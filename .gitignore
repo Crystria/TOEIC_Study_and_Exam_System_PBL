@@ -140,3 +140,5 @@ desktop.ini
 
 # ---------- gitkeep ----------
 !.gitkeep
+# ---------- private-folder ----------
+private/
