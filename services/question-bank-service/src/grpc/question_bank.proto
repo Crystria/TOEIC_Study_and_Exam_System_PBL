@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package toeic.questionbank.v1;
+
+service QuestionBankService {
+  rpc GetQuestions(GetQuestionsRequest) returns (GetQuestionsResponse);
+  rpc GetAnswerKey(GetAnswerKeyRequest) returns (GetAnswerKeyResponse);
+}
+
+message GetQuestionsRequest {
+  repeated string question_ids = 1;
+}
+
+message QuestionOption {
+  string id = 1;
+  string option_key = 2;
+  string content = 3;
+  string media_url = 4;
+}
+
+message Question {
+  string id = 1;
+  int32 part = 2;
+  string type = 3;
+  string stem = 4;
+  string explanation = 5;
+  string difficulty = 6;
+  string media_url = 7;
+  repeated QuestionOption options = 8;
+}
+
+message GetQuestionsResponse {
+  repeated Question questions = 1;
+}
+
+message GetAnswerKeyRequest {
+  repeated string question_ids = 1;
+}
+
+message AnswerKeyItem {
+  string question_id = 1;
+  string correct_option = 2;
+}
+
+message GetAnswerKeyResponse {
+  repeated AnswerKeyItem answers = 1;
+}
