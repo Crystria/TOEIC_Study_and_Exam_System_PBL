@@ -1,0 +1,27 @@
+openapi: 3.0.3
+info:
+  title: TOEIC Study & Exam System API
+  version: 0.1.0
+  description: >
+    Spec REST tổng hợp cho các endpoint đi qua API Gateway.
+    Các file spec chi tiết theo service sẽ được tách trong thư mục này.
+servers:
+  - url: https://api.example.com
+    description: Production (qua API Gateway)
+  - url: http://localhost:3000
+    description: Local (API Gateway)
+tags:
+  - name: auth
+  - name: users
+  - name: questions
+  - name: tests
+  - name: learning
+  - name: analytics
+  - name: ai
+paths: {}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
