@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum GrammarLessonStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model VocabularyTopic {
+  id           String       @id @default(uuid())
+  name         String
+  description  String?
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  vocabularies Vocabulary[]
+
+  @@map("vocabulary_topics")
+}
+
+model Vocabulary {
+  id            String            @id @default(uuid())
+  topicId       String            @map("topic_id")
+  word          String
+  pronunciation String?
+  meaning       String
+  example       String?
+  audioUrl      String?           @map("audio_url")
+  imageUrl      String?           @map("image_url")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  topic         VocabularyTopic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  userProgress  UserProgress[]
+
+  @@index([topicId])
+  @@map("vocabularies")
+}
+
+model GrammarLesson {
+  id             String               @id @default(uuid())
+  title          String
+  slug           String               @unique
+  content        String
+  level          String
+  status         GrammarLessonStatus  @default(DRAFT)
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+  lessonProgress LessonProgress[]
+
+  @@index([level, status])
+  @@map("grammar_lessons")
+}
+
+model UserProgress {
+  id             String     @id @default(uuid())
+  userId         String     @map("user_id")
+  vocabularyId   String     @map("vocabulary_id")
+  easinessFactor Float      @default(2.5) @map("easiness_factor")
+  repetition     Int        @default(0)
+  interval       Int        @default(1)
+  nextReviewAt   DateTime?  @map("next_review_at")
+  lastReviewAt   DateTime?  @map("last_review_at")
+  vocabulary     Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vocabularyId])
+  @@index([userId, nextReviewAt])
+  @@map("user_progress")
+}
+
+model LessonProgress {
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  lessonId    String        @map("lesson_id")
+  status      String        @default("IN_PROGRESS")
+  completedAt DateTime?     @map("completed_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  lesson      GrammarLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@map("lesson_progress")
+}
+
+model LearningSession {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  startedAt       DateTime  @default(now()) @map("started_at")
+  endedAt         DateTime? @map("ended_at")
+  durationSeconds Int       @default(0) @map("duration_seconds")
+
+  @@index([userId])
+  @@map("learning_sessions")
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  aggregateId String    @map("aggregate_id")
+  eventType   String    @map("event_type")
+  payload     Json
+  createdAt   DateTime  @default(now()) @map("created_at")
+  publishedAt DateTime? @map("published_at")
+
+  @@index([publishedAt])
+  @@map("outbox_events")
+}
