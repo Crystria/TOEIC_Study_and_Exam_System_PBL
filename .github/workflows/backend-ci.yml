@@ -1,0 +1,55 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    paths:
+      - 'services/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - api-gateway
+          - auth-service
+          - question-bank-service
+          - exam-service
+          - learning-service
+          - analytics-service
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        working-directory: .
+        run: npm ci || npm install
+      - name: Generate Prisma client
+        run: npm run prisma:generate --if-present
+      - name: Lint
+        run: npm run lint --if-present
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm run test --if-present

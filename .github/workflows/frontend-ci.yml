@@ -1,0 +1,45 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/web/**'
+      - 'apps/admin-cms/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - 'apps/admin-cms/**'
+      - 'packages/**'
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [web, admin-cms]
+    defaults:
+      run:
+        working-directory: apps/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        working-directory: .
+        run: npm ci || npm install
+      - name: Lint
+        run: npm run lint --if-present
+      - name: Build
+        run: npm run build
