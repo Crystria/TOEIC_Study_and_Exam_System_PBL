@@ -122,6 +122,7 @@ logs/
 uploads/
 tmp/
 temp/
+tmp.md
 
 # ---------- IDE / Editor ----------
 .idea/
@@ -137,6 +138,28 @@ temp/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ---------- Monorepo / builds ----------
+**/dist/
+**/build/
+**/.turbo/
+**/tsconfig.tsbuildinfo
+coverage/
+.pnpm-store/
+
+# ---------- Prisma ----------
+**/prisma/*.db
+**/prisma/migrations/dev.db*
+**/src/generated/prisma/
+
+# ---------- Python (uv) ----------
+uv.lock.bak
+*.egg-info/
+
+# ---------- Local env ----------
+.env
+.env.local
+.env.*.local
 
 # ---------- gitkeep ----------
 !.gitkeep

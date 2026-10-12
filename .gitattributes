@@ -1,0 +1,29 @@
+# Chuẩn hóa line-ending cho toàn repo (lưu LF trong Git)
+* text=auto eol=lf
+
+# Script / shell phải dùng LF
+*.sh text eol=lf
+
+# Windows batch dùng CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary (không đụng tới line-ending)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.zip binary
+*.gz binary
+*.jar binary
+*.apk binary
+*.ipa binary
+*.keystore binary
+*.jks binary
