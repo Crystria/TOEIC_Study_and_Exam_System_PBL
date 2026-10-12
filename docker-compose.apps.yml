@@ -1,0 +1,294 @@
+# docker-compose.apps.yml
+# Chạy full-stack dev (frontend + backend) với hot-reload (Compose Watch).
+# PHẢI dùng ghép với hạ tầng:
+#   docker compose -f docker-compose.yml -f docker-compose.apps.yml up -d --build
+# hoặc: npm run apps:up
+#
+# LƯU Ý: AI chatbot service (Python) chưa đưa vào compose (thiếu uv.lock).
+
+x-node: &node-base
+  image: toeic-dev-node:local
+  build:
+    context: .
+    dockerfile: infra/docker/dev-node.Dockerfile
+  working_dir: /app
+  restart: unless-stopped
+
+services:
+  # One-shot: chạy migrate TRƯỚC khi các service khởi động.
+  migrate:
+    <<: *node-base
+    restart: 'no'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "DATABASE_URL='postgresql://toeic:toeic@postgres:5432/auth_db?schema=public' npm run prisma:deploy -w @toeic/auth-service &&
+             DATABASE_URL='postgresql://toeic:toeic@postgres:5432/question_db?schema=public' npm run prisma:deploy -w @toeic/question-bank-service &&
+             DATABASE_URL='postgresql://toeic:toeic@postgres:5432/exam_db?schema=public' npm run prisma:deploy -w @toeic/exam-service &&
+             DATABASE_URL='postgresql://toeic:toeic@postgres:5432/learning_db?schema=public' npm run prisma:deploy -w @toeic/learning-service &&
+             DATABASE_URL='postgresql://toeic:toeic@postgres:5432/analytics_db?schema=public' npm run prisma:deploy -w @toeic/analytics-service"
+
+  auth-service:
+    <<: *node-base
+    command: sh -c "npm run prisma:generate -w @toeic/auth-service && npm run start:dev -w @toeic/auth-service"
+    ports:
+      - '3001:3001'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: development
+      PORT: '3001'
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_db?schema=public
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_CLIENT_ID: auth-service
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me}
+      JWT_REFRESH_TTL: 7d
+    develop:
+      watch:
+        - action: sync
+          path: ./services/auth-service/src
+          target: /app/services/auth-service/src
+        - action: sync
+          path: ./services/auth-service/prisma
+          target: /app/services/auth-service/prisma
+        - action: sync
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/auth-service/package.json
+
+  question-bank-service:
+    <<: *node-base
+    command: sh -c "npm run prisma:generate -w @toeic/question-bank-service && npm run start:dev -w @toeic/question-bank-service"
+    ports:
+      - '3002:3002'
+      - '50052:50052'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: development
+      PORT: '3002'
+      GRPC_PORT: '50052'
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_db?schema=public
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_CLIENT_ID: question-bank-service
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      ELASTICSEARCH_NODE: http://elasticsearch:9200
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-toeic-media}
+    develop:
+      watch:
+        - action: sync
+          path: ./services/question-bank-service/src
+          target: /app/services/question-bank-service/src
+        - action: sync
+          path: ./services/question-bank-service/prisma
+          target: /app/services/question-bank-service/prisma
+        - action: sync
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/question-bank-service/package.json
+
+  exam-service:
+    <<: *node-base
+    command: sh -c "npm run prisma:generate -w @toeic/exam-service && npm run start:dev -w @toeic/exam-service"
+    ports:
+      - '3003:3003'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: development
+      PORT: '3003'
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_db?schema=public
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_CLIENT_ID: exam-service
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      QUESTION_BANK_GRPC_URL: question-bank-service:50052
+    develop:
+      watch:
+        - action: sync
+          path: ./services/exam-service/src
+          target: /app/services/exam-service/src
+        - action: sync
+          path: ./services/exam-service/prisma
+          target: /app/services/exam-service/prisma
+        - action: sync
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/exam-service/package.json
+
+  learning-service:
+    <<: *node-base
+    command: sh -c "npm run prisma:generate -w @toeic/learning-service && npm run start:dev -w @toeic/learning-service"
+    ports:
+      - '3004:3004'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: development
+      PORT: '3004'
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/learning_db?schema=public
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_CLIENT_ID: learning-service
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+    develop:
+      watch:
+        - action: sync
+          path: ./services/learning-service/src
+          target: /app/services/learning-service/src
+        - action: sync
+          path: ./services/learning-service/prisma
+          target: /app/services/learning-service/prisma
+        - action: sync
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/learning-service/package.json
+
+  analytics-service:
+    <<: *node-base
+    command: sh -c "npm run prisma:generate -w @toeic/analytics-service && npm run start:dev -w @toeic/analytics-service"
+    ports:
+      - '3005:3005'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: development
+      PORT: '3005'
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_db?schema=public
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      KAFKA_CLIENT_ID: analytics-service
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+    develop:
+      watch:
+        - action: sync
+          path: ./services/analytics-service/src
+          target: /app/services/analytics-service/src
+        - action: sync
+          path: ./services/analytics-service/prisma
+          target: /app/services/analytics-service/prisma
+        - action: sync
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/analytics-service/package.json
+
+  api-gateway:
+    <<: *node-base
+    command: npm run start:dev -w @toeic/api-gateway
+    ports:
+      - '3000:3000'
+    depends_on:
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    environment:
+      NODE_ENV: development
+      PORT: '3000'
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      CORS_ORIGINS: http://localhost:3006,http://localhost:3007
+      AUTH_SERVICE_URL: http://auth-service:3001
+      QUESTION_BANK_SERVICE_URL: http://question-bank-service:3002
+      EXAM_SERVICE_URL: http://exam-service:3003
+      LEARNING_SERVICE_URL: http://learning-service:3004
+      ANALYTICS_SERVICE_URL: http://analytics-service:3005
+      AI_CHATBOX_SERVICE_URL: http://ai-chatbox-service:8000
+      RATE_LIMIT_CAPACITY: '60'
+      RATE_LIMIT_REFILL_PER_SEC: '1'
+    develop:
+      watch:
+        - action: sync
+          path: ./services/api-gateway/src
+          target: /app/services/api-gateway/src
+        - action: sync
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/api-gateway/package.json
+
+  web:
+    <<: *node-base
+    command: npm run dev -w @toeic/web -- -H 0.0.0.0
+    ports:
+      - '3006:3006'
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3000/api/v1
+      WATCHPACK_POLLING: 'true'
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/web
+          target: /app/apps/web
+        - action: rebuild
+          path: ./apps/web/package.json
+
+  admin-cms:
+    <<: *node-base
+    command: npm run dev -w @toeic/admin-cms -- -H 0.0.0.0
+    ports:
+      - '3007:3007'
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3000/api/v1
+      WATCHPACK_POLLING: 'true'
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/admin-cms
+          target: /app/apps/admin-cms
+        - action: rebuild
+          path: ./apps/admin-cms/package.json

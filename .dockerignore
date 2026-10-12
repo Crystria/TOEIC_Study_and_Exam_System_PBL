@@ -1,0 +1,33 @@
+# VCS / meta
+.git
+.gitignore
+.dockerignore
+**/Dockerfile
+**/.dockerignore
+
+# deps / build output
+**/node_modules
+**/.next
+**/dist
+**/build
+**/.turbo
+**/coverage
+**/*.log
+**/*.tsbuildinfo
+
+# env & secrets
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.local.example
+
+# không cần cho image web/backend
+private/
+docs/
+infra/k8s/
+infra/helm/
+infra/terraform/
+infra/argocd/
+apps/mobile/
+**/.venv
+**/__pycache__/
