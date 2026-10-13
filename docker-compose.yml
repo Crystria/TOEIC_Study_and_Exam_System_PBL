@@ -5,8 +5,8 @@ services:
     image: postgres:16-alpine
     container_name: toeic-postgres
     restart: unless-stopped
-    cpus: ${POSTGRES_CPUS:-1.0}
-    mem_limit: ${POSTGRES_MEMORY_LIMIT:-768m}
+    cpus: ${POSTGRES_CPUS:-0.5}
+    mem_limit: ${POSTGRES_MEMORY_LIMIT:-512m}
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-toeic}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-toeic}
@@ -26,8 +26,8 @@ services:
     image: redis:7-alpine
     container_name: toeic-redis
     restart: unless-stopped
-    cpus: ${REDIS_CPUS:-0.5}
-    mem_limit: ${REDIS_MEMORY_LIMIT:-256m}
+    cpus: ${REDIS_CPUS:-0.25}
+    mem_limit: ${REDIS_MEMORY_LIMIT:-128m}
     command: ['redis-server', '--appendonly', 'yes']
     ports:
       - '${REDIS_PORT:-7379}:6379'
@@ -44,7 +44,7 @@ services:
     container_name: toeic-rabbitmq
     restart: unless-stopped
     cpus: ${RABBITMQ_CPUS:-0.5}
-    mem_limit: ${RABBITMQ_MEMORY_LIMIT:-512m}
+    mem_limit: ${RABBITMQ_MEMORY_LIMIT:-384m}
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-toeic}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-toeic}
@@ -63,8 +63,8 @@ services:
     image: bitnamilegacy/minio:latest
     container_name: toeic-minio
     restart: unless-stopped
-    cpus: ${MINIO_CPUS:-1.0}
-    mem_limit: ${MINIO_MEMORY_LIMIT:-768m}
+    cpus: ${MINIO_CPUS:-0.5}
+    mem_limit: ${MINIO_MEMORY_LIMIT:-512m}
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
@@ -83,8 +83,8 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
     container_name: toeic-elasticsearch
     restart: unless-stopped
-    cpus: ${ELASTICSEARCH_CPUS:-2.0}
-    mem_limit: ${ELASTICSEARCH_MEMORY_LIMIT:-1536m}
+    cpus: ${ELASTICSEARCH_CPUS:-1.0}
+    mem_limit: ${ELASTICSEARCH_MEMORY_LIMIT:-1024m}
     environment:
       discovery.type: single-node
       xpack.security.enabled: 'false'
@@ -104,7 +104,7 @@ services:
     container_name: toeic-mailhog
     restart: unless-stopped
     cpus: ${MAILHOG_CPUS:-0.25}
-    mem_limit: ${MAILHOG_MEMORY_LIMIT:-256m}
+    mem_limit: ${MAILHOG_MEMORY_LIMIT:-128m}
     ports:
       - '${MAILHOG_SMTP_PORT:-1025}:1025'
       - '${MAILHOG_UI_PORT:-8025}:8025'
