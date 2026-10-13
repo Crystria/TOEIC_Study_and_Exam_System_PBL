@@ -30,7 +30,7 @@ services:
     mem_limit: ${REDIS_MEMORY_LIMIT:-256m}
     command: ['redis-server', '--appendonly', 'yes']
     ports:
-      - '${REDIS_PORT:-6379}:6379'
+      - '${REDIS_PORT:-7379}:6379'
     volumes:
       - redis-data:/data
     healthcheck:
@@ -39,48 +39,25 @@ services:
       timeout: 5s
       retries: 5
 
-  kafka:
-    image: bitnamilegacy/kafka:3.7
-    container_name: toeic-kafka
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: toeic-rabbitmq
     restart: unless-stopped
-    cpus: ${KAFKA_CPUS:-1.5}
-    mem_limit: ${KAFKA_MEMORY_LIMIT:-1280m}
+    cpus: ${RABBITMQ_CPUS:-0.5}
+    mem_limit: ${RABBITMQ_MEMORY_LIMIT:-512m}
     environment:
-      KAFKA_CFG_NODE_ID: 1
-      KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-      KAFKA_CFG_LISTENERS: INTERNAL://:29092,CONTROLLER://:9093,EXTERNAL://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:${KAFKA_PORT:-19092}
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-toeic}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-toeic}
     ports:
-      - '${KAFKA_PORT:-19092}:9092'
+      - '${RABBITMQ_PORT:-5772}:5672'
+      - '${RABBITMQ_MGMT_PORT:-15672}:15672'
     volumes:
-      - kafka-data:/bitnami/kafka
+      - rabbitmq-data:/var/lib/rabbitmq
     healthcheck:
-      test: ['CMD-SHELL', 'kafka-topics.sh --bootstrap-server localhost:29092 --list']
-      interval: 15s
-      timeout: 10s
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      interval: 10s
+      timeout: 5s
       retries: 10
-
-  schema-registry:
-    image: confluentinc/cp-schema-registry:7.6.1
-    container_name: toeic-schema-registry
-    restart: unless-stopped
-    cpus: ${SCHEMA_REGISTRY_CPUS:-0.75}
-    mem_limit: ${SCHEMA_REGISTRY_MEMORY_LIMIT:-768m}
-    depends_on:
-      kafka:
-        condition: service_healthy
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
-    ports:
-      - '${SCHEMA_REGISTRY_PORT:-8081}:8081'
 
   minio:
     image: bitnamilegacy/minio:latest
@@ -122,27 +99,6 @@ services:
       timeout: 10s
       retries: 10
 
-  kafka-ui:
-    image: tchiotludo/akhq:latest
-    container_name: toeic-akhq
-    restart: unless-stopped
-    cpus: ${KAFKA_UI_CPUS:-0.75}
-    mem_limit: ${KAFKA_UI_MEMORY_LIMIT:-512m}
-    depends_on:
-      kafka:
-        condition: service_started
-    environment:
-      AKHQ_CONFIGURATION: |
-        akhq:
-          connections:
-            toeic:
-              properties:
-                bootstrap.servers: "kafka:29092"
-              schema-registry:
-                url: "http://schema-registry:8081"
-    ports:
-      - '${AKHQ_PORT:-8080}:8080'
-
   mailhog:
     image: mailhog/mailhog:latest
     container_name: toeic-mailhog
@@ -156,6 +112,6 @@ services:
 volumes:
   postgres-data:
   redis-data:
-  kafka-data:
+  rabbitmq-data:
   minio-data:
   elasticsearch-data:

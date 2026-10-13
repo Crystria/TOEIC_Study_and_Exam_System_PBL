@@ -3,7 +3,8 @@ export interface EnvConfig {
   PORT: number;
   DATABASE_URL: string;
   REDIS_URL: string;
-  KAFKA_BROKERS: string;
+  RABBITMQ_URL: string;
+  RABBITMQ_EXCHANGE?: string;
   JWT_ACCESS_SECRET: string;
   JWT_ACCESS_TTL: string;
   JWT_REFRESH_TTL: string;
@@ -23,8 +24,9 @@ export const loadEnv = (): EnvConfig => ({
   NODE_ENV: process.env.NODE_ENV ?? 'development',
   PORT: toNumber(process.env.PORT, 3000),
   DATABASE_URL: process.env.DATABASE_URL ?? '',
-  REDIS_URL: process.env.REDIS_URL ?? 'redis://localhost:6379',
-  KAFKA_BROKERS: process.env.KAFKA_BROKERS ?? 'localhost:19092',
+  REDIS_URL: process.env.REDIS_URL ?? 'redis://localhost:7379',
+  RABBITMQ_URL: process.env.RABBITMQ_URL ?? 'amqp://toeic:toeic@localhost:5772',
+  RABBITMQ_EXCHANGE: process.env.RABBITMQ_EXCHANGE,
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? 'change-me',
   JWT_ACCESS_TTL: process.env.JWT_ACCESS_TTL ?? '15m',
   JWT_REFRESH_TTL: process.env.JWT_REFRESH_TTL ?? '7d',

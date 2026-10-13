@@ -2,7 +2,7 @@
   "name": "@toeic/common",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared libraries: auth guards, RBAC, Kafka, Redis, outbox, logger, correlation-id",
+  "description": "Shared libraries: auth guards, RBAC, messaging (RabbitMQ), Redis, outbox, logger, correlation-id",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist"],
@@ -20,7 +20,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "ioredis": "^5.4.1",
-    "kafkajs": "^2.2.4",
+    "amqplib": "^0.10.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "uuid": "^10.0.0"
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/amqplib": "^0.10.5",
     "@types/node": "^22.7.5",
     "@types/uuid": "^10.0.0",
     "express": "^4.21.0",

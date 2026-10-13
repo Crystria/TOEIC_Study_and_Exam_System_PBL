@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma';
-import { EventEnvelope, KafkaService } from '@toeic/common';
+import { ConsumedMessage, EventEnvelope, MessagingService } from '@toeic/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { applyActivity, MS_PER_DAY, startOfDay } from './streak';
 
@@ -22,11 +22,6 @@ interface VocabularyLearnedPayload {
 interface LessonCompletedPayload {
   userId: string;
   lessonId: string;
-}
-
-/** Kiểu tối thiểu của message Kafka (khớp `EachMessagePayload` của kafkajs). */
-interface KafkaMessage {
-  message: { value: Buffer | null };
 }
 
 type EventApplier<T> = (
@@ -51,26 +46,35 @@ export class EventsConsumer implements OnModuleInit {
   private readonly logger = new Logger(EventsConsumer.name);
 
   constructor(
-    private readonly kafka: KafkaService,
+    private readonly messaging: MessagingService,
     private readonly prisma: PrismaService,
   ) {}
 
   async onModuleInit(): Promise<void> {
-    await this.kafka.subscribe(TOPIC_TEST_SUBMITTED, CONSUMER_GROUP, (payload) =>
-      this.consume<TestSubmittedPayload>(payload, (tx, envelope) =>
-        this.onTestSubmitted(tx, envelope),
-      ),
+    await this.messaging.subscribe(
+      CONSUMER_GROUP,
+      [TOPIC_TEST_SUBMITTED, TOPIC_VOCABULARY_LEARNED, TOPIC_LESSON_COMPLETED],
+      (message) => this.route(message),
     );
-    await this.kafka.subscribe(TOPIC_VOCABULARY_LEARNED, CONSUMER_GROUP, (payload) =>
-      this.consume<VocabularyLearnedPayload>(payload, (tx, envelope) =>
-        this.onVocabularyLearned(tx, envelope),
-      ),
-    );
-    await this.kafka.subscribe(TOPIC_LESSON_COMPLETED, CONSUMER_GROUP, (payload) =>
-      this.consume<LessonCompletedPayload>(payload, (tx, envelope) =>
-        this.onLessonCompleted(tx, envelope),
-      ),
-    );
+  }
+
+  private async route(message: ConsumedMessage): Promise<void> {
+    switch (message.routingKey) {
+      case TOPIC_TEST_SUBMITTED:
+        return this.consume<TestSubmittedPayload>(message, (tx, envelope) =>
+          this.onTestSubmitted(tx, envelope),
+        );
+      case TOPIC_VOCABULARY_LEARNED:
+        return this.consume<VocabularyLearnedPayload>(message, (tx, envelope) =>
+          this.onVocabularyLearned(tx, envelope),
+        );
+      case TOPIC_LESSON_COMPLETED:
+        return this.consume<LessonCompletedPayload>(message, (tx, envelope) =>
+          this.onLessonCompleted(tx, envelope),
+        );
+      default:
+        this.logger.warn(`Unhandled routing key ${message.routingKey}`);
+    }
   }
 
   /**
@@ -79,16 +83,16 @@ export class EventsConsumer implements OnModuleInit {
    * hoặc rollback, đảm bảo event không bị xử lý 2 lần.
    */
   private async consume<T>(
-    payload: KafkaMessage,
+    message: ConsumedMessage,
     apply: EventApplier<T>,
   ): Promise<void> {
-    if (!payload.message.value) {
+    if (!message.content?.length) {
       return;
     }
 
     let envelope: EventEnvelope<T>;
     try {
-      envelope = JSON.parse(payload.message.value.toString()) as EventEnvelope<T>;
+      envelope = JSON.parse(message.content.toString()) as EventEnvelope<T>;
     } catch (error) {
       this.logger.error(`Malformed event payload: ${(error as Error).message}`);
       return;

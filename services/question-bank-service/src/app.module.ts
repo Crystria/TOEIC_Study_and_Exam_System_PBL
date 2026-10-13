@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { AppConfigModule, JwtAuthGuard, KafkaModule, RedisModule, RolesGuard } from '@toeic/common';
+import { AppConfigModule, JwtAuthGuard, MessagingModule, RedisModule, RolesGuard } from '@toeic/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { QuestionsModule } from './modules/questions/questions.module';
 import { SearchModule } from './modules/search/search.module';
@@ -12,7 +12,7 @@ import { QuestionBankGrpcController } from './grpc/question-bank.grpc.controller
   imports: [
     AppConfigModule,
     RedisModule,
-    KafkaModule,
+    MessagingModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_ACCESS_SECRET ?? 'change-me',

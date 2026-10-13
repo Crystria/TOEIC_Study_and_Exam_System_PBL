@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { AppConfigModule, JwtAuthGuard, KafkaModule, RedisModule, RolesGuard } from '@toeic/common';
+import { AppConfigModule, JwtAuthGuard, MessagingModule, RedisModule, RolesGuard } from '@toeic/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { LearningModule } from './modules/learning/learning.module';
 import { HealthController } from './health/health.controller';
@@ -10,7 +10,7 @@ import { HealthController } from './health/health.controller';
   imports: [
     AppConfigModule,
     RedisModule,
-    KafkaModule,
+    MessagingModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_ACCESS_SECRET ?? 'change-me',

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { KafkaService, writeOutbox } from '@toeic/common';
+import { MessagingService, writeOutbox } from '@toeic/common';
 import { Client as MinioClient } from 'minio';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SearchService } from '../search/search.service';
@@ -18,7 +18,7 @@ export class QuestionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly search: SearchService,
-    private readonly kafka: KafkaService,
+    private readonly messaging: MessagingService,
     private readonly config: ConfigService,
   ) {
     this.bucket = config.get<string>('MINIO_BUCKET') ?? 'toeic-media';
@@ -107,7 +107,7 @@ export class QuestionsService {
       return created;
     });
 
-    await this.kafka.emit('question.created', question.id, {
+    await this.messaging.emit('question.created', question.id, {
       eventId: randomUUID(),
       eventType: 'QuestionCreatedEvent',
       occurredAt: Date.now(),
@@ -155,7 +155,7 @@ export class QuestionsService {
       return updated;
     });
 
-    await this.kafka.emit('question.updated', id, {
+    await this.messaging.emit('question.updated', id, {
       eventId: randomUUID(),
       eventType: 'QuestionUpdatedEvent',
       occurredAt: Date.now(),
