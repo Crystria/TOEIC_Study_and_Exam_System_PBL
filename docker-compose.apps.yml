@@ -19,6 +19,8 @@ services:
   migrate:
     <<: *node-base
     restart: 'no'
+    cpus: ${MIGRATE_CPUS:-1.5}
+    mem_limit: ${MIGRATE_MEMORY_LIMIT:-1g}
     depends_on:
       postgres:
         condition: service_healthy
@@ -31,6 +33,8 @@ services:
 
   auth-service:
     <<: *node-base
+    cpus: ${AUTH_SERVICE_CPUS:-1.0}
+    mem_limit: ${AUTH_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/auth-service && npm run start:dev -w @toeic/auth-service"
     ports:
       - '3001:3001'
@@ -70,6 +74,8 @@ services:
 
   question-bank-service:
     <<: *node-base
+    cpus: ${QUESTION_BANK_SERVICE_CPUS:-1.5}
+    mem_limit: ${QUESTION_BANK_SERVICE_MEMORY_LIMIT:-1g}
     command: sh -c "npm run prisma:generate -w @toeic/question-bank-service && npm run start:dev -w @toeic/question-bank-service"
     ports:
       - '3002:3002'
@@ -117,6 +123,8 @@ services:
 
   exam-service:
     <<: *node-base
+    cpus: ${EXAM_SERVICE_CPUS:-1.0}
+    mem_limit: ${EXAM_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/exam-service && npm run start:dev -w @toeic/exam-service"
     ports:
       - '3003:3003'
@@ -154,6 +162,8 @@ services:
 
   learning-service:
     <<: *node-base
+    cpus: ${LEARNING_SERVICE_CPUS:-1.0}
+    mem_limit: ${LEARNING_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/learning-service && npm run start:dev -w @toeic/learning-service"
     ports:
       - '3004:3004'
@@ -190,6 +200,8 @@ services:
 
   analytics-service:
     <<: *node-base
+    cpus: ${ANALYTICS_SERVICE_CPUS:-1.0}
+    mem_limit: ${ANALYTICS_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/analytics-service && npm run start:dev -w @toeic/analytics-service"
     ports:
       - '3005:3005'
@@ -226,6 +238,8 @@ services:
 
   api-gateway:
     <<: *node-base
+    cpus: ${API_GATEWAY_CPUS:-1.0}
+    mem_limit: ${API_GATEWAY_MEMORY_LIMIT:-768m}
     command: npm run start:dev -w @toeic/api-gateway
     ports:
       - '3000:3000'
@@ -261,6 +275,8 @@ services:
 
   web:
     <<: *node-base
+    cpus: ${WEB_CPUS:-1.5}
+    mem_limit: ${WEB_MEMORY_LIMIT:-1280m}
     command: npm run dev -w @toeic/web -- -H 0.0.0.0
     ports:
       - '3006:3006'
@@ -278,6 +294,8 @@ services:
 
   admin-cms:
     <<: *node-base
+    cpus: ${ADMIN_CMS_CPUS:-1.5}
+    mem_limit: ${ADMIN_CMS_MEMORY_LIMIT:-1280m}
     command: npm run dev -w @toeic/admin-cms -- -H 0.0.0.0
     ports:
       - '3007:3007'
