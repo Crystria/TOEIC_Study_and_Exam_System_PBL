@@ -65,7 +65,10 @@ npm run infra:up      # khởi động Postgres, Redis, Kafka, MinIO, Elasticsea
 ## Chạy dev
 
 ```bash
-npm run dev           # chạy toàn bộ workspace có script dev
+npm run dev           # LƯU Ý: chỉ chạy workspace đầu tiên có script dev (npm
+                      # chạy tuần tự, next dev không thoát) → nên chạy riêng:
+                      #   npm run dev -w @toeic/web        (3006)
+                      #   npm run dev -w @toeic/admin-cms  (3007)
 npm run build
 npm run lint
 npm run test
