@@ -6,7 +6,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any
 
 
-class CircuitState(str, enum.Enum):
+class CircuitState(enum.StrEnum):
     CLOSED = "CLOSED"
     OPEN = "OPEN"
     HALF_OPEN = "HALF_OPEN"
@@ -38,7 +38,9 @@ class CircuitBreaker:
     def state(self) -> CircuitState:
         return self._state
 
-    async def call(self, func: Callable[..., Awaitable[Any]], *args: Any, **kwargs: Any) -> Any:
+    async def call(
+        self, func: Callable[..., Awaitable[Any]], *args: Any, **kwargs: Any
+    ) -> Any:
         if self._state == CircuitState.OPEN:
             if self._should_attempt_reset():
                 self._state = CircuitState.HALF_OPEN
@@ -46,10 +48,12 @@ class CircuitBreaker:
                 raise CircuitBreakerError("Circuit breaker is OPEN")
 
         try:
-            result = await asyncio.wait_for(func(*args, **kwargs), timeout=self.timeout_ms / 1000)
+            result = await asyncio.wait_for(
+                func(*args, **kwargs), timeout=self.timeout_ms / 1000
+            )
             self._on_success()
             return result
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self._on_failure()
             raise CircuitBreakerTimeoutError("Request timed out after 10 seconds")
         except Exception:
@@ -63,7 +67,9 @@ class CircuitBreaker:
 
     def _on_failure(self) -> None:
         self._failure_count += 1
-        self._last_failure_time = asyncio.get_event_loop().time() if hasattr(asyncio, "get_event_loop") else 0
+        self._last_failure_time = (
+            asyncio.get_event_loop().time() if hasattr(asyncio, "get_event_loop") else 0
+        )
         if self._failure_count >= self.failure_threshold:
             self._state = CircuitState.OPEN
 

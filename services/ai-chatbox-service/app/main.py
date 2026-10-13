@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api import routes_health, routes_conversations
+from app.api import routes_conversations, routes_health
 
 app = FastAPI(
     title="AI Chatbox/Tutor Service",

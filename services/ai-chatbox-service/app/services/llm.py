@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import asyncio
-import time
 from typing import Any
 
 import httpx
 
 from app.core.circuit_breaker import (
-    CircuitBreaker,
     CircuitBreakerError,
     CircuitBreakerTimeoutError,
     circuit_breaker,
@@ -89,7 +87,7 @@ async def call_llm(
         raise LLMTimeoutError("LLM request timed out")
     except CircuitBreakerError:
         raise LLMError("Circuit breaker is open")
-    except asyncio.TimeoutError:
+    except TimeoutError:
         raise LLMTimeoutError("LLM request timed out")
     except httpx.HTTPError as e:
         raise LLMError(f"HTTP error calling LLM: {e}")
@@ -99,7 +97,9 @@ async def call_llm(
 
 def get_fallback_response(context: str | None = None) -> str:
     """Return fallback response when circuit breaker opens or timeout occurs."""
-    base_msg = "I'm sorry, but I'm experiencing temporary issues. Please try again later."
+    base_msg = (
+        "I'm sorry, but I'm experiencing temporary issues. Please try again later."
+    )
     if context:
         return f"{base_msg}\n\nContext: {context[:100]}"  # Truncate for safety
     return base_msg

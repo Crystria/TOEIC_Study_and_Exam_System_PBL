@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import datetime
-from typing import Callable
+from collections.abc import Callable
 
 import redis.asyncio as redis
 
@@ -50,8 +50,11 @@ async def check_rate_limit(
     limit: int,
     window_seconds: int = 86400,  # 1 day
 ) -> tuple[bool, int, int]:
-    """Check rate limit using token bucket (sliding window by day). Returns (allowed, limit, count)."""
-    now = datetime.datetime.now(datetime.timezone.utc).timestamp()
+    """Check rate limit using token bucket (sliding window by day).
+
+    Returns (allowed, limit, count).
+    """
+    now = datetime.datetime.now(datetime.UTC).timestamp()
     result = await redis_client.eval(
         TOKEN_BUCKET_LUA_SCRIPT,
         1,
@@ -61,7 +64,9 @@ async def check_rate_limit(
         str(int(now)),
     )
     allowed = bool(result[0]) if isinstance(result, list) and len(result) > 0 else False
-    limit_val = int(result[1]) if isinstance(result, list) and len(result) > 1 else limit
+    limit_val = (
+        int(result[1]) if isinstance(result, list) and len(result) > 1 else limit
+    )
     count_val = int(result[2]) if isinstance(result, list) and len(result) > 2 else 0
     return allowed, limit_val, count_val
 
@@ -72,7 +77,7 @@ async def refund_rate_limit(
     window_seconds: int = 86400,
 ) -> None:
     """Refund quota when using fallback response due to circuit breaker."""
-    now = datetime.datetime.now(datetime.timezone.utc).timestamp()
+    now = datetime.datetime.now(datetime.UTC).timestamp()
     window_start = int(now / window_seconds) * window_seconds
     bucket_key = f"ai:rate_limit:{user_id}:{window_start}"
     # Decrement count if > 0 (best effort)

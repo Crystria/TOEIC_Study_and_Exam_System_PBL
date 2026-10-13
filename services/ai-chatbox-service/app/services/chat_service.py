@@ -34,7 +34,9 @@ async def get_or_create_conversation(
         result = await session.get(Conversation, conversation_id)
         if result and result.user_id == user_id:
             return result
-    conv = Conversation(user_id=user_id, title=title, context_question_id=context_question_id)
+    conv = Conversation(
+        user_id=user_id, title=title, context_question_id=context_question_id
+    )
     session.add(conv)
     await session.flush()
     await session.refresh(conv)
@@ -44,7 +46,9 @@ async def get_or_create_conversation(
 async def get_chat_usage(session: AsyncSession, user_id: str) -> ChatUsage | None:
     """Get today's usage for user."""
     today = datetime.date.today()
-    stmt = select(ChatUsage).where(ChatUsage.user_id == user_id, ChatUsage.usage_date == today)
+    stmt = select(ChatUsage).where(
+        ChatUsage.user_id == user_id, ChatUsage.usage_date == today
+    )
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
 
@@ -88,7 +92,9 @@ async def process_message(
         user_id,
         conversation_id=conversation_id,
         title=message_data.context.get("title") if message_data.context else None,
-        context_question_id=str(message_data.context.get("question_id")) if message_data.context and message_data.context.get("question_id") else None,
+        context_question_id=str(message_data.context.get("question_id"))
+        if message_data.context and message_data.context.get("question_id")
+        else None,
     )
 
     # Save user message
@@ -117,13 +123,17 @@ async def process_message(
     except LLMTimeoutError:
         ai_request_status = AiRequestStatus.TIMEOUT
         is_fallback = True
-        assistant_content = get_fallback_response(str(message_data.context) if message_data.context else None)
+        assistant_content = get_fallback_response(
+            str(message_data.context) if message_data.context else None
+        )
         # Refund quota when using fallback (per ADR)
         await refund_rate_limit(redis_client, user_id)
     except LLMError:
         ai_request_status = AiRequestStatus.FALLBACK
         is_fallback = True
-        assistant_content = get_fallback_response(str(message_data.context) if message_data.context else None)
+        assistant_content = get_fallback_response(
+            str(message_data.context) if message_data.context else None
+        )
         # Refund quota when using fallback (per ADR)
         await refund_rate_limit(redis_client, user_id)
 
@@ -158,10 +168,14 @@ async def process_message(
         MessageResponse(
             id=assistant_msg.id,
             conversation_id=assistant_msg.conversation_id,
-            role=assistant_msg.role.value if hasattr(assistant_msg.role, "value") else str(assistant_msg.role),
+            role=assistant_msg.role.value
+            if hasattr(assistant_msg.role, "value")
+            else str(assistant_msg.role),
             content=assistant_msg.content,
             token_count=assistant_msg.token_count,
-            created_at=assistant_msg.created_at.isoformat() if assistant_msg.created_at else "",
+            created_at=assistant_msg.created_at.isoformat()
+            if assistant_msg.created_at
+            else "",
         ),
         is_fallback,
         ai_request_status.value,
@@ -170,15 +184,22 @@ async def process_message(
 
 def build_system_prompt(context: dict[str, Any] | None) -> str:
     """Build system prompt for LLM based on context."""
-    base_prompt = "You are an AI Tutor for TOEIC preparation. Provide helpful, accurate, and contextual answers."
+    base_prompt = (
+        "You are an AI Tutor for TOEIC preparation. "
+        "Provide helpful, accurate, and contextual answers."
+    )
     if context:
         if context.get("question_id"):
-            base_prompt += f" Context: Question ID {context['question_id']}. Focus on explaining this specific question."
+            base_prompt += (
+                f" Context: Question ID {context['question_id']}. "
+                "Focus on explaining this specific question."
+            )
         if context.get("vocabulary"):
             base_prompt += f" Context: Vocabulary topic - {context['vocabulary']}."
         if context.get("grammar"):
             base_prompt += f" Context: Grammar topic - {context['grammar']}."
     return base_prompt
+
 
 # TODO: Add conversation history retrieval
 # TODO: Handle quota refund more precisely in all failure cases per ADR
