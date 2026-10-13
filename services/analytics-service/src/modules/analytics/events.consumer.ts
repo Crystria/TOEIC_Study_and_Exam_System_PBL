@@ -121,7 +121,7 @@ export class EventsConsumer implements OnModuleInit {
 
       this.logger.debug(`Processed ${envelope.eventType}#${envelope.eventId}`);
     } catch (error) {
-      // TODO: phân loại lỗi để retry / đẩy DLQ; hiện tại rethrow để Kafka retry.
+      // Rethrow để MessagingService retry (header x-retry) rồi đẩy DLQ sau MAX_RETRIES.
       this.logger.error(
         `Failed to process ${envelope.eventType}#${envelope.eventId}: ${(error as Error).message}`,
       );

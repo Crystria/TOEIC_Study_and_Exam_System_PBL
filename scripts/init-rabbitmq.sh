@@ -69,4 +69,4 @@ docker exec "${CONTAINER}" rabbitmqctl eval '
 echo "==> Khởi tạo RabbitMQ xong."
 echo "   Exchange: toeic.events"
 echo "   Queues: analytics-service, question-bank-search"
-echo "   UI: http://localhost:${AKHQ_PORT:-15672}"
+echo "   UI: http://localhost:${RABBITMQ_MGMT_PORT:-15672}"
