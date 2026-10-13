@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "QuestionUpdatedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi CMS cập nhật câu hỏi; search module trong Question Bank cập nhật index Elasticsearch.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "questionId", "type": "string" },
+    { "name": "part", "type": "int" },
+    { "name": "difficulty", "type": "string" }
+  ]
+}

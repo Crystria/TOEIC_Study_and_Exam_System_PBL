@@ -1,0 +1,11 @@
+{
+  "name": "@toeic/config-eslint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "files": ["index.js"],
+  "peerDependencies": {
+    "eslint": ">=9.0.0"
+  }
+}

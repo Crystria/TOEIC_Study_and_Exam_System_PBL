@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "TestSubmittedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi user nộp bài; Analytics tiêu thụ để cập nhật lịch sử và dự đoán điểm.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "attemptId", "type": "string" },
+    { "name": "userId", "type": "string" },
+    { "name": "testId", "type": "string" },
+    {
+      "name": "testType",
+      "type": { "type": "enum", "name": "TestType", "symbols": ["FULL", "MINI"] }
+    },
+    { "name": "score", "type": "int" },
+    { "name": "totalCorrect", "type": "int" }
+  ]
+}

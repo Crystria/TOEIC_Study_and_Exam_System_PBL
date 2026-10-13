@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TestType {
+  FULL
+  MINI
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  EXPIRED
+}
+
+model Test {
+  id              String   @id @default(uuid())
+  title           String
+  type            TestType
+  durationSeconds Int      @map("duration_seconds")
+  status          String   @default("DRAFT")
+  createdBy       String?  @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  questions TestQuestion[]
+  attempts  Attempt[]
+
+  @@map("tests")
+}
+
+model TestQuestion {
+  testId     String @map("test_id")
+  questionId String @map("question_id")
+  orderNo    Int    @map("order_no")
+  part       Int
+
+  test Test @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@id([testId, orderNo])
+  @@index([questionId])
+  @@map("test_questions")
+}
+
+model Attempt {
+  id           String        @id @default(uuid())
+  testId       String        @map("test_id")
+  userId       String        @map("user_id")
+  startedAt    DateTime      @default(now()) @map("started_at")
+  submittedAt  DateTime?     @map("submitted_at")
+  status       AttemptStatus @default(IN_PROGRESS)
+  score        Int?
+  totalCorrect Int?          @map("total_correct")
+
+  test    Test            @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers AttemptAnswer[]
+
+  @@index([userId])
+  @@index([testId])
+  @@map("attempts")
+}
+
+model AttemptAnswer {
+  id             String   @id @default(uuid())
+  attemptId      String   @map("attempt_id")
+  questionId     String   @map("question_id")
+  selectedOption String?  @map("selected_option")
+  isCorrect      Boolean? @map("is_correct")
+  answeredAt     DateTime @default(now()) @map("answered_at")
+
+  attempt Attempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@map("attempt_answers")
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  aggregateId String    @map("aggregate_id")
+  eventType   String    @map("event_type")
+  payload     Json
+  createdAt   DateTime  @default(now()) @map("created_at")
+  publishedAt DateTime? @map("published_at")
+
+  @@index([publishedAt])
+  @@map("outbox_events")
+}

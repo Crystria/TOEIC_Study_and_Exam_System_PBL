@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "LessonCompletedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi user hoàn thành bài học ngữ pháp; Analytics cập nhật streak/thống kê.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "userId", "type": "string" },
+    { "name": "lessonId", "type": "string" }
+  ]
+}

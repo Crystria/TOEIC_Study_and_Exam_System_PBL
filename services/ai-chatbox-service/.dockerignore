@@ -1,0 +1,33 @@
+# Context = services/ai-chatbox-service (xem services/ai-chatbox-service/Dockerfile)
+# Chỉ cần app/ + pyproject.toml (+ uv.lock khi có) cho image runtime.
+
+# Python artifacts
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.venv/
+**/venv/
+**/*.egg-info/
+
+# Tests / tài liệu / meta không cần trong image
+tests/
+README.md
+Dockerfile
+.dockerignore
+.gitignore
+.gitkeep
+
+# Env & secrets
+.env
+.env.*
+!*.env.example
+
+# VCS / IDE / OS
+.git
+.git/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

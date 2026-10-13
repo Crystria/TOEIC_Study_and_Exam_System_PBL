@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "VocabularyLearnedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi user hoàn thành review flashcard; Analytics cập nhật streak/thống kê.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "userId", "type": "string" },
+    { "name": "vocabularyId", "type": "string" },
+    { "name": "quality", "type": "int" }
+  ]
+}

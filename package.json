@@ -1,0 +1,55 @@
+{
+  "name": "toeic-study-exam-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hệ thống Học và Ôn thi TOEIC 2 kỹ năng (Listening & Reading) - monorepo",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/web",
+    "apps/admin-cms",
+    "services/api-gateway",
+    "services/auth-service",
+    "services/question-bank-service",
+    "services/exam-service",
+    "services/learning-service",
+    "services/analytics-service"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspaces --if-present",
+    "setup:env": "node scripts/setup-env.mjs",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "clean": "npm run clean --workspaces --if-present",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "apps:up": "docker compose -f docker-compose.yml -f docker-compose.apps.yml up -d --build",
+    "apps:down": "docker compose -f docker-compose.yml -f docker-compose.apps.yml down",
+    "apps:logs": "docker compose -f docker-compose.yml -f docker-compose.apps.yml logs -f"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.71.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

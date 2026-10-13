@@ -1,0 +1,31 @@
+name: Contracts Compatibility
+
+on:
+  pull_request:
+    paths:
+      - 'packages/contracts/**'
+      - '.github/workflows/contracts-compat.yml'
+
+concurrency:
+  group: contracts-compat-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Avro schemas (JSON syntax)
+        run: |
+          for f in packages/contracts/events/*.avsc; do
+            echo "Validating $f"
+            jq empty "$f"
+          done
+      - name: Validate gRPC proto files
+        run: |
+          sudo apt-get update && sudo apt-get install -y protobuf-compiler
+          for f in packages/contracts/proto/*.proto; do
+            echo "Validating $f"
+            protoc --proto_path=packages/contracts/proto --descriptor_set_out=/dev/null "$f"
+          done
+      # TODO: thêm bước kiểm tra tương thích với Schema Registry / buf breaking.

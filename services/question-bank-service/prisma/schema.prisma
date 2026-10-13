@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QuestionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Question {
+  id          String         @id @default(uuid())
+  part        Int
+  type        String
+  stem        String
+  explanation String?
+  difficulty  String
+  mediaUrl    String?        @map("media_url")
+  status      QuestionStatus @default(DRAFT)
+  createdBy   String?        @map("created_by")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  options QuestionOption[]
+  tags    QuestionTag[]
+
+  @@index([part, difficulty])
+  @@map("questions")
+}
+
+model QuestionOption {
+  id        String  @id @default(uuid())
+  questionId String  @map("question_id")
+  optionKey String  @map("option_key")
+  content   String
+  mediaUrl  String? @map("media_url")
+  isCorrect Boolean @default(false) @map("is_correct")
+  question  Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("question_options")
+}
+
+model Tag {
+  id    String        @id @default(uuid())
+  name  String        @unique
+  questions QuestionTag[]
+
+  @@map("tags")
+}
+
+model QuestionTag {
+  questionId String   @map("question_id")
+  tagId      String   @map("tag_id")
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([questionId, tagId])
+  @@map("question_tags")
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  aggregateId String    @map("aggregate_id")
+  eventType   String    @map("event_type")
+  payload     Json
+  createdAt   DateTime  @default(now()) @map("created_at")
+  publishedAt DateTime? @map("published_at")
+
+  @@index([publishedAt])
+  @@map("outbox_events")
+}

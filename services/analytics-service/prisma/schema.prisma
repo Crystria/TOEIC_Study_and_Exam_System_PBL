@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Thống kê học tập tổng hợp theo người dùng.
+model UserLearningStat {
+  userId            String   @id @map("user_id")
+  totalStudyDays    Int      @default(0) @map("total_study_days")
+  totalLessons      Int      @default(0) @map("total_lessons")
+  totalVocabLearned Int      @default(0) @map("total_vocab_learned")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("user_learning_stats")
+}
+
+/// Lịch sử điểm theo từng lần nộp bài. `attemptId` unique để chống trùng.
+model ScoreHistory {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  attemptId String   @unique @map("attempt_id")
+  testType  String   @map("test_type")
+  score     Int
+  takenAt   DateTime @map("taken_at")
+
+  @@index([userId])
+  @@map("score_history")
+}
+
+/// Nhật ký hoạt động học tập dùng để recompute thống kê/streak.
+model LearningActivity {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  activityType String   @map("activity_type")
+  refId        String?  @map("ref_id")
+  occurredAt   DateTime @map("occurred_at")
+  metadata     Json?
+
+  @@index([userId, occurredAt])
+  @@map("learning_activity")
+}
+
+/// Chuỗi ngày học liên tục (streak).
+model DailyStreak {
+  userId           String    @id @map("user_id")
+  currentStreak    Int       @default(0) @map("current_streak")
+  longestStreak    Int       @default(0) @map("longest_streak")
+  lastActivityDate DateTime? @map("last_activity_date")
+
+  @@map("daily_streaks")
+}
+
+/// Điểm yếu theo kỹ năng/part.
+model WeakArea {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  skillArea   String   @map("skill_area")
+  part        Int      @default(0)
+  errorRate   Float    @default(0) @map("error_rate")
+  sampleCount Int      @default(0) @map("sample_count")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, skillArea, part])
+  @@index([userId])
+  @@map("weak_areas")
+}
+
+/// Bảng chống xử lý trùng event (idempotency). `eventId` là khóa chính unique.
+model ProcessedEvent {
+  eventId     String   @id @map("event_id")
+  eventType   String   @map("event_type")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@map("processed_events")
+}

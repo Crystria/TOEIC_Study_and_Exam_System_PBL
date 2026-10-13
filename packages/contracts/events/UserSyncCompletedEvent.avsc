@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "UserSyncCompletedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Cập nhật trạng thái đồng bộ tiến trình học giữa các thiết bị (Last-Write-Wins).",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "userId", "type": "string" },
+    { "name": "clientDeviceId", "type": "string" },
+    { "name": "lastSyncTime", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "version", "type": "int" }
+  ]
+}
