@@ -23,7 +23,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private readonly consumers: Consumer[] = [];
 
   constructor(private readonly config: ConfigService) {
-    const brokers = (config.get<string>('KAFKA_BROKERS') ?? 'localhost:9092').split(',');
+    const brokers = (config.get<string>('KAFKA_BROKERS') ?? 'localhost:19092').split(',');
     this.kafka = new Kafka({
       clientId: config.get<string>('KAFKA_CLIENT_ID') ?? 'toeic-service',
       brokers,

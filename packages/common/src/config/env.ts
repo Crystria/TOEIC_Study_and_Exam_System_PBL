@@ -24,7 +24,7 @@ export const loadEnv = (): EnvConfig => ({
   PORT: toNumber(process.env.PORT, 3000),
   DATABASE_URL: process.env.DATABASE_URL ?? '',
   REDIS_URL: process.env.REDIS_URL ?? 'redis://localhost:6379',
-  KAFKA_BROKERS: process.env.KAFKA_BROKERS ?? 'localhost:9092',
+  KAFKA_BROKERS: process.env.KAFKA_BROKERS ?? 'localhost:19092',
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? 'change-me',
   JWT_ACCESS_TTL: process.env.JWT_ACCESS_TTL ?? '15m',
   JWT_REFRESH_TTL: process.env.JWT_REFRESH_TTL ?? '7d',

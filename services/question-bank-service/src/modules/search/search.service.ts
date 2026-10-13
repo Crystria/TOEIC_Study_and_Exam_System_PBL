@@ -34,7 +34,7 @@ export class SearchService implements OnModuleInit {
 
   constructor(private readonly config: ConfigService) {
     this.client = new Client({
-      node: config.get<string>('ELASTICSEARCH_NODE') ?? 'http://localhost:9200',
+      node: config.get<string>('ELASTICSEARCH_NODE') ?? 'http://localhost:19200',
     });
   }
 

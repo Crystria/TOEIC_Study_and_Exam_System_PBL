@@ -44,14 +44,14 @@ services:
       KAFKA_CFG_PROCESS_ROLES: controller,broker
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_CFG_LISTENERS: INTERNAL://:29092,CONTROLLER://:9093,EXTERNAL://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:${KAFKA_PORT:-9092}
+      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:${KAFKA_PORT:-19092}
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
       ALLOW_PLAINTEXT_LISTENER: 'yes'
     ports:
-      - '${KAFKA_PORT:-9092}:9092'
+      - '${KAFKA_PORT:-19092}:9092'
     volumes:
       - kafka-data:/bitnami/kafka
     healthcheck:
@@ -82,8 +82,8 @@ services:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
     ports:
-      - '${MINIO_PORT:-9000}:9000'
-      - '${MINIO_CONSOLE_PORT:-9001}:9001'
+      - '${MINIO_PORT:-19000}:9000'
+      - '${MINIO_CONSOLE_PORT:-19001}:9001'
     volumes:
       - minio-data:/bitnami/minio/data
     healthcheck:
@@ -101,7 +101,7 @@ services:
       xpack.security.enabled: 'false'
       ES_JAVA_OPTS: '-Xms512m -Xmx512m'
     ports:
-      - '${ELASTICSEARCH_PORT:-9200}:9200'
+      - '${ELASTICSEARCH_PORT:-19200}:9200'
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     healthcheck:

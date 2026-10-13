@@ -24,7 +24,7 @@ export class QuestionsService {
     this.bucket = config.get<string>('MINIO_BUCKET') ?? 'toeic-media';
     this.minio = new MinioClient({
       endPoint: config.get<string>('MINIO_ENDPOINT')?.split(':')[0] ?? 'localhost',
-      port: Number(config.get<string>('MINIO_ENDPOINT')?.split(':')[1] ?? 9000),
+      port: Number(config.get<string>('MINIO_ENDPOINT')?.split(':')[1] ?? 19000),
       useSSL: false,
       accessKey: config.get<string>('MINIO_ACCESS_KEY') ?? 'minioadmin',
       secretKey: config.get<string>('MINIO_SECRET_KEY') ?? 'minioadmin',
