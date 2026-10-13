@@ -6,6 +6,7 @@ COPY packages ./packages
 COPY services/auth-service ./services/auth-service
 RUN npm ci || npm install
 RUN npm run prisma:generate --workspace @toeic/auth-service
+RUN npm run build --workspace @toeic/common
 RUN npm run build --workspace @toeic/auth-service
 
 FROM node:22-alpine AS runner

@@ -6,6 +6,7 @@ COPY packages ./packages
 COPY services/question-bank-service ./services/question-bank-service
 RUN npm ci || npm install
 RUN npm run prisma:generate --workspace @toeic/question-bank-service
+RUN npm run build --workspace @toeic/common
 RUN npm run build --workspace @toeic/question-bank-service
 
 FROM node:22-alpine AS runner

@@ -6,6 +6,7 @@ COPY packages ./packages
 COPY services/learning-service ./services/learning-service
 RUN npm ci || npm install
 RUN npm run prisma:generate --workspace @toeic/learning-service
+RUN npm run build --workspace @toeic/common
 RUN npm run build --workspace @toeic/learning-service
 
 FROM node:22-alpine AS runner

@@ -5,6 +5,7 @@ COPY package*.json ./
 COPY packages ./packages
 COPY services/api-gateway ./services/api-gateway
 RUN npm ci || npm install
+RUN npm run build --workspace @toeic/common
 RUN npm run build --workspace @toeic/api-gateway
 
 FROM node:22-alpine AS runner

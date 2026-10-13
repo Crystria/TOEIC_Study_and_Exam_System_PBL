@@ -6,6 +6,7 @@ COPY packages ./packages
 COPY services/analytics-service ./services/analytics-service
 RUN npm ci || npm install
 RUN npm run prisma:generate --workspace @toeic/analytics-service
+RUN npm run build --workspace @toeic/common
 RUN npm run build --workspace @toeic/analytics-service
 
 FROM node:22-alpine AS runner

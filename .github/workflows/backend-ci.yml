@@ -47,6 +47,9 @@ jobs:
         run: npm ci || npm install
       - name: Generate Prisma client
         run: npm run prisma:generate --if-present
+      - name: Build @toeic/common
+        working-directory: .
+        run: npm run build -w @toeic/common
       - name: Lint
         run: npm run lint --if-present
       - name: Build
