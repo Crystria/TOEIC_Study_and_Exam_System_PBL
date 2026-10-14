@@ -8,7 +8,7 @@ ACCESS_KEY="${MINIO_ACCESS_KEY:-minioadmin}"
 SECRET_KEY="${MINIO_SECRET_KEY:-minioadmin}"
 
 echo "==> Cấu hình MinIO alias"
-docker exec "${MINIO_CONTAINER}" mc alias set local http://localhost:19000 "${ACCESS_KEY}" "${SECRET_KEY}"
+docker exec "${MINIO_CONTAINER}" mc alias set local http://localhost:9000 "${ACCESS_KEY}" "${SECRET_KEY}"
 
 if docker exec "${MINIO_CONTAINER}" mc ls "local/${BUCKET}" >/dev/null 2>&1; then
   echo "==> Bucket '${BUCKET}' đã tồn tại"
