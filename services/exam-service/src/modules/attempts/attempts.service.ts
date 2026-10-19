@@ -6,7 +6,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { KafkaService, writeOutbox } from '@toeic/common';
+import { MessagingService, writeOutbox } from '@toeic/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { QuestionBankClient } from '../../grpc/question-bank.client';
 import { SaveAnswerDto } from './dto/save-answer.dto';
@@ -24,7 +24,7 @@ export class AttemptsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly questionBank: QuestionBankClient,
-    private readonly kafka: KafkaService,
+    private readonly messaging: MessagingService,
   ) {}
 
   async start(testId: string, userId: string) {
@@ -174,7 +174,7 @@ export class AttemptsService {
       });
     });
 
-    await this.kafka.emit('test.submitted', attemptId, {
+    await this.messaging.emit('test.submitted', attemptId, {
       eventId,
       eventType: 'TestSubmittedEvent',
       occurredAt,

@@ -3,7 +3,7 @@
 Hợp đồng dùng chung giữa các service.
 
 - `proto/` — định nghĩa gRPC (giao tiếp nội bộ đồng bộ, HTTP/2).
-- `events/` — Avro schema cho event Kafka (đăng ký với Schema Registry).
+- `events/` — JSON event schemas cho RabbitMQ (routing key = tên event, xem ADR 0018). Các file `.avsc` là schema Avro cũ, giữ lại để tham chiếu.
 - `openapi/` — spec OpenAPI cho REST API (qua API Gateway).
 
 ## Quy ước thay đổi

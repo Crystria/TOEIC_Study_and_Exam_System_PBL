@@ -5,7 +5,7 @@ import {
   AppConfigModule,
   CorrelationIdMiddleware,
   JwtAuthGuard,
-  KafkaModule,
+  MessagingModule,
   RedisModule,
   RolesGuard,
 } from '@toeic/common';
@@ -17,7 +17,7 @@ import { HealthController } from './health/health.controller';
   imports: [
     AppConfigModule,
     RedisModule,
-    KafkaModule,
+    MessagingModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_ACCESS_SECRET ?? 'change-me',

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma';
-import { KafkaService, writeOutbox } from '@toeic/common';
+import { MessagingService, writeOutbox } from '@toeic/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ListLessonsQueryDto } from './dtos/list-lessons-query.dto';
 import { ListVocabulariesQueryDto } from './dtos/list-vocabularies-query.dto';
@@ -15,7 +15,7 @@ export class LearningService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly kafka: KafkaService,
+    private readonly messaging: MessagingService,
   ) {}
 
   async listVocabularyTopics() {
@@ -121,7 +121,7 @@ export class LearningService {
       return saved;
     });
 
-    await this.kafka.emit('vocabulary.learned', progress.id, {
+    await this.messaging.emit('vocabulary.learned', progress.id, {
       eventId: randomUUID(),
       eventType: 'VocabularyLearnedEvent',
       occurredAt: Date.now(),
@@ -180,7 +180,7 @@ export class LearningService {
       return saved;
     });
 
-    await this.kafka.emit('lesson.completed', progress.id, {
+    await this.messaging.emit('lesson.completed', progress.id, {
       eventId: randomUUID(),
       eventType: 'LessonCompletedEvent',
       occurredAt: Date.now(),
