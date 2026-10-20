@@ -93,7 +93,6 @@ mysql-data/
 mongo-data/
 redis-data/
 elasticsearch-data/
-kafka-data/
 rabbitmq-data/
 minio-data/
 pgdata/

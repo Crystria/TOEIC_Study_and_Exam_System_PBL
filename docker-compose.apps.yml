@@ -43,7 +43,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      kafka:
+      rabbitmq:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
@@ -52,8 +52,7 @@ services:
       PORT: '3001'
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_db?schema=public
       REDIS_URL: redis://redis:6379
-      KAFKA_BROKERS: kafka:29092
-      KAFKA_CLIENT_ID: auth-service
+      RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
       JWT_ACCESS_TTL: 15m
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me}
@@ -85,7 +84,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      kafka:
+      rabbitmq:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
@@ -99,8 +98,7 @@ services:
       GRPC_PORT: '50052'
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_db?schema=public
       REDIS_URL: redis://redis:6379
-      KAFKA_BROKERS: kafka:29092
-      KAFKA_CLIENT_ID: question-bank-service
+      RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
       ELASTICSEARCH_NODE: http://elasticsearch:9200
       MINIO_ENDPOINT: minio:9000
@@ -133,7 +131,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      kafka:
+      rabbitmq:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
@@ -142,8 +140,7 @@ services:
       PORT: '3003'
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_db?schema=public
       REDIS_URL: redis://redis:6379
-      KAFKA_BROKERS: kafka:29092
-      KAFKA_CLIENT_ID: exam-service
+      RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
       QUESTION_BANK_GRPC_URL: question-bank-service:50052
     develop:
@@ -172,7 +169,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      kafka:
+      rabbitmq:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
@@ -181,8 +178,7 @@ services:
       PORT: '3004'
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/learning_db?schema=public
       REDIS_URL: redis://redis:6379
-      KAFKA_BROKERS: kafka:29092
-      KAFKA_CLIENT_ID: learning-service
+      RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
     develop:
       watch:
@@ -210,7 +206,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      kafka:
+      rabbitmq:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
@@ -219,8 +215,7 @@ services:
       PORT: '3005'
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_db?schema=public
       REDIS_URL: redis://redis:6379
-      KAFKA_BROKERS: kafka:29092
-      KAFKA_CLIENT_ID: analytics-service
+      RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
     develop:
       watch:

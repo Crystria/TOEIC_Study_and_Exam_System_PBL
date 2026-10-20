@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RoleCode, KafkaService, writeOutbox } from '@toeic/common';
+import { RoleCode, MessagingService, writeOutbox } from '@toeic/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
@@ -29,7 +29,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
-    private readonly kafka: KafkaService,
+    private readonly messaging: MessagingService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -146,7 +146,7 @@ export class AuthService {
         },
       });
     });
-    await this.kafka.emit('user.sync.completed', userId, {
+    await this.messaging.emit('user.sync.completed', userId, {
       eventId: state.userId + ':' + dto.clientDeviceId,
       eventType: 'UserSyncCompletedEvent',
       occurredAt: Date.now(),

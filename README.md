@@ -10,8 +10,8 @@ Monorepo gồm các ứng dụng client, microservices backend và hạ tầng.
 - **Edge:** API Gateway (NestJS, stateless) — JWT, rate limiting, routing, `X-Correlation-ID`.
 - **Backend services (NestJS + TypeScript):** Auth & User, Question Bank (kèm search module Elasticsearch), Exam, Learning, Analytics.
 - **AI service:** Python FastAPI (uv).
-- **Giao tiếp:** REST/HTTPS qua Gateway (client↔backend), gRPC/HTTP2 (nội bộ đồng bộ), Kafka (bất đồng bộ, Transactional Outbox).
-- **Dữ liệu:** PostgreSQL (Prisma), Redis, Apache Kafka + Schema Registry (Avro), MinIO, Elasticsearch.
+- **Giao tiếp:** REST/HTTPS qua Gateway (client↔backend), gRPC/HTTP2 (nội bộ đồng bộ), RabbitMQ (bất đồng bộ, Transactional Outbox).
+- **Dữ liệu:** PostgreSQL (Prisma), Redis, RabbitMQ (JSON events), MinIO, Elasticsearch.
 
 Chi tiết quyết định kiến trúc: xem `docs/` (tài liệu thiết kế).
 
@@ -30,8 +30,8 @@ services/
   analytics-service/       NestJS
   ai-chatbox-service/      Python FastAPI
 packages/
-  contracts/               proto (gRPC), openapi, avro event schemas
-  common/                  shared libs (auth, kafka, redis, outbox, logger)
+  contracts/               proto (gRPC), openapi, JSON event schemas
+  common/                  shared libs (auth, messaging, redis, outbox, logger)
   config-ts/               preset tsconfig
   config-eslint/           preset eslint
 infra/
@@ -59,7 +59,7 @@ docker-compose.apps.yml    full-stack dev (backend + frontend, hot-reload)
 ```bash
 npm install
 npm run setup:env     # copy .env.example -> .env (root + từng service + app)
-npm run infra:up      # khởi động Postgres, Redis, Kafka, MinIO, Elasticsearch, ...
+npm run infra:up      # khởi động Postgres, Redis, RabbitMQ, MinIO, Elasticsearch, ...
 ```
 
 ## Chạy dev
