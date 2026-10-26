@@ -13,7 +13,7 @@ export class TestsController {
 
   @Public()
   @Get()
-  @ApiOperation({ summary: 'Danh sách đề thi (Full Test / Mini Test)' })
+  @ApiOperation({ summary: 'Danh sách đề thi hoàn chỉnh 7 Part' })
   list(@Query() query: ListTestsQueryDto) {
     return this.testsService.list(query);
   }

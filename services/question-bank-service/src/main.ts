@@ -16,7 +16,7 @@ async function bootstrap(): Promise<void> {
     transport: Transport.GRPC,
     options: {
       package: 'toeic.questionbank.v1',
-      protoPath: join(__dirname, 'grpc/question_bank.proto'),
+      protoPath: join(__dirname, '../../../packages/contracts/proto/question_bank.proto'),
       url: `0.0.0.0:${process.env.GRPC_PORT ?? 50052}`,
     },
   });

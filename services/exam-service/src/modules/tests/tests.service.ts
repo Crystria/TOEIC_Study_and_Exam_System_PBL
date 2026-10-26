@@ -13,8 +13,7 @@ export class TestsService {
 
   async list(query: ListTestsQueryDto) {
     const where: Prisma.TestWhereInput = {
-      ...(query.type ? { type: query.type } : {}),
-      ...(query.status ? { status: query.status } : {}),
+      deletedAt: null,
       ...(query.keyword
         ? { title: { contains: query.keyword, mode: Prisma.QueryMode.insensitive } }
         : {}),
@@ -46,13 +45,10 @@ export class TestsService {
   }
 
   async create(dto: CreateTestDto, createdBy?: string) {
-    // TODO: validate danh sách questionId tồn tại qua Question Bank (gRPC GetQuestions).
     const test = await this.prisma.test.create({
       data: {
         title: dto.title,
-        type: dto.type,
         durationSeconds: dto.durationSeconds,
-        status: dto.status ?? 'DRAFT',
         createdBy,
         questions: dto.questions?.length
           ? {
@@ -66,7 +62,7 @@ export class TestsService {
       },
       include: { questions: { orderBy: { orderNo: 'asc' } } },
     });
-    this.logger.log(`Created test ${test.id} (${test.type})`);
+    this.logger.log(`Created test ${test.id}`);
     return test;
   }
 
@@ -74,7 +70,6 @@ export class TestsService {
     await this.findById(id);
 
     return this.prisma.$transaction(async (tx) => {
-      // Thay thế toàn bộ cấu trúc nếu client gửi danh sách câu hỏi mới.
       if (dto.questions) {
         await tx.testQuestion.deleteMany({ where: { testId: id } });
       }
@@ -83,9 +78,7 @@ export class TestsService {
         where: { id },
         data: {
           title: dto.title,
-          type: dto.type,
           durationSeconds: dto.durationSeconds,
-          status: dto.status,
           questions: dto.questions
             ? {
                 create: dto.questions.map((q) => ({

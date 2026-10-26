@@ -1,10 +1,10 @@
 openapi: 3.0.3
 info:
   title: TOEIC Study & Exam System API
-  version: 0.1.0
+  version: 0.2.0
   description: >
     Spec REST tổng hợp cho các endpoint đi qua API Gateway.
-    Các file spec chi tiết theo service sẽ được tách trong thư mục này.
+    P0 contract cho QuestionGroup, Dynamic Part Test và Attempt snapshot.
 servers:
   - url: https://api.example.com
     description: Production (qua API Gateway)
@@ -14,14 +14,1057 @@ tags:
   - name: auth
   - name: users
   - name: questions
+  - name: question-groups
   - name: tests
+  - name: attempts
   - name: learning
   - name: analytics
   - name: ai
-paths: {}
+paths:
+  /api/v1/questions/{id}/media/presign:
+    post:
+      tags: [questions]
+      summary: Presign upload audio/image cho câu hỏi
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresignRequest'
+      responses:
+        '200':
+          description: Presigned URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/question-groups:
+    get:
+      tags: [question-groups]
+      summary: Danh sách QuestionGroup
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: part
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 7
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Danh sách group
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total, page, size]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QuestionGroup'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [question-groups]
+      summary: Tạo QuestionGroup (CONTENT_ADMIN/SYSTEM_ADMIN)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQuestionGroupRequest'
+      responses:
+        '201':
+          description: Đã tạo group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionGroup'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/v1/question-groups/{id}:
+    get:
+      tags: [question-groups]
+      summary: Chi tiết QuestionGroup
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Chi tiết group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionGroup'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [question-groups]
+      summary: Cập nhật QuestionGroup
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuestionGroupRequest'
+      responses:
+        '200':
+          description: Group đã cập nhật
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionGroup'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    delete:
+      tags: [question-groups]
+      summary: Archive group và toàn bộ câu con
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '204':
+          description: Đã archive
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/v1/question-groups/{id}/media/presign:
+    post:
+      tags: [question-groups]
+      summary: Presign upload audio/image/passage asset cho group
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresignRequest'
+      responses:
+        '200':
+          description: Presigned URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/tests:
+    get:
+      tags: [tests]
+      summary: Danh sách đề active
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Danh sách đề
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total, page, size]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Test'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [tests]
+      summary: Tạo đề hoàn chỉnh 7 Part
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTestRequest'
+      responses:
+        '201':
+          description: Đã tạo đề
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/v1/tests/{testId}:
+    get:
+      tags: [tests]
+      summary: Chi tiết đề
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TestId'
+      responses:
+        '200':
+          description: Chi tiết đề
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/tests/{testId}/parts:
+    get:
+      tags: [tests]
+      summary: Danh sách 7 Part và số câu/group khả dụng
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TestId'
+      responses:
+        '200':
+          description: Thông tin Part
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestPartsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/tests/{testId}/attempts:
+    post:
+      tags: [attempts]
+      summary: Bắt đầu Full Test
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TestId'
+      responses:
+        '201':
+          description: Attempt Full đã bắt đầu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/tests/{testId}/part-attempts:
+    post:
+      tags: [attempts]
+      summary: Bắt đầu Dynamic Part Test
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TestId'
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartPartAttemptRequest'
+      responses:
+        '201':
+          description: Attempt Part đã bắt đầu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attempt'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Group/Part không hợp lệ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /api/v1/attempts/{id}:
+    get:
+      tags: [attempts]
+      summary: Kết quả hoặc trạng thái attempt
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Kết quả attempt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResult'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/attempts:
+    get:
+      tags: [attempts]
+      summary: Lịch sử attempt của user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: mode
+          in: query
+          schema:
+            $ref: '#/components/schemas/AttemptMode'
+        - name: testId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Lịch sử attempt
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total, page, size]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Attempt'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/attempts/{id}/answers/{questionId}:
+    put:
+      tags: [attempts]
+      summary: Lưu đáp án trong lúc làm
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/QuestionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveAnswerRequest'
+      responses:
+        '200':
+          description: Đã lưu đáp án (không trả isCorrect)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedAnswer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/attempts/{id}/submit:
+    post:
+      tags: [attempts]
+      summary: Nộp bài (idempotent)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAttemptRequest'
+      responses:
+        '200':
+          description: Kết quả sau khi nộp
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TestId:
+      name: testId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    QuestionId:
+      name: questionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    BadRequest:
+      description: Dữ liệu không hợp lệ
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Thiếu hoặc sai access token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Không có quyền
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Không tìm thấy
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Xung đột trạng thái
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [statusCode, code, message, correlationId, timestamp, path]
+      properties:
+        statusCode:
+          type: integer
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+        correlationId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+    ValidationErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            details:
+              type: object
+              properties:
+                errors:
+                  type: array
+                  items:
+                    type: object
+                    required: [code, message]
+                    properties:
+                      code:
+                        type: string
+                      part:
+                        type: integer
+                      groupId:
+                        type: string
+                        format: uuid
+                      questionId:
+                        type: string
+                        format: uuid
+                      message:
+                        type: string
+    QuestionOption:
+      type: object
+      required: [optionCode, optionText]
+      properties:
+        optionCode:
+          type: string
+          enum: [A, B, C, D]
+        optionText:
+          type: string
+        mediaUrl:
+          type: string
+          nullable: true
+    Question:
+      type: object
+      required: [questionId, part, type, questionText, difficulty, options]
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        part:
+          type: integer
+          minimum: 1
+          maximum: 7
+        type:
+          type: string
+        questionText:
+          type: string
+        transcript:
+          type: string
+          nullable: true
+        audioKey:
+          type: string
+          nullable: true
+        imageKey:
+          type: string
+          nullable: true
+        difficulty:
+          type: string
+          enum: [EASY, MEDIUM, HARD]
+        explanation:
+          type: string
+          nullable: true
+        correctOption:
+          type: string
+          nullable: true
+          description: Chỉ trả cho admin; user không thấy khi đang làm.
+        groupId:
+          type: string
+          format: uuid
+          nullable: true
+        positionInGroup:
+          type: integer
+          nullable: true
+        isComplete:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionOption'
+    QuestionGroupAsset:
+      type: object
+      required: [assetId, kind, orderNo]
+      properties:
+        assetId:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum: [AUDIO, IMAGE, TEXT]
+        storageKey:
+          type: string
+          nullable: true
+        content:
+          type: string
+          nullable: true
+        orderNo:
+          type: integer
+    QuestionGroup:
+      type: object
+      required: [groupId, part, type, assets]
+      properties:
+        groupId:
+          type: string
+          format: uuid
+        part:
+          type: integer
+          minimum: 1
+          maximum: 7
+        type:
+          type: string
+        instruction:
+          type: string
+          nullable: true
+        audioKey:
+          type: string
+          nullable: true
+        transcript:
+          type: string
+          nullable: true
+        passageText:
+          type: string
+          nullable: true
+        orderNo:
+          type: integer
+          nullable: true
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionGroupAsset'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+    CreateQuestionGroupRequest:
+      type: object
+      required: [part, type]
+      properties:
+        part:
+          type: integer
+          minimum: 3
+          description: Chỉ Part 3/4/6/7 mới có group.
+        type:
+          type: string
+        instruction:
+          type: string
+        audioKey:
+          type: string
+        transcript:
+          type: string
+        passageText:
+          type: string
+        orderNo:
+          type: integer
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionGroupAsset'
+    UpdateQuestionGroupRequest:
+      allOf:
+        - $ref: '#/components/schemas/CreateQuestionGroupRequest'
+    PresignRequest:
+      type: object
+      required: [mediaType, contentType, fileName]
+      properties:
+        mediaType:
+          type: string
+          enum: [AUDIO, IMAGE]
+        contentType:
+          type: string
+          enum: [audio/mpeg, image/png, image/jpeg, image/webp]
+        fileName:
+          type: string
+    PresignResponse:
+      type: object
+      required: [uploadUrl, objectName, bucket, expiresIn]
+      properties:
+        uploadUrl:
+          type: string
+          format: uri
+        objectName:
+          type: string
+        bucket:
+          type: string
+        expiresIn:
+          type: integer
+          example: 300
+        publicUrl:
+          type: string
+          format: uri
+          nullable: true
+    Test:
+      type: object
+      required: [id, title, durationSeconds]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        durationSeconds:
+          type: integer
+          example: 7200
+        createdBy:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+    TestQuestionInput:
+      type: object
+      required: [questionId, orderNo, part]
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        orderNo:
+          type: integer
+          minimum: 1
+        part:
+          type: integer
+          minimum: 1
+          maximum: 7
+    CreateTestRequest:
+      type: object
+      required: [title, durationSeconds, questions]
+      properties:
+        title:
+          type: string
+        durationSeconds:
+          type: integer
+          minimum: 1
+          example: 7200
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestQuestionInput'
+    TestPartSummary:
+      type: object
+      required: [part, totalQuestions, groupCount, available]
+      properties:
+        part:
+          type: integer
+          minimum: 1
+          maximum: 7
+        totalQuestions:
+          type: integer
+        groupCount:
+          type: integer
+        available:
+          type: boolean
+    TestPartsResponse:
+      type: object
+      required: [testId, parts]
+      properties:
+        testId:
+          type: string
+          format: uuid
+        parts:
+          type: array
+          minItems: 7
+          maxItems: 7
+          items:
+            $ref: '#/components/schemas/TestPartSummary'
+    StartPartAttemptRequest:
+      type: object
+      required: [parts, durationSeconds]
+      properties:
+        parts:
+          type: array
+          minItems: 1
+          maxItems: 7
+          uniqueItems: true
+          items:
+            type: integer
+            minimum: 1
+            maximum: 7
+        durationSeconds:
+          type: integer
+          minimum: 300
+          maximum: 10800
+          example: 1800
+    AttemptMode:
+      type: string
+      enum: [FULL, PART]
+    AttemptStatus:
+      type: string
+      enum: [IN_PROGRESS, SUBMITTED, EXPIRED]
+    AttemptPart:
+      type: object
+      required: [part, orderNo, totalQuestions, correctCount, accuracy]
+      properties:
+        part:
+          type: integer
+          minimum: 1
+          maximum: 7
+        orderNo:
+          type: integer
+        totalQuestions:
+          type: integer
+        correctCount:
+          type: integer
+        accuracy:
+          type: number
+          format: double
+    AttemptQuestion:
+      type: object
+      required: [questionId, part, orderNo, questionText, options]
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        part:
+          type: integer
+        orderNo:
+          type: integer
+        groupSnapshotId:
+          type: string
+          format: uuid
+          nullable: true
+        questionText:
+          type: string
+        transcript:
+          type: string
+          nullable: true
+        audioKey:
+          type: string
+          nullable: true
+        imageKey:
+          type: string
+          nullable: true
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionOption'
+    Attempt:
+      type: object
+      required: [attemptId, testId, mode, status, durationSeconds, deadlineAt, startedAt]
+      properties:
+        attemptId:
+          type: string
+          format: uuid
+        testId:
+          type: string
+          format: uuid
+        mode:
+          $ref: '#/components/schemas/AttemptMode'
+        status:
+          $ref: '#/components/schemas/AttemptStatus'
+        durationSeconds:
+          type: integer
+        deadlineAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        submittedAt:
+          type: string
+          format: date-time
+          nullable: true
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        remainingSeconds:
+          type: integer
+        score:
+          type: integer
+          nullable: true
+        scoreListening:
+          type: integer
+          nullable: true
+        scoreReading:
+          type: integer
+          nullable: true
+        correctCount:
+          type: integer
+          nullable: true
+        totalQuestions:
+          type: integer
+          nullable: true
+        accuracy:
+          type: number
+          format: double
+          nullable: true
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptPart'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptQuestion'
+    PartStat:
+      type: object
+      required: [part, skill, totalQuestions, correctCount, accuracy]
+      properties:
+        part:
+          type: integer
+          minimum: 1
+          maximum: 7
+        skill:
+          type: string
+          enum: [LISTENING, READING]
+        totalQuestions:
+          type: integer
+        correctCount:
+          type: integer
+        accuracy:
+          type: number
+          format: double
+    AnswerResult:
+      type: object
+      required: [questionId, selectedOption, isCorrect]
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        selectedOption:
+          type: string
+          nullable: true
+        correctOption:
+          type: string
+          nullable: true
+        isCorrect:
+          type: boolean
+        explanation:
+          type: string
+          nullable: true
+        transcript:
+          type: string
+          nullable: true
+    AttemptResult:
+      allOf:
+        - $ref: '#/components/schemas/Attempt'
+        - type: object
+          properties:
+            testTitle:
+              type: string
+            partStats:
+              type: array
+              items:
+                $ref: '#/components/schemas/PartStat'
+            answers:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnswerResult'
+    SaveAnswerRequest:
+      type: object
+      required: [selectedOption]
+      properties:
+        selectedOption:
+          type: string
+          nullable: true
+          enum: [A, B, C, D]
+    SavedAnswer:
+      type: object
+      required: [attemptId, questionId, selectedOption, answeredAt]
+      properties:
+        attemptId:
+          type: string
+          format: uuid
+        questionId:
+          type: string
+          format: uuid
+        selectedOption:
+          type: string
+          nullable: true
+        answeredAt:
+          type: string
+          format: date-time
+    SubmitAttemptRequest:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required: [questionId, selectedOption]
+            properties:
+              questionId:
+                type: string
+                format: uuid
+              selectedOption:
+                type: string
+                nullable: true
+                enum: [A, B, C, D]

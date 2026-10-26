@@ -30,10 +30,38 @@ message Question {
   string difficulty = 6;
   string media_url = 7;
   repeated QuestionOption options = 8;
+  string group_id = 9;
+  int32 position_in_group = 10;
+  string transcript = 11;
+  string audio_key = 12;
+  string image_key = 13;
+  bool is_complete = 14;
+}
+
+message QuestionGroupAsset {
+  string asset_id = 1;
+  string kind = 2;
+  string storage_key = 3;
+  string content = 4;
+  int32 order_no = 5;
+}
+
+message QuestionGroup {
+  string group_id = 1;
+  int32 part = 2;
+  string type = 3;
+  string instruction = 4;
+  string audio_key = 5;
+  string transcript = 6;
+  string passage_text = 7;
+  int32 order_no = 8;
+  repeated QuestionGroupAsset assets = 9;
 }
 
 message GetQuestionsResponse {
   repeated Question questions = 1;
+  repeated QuestionGroup groups = 2;
+  repeated string missing_ids = 3;
 }
 
 message GetAnswerKeyRequest {
@@ -47,4 +75,5 @@ message AnswerKeyItem {
 
 message GetAnswerKeyResponse {
   repeated AnswerKeyItem answers = 1;
+  repeated string missing_ids = 2;
 }

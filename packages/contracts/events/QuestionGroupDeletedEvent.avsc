@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "QuestionGroupDeletedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi archive QuestionGroup; search indexer xóa document của toàn bộ câu con.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "groupId", "type": "string" },
+    { "name": "part", "type": "int" },
+    { "name": "questionIds", "type": { "type": "array", "items": "string" } },
+    { "name": "deletedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

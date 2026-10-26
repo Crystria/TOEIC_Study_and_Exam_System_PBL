@@ -57,7 +57,9 @@ export class AnalyticsService {
       orderBy: { takenAt: 'desc' },
     });
 
-    const scores = items.map((item) => item.score);
+    const scores = items
+      .map((item) => item.score)
+      .filter((value): value is number => value !== null);
     return {
       items,
       summary: {
@@ -99,11 +101,15 @@ export class AnalyticsService {
       orderBy: { takenAt: 'asc' },
     });
 
-    if (recentAttempts.length < PREDICTION_MIN_ATTEMPTS) {
+    const recentScores = recentAttempts
+      .map((attempt) => attempt.score)
+      .filter((value): value is number => value !== null);
+
+    if (recentScores.length < PREDICTION_MIN_ATTEMPTS) {
       return {
         available: false,
-        reason: `Cần tối thiểu ${PREDICTION_MIN_ATTEMPTS} lần nộp bài trong ${PREDICTION_WINDOW_DAYS} ngày gần nhất`,
-        recentAttempts: recentAttempts.length,
+        reason: `Cần tối thiểu ${PREDICTION_MIN_ATTEMPTS} lần nộp bài có điểm trong ${PREDICTION_WINDOW_DAYS} ngày gần nhất`,
+        recentAttempts: recentScores.length,
         windowDays: PREDICTION_WINDOW_DAYS,
       };
     }
@@ -113,13 +119,13 @@ export class AnalyticsService {
     // trung bình cộng điểm các lần nộp gần nhất và sẽ được thay bằng mô hình
     // hồi quy/trọng số độ mới khi có đặc tả chính thức.
     const predictedScore = Math.round(
-      recentAttempts.reduce((sum, attempt) => sum + attempt.score, 0) / recentAttempts.length,
+      recentScores.reduce((sum, value) => sum + value, 0) / recentScores.length,
     );
 
     return {
       available: true,
       predictedScore,
-      recentAttempts: recentAttempts.length,
+      recentAttempts: recentScores.length,
       windowDays: PREDICTION_WINDOW_DAYS,
       method: 'PLACEHOLDER_MEAN',
     };

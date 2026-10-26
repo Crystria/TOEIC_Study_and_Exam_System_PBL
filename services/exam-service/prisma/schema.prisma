@@ -8,9 +8,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum TestType {
+enum AttemptMode {
   FULL
-  MINI
+  PART
 }
 
 enum AttemptStatus {
@@ -20,18 +20,18 @@ enum AttemptStatus {
 }
 
 model Test {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   title           String
-  type            TestType
-  durationSeconds Int      @map("duration_seconds")
-  status          String   @default("DRAFT")
-  createdBy       String?  @map("created_by")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  durationSeconds Int       @map("duration_seconds")
+  createdBy       String?   @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
 
   questions TestQuestion[]
   attempts  Attempt[]
 
+  @@index([deletedAt])
   @@map("tests")
 }
 
@@ -44,50 +44,136 @@ model TestQuestion {
   test Test @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@id([testId, orderNo])
+  @@unique([testId, questionId])
   @@index([questionId])
   @@map("test_questions")
 }
 
 model Attempt {
-  id           String        @id @default(uuid())
-  testId       String        @map("test_id")
-  userId       String        @map("user_id")
-  startedAt    DateTime      @default(now()) @map("started_at")
-  submittedAt  DateTime?     @map("submitted_at")
-  status       AttemptStatus @default(IN_PROGRESS)
-  score        Int?
-  totalCorrect Int?          @map("total_correct")
+  id              String        @id @default(uuid())
+  testId          String        @map("test_id")
+  userId          String        @map("user_id")
+  mode            AttemptMode   @default(FULL)
+  durationSeconds Int           @map("duration_seconds")
+  deadlineAt      DateTime      @map("deadline_at")
+  startedAt       DateTime      @default(now()) @map("started_at")
+  submittedAt     DateTime?     @map("submitted_at")
+  completedAt     DateTime?     @map("completed_at")
+  status          AttemptStatus @default(IN_PROGRESS)
+  score           Int?
+  scoreListening  Int?          @map("score_listening")
+  scoreReading    Int?          @map("score_reading")
+  correctCount    Int?          @map("correct_count")
+  totalQuestions  Int?          @map("total_questions")
+  accuracy        Float?
 
-  test    Test            @relation(fields: [testId], references: [id], onDelete: Cascade)
-  answers AttemptAnswer[]
+  test              Test                     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers           AttemptAnswer[]
+  parts             AttemptPart[]
+  groupSnapshots    AttemptGroupSnapshot[]
+  questionSnapshots AttemptQuestionSnapshot[]
 
-  @@index([userId])
-  @@index([testId])
+  @@index([userId, startedAt])
+  @@index([status, deadlineAt])
+  @@index([testId, status])
   @@map("attempts")
 }
 
-model AttemptAnswer {
-  id             String   @id @default(uuid())
-  attemptId      String   @map("attempt_id")
-  questionId     String   @map("question_id")
-  selectedOption String?  @map("selected_option")
-  isCorrect      Boolean? @map("is_correct")
-  answeredAt     DateTime @default(now()) @map("answered_at")
+model AttemptPart {
+  attemptId      String  @map("attempt_id")
+  part           Int
+  orderNo        Int     @map("order_no")
+  totalQuestions Int     @default(0) @map("total_questions")
+  correctCount   Int     @default(0) @map("correct_count")
+  accuracy       Float   @default(0)
 
   attempt Attempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
 
+  @@id([attemptId, part])
+  @@index([attemptId])
+  @@map("attempt_parts")
+}
+
+model AttemptGroupSnapshot {
+  id          String   @id @default(uuid())
+  attemptId   String   @map("attempt_id")
+  groupId     String   @map("group_id")
+  part        Int
+  orderNo     Int      @map("order_no")
+  type        String?
+  instruction String?
+  audioKey    String?  @map("audio_key")
+  transcript  String?
+  passageText String?  @map("passage_text")
+  assets      Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  attempt   Attempt                   @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questions AttemptQuestionSnapshot[]
+
+  @@unique([attemptId, groupId])
+  @@index([attemptId, part])
+  @@map("attempt_group_snapshots")
+}
+
+model AttemptQuestionSnapshot {
+  id              String   @id @default(uuid())
+  attemptId       String   @map("attempt_id")
+  groupSnapshotId String?  @map("group_snapshot_id")
+  questionId      String   @map("question_id")
+  part            Int
+  orderNo         Int      @map("order_no")
+  questionText    String   @map("question_text")
+  transcript      String?
+  audioKey        String?  @map("audio_key")
+  imageKey        String?  @map("image_key")
+  explanation     String?
+  options         Json
+  correctOption   String   @map("correct_option")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  attempt       Attempt               @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  groupSnapshot AttemptGroupSnapshot? @relation(fields: [groupSnapshotId], references: [id], onDelete: SetNull)
+  answers       AttemptAnswer[]
+
   @@unique([attemptId, questionId])
+  @@unique([attemptId, orderNo])
+  @@index([attemptId, part])
+  @@index([groupSnapshotId])
+  @@map("attempt_question_snapshots")
+}
+
+model AttemptAnswer {
+  id                        String   @id @default(uuid())
+  attemptId                 String   @map("attempt_id")
+  attemptQuestionSnapshotId String?  @map("attempt_question_snapshot_id")
+  questionId                String   @map("question_id")
+  selectedOption            String?  @map("selected_option")
+  isCorrect                 Boolean? @map("is_correct")
+  answeredAt                DateTime @default(now()) @map("answered_at")
+
+  attempt          Attempt                  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionSnapshot AttemptQuestionSnapshot? @relation(fields: [attemptQuestionSnapshotId], references: [id], onDelete: SetNull)
+
+  @@unique([attemptId, questionId])
+  @@unique([attemptId, attemptQuestionSnapshotId])
+  @@index([attemptQuestionSnapshotId])
   @@map("attempt_answers")
 }
 
 model OutboxEvent {
-  id          String    @id @default(uuid())
-  aggregateId String    @map("aggregate_id")
-  eventType   String    @map("event_type")
-  payload     Json
-  createdAt   DateTime  @default(now()) @map("created_at")
-  publishedAt DateTime? @map("published_at")
+  id            String    @id @default(uuid())
+  aggregateType String    @default("unknown") @map("aggregate_type")
+  aggregateId   String    @map("aggregate_id")
+  eventType     String    @map("event_type")
+  payload       Json
+  occurredAt    DateTime  @default(now()) @map("occurred_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  publishedAt   DateTime? @map("published_at")
+  retryCount    Int       @default(0) @map("retry_count")
+  lastError     String?   @map("last_error")
 
   @@index([publishedAt])
+  @@index([aggregateId])
   @@map("outbox_events")
 }

@@ -28,8 +28,8 @@ export class AttemptsService {
   ) {}
 
   async start(testId: string, userId: string) {
-    const test = await this.prisma.test.findUnique({
-      where: { id: testId },
+    const test = await this.prisma.test.findFirst({
+      where: { id: testId, deletedAt: null },
       include: { questions: { orderBy: { orderNo: 'asc' } } },
     });
     if (!test) {
@@ -49,7 +49,15 @@ export class AttemptsService {
     // TODO: persist deadline / add background job để chuyển Attempt sang EXPIRED khi quá hạn.
 
     const attempt = await this.prisma.attempt.create({
-      data: { testId, userId, startedAt, status: 'IN_PROGRESS' },
+      data: {
+        testId,
+        userId,
+        mode: 'FULL',
+        durationSeconds: test.durationSeconds,
+        deadlineAt: deadline,
+        startedAt,
+        status: 'IN_PROGRESS',
+      },
     });
 
     const questions = test.questions.map((tq) => {
@@ -73,7 +81,7 @@ export class AttemptsService {
     return {
       attemptId: attempt.id,
       testId: test.id,
-      testType: test.type,
+      mode: attempt.mode,
       startedAt,
       deadline,
       durationSeconds: test.durationSeconds,
@@ -81,12 +89,7 @@ export class AttemptsService {
     };
   }
 
-  async saveAnswer(
-    attemptId: string,
-    questionId: string,
-    dto: SaveAnswerDto,
-    userId: string,
-  ) {
+  async saveAnswer(attemptId: string, questionId: string, dto: SaveAnswerDto, userId: string) {
     const attempt = await this.requireOwnedAttempt(attemptId, userId);
     if (attempt.status !== 'IN_PROGRESS') {
       throw new BadRequestException('Attempt is not in progress');
@@ -126,9 +129,7 @@ export class AttemptsService {
     const answers = await this.prisma.attemptAnswer.findMany({ where: { attemptId } });
     const questionIds = answers.map((a) => a.questionId);
     const answerKey = await this.questionBank.getAnswerKey(questionIds);
-    const correctByQuestion = new Map(
-      answerKey.map((a) => [a.question_id, a.correct_option]),
-    );
+    const correctByQuestion = new Map(answerKey.map((a) => [a.question_id, a.correct_option]));
 
     const graded = answers.map((a) => ({
       id: a.id,
@@ -143,21 +144,32 @@ export class AttemptsService {
     const submittedAt = new Date();
     const eventId = randomUUID();
     const occurredAt = Date.now();
+    const totalQuestions = answers.length;
+    const accuracy = totalQuestions > 0 ? totalCorrect / totalQuestions : 0;
     const eventPayload = {
       eventId,
       occurredAt,
       attemptId,
       userId,
       testId: attempt.testId,
-      testType: attempt.test.type,
+      mode: attempt.mode,
       score,
       totalCorrect,
+      completedAt: submittedAt.getTime(),
     };
 
     await this.prisma.$transaction(async (tx) => {
       await tx.attempt.update({
         where: { id: attemptId },
-        data: { status: 'SUBMITTED', submittedAt, score, totalCorrect },
+        data: {
+          status: 'SUBMITTED',
+          submittedAt,
+          completedAt: submittedAt,
+          score,
+          correctCount: totalCorrect,
+          totalQuestions,
+          accuracy,
+        },
       });
 
       for (const g of graded) {
@@ -185,11 +197,14 @@ export class AttemptsService {
     return {
       attemptId,
       testId: attempt.testId,
+      mode: attempt.mode,
       status: 'SUBMITTED',
       submittedAt,
-      totalCorrect,
+      completedAt: submittedAt,
+      correctCount: totalCorrect,
       score,
-      totalQuestions: answers.length,
+      totalQuestions,
+      accuracy,
     };
   }
 
@@ -210,12 +225,18 @@ export class AttemptsService {
       attemptId: attempt.id,
       testId: attempt.testId,
       testTitle: attempt.test.title,
-      testType: attempt.test.type,
+      mode: attempt.mode,
       status: attempt.status,
       score: attempt.score,
-      totalCorrect: attempt.totalCorrect,
+      scoreListening: attempt.scoreListening,
+      scoreReading: attempt.scoreReading,
+      correctCount: attempt.correctCount,
+      totalQuestions: attempt.totalQuestions,
+      accuracy: attempt.accuracy,
       startedAt: attempt.startedAt,
+      deadlineAt: attempt.deadlineAt,
       submittedAt: attempt.submittedAt,
+      completedAt: attempt.completedAt,
       answers: attempt.answers.map((a) => ({
         questionId: a.questionId,
         selectedOption: a.selectedOption,

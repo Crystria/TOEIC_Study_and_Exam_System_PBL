@@ -14,24 +14,77 @@ enum QuestionStatus {
   ARCHIVED
 }
 
+enum QuestionGroupAssetKind {
+  AUDIO
+  IMAGE
+  TEXT
+}
+
 model Question {
-  id          String         @id @default(uuid())
-  part        Int
-  type        String
-  stem        String
-  explanation String?
-  difficulty  String
-  mediaUrl    String?        @map("media_url")
-  status      QuestionStatus @default(DRAFT)
-  createdBy   String?        @map("created_by")
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @updatedAt @map("updated_at")
+  id              String         @id @default(uuid())
+  part            Int
+  type            String
+  stem            String
+  explanation     String?
+  difficulty      String
+  mediaUrl        String?        @map("media_url")
+  status          QuestionStatus @default(DRAFT)
+  groupId         String?        @map("group_id")
+  positionInGroup Int?           @map("position_in_group")
+  transcript      String?
+  audioKey        String?        @map("audio_key")
+  imageKey        String?        @map("image_key")
+  deletedAt       DateTime?      @map("deleted_at")
+  createdBy       String?        @map("created_by")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
 
   options QuestionOption[]
   tags    QuestionTag[]
+  group   QuestionGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
+  @@unique([groupId, positionInGroup])
   @@index([part, difficulty])
+  @@index([part, deletedAt])
+  @@index([groupId])
   @@map("questions")
+}
+
+model QuestionGroup {
+  id          String    @id @default(uuid()) @map("group_id")
+  part        Int
+  type        String
+  instruction String?
+  audioKey    String?   @map("audio_key")
+  transcript  String?
+  passageText String?   @map("passage_text")
+  orderNo     Int?      @map("order_no")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  questions Question[]
+  assets    QuestionGroupAsset[]
+
+  @@index([part, deletedAt])
+  @@index([orderNo])
+  @@map("question_groups")
+}
+
+model QuestionGroupAsset {
+  id         String                 @id @default(uuid()) @map("asset_id")
+  groupId    String                 @map("group_id")
+  kind       QuestionGroupAssetKind
+  storageKey String?                @map("storage_key")
+  content    String?
+  orderNo    Int                    @map("order_no")
+  createdAt  DateTime               @default(now()) @map("created_at")
+
+  group QuestionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, orderNo])
+  @@index([groupId])
+  @@map("question_group_assets")
 }
 
 model QuestionOption {
@@ -66,13 +119,18 @@ model QuestionTag {
 }
 
 model OutboxEvent {
-  id          String    @id @default(uuid())
-  aggregateId String    @map("aggregate_id")
-  eventType   String    @map("event_type")
-  payload     Json
-  createdAt   DateTime  @default(now()) @map("created_at")
-  publishedAt DateTime? @map("published_at")
+  id            String    @id @default(uuid())
+  aggregateType String    @default("unknown") @map("aggregate_type")
+  aggregateId   String    @map("aggregate_id")
+  eventType     String    @map("event_type")
+  payload       Json
+  occurredAt    DateTime  @default(now()) @map("occurred_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  publishedAt   DateTime? @map("published_at")
+  retryCount    Int       @default(0) @map("retry_count")
+  lastError     String?   @map("last_error")
 
   @@index([publishedAt])
+  @@index([aggregateId])
   @@map("outbox_events")
 }
