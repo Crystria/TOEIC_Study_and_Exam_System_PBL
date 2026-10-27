@@ -29,3 +29,4 @@ yarn-error.log*
 
 # testing
 /coverage
+/.test-build/

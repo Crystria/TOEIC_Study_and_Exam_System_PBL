@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "Empty conversation and clear demo boundaries, no local persistence",
+    "Empty and over-limit input errors are associated, focus returns, Unicode max boundary works",
+    "Suggestions fill only, focus textarea, Shift+Enter creates line break; IME Enter/229 never sends",
+    "Enter sends once, synchronous duplicate events are blocked; pending state, success, focus and Markdown",
+    "Response error keeps exact draft, edited retry updates the same message and counts once",
+    "Ten-second timeout is explicit, preserves draft, consumes no demo turn and retry has no duplicate",
+    "Loading and initial error states recover; exhausted scenario blocks form and suggestions",
+    "Twenty actual successful exchanges exhaust only the in-memory demo counter",
+    "Scroll follows new messages at bottom, preserves reader position above and offers keyboard jump",
+    "Untrusted user HTML/links remain text; generic sample cannot expose active answer keys",
+    "Reload clears chat, draft and demo count; navigating away cancels pending response",
+    "Chat leaves valid active Attempt, Learning, Settings/history snapshots and Dashboard/Analytics unchanged",
+    "Mobile navigation and keyboard Tab order, visible focus and safe teaching links"
+  ],
+  "responsive": [
+    1440,
+    1024,
+    768,
+    390,
+    320
+  ],
+  "errors": [],
+  "apiRequests": []
+}

@@ -1,0 +1,27 @@
+{
+  "checks": [
+    "Empty state does not write; setup uses demo defaults with optional blank values",
+    "Validation is field-specific; first invalid field receives focus; invalid form cannot save",
+    "Save/reload preserves calendar date and wall time across browser and configured timezone, including DST",
+    "Cancel restores saved values; reset requires confirmation, changes only draft and can be cancelled",
+    "Keyboard navigation, switch toggle, reminder off with null time and saving optional null",
+    "App Link guards unsaved edits; Escape preserves draft; confirm navigates without saving",
+    "Browser Back warns and preserves draft; confirmed Back reaches preceding route",
+    "Write failure preserves draft and old snapshot; retry succeeds",
+    "Corrupt and unsupported storage blocks editing and never overwrites; retry reads repaired snapshot",
+    "Read SecurityError is explicit and retryable",
+    "Cross-tab conflict refuses stale save; reload requires discarding draft",
+    "Loading/error QA states retry without creating a snapshot",
+    "Saving settings leaves active Attempt, learning/history storage and Dashboard/Analytics fixtures unchanged",
+    "Mobile keyboard menu navigation opens unsaved dialog and closes drawer"
+  ],
+  "responsive": [
+    1440,
+    1024,
+    768,
+    390,
+    320
+  ],
+  "errors": [],
+  "apiRequests": []
+}

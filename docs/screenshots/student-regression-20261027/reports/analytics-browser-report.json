@@ -1,0 +1,142 @@
+{
+  "checks": [
+    "Default: distinct learning/exam metrics, eligible trend, prediction and weighted Part counts",
+    "Four ranges keep counts, tables and prediction consistent",
+    "Combined mode/scope filters isolate activity from scores and graded Part data",
+    "Reload and route Back/Forward retain URL filters",
+    "Keyboard: filter focus order, native select, reset focus and accessible chart tables",
+    "Loading, empty, insufficient and ungraded states do not invent scores or accuracy",
+    "Error/retry retains filters and restores focus to title",
+    "Invalid and repeated filters safely return to defaults",
+    "Existing local exam/history cannot update Analytics, dashboard, streak or prediction",
+    "Desktop/tablet/mobile: data states, filters, local scrolling and navigation"
+  ],
+  "responsive": [
+    {
+      "width": 320,
+      "state": "ready",
+      "scroll": 320
+    },
+    {
+      "width": 320,
+      "state": "practice",
+      "scroll": 320
+    },
+    {
+      "width": 320,
+      "state": "empty",
+      "scroll": 320
+    },
+    {
+      "width": 320,
+      "state": "error",
+      "scroll": 320
+    },
+    {
+      "width": 390,
+      "state": "ready",
+      "scroll": 390
+    },
+    {
+      "width": 390,
+      "state": "practice",
+      "scroll": 390
+    },
+    {
+      "width": 390,
+      "state": "empty",
+      "scroll": 390
+    },
+    {
+      "width": 390,
+      "state": "error",
+      "scroll": 390
+    },
+    {
+      "width": 768,
+      "state": "ready",
+      "scroll": 768
+    },
+    {
+      "width": 768,
+      "state": "practice",
+      "scroll": 768
+    },
+    {
+      "width": 768,
+      "state": "empty",
+      "scroll": 768
+    },
+    {
+      "width": 768,
+      "state": "error",
+      "scroll": 768
+    },
+    {
+      "width": 1024,
+      "state": "ready",
+      "scroll": 1024
+    },
+    {
+      "width": 1024,
+      "state": "practice",
+      "scroll": 1024
+    },
+    {
+      "width": 1024,
+      "state": "empty",
+      "scroll": 1024
+    },
+    {
+      "width": 1024,
+      "state": "error",
+      "scroll": 1024
+    },
+    {
+      "width": 1440,
+      "state": "ready",
+      "scroll": 1440
+    },
+    {
+      "width": 1440,
+      "state": "practice",
+      "scroll": 1440
+    },
+    {
+      "width": 1440,
+      "state": "empty",
+      "scroll": 1440
+    },
+    {
+      "width": 1440,
+      "state": "error",
+      "scroll": 1440
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "location": {
+        "url": "http://localhost:3006/favicon.ico",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "apiRequests": [],
+  "knownStatic404s": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "location": {
+        "url": "http://localhost:3006/favicon.ico",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ]
+}

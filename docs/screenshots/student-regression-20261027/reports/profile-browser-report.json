@@ -1,0 +1,24 @@
+{
+  "checks": [
+    "Profile opens independently with clear demo boundaries and immutable email/role/status",
+    "Validation focuses first invalid field; documented boundaries and accessible errors",
+    "Saving blocks duplicate submits, updates only in-memory snapshot and restores focus",
+    "Cancel restores snapshot and focus; optional phone saves as null and edits can use one-character name",
+    "Save failure preserves exact draft and existing summary, retry succeeds without duplicate state",
+    "Avatar supports valid local preview, safe rejection, failed decode and object URL cleanup",
+    "Unsaved shell link is guarded, Escape returns focus, confirm discards edits",
+    "Browser Back guards dirty edits and resumes the original destination on confirm",
+    "Initial loading, empty and error/retry are explicit; retry focuses heading",
+    "Saving profile leaves Attempt, Learning, Settings/history storage, shell identity, Dashboard/Analytics and active AI chat unchanged",
+    "Mobile keyboard, guarded navigation and Settings default navigation behavior remain usable"
+  ],
+  "responsive": [
+    1440,
+    1024,
+    768,
+    390,
+    320
+  ],
+  "errors": [],
+  "apiRequests": []
+}

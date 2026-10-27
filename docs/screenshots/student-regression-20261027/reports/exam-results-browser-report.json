@@ -1,0 +1,110 @@
+{
+  "checks": [
+    "Empty local history and separate example link",
+    "Prepare → player → manual ending → local result",
+    "Result reload keeps counts, closure and archive distinct from grading",
+    "Ungraded read-only review, keyboard focus, filters and missing audio",
+    "History search, combined filters, detail navigation",
+    "Responsive result, history and shared Reading review",
+    "Example remains separate, supports all review verdict filters and shared passages",
+    "Review loading, empty, error and retry retain the same session",
+    "Invalid IDs, wrong test, missing snapshots and active-session protection",
+    "Archive survives replacing the draft; pagination and expired/full modes",
+    "Corrupt history is kept, cannot be overwritten by a finished draft",
+    "Storage failure remains explicit and retry writes only demo history"
+  ],
+  "responsive": [
+    {
+      "name": "result",
+      "width": 1440,
+      "scroll": 1440,
+      "client": 1440
+    },
+    {
+      "name": "history",
+      "width": 1440,
+      "scroll": 1440,
+      "client": 1440
+    },
+    {
+      "name": "review",
+      "width": 1440,
+      "scroll": 1440,
+      "client": 1440
+    },
+    {
+      "name": "result",
+      "width": 768,
+      "scroll": 768,
+      "client": 768
+    },
+    {
+      "name": "history",
+      "width": 768,
+      "scroll": 768,
+      "client": 768
+    },
+    {
+      "name": "review",
+      "width": 768,
+      "scroll": 768,
+      "client": 768
+    },
+    {
+      "name": "result",
+      "width": 390,
+      "scroll": 390,
+      "client": 390
+    },
+    {
+      "name": "history",
+      "width": 390,
+      "scroll": 390,
+      "client": 390
+    },
+    {
+      "name": "review",
+      "width": 390,
+      "scroll": 390,
+      "client": 390
+    },
+    {
+      "name": "result",
+      "width": 320,
+      "scroll": 320,
+      "client": 320
+    },
+    {
+      "name": "history",
+      "width": 320,
+      "scroll": 320,
+      "client": 320
+    },
+    {
+      "name": "review",
+      "width": 320,
+      "scroll": 320,
+      "client": 320
+    },
+    {
+      "name": "result",
+      "width": 1024,
+      "scroll": 1024,
+      "client": 1024
+    },
+    {
+      "name": "history",
+      "width": 1024,
+      "scroll": 1024,
+      "client": 1024
+    },
+    {
+      "name": "review",
+      "width": 1024,
+      "scroll": 1024,
+      "client": 1024
+    }
+  ],
+  "errors": [],
+  "requests": []
+}
