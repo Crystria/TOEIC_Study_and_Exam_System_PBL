@@ -57,6 +57,8 @@ services:
       JWT_ACCESS_TTL: 15m
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me}
       JWT_REFRESH_TTL: 7d
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
     develop:
       watch:
         - action: sync
@@ -102,6 +104,9 @@ services:
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
       ELASTICSEARCH_NODE: http://elasticsearch:9200
       MINIO_ENDPOINT: minio:9000
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:19000/toeic-media}
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:19000}
+      MINIO_REGION: ${MINIO_REGION:-us-east-1}
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
       MINIO_BUCKET: ${MINIO_BUCKET:-toeic-media}
@@ -248,6 +253,8 @@ services:
       PORT: '3000'
       REDIS_URL: redis://redis:6379
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
       CORS_ORIGINS: http://localhost:3006,http://localhost:3007
       AUTH_SERVICE_URL: http://auth-service:3001
       QUESTION_BANK_SERVICE_URL: http://question-bank-service:3002
@@ -257,6 +264,8 @@ services:
       AI_CHATBOX_SERVICE_URL: http://ai-chatbox-service:8000
       RATE_LIMIT_CAPACITY: '60'
       RATE_LIMIT_REFILL_PER_SEC: '1'
+      RATE_LIMIT_USER_CAPACITY: '300'
+      RATE_LIMIT_USER_REFILL_PER_SEC: '5'
     develop:
       watch:
         - action: sync

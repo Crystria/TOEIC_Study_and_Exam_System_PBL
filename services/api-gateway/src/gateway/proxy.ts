@@ -1,42 +1,132 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { CORRELATION_ID_HEADER } from '@toeic/common';
+import { Request, Response } from 'express';
 import { createProxyMiddleware, RequestHandler } from 'http-proxy-middleware';
+import { IncomingMessage, ServerResponse } from 'node:http';
+import { Readable } from 'node:stream';
+import { BufferedRequest } from './body-limit.middleware';
+import { sendGatewayError } from './http-error';
+import { matchRoute, normalizePath, proxyTimeoutMs } from './route-policy';
 
-interface RouteRule {
-  prefix: string;
-  configKey: string;
+const logger = new Logger('GatewayProxy');
+
+function pathnameOf(url: string | undefined): string {
+  return normalizePath((url ?? '/').split('?')[0] ?? '/');
 }
 
-const ROUTES: RouteRule[] = [
-  { prefix: '/api/v1/auth', configKey: 'AUTH_SERVICE_URL' },
-  { prefix: '/api/v1/users', configKey: 'AUTH_SERVICE_URL' },
-  { prefix: '/api/v1/admin', configKey: 'AUTH_SERVICE_URL' },
-  { prefix: '/api/v1/sync', configKey: 'AUTH_SERVICE_URL' },
-  { prefix: '/api/v1/questions', configKey: 'QUESTION_BANK_SERVICE_URL' },
-  { prefix: '/api/v1/tests', configKey: 'EXAM_SERVICE_URL' },
-  { prefix: '/api/v1/attempts', configKey: 'EXAM_SERVICE_URL' },
-  { prefix: '/api/v1/learning', configKey: 'LEARNING_SERVICE_URL' },
-  { prefix: '/api/v1/analytics', configKey: 'ANALYTICS_SERVICE_URL' },
-  { prefix: '/api/v1/ai', configKey: 'AI_CHATBOX_SERVICE_URL' },
-];
+function isTimeoutError(error: Error): boolean {
+  const code = (error as NodeJS.ErrnoException).code;
+  return code === 'ETIMEDOUT' || code === 'ESOCKETTIMEDOUT';
+}
 
-/**
- * Tạo proxy dispatcher: chọn upstream theo prefix đường dẫn.
- * Không mount theo path (tránh bị Express strip prefix) — route theo originalUrl.
- */
+function correlationIdOf(req: IncomingMessage): string {
+  const value = req.headers[CORRELATION_ID_HEADER];
+  return typeof value === 'string' ? value : '';
+}
+
 export function createGatewayProxy(config: ConfigService): RequestHandler {
-  const resolveTarget = (req: { url?: string }): string | undefined => {
-    const url = req.url ?? '';
-    const rule = ROUTES.find((r) => url.startsWith(r.prefix));
+  const resolveTarget = (req: IncomingMessage): string | undefined => {
+    const rule = matchRoute(pathnameOf(req.url));
     if (!rule) {
       return undefined;
     }
-    return config.get<string>(rule.configKey);
+
+    const target = config.get<string>(rule.upstream);
+    if (!target) {
+      logger.error(`Missing upstream configuration: ${rule.upstream}`);
+    }
+    return target;
   };
 
-  return createProxyMiddleware({
+  const commonOptions = {
     changeOrigin: true,
     xfwd: true,
-    pathFilter: (pathname) => ROUTES.some((r) => pathname.startsWith(r.prefix)),
-    router: (req) => resolveTarget(req),
-  });
+    pathFilter: (pathname: string) => Boolean(matchRoute(pathname)),
+    router: resolveTarget,
+    on: {
+      proxyReq: (proxyReq: import('node:http').ClientRequest, req: IncomingMessage) => {
+        const correlationId = correlationIdOf(req);
+        const connectTimer = setTimeout(() => {
+          const error = Object.assign(new Error('Upstream connection timed out'), {
+            code: 'ETIMEDOUT',
+          });
+          proxyReq.destroy(error);
+        }, 2_000);
+        const clearConnectTimer = () => clearTimeout(connectTimer);
+        const watchSocket = (socket: import('node:net').Socket) => {
+          if (!socket.connecting) clearConnectTimer();
+          else socket.once('connect', clearConnectTimer);
+        };
+        if (proxyReq.socket) watchSocket(proxyReq.socket);
+        else proxyReq.once('socket', watchSocket);
+        proxyReq.once('close', clearConnectTimer);
+        proxyReq.once('error', clearConnectTimer);
+        proxyReq.setTimeout(proxyTimeoutMs(req.method ?? 'GET', pathnameOf(req.url)), () => {
+          proxyReq.destroy(
+            Object.assign(new Error('Upstream response timed out'), { code: 'ETIMEDOUT' }),
+          );
+        });
+        if (correlationId) {
+          proxyReq.setHeader(CORRELATION_ID_HEADER, correlationId);
+        }
+      },
+      proxyRes: (proxyRes: IncomingMessage, req: IncomingMessage, res: ServerResponse) => {
+        const correlationId = correlationIdOf(req);
+        if (correlationId) {
+          proxyRes.headers[CORRELATION_ID_HEADER] = correlationId;
+          res.setHeader(CORRELATION_ID_HEADER, correlationId);
+        }
+      },
+      error: (
+        error: Error,
+        req: IncomingMessage,
+        res: ServerResponse | import('node:net').Socket,
+      ) => {
+        const statusCode = isTimeoutError(error) ? 504 : 502;
+        const code = isTimeoutError(error) ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_ERROR';
+        const correlationId = correlationIdOf(req);
+
+        logger.error(
+          `Proxy ${req.method ?? 'UNKNOWN'} ${req.url ?? '/'} failed ` +
+            `[${correlationId || 'no-correlation-id'}]: ${error.message}`,
+        );
+
+        if (!(res instanceof ServerResponse)) {
+          res.destroy();
+          return;
+        }
+
+        sendGatewayError(
+          req as unknown as Request,
+          res as unknown as Response,
+          statusCode,
+          code,
+          statusCode === 504 ? 'Upstream service timed out' : 'Upstream service unavailable',
+        );
+      },
+    },
+  };
+
+  const dispatcher = ((req, res, next) => {
+    const route = matchRoute(pathnameOf(req.url));
+    if (!route) return next?.();
+    if (!config.get<string>(route.upstream)) {
+      sendGatewayError(
+        req as Request,
+        res as Response,
+        502,
+        'UPSTREAM_ERROR',
+        'Upstream service unavailable',
+      );
+      return;
+    }
+    const body = (req as BufferedRequest).rawBody;
+    const proxy = createProxyMiddleware({
+      ...commonOptions,
+      ...(body ? { buffer: Readable.from(body.length ? [body] : []) } : {}),
+    });
+    return proxy(req, res, next);
+  }) as RequestHandler;
+  return dispatcher;
 }

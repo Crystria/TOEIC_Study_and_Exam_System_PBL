@@ -8,12 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum QuestionStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
 enum QuestionGroupAssetKind {
   AUDIO
   IMAGE
@@ -21,27 +15,26 @@ enum QuestionGroupAssetKind {
 }
 
 model Question {
-  id              String         @id @default(uuid())
+  id              String    @id @default(uuid()) @map("question_id")
   part            Int
   type            String
-  stem            String
+  questionText    String?   @map("question_text")
   explanation     String?
   difficulty      String
-  mediaUrl        String?        @map("media_url")
-  status          QuestionStatus @default(DRAFT)
-  groupId         String?        @map("group_id")
-  positionInGroup Int?           @map("position_in_group")
+  correctOption   String    @map("correct_option")
+  groupId         String?   @map("group_id")
+  positionInGroup Int?      @map("position_in_group")
   transcript      String?
-  audioKey        String?        @map("audio_key")
-  imageKey        String?        @map("image_key")
-  deletedAt       DateTime?      @map("deleted_at")
-  createdBy       String?        @map("created_by")
-  createdAt       DateTime       @default(now()) @map("created_at")
-  updatedAt       DateTime       @updatedAt @map("updated_at")
+  audioKey        String?   @map("audio_key")
+  imageKey        String?   @map("image_key")
+  deletedAt       DateTime? @map("deleted_at")
+  createdBy       String?   @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
   options QuestionOption[]
   tags    QuestionTag[]
-  group   QuestionGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  group   QuestionGroup?   @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
   @@unique([groupId, positionInGroup])
   @@index([part, difficulty])
@@ -88,21 +81,18 @@ model QuestionGroupAsset {
 }
 
 model QuestionOption {
-  id        String  @id @default(uuid())
-  questionId String  @map("question_id")
-  optionKey String  @map("option_key")
-  content   String
-  mediaUrl  String? @map("media_url")
-  isCorrect Boolean @default(false) @map("is_correct")
-  question  Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String   @map("question_id")
+  optionCode String   @map("option_code")
+  optionText String   @map("option_text")
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  @@index([questionId])
+  @@id([questionId, optionCode])
   @@map("question_options")
 }
 
 model Tag {
-  id    String        @id @default(uuid())
-  name  String        @unique
+  id        String        @id @default(uuid()) @map("tag_id")
+  name      String        @unique @map("tag_name")
   questions QuestionTag[]
 
   @@map("tags")
@@ -119,18 +109,21 @@ model QuestionTag {
 }
 
 model OutboxEvent {
-  id            String    @id @default(uuid())
-  aggregateType String    @default("unknown") @map("aggregate_type")
-  aggregateId   String    @map("aggregate_id")
-  eventType     String    @map("event_type")
-  payload       Json
-  occurredAt    DateTime  @default(now()) @map("occurred_at")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  publishedAt   DateTime? @map("published_at")
-  retryCount    Int       @default(0) @map("retry_count")
-  lastError     String?   @map("last_error")
+  id             String    @id @default(uuid())
+  aggregateType  String    @default("unknown") @map("aggregate_type")
+  aggregateId    String    @map("aggregate_id")
+  eventType      String    @map("event_type")
+  payload        Json
+  occurredAt     DateTime  @default(now()) @map("occurred_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  publishedAt    DateTime? @map("published_at")
+  retryCount     Int       @default(0) @map("retry_count")
+  lastError      String?   @map("last_error")
+  nextAttemptAt  DateTime  @default(now()) @map("next_attempt_at")
+  deadLetteredAt DateTime? @map("dead_lettered_at")
 
   @@index([publishedAt])
   @@index([aggregateId])
+  @@index([publishedAt, deadLetteredAt, nextAttemptAt])
   @@map("outbox_events")
 }

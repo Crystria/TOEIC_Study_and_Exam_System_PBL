@@ -3,8 +3,14 @@ module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: 'src',
   testRegex: '.*\\.spec\\.ts$',
-  transform: { '^.+\\.(t|j)s$': 'ts-jest' },
+  transform: {
+    '^.+\\.(t|j)s$': 'ts-jest',
+  },
+  collectCoverageFrom: ['**/*.(t|j)s'],
+  coverageDirectory: '../coverage',
   testEnvironment: 'node',
   passWithNoTests: true,
-  moduleNameMapper: { '^@toeic/common$': '<rootDir>/../../../packages/common/src' },
+  moduleNameMapper: {
+    '^@toeic/common$': '<rootDir>/../../../packages/common/src',
+  },
 };

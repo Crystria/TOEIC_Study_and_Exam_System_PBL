@@ -36,6 +36,7 @@ message Question {
   string audio_key = 12;
   string image_key = 13;
   bool is_complete = 14;
+  string question_text = 15;
 }
 
 message QuestionGroupAsset {
@@ -56,6 +57,7 @@ message QuestionGroup {
   string passage_text = 7;
   int32 order_no = 8;
   repeated QuestionGroupAsset assets = 9;
+  repeated string question_ids = 10;
 }
 
 message GetQuestionsResponse {

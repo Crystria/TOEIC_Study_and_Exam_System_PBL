@@ -21,6 +21,95 @@ tags:
   - name: analytics
   - name: ai
 paths:
+  /api/v1/questions:
+    get:
+      tags: [questions]
+      summary: Tìm câu hỏi active; USER không nhận answer key
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: keyword, in: query, schema: { type: string } }
+        - { name: part, in: query, schema: { type: integer, minimum: 1, maximum: 7 } }
+        - { name: difficulty, in: query, schema: { type: string, enum: [EASY, MEDIUM, HARD] } }
+        - { name: tag, in: query, schema: { type: string } }
+        - { name: groupId, in: query, schema: { type: string, format: uuid } }
+        - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: size, in: query, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        '200':
+          description: Trang câu hỏi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/Question' } }
+                  total: { type: integer }
+                  page: { type: integer }
+                  size: { type: integer }
+                  totalPages: { type: integer }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [questions]
+      summary: Tạo câu hỏi (CONTENT_ADMIN/SYSTEM_ADMIN)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateQuestionRequest' }
+      responses:
+        '201':
+          description: Câu hỏi được tạo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Question' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/v1/questions/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [questions]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Chi tiết câu hỏi active
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Question' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [questions]
+      summary: Cập nhật câu hỏi (CONTENT_ADMIN/SYSTEM_ADMIN)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateQuestionRequest' }
+      responses:
+        '200':
+          description: Câu hỏi được cập nhật
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Question' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    delete:
+      tags: [questions]
+      summary: Archive câu hỏi (CONTENT_ADMIN/SYSTEM_ADMIN)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Archived }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/v1/questions/reindex:
+    post:
+      tags: [questions]
+      summary: Rebuild search index (SYSTEM_ADMIN)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201': { description: Số document đã index }
+        '403': { $ref: '#/components/responses/Forbidden' }
   /api/v1/questions/{id}/media/presign:
     post:
       tags: [questions]
@@ -29,6 +118,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
@@ -36,7 +126,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PresignRequest'
       responses:
-        '200':
+        '201':
           description: Presigned URL
           content:
             application/json:
@@ -170,7 +260,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
-        '204':
+        '200':
           description: Đã archive
         '401':
           $ref: '#/components/responses/Unauthorized'
@@ -184,6 +274,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
@@ -191,7 +282,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PresignRequest'
       responses:
-        '200':
+        '201':
           description: Presigned URL
           content:
             application/json:
@@ -489,6 +580,11 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: { type: string, maxLength: 200 }
     Id:
       name: id
       in: path
@@ -597,9 +693,50 @@ components:
           enum: [A, B, C, D]
         optionText:
           type: string
-        mediaUrl:
-          type: string
-          nullable: true
+    CreateQuestionRequest:
+      type: object
+      required: [part, type, difficulty, correctOption, options]
+      properties:
+        part: { type: integer, minimum: 1, maximum: 7 }
+        type: { type: string, minLength: 1 }
+        questionText: { type: string, nullable: true }
+        explanation: { type: string, nullable: true }
+        difficulty: { type: string, enum: [EASY, MEDIUM, HARD] }
+        correctOption: { type: string, enum: [A, B, C, D] }
+        groupId: { type: string, format: uuid, nullable: true }
+        positionInGroup: { type: integer, minimum: 1, nullable: true }
+        transcript: { type: string, nullable: true }
+        audioKey: { type: string, nullable: true }
+        imageKey: { type: string, nullable: true }
+        tags: { type: array, maxItems: 30, uniqueItems: true, items: { type: string } }
+        options:
+          type: array
+          minItems: 3
+          maxItems: 4
+          items: { $ref: '#/components/schemas/QuestionOption' }
+    UpdateQuestionRequest:
+      type: object
+      description: Các field của CreateQuestionRequest đều optional; validate trên dữ liệu sau merge.
+      properties:
+        part: { type: integer, minimum: 1, maximum: 7 }
+        type: { type: string, minLength: 1 }
+        questionText: { type: string, nullable: true }
+        explanation: { type: string, nullable: true }
+        difficulty: { type: string, enum: [EASY, MEDIUM, HARD] }
+        correctOption: { type: string, enum: [A, B, C, D] }
+        groupId: { type: string, format: uuid, nullable: true }
+        positionInGroup: { type: integer, minimum: 1, nullable: true }
+        transcript: { type: string, nullable: true }
+        audioKey: { type: string, nullable: true }
+        imageKey: { type: string, nullable: true }
+        tags: { type: array, maxItems: 30, uniqueItems: true, items: { type: string } }
+        options:
+          {
+            type: array,
+            minItems: 3,
+            maxItems: 4,
+            items: { $ref: '#/components/schemas/QuestionOption' },
+          }
     Question:
       type: object
       required: [questionId, part, type, questionText, difficulty, options]
@@ -615,6 +752,7 @@ components:
           type: string
         questionText:
           type: string
+          nullable: true
         transcript:
           type: string
           nullable: true
@@ -669,6 +807,11 @@ components:
       type: object
       required: [groupId, part, type, assets]
       properties:
+        questionIds:
+          type: array
+          items: { type: string, format: uuid }
+        isComplete:
+          type: boolean
         groupId:
           type: string
           format: uuid
@@ -709,11 +852,12 @@ components:
           nullable: true
     CreateQuestionGroupRequest:
       type: object
-      required: [part, type]
+      required: [part, type, questions]
+      description: Tạo group cùng câu con trong một transaction. Media chưa upload được đánh dấu isComplete=false; Part 3/4 cần transcript, Part 6/7 cần passage/asset hợp lệ.
       properties:
         part:
           type: integer
-          minimum: 3
+          enum: [3, 4, 6, 7]
           description: Chỉ Part 3/4/6/7 mới có group.
         type:
           type: string
@@ -730,10 +874,37 @@ components:
         assets:
           type: array
           items:
-            $ref: '#/components/schemas/QuestionGroupAsset'
+            $ref: '#/components/schemas/QuestionGroupAssetInput'
+        questions:
+          type: array
+          minItems: 1
+          description: part phải khớp group; không gửi groupId; positionInGroup mặc định theo thứ tự array.
+          items:
+            $ref: '#/components/schemas/CreateQuestionRequest'
     UpdateQuestionGroupRequest:
-      allOf:
-        - $ref: '#/components/schemas/CreateQuestionGroupRequest'
+      type: object
+      properties:
+        type: { type: string }
+        instruction: { type: string, nullable: true }
+        audioKey: { type: string, nullable: true }
+        transcript: { type: string, nullable: true }
+        passageText: { type: string, nullable: true }
+        orderNo: { type: integer, minimum: 1, nullable: true }
+        assets: { type: array, items: { $ref: '#/components/schemas/QuestionGroupAssetInput' } }
+        questionOrder:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: { type: string, format: uuid }
+          description: Phải chứa mọi questionId trong group đúng một lần.
+    QuestionGroupAssetInput:
+      type: object
+      required: [kind, orderNo]
+      properties:
+        kind: { type: string, enum: [AUDIO, IMAGE, TEXT] }
+        orderNo: { type: integer, minimum: 1 }
+        storageKey: { type: string, nullable: true }
+        content: { type: string, nullable: true }
     PresignRequest:
       type: object
       required: [mediaType, contentType, fileName]
@@ -754,6 +925,10 @@ components:
           type: string
           format: uri
         objectName:
+          type: string
+        storageKey:
+          type: string
+        contentType:
           type: string
         bucket:
           type: string

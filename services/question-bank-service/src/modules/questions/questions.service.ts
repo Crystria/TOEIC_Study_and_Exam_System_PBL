@@ -1,198 +1,194 @@
 import { randomUUID } from 'node:crypto';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { MessagingService, writeOutbox } from '@toeic/common';
-import { Client as MinioClient } from 'minio';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { writeOutbox } from '@toeic/common';
+import { Prisma } from '../../generated/prisma';
 import { PrismaService } from '../../prisma/prisma.service';
+import { MediaService } from '../media/media.service';
 import { SearchService } from '../search/search.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { ListQuestionsQueryDto } from './dto/list-questions-query.dto';
+import { PresignMediaDto } from './dto/presign-media.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
+import { assertQuestion, publicQuestion, questionInclude, QuestionRecord } from './question-rules';
+import { contentTransaction } from './content-transaction';
 
 @Injectable()
 export class QuestionsService {
-  private readonly logger = new Logger(QuestionsService.name);
-  private readonly minio: MinioClient;
-  private readonly bucket: string;
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly search: SearchService,
-    private readonly messaging: MessagingService,
-    private readonly config: ConfigService,
-  ) {
-    this.bucket = config.get<string>('MINIO_BUCKET') ?? 'toeic-media';
-    this.minio = new MinioClient({
-      endPoint: config.get<string>('MINIO_ENDPOINT')?.split(':')[0] ?? 'localhost',
-      port: Number(config.get<string>('MINIO_ENDPOINT')?.split(':')[1] ?? 19000),
-      useSSL: false,
-      accessKey: config.get<string>('MINIO_ACCESS_KEY') ?? 'minioadmin',
-      secretKey: config.get<string>('MINIO_SECRET_KEY') ?? 'minioadmin',
-    });
-  }
+    private readonly media: MediaService,
+  ) {}
 
-  async list(query: ListQuestionsQueryDto) {
-    return this.search.search({
-      keyword: query.keyword,
-      part: query.part,
-      difficulty: query.difficulty,
-      tag: query.tag,
-      page: query.page,
-      size: query.size,
-    });
+  async list(query: ListQuestionsQueryDto, admin = false) {
+    const result = await this.search.search(query);
+    return {
+      ...result,
+      items: result.items.map((q) => publicQuestion(q, admin, (key) => this.media.url(key))),
+    };
   }
-
-  async findById(id: string) {
-    const question = await this.prisma.question.findUnique({
-      where: { id },
-      include: { options: true, tags: { include: { tag: true } } },
+  async record(id: string, tx: Prisma.TransactionClient = this.prisma): Promise<QuestionRecord> {
+    const question = await tx.question.findFirst({
+      where: { id, deletedAt: null },
+      include: questionInclude,
     });
-    if (!question) {
-      throw new NotFoundException('Question not found');
-    }
+    if (!question) throw new NotFoundException('Question not found');
     return question;
   }
-
+  async findById(id: string, admin = false) {
+    return publicQuestion(await this.record(id), admin, (key) => this.media.url(key));
+  }
   async findByIds(ids: string[]) {
     return this.prisma.question.findMany({
-      where: { id: { in: ids } },
-      include: { options: true },
+      where: {
+        id: { in: ids },
+        deletedAt: null,
+        OR: [{ groupId: null }, { group: { deletedAt: null } }],
+      },
+      include: questionInclude,
     });
   }
-
   async getAnswerKey(ids: string[]) {
-    const options = await this.prisma.questionOption.findMany({
-      where: { questionId: { in: ids }, isCorrect: true },
-      select: { questionId: true, optionKey: true },
-    });
-    return options.map((o) => ({ questionId: o.questionId, correctOption: o.optionKey }));
+    const questions = await this.findByIds(ids);
+    return questions.map((q) => ({ questionId: q.id, correctOption: q.correctOption }));
   }
-
   async create(dto: CreateQuestionDto, createdBy?: string) {
-    const questionId = randomUUID();
-    const question = await this.prisma.$transaction(async (tx) => {
-      const created = await tx.question.create({
-        data: {
-          id: questionId,
-          part: dto.part,
-          type: dto.type,
-          stem: dto.stem,
-          explanation: dto.explanation,
-          difficulty: dto.difficulty,
-          mediaUrl: dto.mediaUrl,
-          status: dto.status ?? 'DRAFT',
-          createdBy,
-          options: {
-            create: dto.options.map((o) => ({
-              optionKey: o.optionKey,
-              content: o.content,
-              mediaUrl: o.mediaUrl,
-              isCorrect: o.isCorrect,
-            })),
-          },
-          tags: {
-            create: (dto.tags ?? []).map((name) => ({
-              tag: { connectOrCreate: { where: { name }, create: { name } } },
-            })),
-          },
-        },
-        include: { options: true, tags: { include: { tag: true } } },
-      });
-
-      await writeOutbox(tx as never, {
-        aggregateId: created.id,
-        eventType: 'QuestionCreatedEvent',
-        payload: { questionId: created.id, part: created.part, difficulty: created.difficulty },
-      });
-      return created;
-    });
-
-    await this.messaging.emit('question.created', question.id, {
-      eventId: randomUUID(),
-      eventType: 'QuestionCreatedEvent',
-      occurredAt: Date.now(),
-      payload: { questionId: question.id, part: question.part, difficulty: question.difficulty },
-    });
-    await this.reindex(question.id);
-    return question;
+    const id = randomUUID();
+    await contentTransaction(this.prisma, async (tx) =>
+      this.createInTransaction(tx, id, dto, createdBy),
+    );
+    return this.findById(id, true);
   }
-
+  async createInTransaction(
+    tx: Prisma.TransactionClient,
+    id: string,
+    dto: CreateQuestionDto,
+    createdBy?: string,
+  ) {
+    assertQuestion(dto);
+    await this.validateGroup(tx, dto, id);
+    await this.verifyMedia(id, dto);
+    const { options, tags, ...fields } = dto;
+    const q = await tx.question.create({
+      data: {
+        ...fields,
+        id,
+        createdBy,
+        options: { create: options },
+        tags: { create: this.tagCreates(tags ?? []) },
+      },
+    });
+    await this.event(tx, q.id, 'QuestionCreatedEvent', q.part, q.difficulty, q.groupId);
+    return q;
+  }
   async update(id: string, dto: UpdateQuestionDto) {
-    await this.findById(id);
-    const question = await this.prisma.$transaction(async (tx) => {
-      if (dto.options) {
-        await tx.questionOption.deleteMany({ where: { questionId: id } });
-      }
-      const updated = await tx.question.update({
+    await contentTransaction(this.prisma, async (tx) => {
+      const previous = await this.record(id, tx);
+      const merged = { ...previous, ...dto };
+      assertQuestion(merged);
+      if (previous.part !== merged.part && (previous.audioKey || previous.imageKey))
+        throw new BadRequestException('Clear media keys before changing part');
+      await this.validateGroup(tx, merged, id);
+      if (previous.groupId && previous.groupId !== merged.groupId)
+        await this.assertNotLastMember(tx, previous.groupId);
+      await this.verifyMedia(id, merged);
+      const { options, tags, ...fields } = dto;
+      if (options) await tx.questionOption.deleteMany({ where: { questionId: id } });
+      if (tags) await tx.questionTag.deleteMany({ where: { questionId: id } });
+      const q = await tx.question.update({
         where: { id },
         data: {
-          part: dto.part,
-          type: dto.type,
-          stem: dto.stem,
-          explanation: dto.explanation,
-          difficulty: dto.difficulty,
-          mediaUrl: dto.mediaUrl,
-          status: dto.status,
-          options: dto.options
-            ? {
-                create: dto.options.map((o) => ({
-                  optionKey: o.optionKey,
-                  content: o.content,
-                  mediaUrl: o.mediaUrl,
-                  isCorrect: o.isCorrect,
-                })),
-              }
-            : undefined,
+          ...fields,
+          options: options ? { create: options } : undefined,
+          tags: tags ? { create: this.tagCreates(tags) } : undefined,
         },
-        include: { options: true, tags: { include: { tag: true } } },
       });
-
-      await writeOutbox(tx as never, {
-        aggregateId: id,
-        eventType: 'QuestionUpdatedEvent',
-        payload: { questionId: id, part: updated.part, difficulty: updated.difficulty },
-      });
-      return updated;
+      await this.event(tx, id, 'QuestionUpdatedEvent', q.part, q.difficulty, q.groupId);
+      if (previous.groupId && previous.groupId !== q.groupId)
+        await this.groupChanged(tx, previous.groupId);
     });
-
-    await this.messaging.emit('question.updated', id, {
-      eventId: randomUUID(),
-      eventType: 'QuestionUpdatedEvent',
-      occurredAt: Date.now(),
-      payload: { questionId: id, part: question.part, difficulty: question.difficulty },
-    });
-    await this.reindex(id);
-    return question;
+    return this.findById(id, true);
   }
-
   async remove(id: string) {
-    await this.findById(id);
-    await this.prisma.question.update({ where: { id }, data: { status: 'ARCHIVED' } });
-    await this.search.removeQuestion(id);
+    await contentTransaction(this.prisma, async (tx) => {
+      const q = await this.record(id, tx);
+      if (q.groupId) await this.assertNotLastMember(tx, q.groupId);
+      await tx.question.update({ where: { id }, data: { deletedAt: new Date() } });
+      await this.event(tx, id, 'QuestionDeletedEvent', q.part, q.difficulty, q.groupId);
+    });
     return { success: true };
   }
-
-  async presign(fileName: string, contentType: string) {
-    const objectName = `${Date.now()}-${fileName}`;
-    const url = await this.minio.presignedPutObject(this.bucket, objectName, 15 * 60);
-    return { uploadUrl: url, objectName, bucket: this.bucket, contentType };
+  async presign(id: string, dto: PresignMediaDto, idempotencyKey?: string) {
+    const q = await this.record(id);
+    return this.media.presign('questions', q.part, id, dto, idempotencyKey);
   }
-
-  private async reindex(id: string): Promise<void> {
-    try {
-      const question = await this.findById(id);
-      await this.search.indexQuestion({
-        id: question.id,
-        part: question.part,
-        type: question.type,
-        stem: question.stem,
-        explanation: question.explanation ?? undefined,
-        difficulty: question.difficulty,
-        tags: question.tags.map((t) => t.tag.name),
-        status: question.status,
-      });
-    } catch (error) {
-      this.logger.warn(`Reindex failed for ${id}: ${(error as Error).message}`);
-    }
+  private tagCreates(tags: string[]) {
+    return [...new Set(tags.map((name) => name.trim()).filter(Boolean))].map((name) => ({
+      tag: { connectOrCreate: { where: { name }, create: { name } } },
+    }));
+  }
+  private async verifyMedia(
+    id: string,
+    q: { part: number; audioKey?: string | null; imageKey?: string | null },
+  ) {
+    const prefix = this.media.prefix('questions', q.part, id);
+    await this.media.verify(q.audioKey, prefix, 'AUDIO');
+    await this.media.verify(q.imageKey, prefix, 'IMAGE');
+  }
+  private async validateGroup(
+    tx: Prisma.TransactionClient,
+    q: Pick<CreateQuestionDto, 'part' | 'groupId' | 'positionInGroup'>,
+    id: string,
+  ) {
+    if (!q.groupId) return;
+    const group = await tx.questionGroup.findFirst({ where: { id: q.groupId, deletedAt: null } });
+    if (!group || group.part !== q.part)
+      throw new BadRequestException('Group must be active and match question part');
+    const duplicate = await tx.question.findFirst({
+      where: { groupId: q.groupId, positionInGroup: q.positionInGroup, NOT: { id } },
+    });
+    if (duplicate) throw new BadRequestException('positionInGroup already used');
+    if (q.part === 6 && !group.passageText?.includes(`[[${q.positionInGroup}]]`))
+      throw new BadRequestException('Part 6 position must match a passage placeholder');
+  }
+  private async assertNotLastMember(tx: Prisma.TransactionClient, groupId: string) {
+    if ((await tx.question.count({ where: { groupId, deletedAt: null } })) <= 1)
+      throw new BadRequestException(
+        'Archive the group instead of removing its last active question',
+      );
+  }
+  private async event(
+    tx: Prisma.TransactionClient,
+    id: string,
+    eventType: string,
+    part: number,
+    difficulty: string,
+    groupId: string | null,
+  ) {
+    await writeOutbox(tx as never, {
+      aggregateType: 'Question',
+      aggregateId: id,
+      eventType,
+      payload: { questionId: id, part, difficulty },
+    });
+    if (groupId) await this.groupChanged(tx, groupId);
+  }
+  private async groupChanged(tx: Prisma.TransactionClient, groupId: string) {
+    const group = await tx.questionGroup.update({
+      where: { id: groupId },
+      data: { updatedAt: new Date() },
+      include: { questions: { select: { id: true } } },
+    });
+    await writeOutbox(tx as never, {
+      aggregateType: 'QuestionGroup',
+      aggregateId: groupId,
+      eventType: 'QuestionGroupUpdatedEvent',
+      payload: {
+        groupId,
+        part: group.part,
+        type: group.type,
+        questionIds: group.questions.map((q) => q.id),
+      },
+    });
   }
 }

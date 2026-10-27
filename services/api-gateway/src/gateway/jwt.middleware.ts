@@ -1,40 +1,80 @@
 import { JwtService } from '@nestjs/jwt';
-import { RequestHandler } from 'express';
+import { JwtPayload } from '@toeic/common';
+import { Request, RequestHandler } from 'express';
+import { sendGatewayError } from './http-error';
+import { isPublicPath, normalizePath } from './route-policy';
 
-const PUBLIC_PATHS = new Set([
-  '/api/v1/auth/register',
-  '/api/v1/auth/login',
-  '/api/v1/auth/refresh',
-  '/health',
-  '/status',
-]);
+export interface JwtMiddlewareOptions {
+  secret: string;
+  issuer: string;
+  audience: string;
+}
 
-/**
- * Xác thực JWT tại edge. Bỏ qua các public path và preflight.
- * Forward nguyên Authorization header tới upstream.
- */
-export function createJwtMiddleware(jwt: JwtService): RequestHandler {
+type AuthenticatedRequest = Request & { user?: JwtPayload };
+
+function stripClientUserHeaders(req: Request): void {
+  for (const header of Object.keys(req.headers)) {
+    if (header.startsWith('x-user-')) {
+      delete req.headers[header];
+    }
+  }
+}
+
+function extractBearerToken(req: Request): string | undefined {
+  const [type, token] = req.headers.authorization?.split(' ') ?? [];
+  return type === 'Bearer' && token ? token : undefined;
+}
+
+export function createJwtMiddleware(
+  jwt: JwtService,
+  options: JwtMiddlewareOptions,
+): RequestHandler {
   return async (req, res, next) => {
+    stripClientUserHeaders(req);
+
     if (req.method === 'OPTIONS') {
       return next();
     }
-    const path = req.path;
-    if (PUBLIC_PATHS.has(path) || !path.startsWith('/api/v1')) {
+
+    const path = normalizePath(req.path);
+    if (isPublicPath(path) || !path.startsWith('/api/v1')) {
       return next();
     }
 
-    const [type, token] = req.headers.authorization?.split(' ') ?? [];
-    if (type !== 'Bearer' || !token) {
-      res.status(401).json({ statusCode: 401, message: 'Missing access token' });
+    const token = extractBearerToken(req);
+    if (!token) {
+      sendGatewayError(req, res, 401, 'UNAUTHORIZED', 'Missing access token');
       return;
     }
+
     try {
-      await jwt.verifyAsync(token, {
-        secret: process.env.JWT_ACCESS_SECRET ?? 'change-me',
+      const payload = await jwt.verifyAsync<JwtPayload>(token, {
+        algorithms: ['HS256'],
+        secret: options.secret,
+        issuer: options.issuer,
+        audience: options.audience,
       });
-      next();
+
+      const claims = payload as JwtPayload & { exp?: number };
+      if (
+        payload.type !== 'access' ||
+        typeof payload.sub !== 'string' ||
+        payload.sub.length === 0 ||
+        typeof claims.exp !== 'number' ||
+        !Number.isFinite(claims.exp) ||
+        !Array.isArray(payload.roles) ||
+        !payload.roles.every((role) => typeof role === 'string')
+      ) {
+        throw new Error('Invalid access token payload');
+      }
+
+      (req as AuthenticatedRequest).user = payload;
+      req.headers['x-user-id'] = payload.sub;
+      req.headers['x-user-roles'] = (payload.roles ?? []).join(',');
+      return next();
     } catch {
-      res.status(401).json({ statusCode: 401, message: 'Invalid or expired access token' });
+      sendGatewayError(req, res, 401, 'UNAUTHORIZED', 'Invalid or expired access token');
+      return;
     }
   };
 }
