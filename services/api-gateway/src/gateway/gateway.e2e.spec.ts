@@ -221,6 +221,25 @@ describe('API Gateway e2e', () => {
     expect(received?.url).toBe('/api/v1/auth/login');
   });
 
+  it('does not retain one server-close listener per proxied request', async () => {
+    const app = createTestApp(upstreamUrl, fakeRedis());
+    const server = app.listen(0, '127.0.0.1');
+    await new Promise<void>((resolve) => server.once('listening', resolve));
+    try {
+      for (let i = 0; i < 20; i++)
+        expect(
+          (
+            await request(server)
+              .get('/api/v1/tests')
+              .set('Authorization', `Bearer ${signToken(jwt)}`)
+          ).status,
+        ).toBe(200);
+      expect(server.listenerCount('close')).toBeLessThanOrEqual(2);
+    } finally {
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+  });
+
   it('returns 429 when the user bucket is exhausted', async () => {
     const redis = fakeRedis();
     redis.consumeToken.mockResolvedValueOnce(false);

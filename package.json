@@ -31,7 +31,13 @@
     "infra:logs": "docker compose logs -f",
     "apps:up": "docker compose -f docker-compose.yml -f docker-compose.apps.yml up -d --build",
     "apps:down": "docker compose -f docker-compose.yml -f docker-compose.apps.yml down",
-    "apps:logs": "docker compose -f docker-compose.yml -f docker-compose.apps.yml logs -f"
+    "apps:logs": "docker compose -f docker-compose.yml -f docker-compose.apps.yml logs -f",
+    "qa:build": "docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml build api-gateway",
+    "qa:up": "docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml up -d --wait api-gateway",
+    "qa:stop": "docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml stop api-gateway auth-service question-bank-service exam-service analytics-service",
+    "qa:migrate": "node scripts/qa/migrate.mjs",
+    "qa:e2e": "node scripts/qa/e2e.mjs",
+    "qa:seed": "node scripts/qa/e2e.mjs --seed"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",

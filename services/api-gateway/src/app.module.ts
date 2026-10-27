@@ -9,6 +9,7 @@ import {
 } from '@toeic/common';
 import { requiredConfig } from './config/gateway-config';
 import { HealthController } from './health/health.controller';
+import { ReadinessController } from './health/readiness.controller';
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { HealthController } from './health/health.controller';
       }),
     }),
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, ReadinessController],
 })
 export class AppModule {}

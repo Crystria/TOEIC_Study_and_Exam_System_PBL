@@ -12,6 +12,7 @@ import {
 import { PrismaModule } from './prisma/prisma.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { HealthController } from './health/health.controller';
+import { ReadinessController } from './health/readiness.controller';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { HealthController } from './health/health.controller';
     PrismaModule,
     AnalyticsModule,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, ReadinessController],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },

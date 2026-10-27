@@ -16,6 +16,7 @@ import { GrpcModule } from './grpc/grpc.module';
 import { TestsModule } from './modules/tests/tests.module';
 import { AttemptsModule } from './modules/attempts/attempts.module';
 import { HealthController } from './health/health.controller';
+import { ReadinessController } from './health/readiness.controller';
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import { HealthController } from './health/health.controller';
     TestsModule,
     AttemptsModule,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, ReadinessController],
   providers: [
     { provide: APP_GUARD, useClass: ExamAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },

@@ -14,7 +14,28 @@ x-node: &node-base
   working_dir: /app
   restart: unless-stopped
 
+x-node-health: &node-health
+  test: ['CMD', 'node', 'scripts/healthcheck.mjs']
+  interval: 10s
+  timeout: 4s
+  start_period: 90s
+  retries: 12
+
 services:
+  media-init:
+    <<: *node-base
+    restart: 'no'
+    depends_on:
+      minio:
+        condition: service_healthy
+    command: node scripts/init-media.mjs
+    environment:
+      NODE_ENV: development
+      MINIO_ENDPOINT: minio:9000
+      MINIO_BUCKET: ${MINIO_BUCKET:-toeic-media}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_PUBLIC_READ: 'true'
   # One-shot: chạy migrate TRƯỚC khi các service khởi động.
   migrate:
     <<: *node-base
@@ -33,6 +54,7 @@ services:
 
   auth-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${AUTH_SERVICE_CPUS:-1.0}
     mem_limit: ${AUTH_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/auth-service && npm run start:dev -w @toeic/auth-service"
@@ -50,6 +72,7 @@ services:
     environment:
       NODE_ENV: development
       PORT: '3001'
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
@@ -75,6 +98,7 @@ services:
 
   question-bank-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${QUESTION_BANK_SERVICE_CPUS:-1.5}
     mem_limit: ${QUESTION_BANK_SERVICE_MEMORY_LIMIT:-1g}
     command: sh -c "npm run prisma:generate -w @toeic/question-bank-service && npm run start:dev -w @toeic/question-bank-service"
@@ -92,16 +116,21 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      media-init:
+        condition: service_completed_successfully
       migrate:
         condition: service_completed_successfully
     environment:
       NODE_ENV: development
       PORT: '3002'
       GRPC_PORT: '50052'
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
       ELASTICSEARCH_NODE: http://elasticsearch:9200
       MINIO_ENDPOINT: minio:9000
       MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:19000/toeic-media}
@@ -126,12 +155,15 @@ services:
 
   exam-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${EXAM_SERVICE_CPUS:-1.0}
     mem_limit: ${EXAM_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/exam-service && npm run start:dev -w @toeic/exam-service"
     ports:
       - '3003:3003'
     depends_on:
+      question-bank-service:
+        condition: service_healthy
       postgres:
         condition: service_healthy
       redis:
@@ -143,11 +175,15 @@ services:
     environment:
       NODE_ENV: development
       PORT: '3003'
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
       QUESTION_BANK_GRPC_URL: question-bank-service:50052
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:19000/toeic-media}
     develop:
       watch:
         - action: sync
@@ -201,6 +237,7 @@ services:
 
   analytics-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${ANALYTICS_SERVICE_CPUS:-1.0}
     mem_limit: ${ANALYTICS_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/analytics-service && npm run start:dev -w @toeic/analytics-service"
@@ -218,6 +255,7 @@ services:
     environment:
       NODE_ENV: development
       PORT: '3005'
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
@@ -238,6 +276,7 @@ services:
 
   api-gateway:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${API_GATEWAY_CPUS:-1.0}
     mem_limit: ${API_GATEWAY_MEMORY_LIMIT:-768m}
     command: npm run start:dev -w @toeic/api-gateway
@@ -247,15 +286,23 @@ services:
       redis:
         condition: service_healthy
       auth-service:
-        condition: service_started
+        condition: service_healthy
+      question-bank-service:
+        condition: service_healthy
+      exam-service:
+        condition: service_healthy
+      analytics-service:
+        condition: service_healthy
     environment:
       NODE_ENV: development
       PORT: '3000'
+      HEALTHCHECK_PATH: /ready
       REDIS_URL: redis://redis:6379
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
       JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
       CORS_ORIGINS: http://localhost:3006,http://localhost:3007
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-0}
       AUTH_SERVICE_URL: http://auth-service:3001
       QUESTION_BANK_SERVICE_URL: http://question-bank-service:3002
       EXAM_SERVICE_URL: http://exam-service:3003

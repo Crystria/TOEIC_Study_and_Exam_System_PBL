@@ -82,6 +82,11 @@ and keeps accuracy/parts. Only scored attempts contribute to score summaries.
 
 ## Verification
 
+`GET /api/v1/ready` probes PostgreSQL and Redis with a bounded timeout. The
+[P4 Gateway QA suite](../../scripts/qa/README.md) runs compiled Docker services
+with a full 200-question fixture, real Auth/MinIO/search/Analytics, and smoke p95
+measurements. The service integration suite below remains useful in isolation.
+
 ```powershell
 npm run prisma:generate -w @toeic/exam-service
 npm run build -w @toeic/common

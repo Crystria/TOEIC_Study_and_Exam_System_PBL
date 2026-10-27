@@ -57,6 +57,7 @@ export const PUBLIC_PATHS = new Set([
   '/api/v1/auth/refresh',
   '/health',
   '/status',
+  '/ready',
 ]);
 
 const AUTH_PUBLIC_PREFIXES = [
@@ -78,7 +79,7 @@ export function normalizePath(path: string): string {
 
 export function isHealthPath(path: string): boolean {
   const normalized = normalizePath(path);
-  return normalized === '/health' || normalized === '/status';
+  return normalized === '/health' || normalized === '/status' || normalized === '/ready';
 }
 
 export function isPublicPath(path: string): boolean {

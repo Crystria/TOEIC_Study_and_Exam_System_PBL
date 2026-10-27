@@ -8,6 +8,9 @@ on:
       - 'packages/**'
       - 'package.json'
       - 'package-lock.json'
+      - 'scripts/**'
+      - 'docker-compose*.yml'
+      - 'infra/docker/**'
       - '.github/workflows/backend-ci.yml'
   pull_request:
     paths:
@@ -15,6 +18,10 @@ on:
       - 'packages/**'
       - 'package.json'
       - 'package-lock.json'
+      - 'scripts/**'
+      - 'docker-compose*.yml'
+      - 'infra/docker/**'
+      - '.github/workflows/backend-ci.yml'
 
 concurrency:
   group: backend-ci-${{ github.ref }}
@@ -44,7 +51,7 @@ jobs:
           cache: npm
       - name: Install dependencies
         working-directory: .
-        run: npm ci || npm install
+        run: npm ci
       - name: Build @toeic/common
         working-directory: .
         run: npm run build -w @toeic/common
@@ -56,3 +63,71 @@ jobs:
         run: npm run build
       - name: Test
         run: npm run test --if-present
+
+  migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: toeic
+          POSTGRES_PASSWORD: toeic
+          POSTGRES_DB: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U toeic -d postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Deploy from empty DB, repeat and check schema drift
+        env:
+          PGPASSWORD: toeic
+        shell: bash
+        run: |
+          set -euo pipefail
+          for service in auth question-bank exam learning analytics; do
+            db="${service//-/_}_ci"
+            createdb -h localhost -U toeic "$db"
+            export DATABASE_URL="postgresql://toeic:toeic@localhost:5432/$db?schema=public"
+            schema="services/$service-service/prisma/schema.prisma"
+            npx prisma migrate deploy --schema "$schema"
+            npx prisma migrate deploy --schema "$schema"
+            npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel "$schema" --exit-code
+          done
+
+  gateway-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Generate host clients for QA runner
+        run: |
+          for service in auth question-bank exam analytics; do
+            npm run prisma:generate -w "@toeic/$service-service"
+          done
+      - run: npm run qa:build
+      - run: npm run qa:up
+      - run: npm run qa:e2e
+      - name: Upload QA measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gateway-p4-qa
+          path: artifacts/qa/
+          if-no-files-found: ignore
+      - name: Collect service logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml logs --tail 80
+      - name: Stop QA stack
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml down

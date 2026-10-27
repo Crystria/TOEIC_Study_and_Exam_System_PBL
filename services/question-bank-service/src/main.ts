@@ -19,6 +19,7 @@ export function configureHttp(app: INestApplication): void {
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   configureHttp(app);
 
   app.connectMicroservice<MicroserviceOptions>({

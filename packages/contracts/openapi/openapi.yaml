@@ -4,13 +4,14 @@ info:
   version: 0.2.0
   description: >
     Spec REST tổng hợp cho các endpoint đi qua API Gateway.
-    P0 contract cho QuestionGroup, Dynamic Part Test và Attempt snapshot.
+    Contract P4 cho QuestionGroup, Dynamic Part Test, Attempt snapshot và readiness.
 servers:
   - url: https://api.example.com
     description: Production (qua API Gateway)
   - url: http://localhost:3000
     description: Local (API Gateway)
 tags:
+  - name: health
   - name: auth
   - name: users
   - name: questions
@@ -21,6 +22,50 @@ tags:
   - name: analytics
   - name: ai
 paths:
+  /health:
+    get:
+      tags: [health]
+      summary: Gateway liveness (không yêu cầu JWT)
+      responses:
+        '200':
+          description: Gateway đang chạy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [ok] }
+  /status:
+    get:
+      tags: [health]
+      summary: Gateway status (không yêu cầu JWT hoặc rate limit)
+      responses:
+        '200': { description: Gateway đang chạy }
+  /ready:
+    get:
+      tags: [health]
+      summary: Gateway và các dependency bắt buộc sẵn sàng
+      description: >
+        Không yêu cầu JWT hoặc rate limit. Probe Redis và HTTP Auth, Question Bank,
+        Exam, Analytics; mọi upstream probe PostgreSQL, Auth/Exam probe cả Redis.
+        Mỗi probe có timeout; không trả connection string hoặc lỗi nội bộ.
+      responses:
+        '200':
+          description: Sẵn sàng nhận request
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, checks, qa]
+                properties:
+                  status: { type: string, enum: [ready] }
+                  checks:
+                    {
+                      type: object,
+                      additionalProperties: { type: string, enum: [ok, unavailable] },
+                    }
+                  qa: { type: boolean, description: Chỉ true khi QA_MODE=true }
+        '503': { description: Có dependency bắt buộc chưa sẵn sàng }
   /api/v1/questions:
     get:
       tags: [questions]

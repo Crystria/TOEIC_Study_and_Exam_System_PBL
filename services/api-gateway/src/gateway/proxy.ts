@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CORRELATION_ID_HEADER } from '@toeic/common';
-import { Request, Response } from 'express';
-import { createProxyMiddleware, RequestHandler } from 'http-proxy-middleware';
-import { IncomingMessage, ServerResponse } from 'node:http';
+import { Request, Response, RequestHandler } from 'express';
+import { createProxyServer } from 'http-proxy';
+import { IncomingMessage, Server, ServerResponse } from 'node:http';
 import { Readable } from 'node:stream';
 import { BufferedRequest } from './body-limit.middleware';
 import { sendGatewayError } from './http-error';
@@ -39,79 +39,80 @@ export function createGatewayProxy(config: ConfigService): RequestHandler {
     return target;
   };
 
-  const commonOptions = {
-    changeOrigin: true,
-    xfwd: true,
-    pathFilter: (pathname: string) => Boolean(matchRoute(pathname)),
-    router: resolveTarget,
-    on: {
-      proxyReq: (proxyReq: import('node:http').ClientRequest, req: IncomingMessage) => {
-        const correlationId = correlationIdOf(req);
-        const connectTimer = setTimeout(() => {
-          const error = Object.assign(new Error('Upstream connection timed out'), {
-            code: 'ETIMEDOUT',
-          });
-          proxyReq.destroy(error);
-        }, 2_000);
-        const clearConnectTimer = () => clearTimeout(connectTimer);
-        const watchSocket = (socket: import('node:net').Socket) => {
-          if (!socket.connecting) clearConnectTimer();
-          else socket.once('connect', clearConnectTimer);
-        };
-        if (proxyReq.socket) watchSocket(proxyReq.socket);
-        else proxyReq.once('socket', watchSocket);
-        proxyReq.once('close', clearConnectTimer);
-        proxyReq.once('error', clearConnectTimer);
-        proxyReq.setTimeout(proxyTimeoutMs(req.method ?? 'GET', pathnameOf(req.url)), () => {
-          proxyReq.destroy(
-            Object.assign(new Error('Upstream response timed out'), { code: 'ETIMEDOUT' }),
-          );
+  const handlers = {
+    proxyReq: (proxyReq: import('node:http').ClientRequest, req: IncomingMessage) => {
+      const correlationId = correlationIdOf(req);
+      const connectTimer = setTimeout(() => {
+        const error = Object.assign(new Error('Upstream connection timed out'), {
+          code: 'ETIMEDOUT',
         });
-        if (correlationId) {
-          proxyReq.setHeader(CORRELATION_ID_HEADER, correlationId);
-        }
-      },
-      proxyRes: (proxyRes: IncomingMessage, req: IncomingMessage, res: ServerResponse) => {
-        const correlationId = correlationIdOf(req);
-        if (correlationId) {
-          proxyRes.headers[CORRELATION_ID_HEADER] = correlationId;
-          res.setHeader(CORRELATION_ID_HEADER, correlationId);
-        }
-      },
-      error: (
-        error: Error,
-        req: IncomingMessage,
-        res: ServerResponse | import('node:net').Socket,
-      ) => {
-        const statusCode = isTimeoutError(error) ? 504 : 502;
-        const code = isTimeoutError(error) ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_ERROR';
-        const correlationId = correlationIdOf(req);
-
-        logger.error(
-          `Proxy ${req.method ?? 'UNKNOWN'} ${req.url ?? '/'} failed ` +
-            `[${correlationId || 'no-correlation-id'}]: ${error.message}`,
+        proxyReq.destroy(error);
+      }, 2_000);
+      const clearConnectTimer = () => clearTimeout(connectTimer);
+      const watchSocket = (socket: import('node:net').Socket) => {
+        if (!socket.connecting) clearConnectTimer();
+        else socket.once('connect', clearConnectTimer);
+      };
+      if (proxyReq.socket) watchSocket(proxyReq.socket);
+      else proxyReq.once('socket', watchSocket);
+      proxyReq.once('close', clearConnectTimer);
+      proxyReq.once('error', clearConnectTimer);
+      proxyReq.setTimeout(proxyTimeoutMs(req.method ?? 'GET', pathnameOf(req.url)), () => {
+        proxyReq.destroy(
+          Object.assign(new Error('Upstream response timed out'), { code: 'ETIMEDOUT' }),
         );
+      });
+      if (correlationId) {
+        proxyReq.setHeader(CORRELATION_ID_HEADER, correlationId);
+      }
+    },
+    proxyRes: (proxyRes: IncomingMessage, req: IncomingMessage, res: ServerResponse) => {
+      const correlationId = correlationIdOf(req);
+      if (correlationId) {
+        proxyRes.headers[CORRELATION_ID_HEADER] = correlationId;
+        res.setHeader(CORRELATION_ID_HEADER, correlationId);
+      }
+    },
+    error: (
+      error: Error,
+      req: IncomingMessage,
+      res: ServerResponse | import('node:net').Socket,
+    ) => {
+      const statusCode = isTimeoutError(error) ? 504 : 502;
+      const code = isTimeoutError(error) ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_ERROR';
+      const correlationId = correlationIdOf(req);
 
-        if (!(res instanceof ServerResponse)) {
-          res.destroy();
-          return;
-        }
+      logger.error(
+        `Proxy ${req.method ?? 'UNKNOWN'} ${req.url ?? '/'} failed ` +
+          `[${correlationId || 'no-correlation-id'}]: ${error.message}`,
+      );
 
-        sendGatewayError(
-          req as unknown as Request,
-          res as unknown as Response,
-          statusCode,
-          code,
-          statusCode === 504 ? 'Upstream service timed out' : 'Upstream service unavailable',
-        );
-      },
+      if (!(res instanceof ServerResponse)) {
+        res.destroy();
+        return;
+      }
+
+      sendGatewayError(
+        req as unknown as Request,
+        res as unknown as Response,
+        statusCode,
+        code,
+        statusCode === 504 ? 'Upstream service timed out' : 'Upstream service unavailable',
+      );
     },
   };
 
+  // Reuse one proxy: a new HPM instance per request retains a server close listener.
+  const proxy = createProxyServer({ changeOrigin: true, xfwd: true });
+  proxy.on('proxyReq', handlers.proxyReq);
+  proxy.on('proxyRes', handlers.proxyRes);
+  proxy.on('error', handlers.error);
+  const servers = new WeakSet<Server>();
   const dispatcher = ((req, res, next) => {
     const route = matchRoute(pathnameOf(req.url));
     if (!route) return next?.();
-    if (!config.get<string>(route.upstream)) {
+    const target = resolveTarget(req);
+    if (!target) {
       sendGatewayError(
         req as Request,
         res as Response,
@@ -122,11 +123,15 @@ export function createGatewayProxy(config: ConfigService): RequestHandler {
       return;
     }
     const body = (req as BufferedRequest).rawBody;
-    const proxy = createProxyMiddleware({
-      ...commonOptions,
+    const server = (req.socket as import('node:net').Socket & { server?: Server }).server;
+    if (server && !servers.has(server)) {
+      servers.add(server);
+      server.once('close', () => proxy.close());
+    }
+    proxy.web(req, res, {
+      target,
       ...(body ? { buffer: Readable.from(body.length ? [body] : []) } : {}),
     });
-    return proxy(req, res, next);
   }) as RequestHandler;
   return dispatcher;
 }

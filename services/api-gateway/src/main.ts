@@ -25,7 +25,7 @@ export function configureGateway(
 ): void {
   const httpAdapter = app.getHttpAdapter().getInstance();
   httpAdapter.disable('x-powered-by');
-  httpAdapter.set('trust proxy', 1);
+  httpAdapter.set('trust proxy', Number(config.get<string>('TRUST_PROXY_HOPS') ?? 0));
 
   app.use(helmet());
   app.use(correlationIdMiddleware);
@@ -62,6 +62,7 @@ export function configureGateway(
 async function bootstrap(): Promise<void> {
   const logger = new Logger('ApiGateway');
   const app = await NestFactory.create(AppModule, { bodyParser: false });
+  app.enableShutdownHooks();
   configureGateway(app, app.get(ConfigService), app.get(RedisService), app.get(JwtService));
 
   const port = Number(process.env.PORT ?? 3000);

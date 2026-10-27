@@ -1,8 +1,13 @@
-# Question Bank Service — P2
+# Question Bank Service
 
 REST: `/api/v1/questions`, `/api/v1/question-groups`. Reads require an access JWT;
 writes require `CONTENT_ADMIN` or `SYSTEM_ADMIN`. `POST /api/v1/questions/reindex`
 requires `SYSTEM_ADMIN`.
+
+`GET /api/v1/ready` probes PostgreSQL; Redis/search can degrade to the documented
+fallbacks. `QUESTION_SEARCH_INDEX` defaults to `questions-v2` and can isolate QA
+indexing. See [P4 Gateway QA](../../scripts/qa/README.md) for the complete
+HTTP/media/search/exam workflow on dedicated storage.
 
 Question payloads use `questionText`, `correctOption`, `options: [{ optionCode,
 optionText }]`, `groupId`, `positionInGroup`, `audioKey`, `imageKey`, `transcript`,

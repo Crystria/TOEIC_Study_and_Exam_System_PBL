@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { QuestionsModule } from './modules/questions/questions.module';
 import { SearchModule } from './modules/search/search.module';
 import { HealthController } from './health/health.controller';
+import { ReadinessController } from './health/readiness.controller';
 import { QuestionBankGrpcController } from './grpc/question-bank.grpc.controller';
 import { GroupsModule } from './modules/groups/groups.module';
 import { OutboxRelay } from './modules/outbox/outbox-relay';
@@ -38,7 +39,7 @@ import { QuestionBankAuthGuard } from './question-bank-auth.guard';
     QuestionsModule,
     GroupsModule,
   ],
-  controllers: [HealthController, QuestionBankGrpcController],
+  controllers: [HealthController, ReadinessController, QuestionBankGrpcController],
   providers: [
     { provide: APP_GUARD, useClass: QuestionBankAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },

@@ -10,11 +10,12 @@ import { ListQuestionsQueryDto } from '../questions/dto/list-questions-query.dto
 export class SearchService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(SearchService.name);
   private readonly client: Client;
-  private readonly index = 'questions-v2';
+  private readonly index: string;
   constructor(
     config: ConfigService,
     private readonly prisma: PrismaService,
   ) {
+    this.index = config.get<string>('QUESTION_SEARCH_INDEX') ?? 'questions-v2';
     this.client = new Client({
       node: config.get<string>('ELASTICSEARCH_NODE') ?? 'http://localhost:19200',
       requestTimeout: 2000,
@@ -146,9 +147,7 @@ export class SearchService implements OnModuleInit, OnModuleDestroy {
       ];
     return where;
   }
-  async search(
-    query: ListQuestionsQueryDto,
-  ): Promise<{
+  async search(query: ListQuestionsQueryDto): Promise<{
     items: QuestionRecord[];
     total: number;
     page: number;
