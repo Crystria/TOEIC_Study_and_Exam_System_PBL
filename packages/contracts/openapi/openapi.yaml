@@ -344,6 +344,46 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
   /api/v1/tests/{testId}:
+    patch:
+      tags: [tests]
+      summary: Cập nhật đề; attempt cũ giữ nguyên snapshot (CONTENT_ADMIN/SYSTEM_ADMIN)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/TestId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string, minLength: 1 }
+                durationSeconds: { type: integer, enum: [7200] }
+                questions:
+                  {
+                    type: array,
+                    minItems: 200,
+                    maxItems: 200,
+                    items: { $ref: '#/components/schemas/TestQuestionInput' },
+                  }
+      responses:
+        '200':
+          description: Đề đã cập nhật
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Test' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+    delete:
+      tags: [tests]
+      summary: Archive đề; không ảnh hưởng attempt cũ
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/TestId'
+      responses:
+        '200': { description: Đề đã archive }
+        '403': { $ref: '#/components/responses/Forbidden' }
     get:
       tags: [tests]
       summary: Chi tiết đề
@@ -389,6 +429,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/TestId'
+        - $ref: '#/components/parameters/IdempotencyKey'
       responses:
         '201':
           description: Attempt Full đã bắt đầu
@@ -459,6 +500,33 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/v1/attempts/{id}/draft:
+    put:
+      tags: [attempts]
+      summary: Merge draft Redis, TTL đến deadline + 1 giờ
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  {
+                    type: array,
+                    maxItems: 200,
+                    items: { $ref: '#/components/schemas/AnswerInput' },
+                  }
+      responses:
+        '200': { description: Đã lưu draft; chưa ghi attempt_answers }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '503': { description: Redis không khả dụng; client giữ local answers và thử lại }
   /api/v1/attempts:
     get:
       tags: [attempts]
@@ -559,7 +627,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SubmitAttemptRequest'
       responses:
-        '200':
+        '201':
           description: Kết quả sau khi nộp
           content:
             application/json:
@@ -647,10 +715,16 @@ components:
         code:
           type: string
         message:
-          type: string
+          oneOf:
+            - type: string
+            - type: array
+              items: { type: string }
         details:
-          type: object
-          additionalProperties: true
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items: { type: string }
         correlationId:
           type: string
         timestamp:
@@ -941,9 +1015,9 @@ components:
           nullable: true
     Test:
       type: object
-      required: [id, title, durationSeconds]
+      required: [testId, title, durationSeconds]
       properties:
-        id:
+        testId:
           type: string
           format: uuid
         title:
@@ -986,16 +1060,21 @@ components:
           type: string
         durationSeconds:
           type: integer
-          minimum: 1
+          enum: [7200]
           example: 7200
         questions:
           type: array
+          minItems: 200
+          maxItems: 200
           items:
             $ref: '#/components/schemas/TestQuestionInput'
     TestPartSummary:
       type: object
       required: [part, totalQuestions, groupCount, available]
       properties:
+        errors:
+          type: array
+          items: { type: string }
         part:
           type: integer
           minimum: 1
@@ -1071,10 +1150,20 @@ components:
           type: integer
         orderNo:
           type: integer
-        groupSnapshotId:
+        groupId:
           type: string
           format: uuid
           nullable: true
+        positionInGroup:
+          type: integer
+          nullable: true
+        correctOption:
+          type: string
+          description: Chỉ có sau SUBMITTED/EXPIRED
+        explanation:
+          type: string
+          nullable: true
+          description: Chỉ có sau SUBMITTED/EXPIRED
         questionText:
           type: string
         transcript:
@@ -1094,6 +1183,21 @@ components:
       type: object
       required: [attemptId, testId, mode, status, durationSeconds, deadlineAt, startedAt]
       properties:
+        readOnly:
+          type: boolean
+          description: true cho attempt legacy không có snapshot
+        serverTime:
+          type: string
+          format: date-time
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionGroup'
+        totalScore:
+          type: integer
+          nullable: true
+        scoreDisclaimer:
+          type: string
         attemptId:
           type: string
           format: uuid
@@ -1144,7 +1248,9 @@ components:
         parts:
           type: array
           items:
-            $ref: '#/components/schemas/AttemptPart'
+            type: integer
+            minimum: 1
+            maximum: 7
         questions:
           type: array
           items:
@@ -1164,12 +1270,14 @@ components:
           type: integer
         correctCount:
           type: integer
+          nullable: true
         accuracy:
           type: number
           format: double
+          nullable: true
     AnswerResult:
       type: object
-      required: [questionId, selectedOption, isCorrect]
+      required: [questionId, selectedOption]
       properties:
         questionId:
           type: string
@@ -1199,6 +1307,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/PartStat'
+            partDetails:
+              type: array
+              items:
+                $ref: '#/components/schemas/PartStat'
             answers:
               type: array
               items:
@@ -1210,7 +1322,7 @@ components:
         selectedOption:
           type: string
           nullable: true
-          enum: [A, B, C, D]
+          enum: [A, B, C, D, null]
     SavedAnswer:
       type: object
       required: [attemptId, questionId, selectedOption, answeredAt]
@@ -1232,14 +1344,12 @@ components:
       properties:
         answers:
           type: array
+          maxItems: 200
           items:
-            type: object
-            required: [questionId, selectedOption]
-            properties:
-              questionId:
-                type: string
-                format: uuid
-              selectedOption:
-                type: string
-                nullable: true
-                enum: [A, B, C, D]
+            $ref: '#/components/schemas/AnswerInput'
+    AnswerInput:
+      type: object
+      required: [questionId, selectedOption]
+      properties:
+        questionId: { type: string, format: uuid }
+        selectedOption: { type: string, nullable: true, enum: [A, B, C, D, null] }

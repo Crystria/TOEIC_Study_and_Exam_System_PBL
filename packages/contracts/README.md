@@ -13,3 +13,5 @@ Hợp đồng dùng chung giữa các service.
 - Thay đổi proto/event schema phải giữ tương thích (compatibility) — kiểm tra ở CI.
 - Không xóa field cũ; chỉ thêm field mới có default.
 - Proto canonical nằm trong `packages/contracts/proto`; service không giữ bản copy.
+- P3: `Question.revision` và `AnswerKeyItem.revision` phải khớp trước khi Exam lưu snapshot.
+  Các field legacy và field number cũ được giữ nguyên; mismatch trả 409 để retry start.

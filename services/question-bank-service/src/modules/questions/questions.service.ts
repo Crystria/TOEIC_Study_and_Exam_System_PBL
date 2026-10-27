@@ -50,7 +50,11 @@ export class QuestionsService {
   }
   async getAnswerKey(ids: string[]) {
     const questions = await this.findByIds(ids);
-    return questions.map((q) => ({ questionId: q.id, correctOption: q.correctOption }));
+    return questions.map((q) => ({
+      questionId: q.id,
+      correctOption: q.correctOption,
+      revision: q.updatedAt.toISOString(),
+    }));
   }
   async create(dto: CreateQuestionDto, createdBy?: string) {
     const id = randomUUID();

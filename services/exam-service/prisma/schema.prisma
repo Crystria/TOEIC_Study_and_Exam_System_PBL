@@ -20,8 +20,8 @@ enum AttemptStatus {
 }
 
 model Test {
-  id              String    @id @default(uuid())
-  title           String
+  id              String    @id @default(uuid()) @map("test_id")
+  title           String    @map("test_title")
   durationSeconds Int       @map("duration_seconds")
   createdBy       String?   @map("created_by")
   createdAt       DateTime  @default(now()) @map("created_at")
@@ -38,19 +38,19 @@ model Test {
 model TestQuestion {
   testId     String @map("test_id")
   questionId String @map("question_id")
-  orderNo    Int    @map("order_no")
+  orderNo    Int    @map("position")
   part       Int
 
   test Test @relation(fields: [testId], references: [id], onDelete: Cascade)
 
-  @@id([testId, orderNo])
-  @@unique([testId, questionId])
+  @@id([testId, questionId])
+  @@unique([testId, orderNo])
   @@index([questionId])
   @@map("test_questions")
 }
 
 model Attempt {
-  id              String        @id @default(uuid())
+  id              String        @id @default(uuid()) @map("attempt_id")
   testId          String        @map("test_id")
   userId          String        @map("user_id")
   mode            AttemptMode   @default(FULL)
@@ -66,12 +66,14 @@ model Attempt {
   correctCount    Int?          @map("correct_count")
   totalQuestions  Int?          @map("total_questions")
   accuracy        Float?
+  snapshotVersion Int           @default(0) @map("snapshot_version")
 
-  test              Test                     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  test              Test                      @relation(fields: [testId], references: [id], onDelete: Cascade)
   answers           AttemptAnswer[]
   parts             AttemptPart[]
   groupSnapshots    AttemptGroupSnapshot[]
   questionSnapshots AttemptQuestionSnapshot[]
+  startRequests     AttemptStartRequest[]
 
   @@index([userId, startedAt])
   @@index([status, deadlineAt])
@@ -79,13 +81,26 @@ model Attempt {
   @@map("attempts")
 }
 
+model AttemptStartRequest {
+  userId      String   @map("user_id")
+  key         String
+  fingerprint String
+  attemptId   String   @map("attempt_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  attempt     Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@id([userId, key])
+  @@index([attemptId])
+  @@map("attempt_start_requests")
+}
+
 model AttemptPart {
-  attemptId      String  @map("attempt_id")
+  attemptId      String @map("attempt_id")
   part           Int
-  orderNo        Int     @map("order_no")
-  totalQuestions Int     @default(0) @map("total_questions")
-  correctCount   Int     @default(0) @map("correct_count")
-  accuracy       Float   @default(0)
+  orderNo        Int    @map("order_no")
+  totalQuestions Int    @default(0) @map("total_questions")
+  correctCount   Int    @default(0) @map("correct_count")
+  accuracy       Float  @default(0)
 
   attempt Attempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
 
@@ -124,6 +139,8 @@ model AttemptQuestionSnapshot {
   part            Int
   orderNo         Int      @map("order_no")
   questionText    String   @map("question_text")
+  positionInGroup Int?     @map("position_in_group")
+  type            String   @default("SINGLE_CHOICE")
   transcript      String?
   audioKey        String?  @map("audio_key")
   imageKey        String?  @map("image_key")
@@ -162,18 +179,21 @@ model AttemptAnswer {
 }
 
 model OutboxEvent {
-  id            String    @id @default(uuid())
-  aggregateType String    @default("unknown") @map("aggregate_type")
-  aggregateId   String    @map("aggregate_id")
-  eventType     String    @map("event_type")
-  payload       Json
-  occurredAt    DateTime  @default(now()) @map("occurred_at")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  publishedAt   DateTime? @map("published_at")
-  retryCount    Int       @default(0) @map("retry_count")
-  lastError     String?   @map("last_error")
+  id             String    @id @default(uuid())
+  aggregateType  String    @default("unknown") @map("aggregate_type")
+  aggregateId    String    @map("aggregate_id")
+  eventType      String    @map("event_type")
+  payload        Json
+  occurredAt     DateTime  @default(now()) @map("occurred_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  publishedAt    DateTime? @map("published_at")
+  retryCount     Int       @default(0) @map("retry_count")
+  lastError      String?   @map("last_error")
+  nextAttemptAt  DateTime  @default(now()) @map("next_attempt_at")
+  deadLetteredAt DateTime? @map("dead_lettered_at")
 
   @@index([publishedAt])
   @@index([aggregateId])
+  @@index([publishedAt, deadLetteredAt, nextAttemptAt])
   @@map("outbox_events")
 }

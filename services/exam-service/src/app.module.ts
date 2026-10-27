@@ -1,10 +1,12 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { ExamAuthGuard } from './exam-auth.guard';
+import { ExamOutboxRelay } from './modules/outbox/outbox-relay';
 import {
   AppConfigModule,
   CorrelationIdMiddleware,
-  JwtAuthGuard,
   MessagingModule,
   RedisModule,
   RolesGuard,
@@ -20,9 +22,21 @@ import { HealthController } from './health/health.controller';
     AppConfigModule,
     RedisModule,
     MessagingModule,
-    JwtModule.register({
+    JwtModule.registerAsync({
       global: true,
-      secret: process.env.JWT_ACCESS_SECRET ?? 'change-me',
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('JWT_ACCESS_SECRET')?.trim();
+        if (!secret) throw new Error('JWT_ACCESS_SECRET is required');
+        return {
+          secret,
+          verifyOptions: {
+            issuer: config.get<string>('JWT_ISSUER') ?? 'toeic-auth',
+            audience: config.get<string>('JWT_AUDIENCE') ?? 'toeic-api',
+            algorithms: ['HS256' as const],
+          },
+        };
+      },
     }),
     PrismaModule,
     GrpcModule,
@@ -31,8 +45,9 @@ import { HealthController } from './health/health.controller';
   ],
   controllers: [HealthController],
   providers: [
-    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: ExamAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
+    ExamOutboxRelay,
   ],
 })
 export class AppModule implements NestModule {

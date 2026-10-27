@@ -37,6 +37,7 @@ message Question {
   string image_key = 13;
   bool is_complete = 14;
   string question_text = 15;
+  string revision = 16;
 }
 
 message QuestionGroupAsset {
@@ -73,6 +74,7 @@ message GetAnswerKeyRequest {
 message AnswerKeyItem {
   string question_id = 1;
   string correct_option = 2;
+  string revision = 3;
 }
 
 message GetAnswerKeyResponse {

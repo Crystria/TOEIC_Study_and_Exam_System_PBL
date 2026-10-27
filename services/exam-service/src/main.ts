@@ -1,14 +1,21 @@
-import { ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpErrorFilter } from './http-error.filter';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
-async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+export function configureHttp(app: INestApplication) {
   app.setGlobalPrefix('api/v1');
+  app.useGlobalFilters(new HttpErrorFilter());
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }),
   );
+}
+
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.create(AppModule);
+  configureHttp(app);
+  app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
     .setTitle('Exam Service API')
@@ -21,4 +28,4 @@ async function bootstrap(): Promise<void> {
   await app.listen(port);
 }
 
-void bootstrap();
+if (require.main === module) void bootstrap();

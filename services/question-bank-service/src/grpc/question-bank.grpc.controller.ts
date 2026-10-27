@@ -34,6 +34,7 @@ export class QuestionBankGrpcController {
         group_id: q.groupId ?? '',
         position_in_group: q.positionInGroup ?? 0,
         is_complete: isComplete(q),
+        revision: q.updatedAt.toISOString(),
         options: q.options.map((o) => ({
           id: `${q.id}:${o.optionCode}`,
           option_key: o.optionCode,
@@ -68,7 +69,11 @@ export class QuestionBankGrpcController {
     const answers = await this.questions.getAnswerKey(ids);
     const found = new Set(answers.map((a) => a.questionId));
     return {
-      answers: answers.map((a) => ({ question_id: a.questionId, correct_option: a.correctOption })),
+      answers: answers.map((a) => ({
+        question_id: a.questionId,
+        correct_option: a.correctOption,
+        revision: a.revision,
+      })),
       missing_ids: ids.filter((id) => !found.has(id)),
     };
   }
