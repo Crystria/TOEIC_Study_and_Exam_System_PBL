@@ -191,16 +191,28 @@ export class LearningService {
   }
 
   async getProgress(userId: string) {
-    const [totalVocabularies, reviewed, dueToday, totalLessons, completedLessons] =
+    const [totalVocabularies, reviewed, dueToday, totalLessons, completedLessons, recentSessions] =
       await this.prisma.$transaction([
         this.prisma.vocabulary.count(),
         this.prisma.userProgress.count({ where: { userId } }),
         this.prisma.userProgress.count({ where: { userId, nextReviewAt: { lte: new Date() } } }),
         this.prisma.grammarLesson.count(),
         this.prisma.lessonProgress.count({ where: { userId, status: 'COMPLETED' } }),
+        this.prisma.learningSession.findMany({
+          where: { userId },
+          orderBy: { startedAt: 'desc' },
+          select: { startedAt: true, endedAt: true, durationSeconds: true },
+        }),
       ]);
 
-    // TODO: bổ sung streak và tổng thời gian học từ LearningSession.
+    const totalMinutes = recentSessions.reduce((sum, session) => {
+      const duration = session.durationSeconds ?? 0;
+      return sum + Math.max(0, Math.round(duration / 60));
+    }, 0);
+
+    const lastSessionAt = recentSessions[0]?.startedAt ?? null;
+    const currentStreak = lastSessionAt ? this.calculateUserStreak(recentSessions) : 0;
+
     return {
       userId,
       vocabulary: {
@@ -210,6 +222,41 @@ export class LearningService {
         masteryRate: totalVocabularies > 0 ? reviewed / totalVocabularies : 0,
       },
       lessons: { total: totalLessons, completed: completedLessons },
+      studySummary: {
+        totalMinutes,
+        sessions: recentSessions.length,
+        currentStreak,
+        lastSessionAt: lastSessionAt?.toISOString() ?? null,
+      },
+      streak: lastSessionAt ? { userId, lastStudyAt: lastSessionAt.toISOString() } : null,
     };
+  }
+
+  private calculateUserStreak(sessions: { startedAt: Date }[]): number {
+    if (!sessions.length) {
+      return 0;
+    }
+
+    const uniqueDays = new Set(
+      sessions.map((session) => new Date(session.startedAt).toISOString().slice(0, 10)),
+    );
+    const days = Array.from(uniqueDays).sort().reverse();
+
+    let streak = 0;
+    let cursor = new Date();
+    cursor.setUTCHours(0, 0, 0, 0);
+
+    for (const day of days) {
+      const current = new Date(day);
+      const diff = Math.round((cursor.getTime() - current.getTime()) / (24 * 60 * 60 * 1000));
+      if (diff === 0 || diff === 1) {
+        streak += 1;
+        cursor = new Date(current);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
   }
 }

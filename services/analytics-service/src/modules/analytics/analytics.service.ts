@@ -9,10 +9,8 @@ const RANGE_DAYS: Record<TimeRange, number | null> = {
   [TimeRange.ALL_TIME]: null,
 };
 
-// SRS: chỉ quy định điều kiện kích hoạt dự đoán là >= 3 lần nộp bài trong 30 ngày.
 const PREDICTION_MIN_ATTEMPTS = 3;
 const PREDICTION_WINDOW_DAYS = 30;
-
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 @Injectable()
@@ -48,6 +46,7 @@ export class AnalyticsService {
         updatedAt: stat?.updatedAt ?? null,
       },
       activitiesInRange: activities,
+      totalActivities: Object.values(activities).reduce((sum, value) => sum + value, 0),
     };
   }
 
@@ -108,20 +107,34 @@ export class AnalyticsService {
       };
     }
 
-    // TODO: SRS mới chỉ chốt điều kiện kích hoạt (>= 3 lần nộp/30 ngày),
-    // công thức dự đoán điểm chưa được đặc tả. Placeholder dưới đây dùng
-    // trung bình cộng điểm các lần nộp gần nhất và sẽ được thay bằng mô hình
-    // hồi quy/trọng số độ mới khi có đặc tả chính thức.
-    const predictedScore = Math.round(
-      recentAttempts.reduce((sum, attempt) => sum + attempt.score, 0) / recentAttempts.length,
-    );
+    const maxScore = recentAttempts.reduce((max, attempt) => {
+      const localMax = attempt.testType === 'MINI' ? 495 : 990;
+      return Math.max(max, localMax);
+    }, 990);
+
+    const weightedAverage = recentAttempts.reduce((sum, attempt, index) => {
+      const weight = index + 1;
+      return sum + attempt.score * weight;
+    }, 0);
+
+    const totalWeight = recentAttempts.reduce((sum, _, index) => sum + (index + 1), 0);
+    const baseline = totalWeight > 0 ? weightedAverage / totalWeight : recentAttempts[0].score;
+    const trend = recentAttempts.length > 1 ? recentAttempts[recentAttempts.length - 1].score - recentAttempts[0].score : 0;
+    const predictedScore = Math.round(Math.max(0, Math.min(maxScore, baseline + trend * 0.25)));
 
     return {
       available: true,
       predictedScore,
       recentAttempts: recentAttempts.length,
       windowDays: PREDICTION_WINDOW_DAYS,
-      method: 'PLACEHOLDER_MEAN',
+      method: 'WEIGHTED_RECENT_TREND',
+      stats: {
+        averageScore: Math.round(
+          recentAttempts.reduce((sum, attempt) => sum + attempt.score, 0) / recentAttempts.length,
+        ),
+        latestScore: recentAttempts[recentAttempts.length - 1]?.score ?? null,
+        trend,
+      },
     };
   }
 
