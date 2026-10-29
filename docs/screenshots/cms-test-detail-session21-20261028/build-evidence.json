@@ -1,0 +1,15 @@
+{
+  "source": "apps/admin-cms",
+  "copy": "tmp/frontend-cms-test-detail-build-20261028",
+  "files": 92,
+  "mismatch": [],
+  "localDependencyFiles": 436,
+  "localDependencyMismatch": [],
+  "buildId": "aYK8EZEgmHS7ZjvbR8k84",
+  "standalone": true,
+  "eslintSource": "8.57.1",
+  "eslintCopy": "8.57.1",
+  "next": "14.2.35",
+  "configurationUnchanged": true,
+  "lintAndTypecheckEnabled": true
+}

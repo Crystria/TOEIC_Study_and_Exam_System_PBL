@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: API cannot run implicitly or target production
+ok 1 - API cannot run implicitly or target production
+  ---
+  duration_ms: 29.3592
+  type: 'test'
+  ...
+# Subtest: CSRF origin and encoded path traversal are rejected before fetch
+ok 2 - CSRF origin and encoded path traversal are rejected before fetch
+  ---
+  duration_ms: 3.2806
+  type: 'test'
+  ...
+# Subtest: opaque IDs are encoded as one upstream segment without changing their value
+ok 3 - opaque IDs are encoded as one upstream segment without changing their value
+  ---
+  duration_ms: 1.993
+  type: 'test'
+  ...
+# Subtest: successful login stores HttpOnly cookies and returns no tokens
+ok 4 - successful login stores HttpOnly cookies and returns no tokens
+  ---
+  duration_ms: 1.784
+  type: 'test'
+  ...
+# Subtest: CMS cannot register and login never accepts a non-active account
+ok 5 - CMS cannot register and login never accepts a non-active account
+  ---
+  duration_ms: 1.2969
+  type: 'test'
+  ...
+# Subtest: session restoration verifies roles from me, not a client persona
+ok 6 - session restoration verifies roles from me, not a client persona
+  ---
+  duration_ms: 0.5658
+  type: 'test'
+  ...
+# Subtest: concurrent 401 session reads rotate once and propagate fresh cookies
+ok 7 - concurrent 401 session reads rotate once and propagate fresh cookies
+  ---
+  duration_ms: 19.638
+  type: 'test'
+  ...
+# Subtest: failed refresh expires cookies; network failure preserves session for retry
+ok 8 - failed refresh expires cookies; network failure preserves session for retry
+  ---
+  duration_ms: 1.0699
+  type: 'test'
+  ...
+# Subtest: logout clears local cookies even if Gateway revocation fails
+ok 9 - logout clears local cookies even if Gateway revocation fails
+  ---
+  duration_ms: 0.9651
+  type: 'test'
+  ...
+# Subtest: mutations are disabled until isolated test writes are explicitly configured
+ok 10 - mutations are disabled until isolated test writes are explicitly configured
+  ---
+  duration_ms: 0.5592
+  type: 'test'
+  ...
+# Subtest: a 401 mutation is sent once and never replayed or silently refreshed
+ok 11 - a 401 mutation is sent once and never replayed or silently refreshed
+  ---
+  duration_ms: 0.7712
+  type: 'test'
+  ...
+# Subtest: backend errors retain validation payload without forwarding cookies or auth headers
+ok 12 - backend errors retain validation payload without forwarding cookies or auth headers
+  ---
+  duration_ms: 0.5017
+  type: 'test'
+  ...
+# Subtest: CMS multi-role access uses arrays and backend rules, metadata stays locked
+ok 13 - CMS multi-role access uses arrays and backend rules, metadata stays locked
+  ---
+  duration_ms: 1.0618
+  type: 'test'
+  ...
+# Subtest: unsafe attempts, AI ownership and media lifecycle cannot be enabled by an arbitrary path
+ok 14 - unsafe attempts, AI ownership and media lifecycle cannot be enabled by an arbitrary path
+  ---
+  duration_ms: 1.1507
+  type: 'test'
+  ...
+# Subtest: user adapters distinguish backend role objects from sanitized session arrays
+ok 15 - user adapters distinguish backend role objects from sanitized session arrays
+  ---
+  duration_ms: 0.8916
+  type: 'test'
+  ...
+# Subtest: vocabulary nullable media and topic counts use source field names
+ok 16 - vocabulary nullable media and topic counts use source field names
+  ---
+  duration_ms: 0.3943
+  type: 'test'
+  ...
+# Subtest: pagination is validated and never inferred from current page length
+ok 17 - pagination is validated and never inferred from current page length
+  ---
+  duration_ms: 0.4903
+  type: 'test'
+  ...
+# Subtest: query allowlists omit demo URL controls and enforce request enums
+ok 18 - query allowlists omit demo URL controls and enforce request enums
+  ---
+  duration_ms: 0.634
+  type: 'test'
+  ...
+# Subtest: result adapter excludes placeholder score and hides grading while in progress
+ok 19 - result adapter excludes placeholder score and hides grading while in progress
+  ---
+  duration_ms: 0.5021
+  type: 'test'
+  ...
+# Subtest: test metadata uses source Full/Mini and real structure, never synthesizes questions
+ok 20 - test metadata uses source Full/Mini and real structure, never synthesizes questions
+  ---
+  duration_ms: 0.5349
+  type: 'test'
+  ...
+# Subtest: question detail and audit fields follow Prisma source, not list/demo projection
+ok 21 - question detail and audit fields follow Prisma source, not list/demo projection
+  ---
+  duration_ms: 0.4542
+  type: 'test'
+  ...
+# Subtest: media URLs are never built from keys and dangerous protocols are rejected
+ok 22 - media URLs are never built from keys and dangerous protocols are rejected
+  ---
+  duration_ms: 0.6287
+  type: 'test'
+  ...
+# Subtest: completion acknowledgement requires the actual status and timestamp
+ok 23 - completion acknowledgement requires the actual status and timestamp
+  ---
+  duration_ms: 0.5959
+  type: 'test'
+  ...
+# Subtest: shared Markdown supports tables/code and never emits HTML or unsafe links
+ok 24 - shared Markdown supports tables/code and never emits HTML or unsafe links
+  ---
+  duration_ms: 0.9493
+  type: 'test'
+  ...
+# Subtest: CMS question/test writes use allowlisted DTOs without losing stored structure
+ok 25 - CMS question/test writes use allowlisted DTOs without losing stored structure
+  ---
+  duration_ms: 5.0684
+  type: 'test'
+  ...
+# Subtest: server validation maps only allowed fields and does not expose arbitrary server details
+ok 26 - server validation maps only allowed fields and does not expose arbitrary server details
+  ---
+  duration_ms: 0.5045
+  type: 'test'
+  ...
+# Subtest: timeout is explicit and does not clear a recoverable session
+ok 27 - timeout is explicit and does not clear a recoverable session
+  ---
+  duration_ms: 0.8513
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 207.4133

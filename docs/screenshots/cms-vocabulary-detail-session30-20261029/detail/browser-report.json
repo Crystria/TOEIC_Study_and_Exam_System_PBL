@@ -1,0 +1,232 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Both exact words/metadata/independent examples, English lang, direct/reload, no write/media/student controls",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard list-detail-return, keyword/topic/size/persona/slow scenario and Back/Forward/reload retain catalog results",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Page2/custom size and scenario survive return; tool stays detail-only; direct agenda remains agenda even with briefing list page",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Tab/Enter reaches preview disclosure and select with visible focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing word/meaning/IPA/example and missing versus unresolved topic are explicit without fallback",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long/unbroken fields and literal HTML have no overflow, injected element/request or mutation on normal restore",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "word-1-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "example-1-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "word-2-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "example-2-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "keyboard-tool-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "missing-fields-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "topic-missing-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "topic-unresolved-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-word-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-meaning-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-ipa-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-topic-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-example-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-003-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-028-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "not-found-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "storageWrites": [],
+  "credentialReads": [],
+  "browser": "156.0.8078.48",
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'demo-vocabulary-001%25252F'\n- 'demo-vocabulary-001%2F'\n                        ^\n\n    at D:\\TOEIC_Study_and_Exam_System_PBL\\scripts\\qa\\cms-vocabulary-detail.cjs:338:14"
+}

@@ -1,0 +1,39 @@
+{
+  "kind": "real unauthenticated local Gateway HTTP probes; no stubs",
+  "checkedAt": "2026-10-29T12:14:37.638Z",
+  "gateway": "http://127.0.0.1:3000/api/v1",
+  "requests": [
+    {
+      "endpoint": "users/me",
+      "method": "GET",
+      "status": null,
+      "error": "GATEWAY_UNREACHABLE",
+      "elapsedMs": 66
+    },
+    {
+      "endpoint": "learning/vocabulary-topics",
+      "method": "GET",
+      "status": null,
+      "error": "GATEWAY_UNREACHABLE",
+      "elapsedMs": 7
+    },
+    {
+      "endpoint": "tests",
+      "method": "GET",
+      "status": null,
+      "error": "GATEWAY_UNREACHABLE",
+      "elapsedMs": 6
+    },
+    {
+      "endpoint": "admin/users",
+      "method": "GET",
+      "status": null,
+      "error": "GATEWAY_UNREACHABLE",
+      "elapsedMs": 6
+    }
+  ],
+  "authenticatedIntegration": "NOT_VERIFIED",
+  "isolatedDataset": "NOT_CONFIRMED",
+  "writesPerformed": 0,
+  "metadataVerified": false
+}

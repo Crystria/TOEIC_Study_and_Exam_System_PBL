@@ -7,6 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  // QA builds can avoid an output held by an older preview process.
+  distDir: process.env.FRONTEND_BUILD_DIR || '.next',
   experimental: {
     outputFileTracingRoot: path.join(__dirname, '../../'),
   },

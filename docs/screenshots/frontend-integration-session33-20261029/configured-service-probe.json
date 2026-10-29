@@ -1,0 +1,173 @@
+{
+  "kind": "read-only TCP checks of configured local hosts; not protocol, DB identity or dataset verification",
+  "targets": [
+    {
+      "service": "api-gateway",
+      "target": "http",
+      "host": "127.0.0.1",
+      "port": 3000,
+      "state": "TCP_CLOSED"
+    },
+    {
+      "service": "api-gateway",
+      "target": "REDIS_URL",
+      "host": "localhost",
+      "port": 7379,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "auth-service",
+      "target": "http",
+      "host": "127.0.0.1",
+      "port": 3001,
+      "state": "TCP_CLOSED"
+    },
+    {
+      "service": "auth-service",
+      "target": "REDIS_URL",
+      "host": "localhost",
+      "port": 7379,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "auth-service",
+      "target": "RABBITMQ_URL",
+      "host": "localhost",
+      "port": 5772,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "auth-service",
+      "target": "DATABASE_URL",
+      "host": "localhost",
+      "port": 5432,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "question-bank-service",
+      "target": "http",
+      "host": "127.0.0.1",
+      "port": 3002,
+      "state": "TCP_CLOSED"
+    },
+    {
+      "service": "question-bank-service",
+      "target": "REDIS_URL",
+      "host": "localhost",
+      "port": 7379,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "question-bank-service",
+      "target": "RABBITMQ_URL",
+      "host": "localhost",
+      "port": 5772,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "question-bank-service",
+      "target": "ELASTICSEARCH_NODE",
+      "host": "localhost",
+      "port": 19200,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "question-bank-service",
+      "target": "MINIO_ENDPOINT",
+      "host": "localhost",
+      "port": 19000,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "question-bank-service",
+      "target": "DATABASE_URL",
+      "host": "localhost",
+      "port": 5432,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "exam-service",
+      "target": "http",
+      "host": "127.0.0.1",
+      "port": 3003,
+      "state": "TCP_CLOSED"
+    },
+    {
+      "service": "exam-service",
+      "target": "REDIS_URL",
+      "host": "localhost",
+      "port": 7379,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "exam-service",
+      "target": "RABBITMQ_URL",
+      "host": "localhost",
+      "port": 5772,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "exam-service",
+      "target": "DATABASE_URL",
+      "host": "localhost",
+      "port": 5432,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "learning-service",
+      "target": "http",
+      "host": "127.0.0.1",
+      "port": 3004,
+      "state": "TCP_CLOSED"
+    },
+    {
+      "service": "learning-service",
+      "target": "REDIS_URL",
+      "host": "localhost",
+      "port": 7379,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "learning-service",
+      "target": "RABBITMQ_URL",
+      "host": "localhost",
+      "port": 5772,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "learning-service",
+      "target": "DATABASE_URL",
+      "host": "localhost",
+      "port": 5432,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "analytics-service",
+      "target": "http",
+      "host": "127.0.0.1",
+      "port": 3005,
+      "state": "TCP_CLOSED"
+    },
+    {
+      "service": "analytics-service",
+      "target": "REDIS_URL",
+      "host": "localhost",
+      "port": 7379,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "analytics-service",
+      "target": "RABBITMQ_URL",
+      "host": "localhost",
+      "port": 5772,
+      "state": "TCP_OPEN"
+    },
+    {
+      "service": "analytics-service",
+      "target": "DATABASE_URL",
+      "host": "localhost",
+      "port": 5432,
+      "state": "TCP_OPEN"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ interface AudioPlayerProps {
   source: string | null;
   label: string;
   missingMessage: string;
+  missingTitle?: string;
   locked?: boolean;
   // Pause even between questions sharing the same stimulus.
   stopKey?: string;
@@ -19,7 +20,14 @@ export function AudioPlayer(props: AudioPlayerProps) {
   return <AudioSource key={props.source ?? 'missing'} {...props} />;
 }
 
-function AudioSource({ source, label, missingMessage, locked = false, stopKey }: AudioPlayerProps) {
+function AudioSource({
+  source,
+  label,
+  missingMessage,
+  missingTitle = 'Chưa có audio minh họa',
+  locked = false,
+  stopKey,
+}: AudioPlayerProps) {
   const audio = useRef<HTMLAudioElement>(null);
   const alive = useRef(false);
   const playRequest = useRef(0);
@@ -71,7 +79,7 @@ function AudioSource({ source, label, missingMessage, locked = false, stopKey }:
     return (
       <div className="player-media-missing">
         <div>
-          <strong>Chưa có audio minh họa</strong>
+          <strong>{missingTitle}</strong>
           <p role="status">{missingMessage}</p>
         </div>
         <Button disabled aria-label={label}>

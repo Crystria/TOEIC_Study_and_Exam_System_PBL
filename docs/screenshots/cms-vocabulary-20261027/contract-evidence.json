@@ -1,0 +1,9 @@
+{
+  "services/learning-service/src/modules/learning/dtos/list-vocabularies-query.dto.ts": "5d1e2c61691dee2f3da43c7dd66fdca07e31bbc995ca9c8fffd6418aba8259f0",
+  "services/learning-service/src/modules/learning/learning.controller.ts": "50ca9616989901654c10847fbc7aca89ee82e860371a8e20c22dda2513abe6ca",
+  "services/learning-service/src/modules/learning/learning.service.ts": "103b176f7ca53e22dd8bee531e93f56f61b23557432fc60427bbf3d43b1838c7",
+  "services/learning-service/prisma/schema.prisma": "66059a23d034a362101c5549891a94a90f6265b88d5b01da72fc96799cf1fdf6",
+  "packages/contracts/openapi/openapi.yaml": "b17833061739593906a3f8c2abfb68a8938009b97f8afe09eb4926cfb74ddb67",
+  "packages/contracts/README.md": "389fec91b2e924490fd400fb32f40e6f4146bde7961f3c2387015b2008968224",
+  "packages/contracts/events/VocabularyLearnedEvent.avsc": "d459670e0582d93bcf29477b30dd769215aa57e6b94e19a5c3ad2a927a81bd6a"
+}

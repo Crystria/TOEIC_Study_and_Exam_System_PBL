@@ -131,3 +131,29 @@ uv run uvicorn app.main:app --reload
 - Commit theo Conventional Commits; scope giới hạn trong `commitlint.config.js`.
 - Mỗi service có pipeline CI riêng theo path-filter (xem `.github/workflows/`).
 - Không commit secret; dùng biến môi trường / secret manager.
+
+## Frontend demo và API local/test
+
+Web: <http://localhost:3006>; CMS: <http://localhost:3007>. Mặc định là DEMO. Nhánh API frontend dùng `NEXT_PUBLIC_DATA_MODE=api`, cấu hình Gateway local/test rõ ràng và phiên cookie HttpOnly qua route frontend `/api/frontend/*`. Không dùng helper JWT localStorage cũ hoặc fallback từ lỗi API sang fixture. Bật thao tác ghi chỉ với dữ liệu kiểm thử cô lập; chưa dùng cho production.
+
+Xem [README web](apps/web/README.md), [README CMS](apps/admin-cms/README.md) và [bàn giao lượt 33](docs/frontend-integration-session33.md) để biết cấu hình, kiểm chứng và dependency hiện tại. [Ma trận contract lượt 32](docs/frontend-integration-session32.md) được giữ nguyên. Mã endpoint tồn tại và test stub đạt không đồng nghĩa tích hợp end-to-end đã nghiệm thu.
+
+Build kiểm tra hai frontend trong cùng một bản sao cô lập, giữ cache dev gốc:
+
+```powershell
+node scripts/qa/frontend-integration-build.cjs --api --evidence-dir tmp/frontend-integration-session33 --build-dir tmp/frontend-integration-session32/build
+```
+
+Chạy preview sau khi build kết thúc thành công, mặc định cổng 3106/3107 để tránh đụng tiến trình dev:
+
+```powershell
+node scripts/qa/frontend-integration-preview.cjs --build-dir tmp/frontend-integration-session32/build --gateway http://127.0.0.1:3000/api/v1
+```
+
+Nhập `stop` trong terminal preview trước khi rebuild. Helper giữ PID của chính nó và từ chối rebuild khi preview đó còn chạy; không dừng server khác. Cả hai app dùng một bản sao nguồn; output `.next-session33` trong bản sao tránh output cũ đang bị giữ. Cache `.next` của repo gốc không dùng cho production QA. Lệnh này không khởi động Gateway hoặc tạo dữ liệu test.
+
+Kiểm tra Gateway local chỉ đọc, không credentials và không ghi DB; dùng tên output mới mỗi lần:
+
+```powershell
+node scripts/qa/frontend-local-readiness.cjs --out tmp/frontend-integration-session33/my-runtime-probe.json
+```

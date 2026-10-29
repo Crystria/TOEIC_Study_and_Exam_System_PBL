@@ -18,10 +18,182 @@ tags:
   - name: learning
   - name: analytics
   - name: ai
-paths: {}
+paths:
+  /api/v1/tests/cms-metadata:
+    get:
+      tags: [tests]
+      operationId: listCmsTestMetadata
+      summary: Danh sách metadata đề thi CMS
+      description: >
+        JWT được kiểm tại Gateway và Exam. Exam chỉ cho phép mảng roles chứa CONTENT_ADMIN;
+        SYSTEM_ADMIN đơn lẻ không kế thừa. Có thể đọc mọi status, không tự lọc PUBLISHED.
+        Keyword là substring title không phân biệt hoa thường theo PostgreSQL;
+        các bộ lọc kết hợp AND. Sắp createdAt giảm dần, không bảo đảm thứ tự phụ khi trùng.
+        Page quá cuối trả items rỗng và giữ page yêu cầu, không clamp.
+        Chỉ năm query parameters dưới đây được phép; không nhận tham số persona/preview CMS.
+      security:
+        - bearerAuth: []
+      x-required-roles: [CONTENT_ADMIN]
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          schema: { type: string }
+        - name: type
+          in: query
+          required: false
+          schema: { type: string, enum: [FULL, MINI] }
+        - name: status
+          in: query
+          required: false
+          description: Bộ lọc đầu vào; không giới hạn từ vựng status trong response.
+          schema: { type: string, enum: [DRAFT, PUBLISHED, ARCHIVED] }
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: size
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+      responses:
+        '200':
+          description: Metadata và số Test khớp bộ lọc; total không phải số câu.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CmsTestMetadataPage' }
+        '400':
+          description: Query sai kiểu/giá trị hoặc có parameter không được hỗ trợ.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/MetadataReadFailure' }
+  /api/v1/tests/cms-metadata/{id}:
+    get:
+      tags: [tests]
+      operationId: getCmsTestMetadata
+      summary: Chi tiết metadata đề thi CMS
+      description: >
+        Cùng chính sách JWT/CONTENT_ADMIN như danh sách; trả trực tiếp một item metadata.
+        Không trả cấu trúc câu hỏi hoặc coi count/status là bằng chứng đề hoàn chỉnh.
+      security:
+        - bearerAuth: []
+      x-required-roles: [CONTENT_ADMIN]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Opaque Test ID, không áp đặt format UUID.
+          schema: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Sáu trường metadata của Test tồn tại.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CmsTestMetadata' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: Không tìm thấy Test.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '500': { $ref: '#/components/responses/MetadataReadFailure' }
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  schemas:
+    CmsTestMetadata:
+      type: object
+      additionalProperties: false
+      required: [id, title, type, durationSeconds, questionCount, status]
+      description: >
+        Chỉ sáu key. Metadata thiếu/không hỗ trợ được chuẩn hóa thành null;
+        ID thiếu/rỗng là lỗi dữ liệu và không được tự tạo. Lỗi query/auth không phải metadata null.
+        ID demo-test-001/demo-test-002 nếu xuất hiện trong ví dụ/tài liệu chỉ là minh họa,
+        không phải record API/DB thật hoặc response đã kiểm trên hệ thống triển khai.
+      properties:
+        id:
+          type: string
+          minLength: 1
+          description: Định danh opaque, bắt buộc có giá trị.
+        title:
+          type: string
+          nullable: true
+          description: Tên lưu thật; thiếu hoặc chỉ có khoảng trắng thành null.
+        type:
+          type: string
+          enum: [FULL, MINI, null]
+          nullable: true
+          description: Không chuyển FULL_TEST/MINI_TEST thành enum này một cách ngầm định.
+        durationSeconds:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Giây lưu thật; thiếu/sai thành null, không suy từ loại đề.
+        questionCount:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: >
+            Aggregate số hàng TestQuestion liên kết với Test, không DISTINCT questionId.
+            Cả list/detail dùng _count.questions, không trả relation. 0 là không có hàng;
+            null là thiếu nguồn count hợp lệ, không phải số 0. Query hợp lệ với Test tồn tại
+            bình thường trả một số. Không chứng minh đề đầy đủ hoặc câu hỏi tồn tại/hợp lệ.
+        status:
+          type: string
+          nullable: true
+          description: Code lưu thật, giữ code lạ; thiếu/rỗng thành null, không định nghĩa lifecycle.
+    CmsTestMetadataPage:
+      type: object
+      additionalProperties: false
+      required: [items, total, page, size]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/CmsTestMetadata' }
+        total: { type: integer, minimum: 0 }
+        page: { type: integer, minimum: 1 }
+        size: { type: integer, minimum: 1, maximum: 50 }
+    ApiError:
+      type: object
+      required: [statusCode, message]
+      properties:
+        statusCode: { type: integer }
+        message:
+          oneOf:
+            - type: string
+            - type: array
+              items: { type: string }
+        error: { type: string }
+  responses:
+    Unauthorized:
+      description: JWT thiếu/sai tại Gateway hoặc Exam; không chuyển thành dữ liệu demo.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    Forbidden:
+      description: Exam từ chối vì không có CONTENT_ADMIN trong mảng roles.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    RateLimited:
+      description: Gateway rate limit có thể xảy ra trước JWT/proxy.
+      headers:
+        Retry-After:
+          schema: { type: string }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    MetadataReadFailure:
+      description: Lỗi đọc dữ liệu hoặc ID lưu không hợp lệ; không trả item null/count 0 thay lỗi.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }

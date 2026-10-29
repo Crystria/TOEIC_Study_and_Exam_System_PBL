@@ -1,0 +1,16 @@
+{
+  "baselineFiles": 2047,
+  "unchanged": 2043,
+  "changed": [
+    "apps/admin-cms/src/components/layout/cms-shell.tsx",
+    "apps/admin-cms/src/components/questions/question-list.tsx",
+    "apps/admin-cms/README.md",
+    "docs/frontend-design-review.md"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "reviewPrefixPreserved": true,
+  "previousEvidenceUnchanged": true,
+  "studentSourceUnchanged": true,
+  "backendAndContractsUnchanged": true
+}

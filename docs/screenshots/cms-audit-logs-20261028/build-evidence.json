@@ -1,0 +1,239 @@
+{
+  "buildDirectory": "tmp/frontend-cms-audit-build-20261028",
+  "sourceFiles": 57,
+  "mismatches": [],
+  "checked": [
+    {
+      "path": "src/app/(auth)/login/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/(dashboard)/audit-logs/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/(dashboard)/layout.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/(dashboard)/lessons/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/(dashboard)/questions/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/(dashboard)/tests/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/(dashboard)/users/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/(dashboard)/vocabulary/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/globals.css",
+      "matches": true
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/app/page.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/audit-logs/audit-log-list.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/auth/login-preview.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/layout/cms-route-preview.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/layout/cms-shell.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/layout/sidebar.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/lessons/lesson-list.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/questions/question-list.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/tests/test-list.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/ui/button.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/ui/card.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/users/user-list.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/components/vocabulary/vocabulary-list.tsx",
+      "matches": true
+    },
+    {
+      "path": "src/lib/api-client.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/audit-logs/demo-repository.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/audit-logs/fixtures.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/audit-logs/query.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/audit-logs/types.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/demo/cms-fixtures.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/lessons/demo-repository.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/lessons/fixtures.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/lessons/query.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/lessons/types.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/questions/demo-repository.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/questions/fixtures.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/questions/query.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/questions/types.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/tests/demo-repository.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/tests/fixtures.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/tests/query.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/tests/types.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/users/demo-repository.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/users/fixtures.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/users/query.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/users/types.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/vocabulary/demo-repository.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/vocabulary/fixtures.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/vocabulary/query.ts",
+      "matches": true
+    },
+    {
+      "path": "src/lib/vocabulary/types.ts",
+      "matches": true
+    },
+    {
+      "path": "src/styles/audit-logs.css",
+      "matches": true
+    },
+    {
+      "path": "src/styles/lessons.css",
+      "matches": true
+    },
+    {
+      "path": "src/styles/questions.css",
+      "matches": true
+    },
+    {
+      "path": "src/styles/tests.css",
+      "matches": true
+    },
+    {
+      "path": "src/styles/users.css",
+      "matches": true
+    },
+    {
+      "path": "src/styles/vocabulary.css",
+      "matches": true
+    },
+    {
+      "path": "public/.gitkeep",
+      "matches": true
+    }
+  ],
+  "buildId": "PFPEirh5fXG_FSVjL6W40",
+  "standaloneExists": true,
+  "cacheIsolated": true,
+  "localEslintVersion": "8.57.1"
+}

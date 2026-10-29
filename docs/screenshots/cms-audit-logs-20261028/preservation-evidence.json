@@ -1,0 +1,15 @@
+{
+  "baselineFiles": 1659,
+  "unchanged": 1655,
+  "changed": [
+    "apps/admin-cms/tsconfig.tests.json",
+    "apps/admin-cms/README.md",
+    "apps/admin-cms/src/app/(dashboard)/audit-logs/page.tsx",
+    "docs/frontend-design-review.md"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "reportPrefixPreserved": true,
+  "reportDateOnlyUpdated": true,
+  "previousEvidencePreserved": true
+}

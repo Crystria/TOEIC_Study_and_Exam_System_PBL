@@ -1,0 +1,32 @@
+{
+  "suites": {
+    "detail-verified": {
+      "checks": 44,
+      "screenshots": 75
+    },
+    "shell-regression": {
+      "checks": 35,
+      "screenshots": 46
+    },
+    "vocabulary-regression": {
+      "checks": 32,
+      "screenshots": 52
+    },
+    "lesson-detail-regression": {
+      "checks": 40,
+      "screenshots": 80
+    },
+    "question-form-regression": {
+      "checks": 44,
+      "screenshots": 48
+    }
+  },
+  "totals": {
+    "checks": 195,
+    "screenshots": 301
+  },
+  "excludedEarlierRuns": [
+    "detail",
+    "detail-final"
+  ]
+}

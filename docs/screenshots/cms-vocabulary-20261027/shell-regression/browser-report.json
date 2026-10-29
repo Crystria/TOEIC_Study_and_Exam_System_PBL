@@ -1,0 +1,867 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Login: required/format errors, focus, Enter, password toggle, loading, local completion, no authentication",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All role destinations: URL, heading, selected item and closed drawer",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "role": "CONTENT_ADMIN",
+      "routes": ["/questions", "/tests", "/lessons", "/vocabulary"]
+    },
+    {
+      "name": "Content Back/reload keeps role, URL and page content",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Account disclosure: Enter/Tab/Escape and focus return; closes on outside click/focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All role destinations: URL, heading, selected item and closed drawer",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "role": "SYSTEM_ADMIN",
+      "routes": ["/users", "/audit-logs"]
+    },
+    {
+      "name": "Keyboard role preview switch, destination focus and system reload",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Back restores both demo role and content after role change",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Skip link focus and account exit/Back after hash restore matching URL/content",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Direct links: cross-role explanation; missing/invalid role defaults to content preview",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "System entry without credentials; storage/cookies/IndexedDB remain empty",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Login: required/format errors, focus, Enter, password toggle, loading, local completion, no authentication",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "All role destinations: URL, heading, selected item and closed drawer",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "role": "CONTENT_ADMIN",
+      "routes": ["/questions", "/tests", "/lessons", "/vocabulary"]
+    },
+    {
+      "name": "Content Back/reload keeps role, URL and page content",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Mobile dialog: keyboard open, initial focus, Tab trap, Escape, close/backdrop, restored trigger focus and Back while open",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Account disclosure: Enter/Tab/Escape and focus return; closes on outside click/focus",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "All role destinations: URL, heading, selected item and closed drawer",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "role": "SYSTEM_ADMIN",
+      "routes": ["/users", "/audit-logs"]
+    },
+    {
+      "name": "Keyboard role preview switch, destination focus and system reload",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Back restores both demo role and content after role change",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Skip link focus and account exit/Back after hash restore matching URL/content",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Direct links: cross-role explanation; missing/invalid role defaults to content preview",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Resize to desktop closes drawer and restores body scrolling",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "System entry without credentials; storage/cookies/IndexedDB remain empty",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Login: required/format errors, focus, Enter, password toggle, loading, local completion, no authentication",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "All role destinations: URL, heading, selected item and closed drawer",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "role": "CONTENT_ADMIN",
+      "routes": ["/questions", "/tests", "/lessons", "/vocabulary"]
+    },
+    {
+      "name": "Content Back/reload keeps role, URL and page content",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Mobile dialog: keyboard open, initial focus, Tab trap, Escape, close/backdrop, restored trigger focus and Back while open",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Account disclosure: Enter/Tab/Escape and focus return; closes on outside click/focus",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "All role destinations: URL, heading, selected item and closed drawer",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "role": "SYSTEM_ADMIN",
+      "routes": ["/users", "/audit-logs"]
+    },
+    {
+      "name": "Keyboard role preview switch, destination focus and system reload",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Back restores both demo role and content after role change",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Skip link focus and account exit/Back after hash restore matching URL/content",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Direct links: cross-role explanation; missing/invalid role defaults to content preview",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Resize to desktop closes drawer and restores body scrolling",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "System entry without credentials; storage/cookies/IndexedDB remain empty",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Additional 320px viewport: login, shell and drawer without horizontal overflow",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "login-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "login-demo-entry-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "login-errors-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "login-loading-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "login-preview-complete-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "questions-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "tests-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "lessons-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "vocabulary-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "account-menu-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "users-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "audit-logs-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "different-role-route-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "size": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "login-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "login-demo-entry-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "login-errors-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "login-loading-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "login-preview-complete-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "questions-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "tests-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "lessons-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "vocabulary-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "content-menu-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "account-menu-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "system-menu-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "users-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "audit-logs-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "different-role-route-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "size": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "login-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "login-demo-entry-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "login-errors-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "login-loading-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "login-preview-complete-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "questions-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "tests-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "lessons-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "vocabulary-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "content-menu-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "account-menu-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "system-menu-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "users-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "audit-logs-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "different-role-route-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "size": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "login-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "size": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "questions-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "size": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "content-menu-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "size": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "browser": "156.0.8078.48",
+  "completed": true
+}

@@ -1,0 +1,69 @@
+{
+  "suites": [
+    {
+      "name": "audit-logs",
+      "completed": true,
+      "checks": 32,
+      "png": 60,
+      "errors": [],
+      "forbiddenRequests": [],
+      "httpErrors": []
+    },
+    {
+      "name": "shell-regression",
+      "completed": true,
+      "checks": 35,
+      "png": 46,
+      "errors": [],
+      "forbiddenRequests": [],
+      "httpErrors": []
+    },
+    {
+      "name": "questions-regression",
+      "completed": true,
+      "checks": 25,
+      "png": 27,
+      "errors": [],
+      "forbiddenRequests": [],
+      "httpErrors": []
+    },
+    {
+      "name": "tests-regression",
+      "completed": true,
+      "checks": 25,
+      "png": 30,
+      "errors": [],
+      "forbiddenRequests": [],
+      "httpErrors": []
+    },
+    {
+      "name": "lessons-regression",
+      "completed": true,
+      "checks": 32,
+      "png": 44,
+      "errors": [],
+      "forbiddenRequests": [],
+      "httpErrors": []
+    },
+    {
+      "name": "vocabulary-regression",
+      "completed": true,
+      "checks": 32,
+      "png": 52,
+      "errors": [],
+      "forbiddenRequests": [],
+      "httpErrors": []
+    },
+    {
+      "name": "users-regression-rerun",
+      "completed": true,
+      "checks": 32,
+      "png": 60,
+      "errors": [],
+      "forbiddenRequests": [],
+      "httpErrors": []
+    }
+  ],
+  "groups": 213,
+  "png": 319
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "file": "services\\exam-service\\src\\modules\\tests\\tests.controller.ts",
+    "sha256": "2344CB1E52FEFEC3BF0BAAD3BAE889322F8511A54F58AED861C4C79902435FFB"
+  },
+  {
+    "file": "services\\exam-service\\src\\modules\\tests\\tests.module.ts",
+    "sha256": "D2D9DF79882CBC9560845E4BDE273AE4E420D414BBBC4AB1C44C67D947317ABD"
+  },
+  {
+    "file": "services\\exam-service\\src\\modules\\tests\\tests.service.ts",
+    "sha256": "428AACECD2AEFE4E644EFA9EDD185BA116943EAFD5F7AA64E9444E316133BD6E"
+  },
+  {
+    "file": "services\\exam-service\\src\\modules\\tests\\dto\\create-test.dto.ts",
+    "sha256": "F70D003883B79876C19E6D7204ABC54A26052D336E222F91DDE24C60C1E24A1B"
+  },
+  {
+    "file": "services\\exam-service\\src\\modules\\tests\\dto\\list-tests-query.dto.ts",
+    "sha256": "4BE16EE82B736D863DD6D79342B52498116492F25A83C215CE1E15474DC85668"
+  },
+  {
+    "file": "services\\exam-service\\src\\modules\\tests\\dto\\update-test.dto.ts",
+    "sha256": "011FDCEE5B017927447B137E399FD6C40E16BCE645F7820D687073D95680631F"
+  },
+  {
+    "file": "services\\exam-service\\prisma\\schema.prisma",
+    "sha256": "32253A6CD527C75E62855441570357A819D20B7E3588532F859C4A2A2F795E80"
+  },
+  {
+    "file": "packages\\contracts\\openapi\\openapi.yaml",
+    "sha256": "B17833061739593906A3F8C2ABFB68A8938009B97F8AFE09EB4926CFB74DDB67"
+  },
+  {
+    "file": "packages\\contracts\\proto\\question_bank.proto",
+    "sha256": "4D002AC1D92FC67A7E3ACBD9D28825F1E935D069A4343D89B1BCC0E8CFF92952"
+  },
+  {
+    "file": "packages\\contracts\\events\\TestSubmittedEvent.avsc",
+    "sha256": "DD0EF9DF88B8174CC74501D7B0E6568D0DA20D17A953F01D73FDDC6A7AEC798B"
+  }
+]

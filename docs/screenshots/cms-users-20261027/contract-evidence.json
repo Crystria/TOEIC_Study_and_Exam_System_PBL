@@ -1,0 +1,110 @@
+[
+  {
+    "file": "services/auth-service/src/modules/users/admin-users.controller.ts",
+    "sha256": "b5a997f757c2adac029636fe64326897daab15a0226056c938fcac3523fc2421"
+  },
+  {
+    "file": "services/auth-service/src/modules/users/users.controller.ts",
+    "sha256": "07d65d38a5b9669ee71e482421ac41621f987431d81a00d9c88137f5804b9982"
+  },
+  {
+    "file": "services/auth-service/src/modules/users/users.module.ts",
+    "sha256": "b6be00e702edfb041344ca33e553d69ac42dfebbbf81034619923b585ab7902d"
+  },
+  {
+    "file": "services/auth-service/src/modules/users/users.service.ts",
+    "sha256": "09298cd97a77f84c5811a64d57a3535b39ba10999abbff80315cac8bddeab1c1"
+  },
+  {
+    "file": "services/auth-service/src/modules/users/dto/list-users-query.dto.ts",
+    "sha256": "cf65394a8db5bbca1f9ede5a8c25a4b8ccabd498d5d89baf279f05e4f71f2378"
+  },
+  {
+    "file": "services/auth-service/src/modules/users/dto/update-profile.dto.ts",
+    "sha256": "07d5898c4c2b13a6259cc49fe5dacfd591d25f6ad0e1dc6a0bdbd69cbe513410"
+  },
+  {
+    "file": "services/auth-service/src/modules/users/dto/update-roles.dto.ts",
+    "sha256": "e87a1d1cecc974aed95cd9a29c891ebb1c5dcde92dfacbc67b7a8a4dbd2068b4"
+  },
+  {
+    "file": "services/auth-service/src/modules/users/dto/update-status.dto.ts",
+    "sha256": "bbb625c46c2c9a04e80da931ba319d876ff14f10b1727e75731d70ddcd92da1a"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/auth.controller.ts",
+    "sha256": "6c344c7f40d99f24814670fcbd0c6167ee12e870a47c0526815c6ad31387f8f0"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/auth.module.ts",
+    "sha256": "34ff8d00ce193af05e9c2ad0981d363749fc0c543b9f73d7a3fe5107e6fde414"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/auth.service.ts",
+    "sha256": "6f3396f80ff84d005e3753ea307bef43e3fa1145eaa273685d3f1776101f5b79"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/sync.controller.ts",
+    "sha256": "1c5855f1cec4b7599695941fcc211bd602aade3d225bb495fef15c058ec29250"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/dto/login.dto.ts",
+    "sha256": "e8611590e6ba808e4a1ce9673f52c644f857bd0c603699c73ed9e618d2cd2e5d"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/dto/refresh.dto.ts",
+    "sha256": "d2632cd57eb70e56d7e86af59f6867f189f2888daada9b54b12601727dc36413"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/dto/register.dto.ts",
+    "sha256": "63e594c95744e907a0c0c288adf0afab321d2d66a3659b991a5a0e3e728d8154"
+  },
+  {
+    "file": "services/auth-service/src/modules/auth/dto/sync.dto.ts",
+    "sha256": "d124399b232f50d3084f17d12ecf235e76a6addb78b03fc5732ab3ec940ae67e"
+  },
+  {
+    "file": "services/auth-service/prisma/schema.prisma",
+    "sha256": "844f04d8049ff63753b7da2d895e4dd394a8918438651b535849487239ab2e60"
+  },
+  {
+    "file": "services/auth-service/src/app.module.ts",
+    "sha256": "c82fb0c34903a2bc52647868464e43d79e2b80593e1cef91db2bcf60c23f12b4"
+  },
+  {
+    "file": "packages/common/src/auth/constants.ts",
+    "sha256": "bd92fb4bb1ad9cd588025668d089d0728f6e96a6153dee44d0f06a0d40370cce"
+  },
+  {
+    "file": "packages/common/src/auth/current-user.decorator.ts",
+    "sha256": "e204f871478b76878e5cc5047672145e28e6d830235ce72939a0fa50e9f8bc5c"
+  },
+  {
+    "file": "packages/common/src/auth/jwt-auth.guard.ts",
+    "sha256": "92f08512771b5121175acaa6d6f9e6dce8e7c20820064d1e6526be902477bd5c"
+  },
+  {
+    "file": "packages/common/src/auth/public.decorator.ts",
+    "sha256": "8f99eb062fe99ffe9674e82ba33628ebe8f8e98a07a22aaf23e58e778ebd1cd1"
+  },
+  {
+    "file": "packages/common/src/auth/roles.decorator.ts",
+    "sha256": "9cd37eefaee5b6ac4f0d504b963e54aa71437290b0466ff65119d4bcf567eb80"
+  },
+  {
+    "file": "packages/common/src/auth/roles.guard.ts",
+    "sha256": "f2d149e7ec369f798a923e6ea21fa0371f01b67c12702bf372d8a241c3261b3c"
+  },
+  {
+    "file": "packages/contracts/README.md",
+    "sha256": "389fec91b2e924490fd400fb32f40e6f4146bde7961f3c2387015b2008968224"
+  },
+  {
+    "file": "packages/contracts/openapi/openapi.yaml",
+    "sha256": "b17833061739593906a3f8c2abfb68a8938009b97f8afe09eb4926cfb74ddb67"
+  },
+  {
+    "file": "services/api-gateway/src/app.module.ts",
+    "sha256": "118dfdc039a3db0936b439abbed27052e2066b7f6e2c361e32f4237f7355c9ea"
+  }
+]

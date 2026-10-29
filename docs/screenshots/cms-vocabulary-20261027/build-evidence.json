@@ -1,0 +1,233 @@
+{
+  "directory": "tmp/frontend-cms-vocabulary-build-20261027",
+  "buildId": "UAE1Ek8FuTNeW5j46iIfk",
+  "standaloneExists": true,
+  "files": [
+    {
+      "file": "src/app/globals.css",
+      "sourceSha256": "5e6eba98556ca66454c166a7a282509701ff7f1ea22837f33d8a12441cc35dd9",
+      "buildSha256": "5e6eba98556ca66454c166a7a282509701ff7f1ea22837f33d8a12441cc35dd9"
+    },
+    {
+      "file": "src/app/layout.tsx",
+      "sourceSha256": "79b0f2e993ce184a5218947da2f388ad06dfedb9ca06d6c3bbb0bcc0b041a1ba",
+      "buildSha256": "79b0f2e993ce184a5218947da2f388ad06dfedb9ca06d6c3bbb0bcc0b041a1ba"
+    },
+    {
+      "file": "src/app/page.tsx",
+      "sourceSha256": "36236beb778b189e301a77dcd26de941a89eb00caafdbd63166cfa7383274c50",
+      "buildSha256": "36236beb778b189e301a77dcd26de941a89eb00caafdbd63166cfa7383274c50"
+    },
+    {
+      "file": "src/lib/api-client.ts",
+      "sourceSha256": "cdcfc6285bf455749ef752600f1041b85be4ea22ca708aba648ef6da6c2932b3",
+      "buildSha256": "cdcfc6285bf455749ef752600f1041b85be4ea22ca708aba648ef6da6c2932b3"
+    },
+    {
+      "file": "src/lib/auth.ts",
+      "sourceSha256": "fb84fab16b54d402a222d6cd13120319cd4595d19349f51ac875a6c249065ed5",
+      "buildSha256": "fb84fab16b54d402a222d6cd13120319cd4595d19349f51ac875a6c249065ed5"
+    },
+    {
+      "file": "src/styles/lessons.css",
+      "sourceSha256": "3fa91db151d93b80a4c38524b095114b208bbbf858c886720f0427f6f7d89f8d",
+      "buildSha256": "3fa91db151d93b80a4c38524b095114b208bbbf858c886720f0427f6f7d89f8d"
+    },
+    {
+      "file": "src/styles/questions.css",
+      "sourceSha256": "5ec44e8d22d8fc2dd2e3e280de0c9718ddbcb818a9ecda233812aeff7b7bb06f",
+      "buildSha256": "5ec44e8d22d8fc2dd2e3e280de0c9718ddbcb818a9ecda233812aeff7b7bb06f"
+    },
+    {
+      "file": "src/styles/tests.css",
+      "sourceSha256": "bc50b005c56b336e07507dea971d1f5ddde2a5ad6befc9b777b9482a14d95716",
+      "buildSha256": "bc50b005c56b336e07507dea971d1f5ddde2a5ad6befc9b777b9482a14d95716"
+    },
+    {
+      "file": "src/styles/vocabulary.css",
+      "sourceSha256": "36331bbfd2693ff0157007511c71c1c226297989067b6c64fa42b7a1ce1846de",
+      "buildSha256": "36331bbfd2693ff0157007511c71c1c226297989067b6c64fa42b7a1ce1846de"
+    },
+    {
+      "file": "src/lib/demo/cms-fixtures.ts",
+      "sourceSha256": "3e57291b6c381aec28bea7b20a9f4dd23271ac297b4ab446fedba53f36c97c74",
+      "buildSha256": "3e57291b6c381aec28bea7b20a9f4dd23271ac297b4ab446fedba53f36c97c74"
+    },
+    {
+      "file": "src/lib/lessons/demo-repository.ts",
+      "sourceSha256": "47dfea3b10249219e86581a22f6e35422d0c6a0f385228144b4becaf66b9c6a0",
+      "buildSha256": "47dfea3b10249219e86581a22f6e35422d0c6a0f385228144b4becaf66b9c6a0"
+    },
+    {
+      "file": "src/lib/lessons/fixtures.ts",
+      "sourceSha256": "9e7ed6ceb305a30b8a37f0ff5706228317673c50f1bea06a94f041ce08c8bf48",
+      "buildSha256": "9e7ed6ceb305a30b8a37f0ff5706228317673c50f1bea06a94f041ce08c8bf48"
+    },
+    {
+      "file": "src/lib/lessons/query.ts",
+      "sourceSha256": "4f78b503b9ecdf7ec91ac7c164d8c9b3c9f7304e52ac49443f71e5109508d04d",
+      "buildSha256": "4f78b503b9ecdf7ec91ac7c164d8c9b3c9f7304e52ac49443f71e5109508d04d"
+    },
+    {
+      "file": "src/lib/lessons/types.ts",
+      "sourceSha256": "165e904e1ffb3a0b67507a51402bfaafa89241607243021dabb9c844cf19e99f",
+      "buildSha256": "165e904e1ffb3a0b67507a51402bfaafa89241607243021dabb9c844cf19e99f"
+    },
+    {
+      "file": "src/lib/questions/demo-repository.ts",
+      "sourceSha256": "73063adf759647a55a4bab9a579353859c08c400e2391d53e920216c7f50176b",
+      "buildSha256": "73063adf759647a55a4bab9a579353859c08c400e2391d53e920216c7f50176b"
+    },
+    {
+      "file": "src/lib/questions/fixtures.ts",
+      "sourceSha256": "f96f95b2a75ed810ac2f68668027c71e8c787b64368c10b554090fd2eddba10a",
+      "buildSha256": "f96f95b2a75ed810ac2f68668027c71e8c787b64368c10b554090fd2eddba10a"
+    },
+    {
+      "file": "src/lib/questions/query.ts",
+      "sourceSha256": "b0e1c6bb30bddbac767e2770d066af7ee7e5cc3031074d13bcd83e32d30ae4d9",
+      "buildSha256": "b0e1c6bb30bddbac767e2770d066af7ee7e5cc3031074d13bcd83e32d30ae4d9"
+    },
+    {
+      "file": "src/lib/questions/types.ts",
+      "sourceSha256": "cbb7e3d90836c82e91055108c5bd09ead54c0c68a94fb2b415c45fb4e45df6df",
+      "buildSha256": "cbb7e3d90836c82e91055108c5bd09ead54c0c68a94fb2b415c45fb4e45df6df"
+    },
+    {
+      "file": "src/lib/tests/demo-repository.ts",
+      "sourceSha256": "7f2be68a7c8bf69c37b8c9363d1feed0041d6b7ff0de0b40589d992c24e7bd74",
+      "buildSha256": "7f2be68a7c8bf69c37b8c9363d1feed0041d6b7ff0de0b40589d992c24e7bd74"
+    },
+    {
+      "file": "src/lib/tests/fixtures.ts",
+      "sourceSha256": "b07635db8c6c64aa9697ede241530ab10985b9da3f48a99f80528c9f4662fdb6",
+      "buildSha256": "b07635db8c6c64aa9697ede241530ab10985b9da3f48a99f80528c9f4662fdb6"
+    },
+    {
+      "file": "src/lib/tests/query.ts",
+      "sourceSha256": "ae37a1703695a18645cc058dc65c144c421e3b68c4a3e6c33ecd4eb8f097b6e5",
+      "buildSha256": "ae37a1703695a18645cc058dc65c144c421e3b68c4a3e6c33ecd4eb8f097b6e5"
+    },
+    {
+      "file": "src/lib/tests/types.ts",
+      "sourceSha256": "f6117a5dd10e22b26ebfa988db9c0a3e16f94d63d4b20750a7432fd234114c12",
+      "buildSha256": "f6117a5dd10e22b26ebfa988db9c0a3e16f94d63d4b20750a7432fd234114c12"
+    },
+    {
+      "file": "src/lib/vocabulary/demo-repository.ts",
+      "sourceSha256": "2baf60439d7546f04d0946e91d0236c899291e6c6c8979667f9dee6541c7af16",
+      "buildSha256": "2baf60439d7546f04d0946e91d0236c899291e6c6c8979667f9dee6541c7af16"
+    },
+    {
+      "file": "src/lib/vocabulary/fixtures.ts",
+      "sourceSha256": "dc14df649544f64d949ed465fca7431f32c17e80171922502415a08281fd91a8",
+      "buildSha256": "dc14df649544f64d949ed465fca7431f32c17e80171922502415a08281fd91a8"
+    },
+    {
+      "file": "src/lib/vocabulary/query.ts",
+      "sourceSha256": "cd5349516ee28082acdf34fe50d0be2735c39c42751c76494dba7178cc8566ee",
+      "buildSha256": "cd5349516ee28082acdf34fe50d0be2735c39c42751c76494dba7178cc8566ee"
+    },
+    {
+      "file": "src/lib/vocabulary/types.ts",
+      "sourceSha256": "e0b6c6336bd6774c8605c0fbd639c60aad825c5b1dce7738180082ad24c12d91",
+      "buildSha256": "e0b6c6336bd6774c8605c0fbd639c60aad825c5b1dce7738180082ad24c12d91"
+    },
+    {
+      "file": "src/components/auth/login-preview.tsx",
+      "sourceSha256": "7ad4cb6d93fd08292dc14d2a35fe4e7b48bcf388bf8711e6dc14d952e9cf6a1d",
+      "buildSha256": "7ad4cb6d93fd08292dc14d2a35fe4e7b48bcf388bf8711e6dc14d952e9cf6a1d"
+    },
+    {
+      "file": "src/components/layout/cms-route-preview.tsx",
+      "sourceSha256": "b6153609ccd6ea7f2700e59daced90dba2d87afae7f108d04ae239b4e432859d",
+      "buildSha256": "b6153609ccd6ea7f2700e59daced90dba2d87afae7f108d04ae239b4e432859d"
+    },
+    {
+      "file": "src/components/layout/cms-shell.tsx",
+      "sourceSha256": "9895ae6a1b7b732ff8df401c93117edd29a297c3f6065ce1018d82d423a46aab",
+      "buildSha256": "9895ae6a1b7b732ff8df401c93117edd29a297c3f6065ce1018d82d423a46aab"
+    },
+    {
+      "file": "src/components/layout/sidebar.tsx",
+      "sourceSha256": "88694e97c31e66ca616828daed67ae8320bc6a9f24af3ec7c2047d6b53ad531d",
+      "buildSha256": "88694e97c31e66ca616828daed67ae8320bc6a9f24af3ec7c2047d6b53ad531d"
+    },
+    {
+      "file": "src/components/lessons/lesson-list.tsx",
+      "sourceSha256": "92edeb819a8723b73447c8efc6b4f0a48e0144f53e7a6537cb82b8a3590186e1",
+      "buildSha256": "92edeb819a8723b73447c8efc6b4f0a48e0144f53e7a6537cb82b8a3590186e1"
+    },
+    {
+      "file": "src/components/questions/question-list.tsx",
+      "sourceSha256": "35e5ddc2ed70325054392ce937ae971a1a8dd27bfc1aa430e52180e807d44a01",
+      "buildSha256": "35e5ddc2ed70325054392ce937ae971a1a8dd27bfc1aa430e52180e807d44a01"
+    },
+    {
+      "file": "src/components/tests/test-list.tsx",
+      "sourceSha256": "57d3b29e24d1becd148ba8a66748aedba879280bb4a68e07ae191d6e23048637",
+      "buildSha256": "57d3b29e24d1becd148ba8a66748aedba879280bb4a68e07ae191d6e23048637"
+    },
+    {
+      "file": "src/components/ui/button.tsx",
+      "sourceSha256": "d7dc5564febdf1a192a7445d3c69b373a47e2979a5683a911cbece2873531598",
+      "buildSha256": "d7dc5564febdf1a192a7445d3c69b373a47e2979a5683a911cbece2873531598"
+    },
+    {
+      "file": "src/components/ui/card.tsx",
+      "sourceSha256": "9ad3f301125d416c60917f15af74eae5a2fb56f5a5ce4288c007b927c63acd9d",
+      "buildSha256": "9ad3f301125d416c60917f15af74eae5a2fb56f5a5ce4288c007b927c63acd9d"
+    },
+    {
+      "file": "src/components/vocabulary/vocabulary-list.tsx",
+      "sourceSha256": "d8268d0f8457b0a920e5d082073b57ab3e226b1d5ca1808e9620e01d072cebc2",
+      "buildSha256": "d8268d0f8457b0a920e5d082073b57ab3e226b1d5ca1808e9620e01d072cebc2"
+    },
+    {
+      "file": "src/app/(dashboard)/layout.tsx",
+      "sourceSha256": "2cc376e4ef1a6c325482b27bb7a6b8a0d2d277dcf6e22f79802179515b9cdc6c",
+      "buildSha256": "2cc376e4ef1a6c325482b27bb7a6b8a0d2d277dcf6e22f79802179515b9cdc6c"
+    },
+    {
+      "file": "src/app/(dashboard)/audit-logs/page.tsx",
+      "sourceSha256": "f7691f51b77d7a6fda834c94bfc9c93507ac6b0465ea7d1b298ed0a826449124",
+      "buildSha256": "f7691f51b77d7a6fda834c94bfc9c93507ac6b0465ea7d1b298ed0a826449124"
+    },
+    {
+      "file": "src/app/(dashboard)/lessons/page.tsx",
+      "sourceSha256": "e4e13827a47efc87a2e6b75feb3112990c8affc8a4ad361cd64a0d6a61b9121c",
+      "buildSha256": "e4e13827a47efc87a2e6b75feb3112990c8affc8a4ad361cd64a0d6a61b9121c"
+    },
+    {
+      "file": "src/app/(dashboard)/questions/page.tsx",
+      "sourceSha256": "fa114d6e1eb19b286b0292d81bf6ec17ccdc36403bb03a6737a8d804a87ed909",
+      "buildSha256": "fa114d6e1eb19b286b0292d81bf6ec17ccdc36403bb03a6737a8d804a87ed909"
+    },
+    {
+      "file": "src/app/(dashboard)/tests/page.tsx",
+      "sourceSha256": "c05087839275e0dd18aa678e7882ca87d0e9ce36dc163d937afe2da4376dad03",
+      "buildSha256": "c05087839275e0dd18aa678e7882ca87d0e9ce36dc163d937afe2da4376dad03"
+    },
+    {
+      "file": "src/app/(dashboard)/users/page.tsx",
+      "sourceSha256": "65ff8457ace39591313cf9ea8f81ebbc5b4d3f1a0c1b9e82505f2065b7e08a92",
+      "buildSha256": "65ff8457ace39591313cf9ea8f81ebbc5b4d3f1a0c1b9e82505f2065b7e08a92"
+    },
+    {
+      "file": "src/app/(dashboard)/vocabulary/page.tsx",
+      "sourceSha256": "8e112f8dff3018ccb396f25ab6b06451cb6be24b5cc262d5475aee5e7921f26a",
+      "buildSha256": "8e112f8dff3018ccb396f25ab6b06451cb6be24b5cc262d5475aee5e7921f26a"
+    },
+    {
+      "file": "src/app/(auth)/login/page.tsx",
+      "sourceSha256": "911ba06863a7258b5e09f8bf8eab5bca559ecc4423c3e61f0fdb25ee8040650d",
+      "buildSha256": "911ba06863a7258b5e09f8bf8eab5bca559ecc4423c3e61f0fdb25ee8040650d"
+    },
+    {
+      "file": "public/.gitkeep",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "buildSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "mismatches": []
+}

@@ -1,0 +1,1361 @@
+[
+  {
+    "file": "SRS.docx",
+    "sha256": "e1e3d2dfaac745e9b75e79769da6b945aa79d388cdac2f0e0bcd25a59f0d83fe",
+    "paragraphCount": 726,
+    "excerpts": [
+      {
+        "index": 109,
+        "text": "Đặc điểm các lớp người dùng"
+      },
+      {
+        "index": 110,
+        "text": "•           Học viên (User):"
+      },
+      {
+        "index": 111,
+        "text": "–          Sử dụng: Web App và Mobile App (iOS/Android)."
+      },
+      {
+        "index": 112,
+        "text": "–          Mục tiêu: Học từ vựng Flashcard, đọc bài giảng ngữ pháp, làm bài thi thử TOEIC, xem lịch sử và thống kê tiến độ."
+      },
+      {
+        "index": 113,
+        "text": "•           Quản trị viên hệ thống (System Administrator / SYSTEM_ADMIN):"
+      },
+      {
+        "index": 114,
+        "text": "–          Sử dụng: Admin CMS - Phân hệ Hệ thống."
+      },
+      {
+        "index": 115,
+        "text": "–          Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung."
+      },
+      {
+        "index": 116,
+        "text": "•           Quản trị viên nội dung (Content Administrator / CONTENT_ADMIN):"
+      },
+      {
+        "index": 117,
+        "text": "–          Sử dụng: Admin CMS - Phân hệ Nội dung."
+      },
+      {
+        "index": 118,
+        "text": "–          Mục tiêu: Quản lý kho câu hỏi trắc nghiệm (Listening & Reading), quản lý các bộ từ vựng Flashcard kèm âm thanh/phiên âm, quản lý bài giảng lý thuyết ngữ pháp, và thiết lập cấu trúc các đề thi thử (Full Test/Mini Test)."
+      },
+      {
+        "index": 150,
+        "text": "DỊCH VỤ XÁC THỰC & NGƯỜI DÙNG"
+      },
+      {
+        "index": 151,
+        "text": "Dịch vụ chịu trách nhiệm quản lý thông tin tài khoản, xác thực quyền hạn theo mô hình RBAC (SYSTEM_ADMIN, CONTENT_ADMIN, USER) và đồng bộ hóa phiên làm việc của người dùng trên nhiều nền tảng."
+      },
+      {
+        "index": 152,
+        "text": "3.1.1 Đăng ký tài khoản (FK-01-Dang-Ky)"
+      },
+      {
+        "index": 153,
+        "text": "Tác nhân thực hiện: Khách (Guest)."
+      },
+      {
+        "index": 154,
+        "text": "Mô tả chức năng: Cho phép người dùng tạo tài khoản học viên mới bằng địa chỉ email cá nhân."
+      },
+      {
+        "index": 155,
+        "text": "Dữ liệu đầu vào (Inputs):"
+      },
+      {
+        "index": 156,
+        "text": "email (Chuỗi, định dạng Email chuẩn, bắt buộc)"
+      },
+      {
+        "index": 157,
+        "text": "password (Chuỗi, tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường, số, bắt buộc)"
+      },
+      {
+        "index": 158,
+        "text": "confirm_password (Chuỗi, khớp với password, bắt buộc)"
+      },
+      {
+        "index": 159,
+        "text": "full_name (Chuỗi, tối thiểu 2 ký tự, bắt buộc)"
+      },
+      {
+        "index": 160,
+        "text": "Dữ liệu đầu ra (Outputs):"
+      },
+      {
+        "index": 161,
+        "text": "HTTP 201 (Created): Trả về đối tượng User gồm user_id (UUIDv4), email, full_name, role (USER), status (INACTIVE), created_at."
+      },
+      {
+        "index": 162,
+        "text": "HTTP 400 (Bad Request): Thông báo lỗi dữ liệu không hợp lệ. HTTP 409 (Conflict): Email đã tồn tại trong hệ thống."
+      },
+      {
+        "index": 163,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 164,
+        "text": "Kiểm tra tính duy nhất của Email trong cơ sở dữ liệu auth_db.users; nếu trùng trả về HTTP 409 (Conflict)."
+      },
+      {
+        "index": 165,
+        "text": "Mật khẩu bắt buộc phải được mã hóa băm một chiều bằng thuật toán BCrypt (Salt Work Factor = 12) trước khi lưu vào database."
+      },
+      {
+        "index": 166,
+        "text": "Tài khoản mới mặc định ở trạng thái INACTIVE; hệ thống gửi email kích hoạt và tự động chuyển sang ACTIVE sau khi người dùng xác thực liên kết. Tự động gán vai trò mặc định là USER cho mọi tài khoản đăng ký mới."
+      },
+      {
+        "index": 167,
+        "text": "3.1.2 Đăng nhập hệ thống (FK-02-Dang-Nhap)"
+      },
+      {
+        "index": 168,
+        "text": "Tác nhân thực hiện: Tất cả người dùng (USER, SYSTEM_ADMIN, CONTENT_ADMIN)."
+      },
+      {
+        "index": 169,
+        "text": "Mô tả chức năng: Xác thực thông tin người dùng và cấp cặp Token JWT bảo mật để truy cập các tài nguyên hệ thống."
+      },
+      {
+        "index": 170,
+        "text": "Dữ liệu đầu vào (Inputs):"
+      },
+      {
+        "index": 171,
+        "text": "email (Chuỗi, bắt buộc)"
+      },
+      {
+        "index": 172,
+        "text": "password (Chuỗi, bắt buộc)"
+      },
+      {
+        "index": 173,
+        "text": "Dữ liệu đầu ra (Outputs):"
+      },
+      {
+        "index": 174,
+        "text": "HTTP 200 (OK): Cặp Token gồm access_token (JWT, thời hạn 15 phút) và refresh_token (UUIDv4 lưu dạng token_hash trong DB, thời hạn 7 ngày) kèm danh sách vai trò roles."
+      },
+      {
+        "index": 175,
+        "text": "HTTP 401 (Unauthorized): Thông báo \"Tài khoản hoặc mật khẩu không chính xác\"."
+      },
+      {
+        "index": 176,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 177,
+        "text": "Tài khoản ở trạng thái SUSPENDED hoặc INACTIVE không thể đăng nhập."
+      },
+      {
+        "index": 178,
+        "text": "Tự động tăng biến đếm nhập sai mật khẩu; khóa tài khoản tạm thời 15 phút nếu nhập sai 5 lần liên tiếp."
+      },
+      {
+        "index": 179,
+        "text": "3.1.3 Quản lý người dùng & phân quyền hệ thống (FK-03-Quan-Ly-Nguoi-Dung)"
+      },
+      {
+        "index": 180,
+        "text": "Tác nhân thực hiện: Quản trị viên hệ thống (SYSTEM_ADMIN) đối với phân quyền/trạng thái; Học viên (USER) đối với hồ sơ cá nhân."
+      },
+      {
+        "index": 181,
+        "text": "Mô tả chức năng: Cho phép học viên sửa hồ sơ cá nhân và System Admin quản lý, phân quyền, thay đổi trạng thái tài khoản toàn hệ thống."
+      },
+      {
+        "index": 182,
+        "text": "Dữ liệu đầu vào (Inputs):"
+      },
+      {
+        "index": 183,
+        "text": "Đối với Học viên: full_name (Chuỗi), avatar_key (Chuỗi), phone_number (Chuỗi)."
+      },
+      {
+        "index": 184,
+        "text": "Đối với System Admin: user_id (UUIDv4), status (Enum: ACTIVE, SUSPENDED, INACTIVE), roles (Mảng Enum: SYSTEM_ADMIN, CONTENT_ADMIN, USER)."
+      },
+      {
+        "index": 185,
+        "text": "Dữ liệu đầu ra (Outputs):"
+      },
+      {
+        "index": 186,
+        "text": "HTTP 200 (OK): Trả về thực thể người dùng đã cập nhật."
+      },
+      {
+        "index": 187,
+        "text": "HTTP 403 (Forbidden): Trả về lỗi nếu tài khoản không có quyền SYSTEM_ADMIN mà cố tình gọi API phân quyền."
+      },
+      {
+        "index": 188,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 189,
+        "text": "Chỉ tài khoản có vai trò SYSTEM_ADMIN mới có quyền gán/thay đổi thuộc tính roles và status của tài khoản khác."
+      },
+      {
+        "index": 190,
+        "text": "Ghi vết nhật ký quản trị (Audit Log) cho mọi thao tác nâng/hạ quyền hạn tài khoản."
+      }
+    ]
+  },
+  {
+    "file": "tai_lieu_thiet_ke_CSDL.docx",
+    "sha256": "a6d70a829ef84efbc67c42d1386c756ecd55875389ab61d3d4590276122dba13",
+    "paragraphCount": 2627,
+    "excerpts": [
+      {
+        "index": 219,
+        "text": ""
+      },
+      {
+        "index": 220,
+        "text": "User"
+      },
+      {
+        "index": 221,
+        "text": "Tài khoản và hồ sơ: user_id UUID, email varchar(320), password_hash varchar(60), full_name varchar(255), avatar_key text, phone_number varchar(32), status, failed_login_count, locked_until, timestamps"
+      },
+      {
+        "index": 222,
+        "text": "PK user_id; candidate key email; email, full_name bắt buộc khi đăng ký; avatar, phone, locked_until NULL; status mặc định INACTIVE; failed count mặc định 0"
+      },
+      {
+        "index": 223,
+        "text": "Email duy nhất; password BCrypt cost 12; khóa 15 phút sau 5 lần sai; FK-01, FK-02, FK-03"
+      },
+      {
+        "index": 224,
+        "text": "Role"
+      },
+      {
+        "index": 225,
+        "text": "Danh mục vai trò: role_code, name (SYSTEM_ADMIN, CONTENT_ADMIN, USER)"
+      },
+      {
+        "index": 226,
+        "text": "PK role_code; không NULL"
+      },
+      {
+        "index": 227,
+        "text": "Miền giá trị đóng; quản lý RBAC"
+      },
+      {
+        "index": 228,
+        "text": "UserRole"
+      },
+      {
+        "index": 229,
+        "text": "Gán nhiều vai trò cho một User: user_id, role_code, assigned_at"
+      },
+      {
+        "index": 230,
+        "text": "PK ghép (user_id, role_code)"
+      },
+      {
+        "index": 231,
+        "text": "Mỗi user đăng ký mới phải có USER; chỉ SYSTEM_ADMIN được thay đổi"
+      },
+      {
+        "index": 619,
+        "text": "5.2.1 auth_db.users"
+      },
+      {
+        "index": 620,
+        "text": "Lưu trữ tài khoản, thông tin hồ sơ, trạng thái đăng nhập và trạng thái khóa tạm thời."
+      },
+      {
+        "index": 621,
+        "text": "Column"
+      },
+      {
+        "index": 622,
+        "text": "Type"
+      },
+      {
+        "index": 623,
+        "text": "Key"
+      },
+      {
+        "index": 624,
+        "text": "NULL"
+      },
+      {
+        "index": 625,
+        "text": "UNIQUE"
+      },
+      {
+        "index": 626,
+        "text": "Mô tả"
+      },
+      {
+        "index": 627,
+        "text": "user_id"
+      },
+      {
+        "index": 628,
+        "text": "UUID"
+      },
+      {
+        "index": 629,
+        "text": "PK"
+      },
+      {
+        "index": 630,
+        "text": "Không"
+      },
+      {
+        "index": 631,
+        "text": "Không"
+      },
+      {
+        "index": 632,
+        "text": "Định danh người dùng; là Logical Reference khi nằm ngoài Auth DB."
+      },
+      {
+        "index": 633,
+        "text": "email"
+      },
+      {
+        "index": 634,
+        "text": "VARCHAR(320)"
+      },
+      {
+        "index": 635,
+        "text": "-"
+      },
+      {
+        "index": 636,
+        "text": "Không"
+      },
+      {
+        "index": 637,
+        "text": "Không"
+      },
+      {
+        "index": 638,
+        "text": "Thuộc tính email theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 639,
+        "text": "password_hash"
+      },
+      {
+        "index": 640,
+        "text": "VARCHAR(60)"
+      },
+      {
+        "index": 641,
+        "text": "-"
+      },
+      {
+        "index": 642,
+        "text": "Có"
+      },
+      {
+        "index": 643,
+        "text": "Không"
+      },
+      {
+        "index": 644,
+        "text": "Thuộc tính password hash theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 645,
+        "text": "full_name"
+      },
+      {
+        "index": 646,
+        "text": "VARCHAR(255)"
+      },
+      {
+        "index": 647,
+        "text": "-"
+      },
+      {
+        "index": 648,
+        "text": "Không"
+      },
+      {
+        "index": 649,
+        "text": "Không"
+      },
+      {
+        "index": 650,
+        "text": "Thuộc tính full name theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 651,
+        "text": "avatar_key"
+      },
+      {
+        "index": 652,
+        "text": "TEXT"
+      },
+      {
+        "index": 653,
+        "text": "-"
+      },
+      {
+        "index": 654,
+        "text": "Có"
+      },
+      {
+        "index": 655,
+        "text": "Không"
+      },
+      {
+        "index": 656,
+        "text": "Thuộc tính avatar key theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 657,
+        "text": "phone_number"
+      },
+      {
+        "index": 658,
+        "text": "VARCHAR(32)"
+      },
+      {
+        "index": 659,
+        "text": "-"
+      },
+      {
+        "index": 660,
+        "text": "Có"
+      },
+      {
+        "index": 661,
+        "text": "Không"
+      },
+      {
+        "index": 662,
+        "text": "Thuộc tính phone number theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 663,
+        "text": "status"
+      },
+      {
+        "index": 664,
+        "text": "VARCHAR(16)"
+      },
+      {
+        "index": 665,
+        "text": "-"
+      },
+      {
+        "index": 666,
+        "text": "Không"
+      },
+      {
+        "index": 667,
+        "text": "Không"
+      },
+      {
+        "index": 668,
+        "text": "Trạng thái nghiệp vụ theo miền CHECK của bảng."
+      },
+      {
+        "index": 669,
+        "text": "failed_login_count"
+      },
+      {
+        "index": 670,
+        "text": "INTEGER"
+      },
+      {
+        "index": 671,
+        "text": "-"
+      },
+      {
+        "index": 672,
+        "text": "Không"
+      },
+      {
+        "index": 673,
+        "text": "Không"
+      },
+      {
+        "index": 674,
+        "text": "Thuộc tính failed login count theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 675,
+        "text": "locked_until"
+      },
+      {
+        "index": 676,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 677,
+        "text": "-"
+      },
+      {
+        "index": 678,
+        "text": "Có"
+      },
+      {
+        "index": 679,
+        "text": "Không"
+      },
+      {
+        "index": 680,
+        "text": "Thuộc tính locked until theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 681,
+        "text": "created_at"
+      },
+      {
+        "index": 682,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 683,
+        "text": "-"
+      },
+      {
+        "index": 684,
+        "text": "Không"
+      },
+      {
+        "index": 685,
+        "text": "Không"
+      },
+      {
+        "index": 686,
+        "text": "Thời điểm bản ghi được tạo."
+      },
+      {
+        "index": 687,
+        "text": "updated_at"
+      },
+      {
+        "index": 688,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 689,
+        "text": "-"
+      },
+      {
+        "index": 690,
+        "text": "Không"
+      },
+      {
+        "index": 691,
+        "text": "Không"
+      },
+      {
+        "index": 692,
+        "text": "Thời điểm bản ghi được cập nhật gần nhất."
+      },
+      {
+        "index": 693,
+        "text": ""
+      },
+      {
+        "index": 694,
+        "text": "5.2.2 auth_db.roles"
+      },
+      {
+        "index": 695,
+        "text": "Định nghĩa danh mục vai trò RBAC được hệ thống hỗ trợ."
+      },
+      {
+        "index": 696,
+        "text": "Column"
+      },
+      {
+        "index": 697,
+        "text": "Type"
+      },
+      {
+        "index": 698,
+        "text": "Key"
+      },
+      {
+        "index": 699,
+        "text": "NULL"
+      },
+      {
+        "index": 700,
+        "text": "UNIQUE"
+      },
+      {
+        "index": 701,
+        "text": "Mô tả"
+      },
+      {
+        "index": 702,
+        "text": "role_code"
+      },
+      {
+        "index": 703,
+        "text": "VARCHAR(32)"
+      },
+      {
+        "index": 704,
+        "text": "PK"
+      },
+      {
+        "index": 705,
+        "text": "Không"
+      },
+      {
+        "index": 706,
+        "text": "Không"
+      },
+      {
+        "index": 707,
+        "text": "Thuộc tính role code theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 708,
+        "text": "name"
+      },
+      {
+        "index": 709,
+        "text": "VARCHAR(100)"
+      },
+      {
+        "index": 710,
+        "text": "-"
+      },
+      {
+        "index": 711,
+        "text": "Không"
+      },
+      {
+        "index": 712,
+        "text": "Không"
+      },
+      {
+        "index": 713,
+        "text": "Tên hiển thị của vai trò."
+      },
+      {
+        "index": 714,
+        "text": ""
+      },
+      {
+        "index": 715,
+        "text": "5.2.3 auth_db.user_roles"
+      },
+      {
+        "index": 716,
+        "text": "Biểu diễn quan hệ nhiều nhiều giữa tài khoản và vai trò."
+      },
+      {
+        "index": 717,
+        "text": "Column"
+      },
+      {
+        "index": 718,
+        "text": "Type"
+      },
+      {
+        "index": 719,
+        "text": "Key"
+      },
+      {
+        "index": 720,
+        "text": "NULL"
+      },
+      {
+        "index": 721,
+        "text": "UNIQUE"
+      },
+      {
+        "index": 722,
+        "text": "Mô tả"
+      },
+      {
+        "index": 723,
+        "text": "user_id"
+      },
+      {
+        "index": 724,
+        "text": "UUID"
+      },
+      {
+        "index": 725,
+        "text": "PK, FK"
+      },
+      {
+        "index": 726,
+        "text": "Không"
+      },
+      {
+        "index": 727,
+        "text": "Không"
+      },
+      {
+        "index": 728,
+        "text": "Định danh người dùng; là Logical Reference khi nằm ngoài Auth DB."
+      },
+      {
+        "index": 729,
+        "text": "role_code"
+      },
+      {
+        "index": 730,
+        "text": "VARCHAR(32)"
+      },
+      {
+        "index": 731,
+        "text": "PK, FK"
+      },
+      {
+        "index": 732,
+        "text": "Không"
+      },
+      {
+        "index": 733,
+        "text": "Không"
+      },
+      {
+        "index": 734,
+        "text": "Thuộc tính role code theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 735,
+        "text": "assigned_at"
+      },
+      {
+        "index": 736,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 737,
+        "text": "-"
+      },
+      {
+        "index": 738,
+        "text": "Không"
+      },
+      {
+        "index": 739,
+        "text": "Không"
+      },
+      {
+        "index": 740,
+        "text": "Thuộc tính assigned at theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 2555,
+        "text": "Ghi chú tránh dư thừa"
+      },
+      {
+        "index": 2556,
+        "text": "ux_users_email_ci lower(email)"
+      },
+      {
+        "index": 2557,
+        "text": "Đăng ký và đăng nhập bằng email"
+      },
+      {
+        "index": 2558,
+        "text": "UNIQUE đồng thời phục vụ lookup"
+      },
+      {
+        "index": 2559,
+        "text": "idx_users_status"
+      },
+      {
+        "index": 2560,
+        "text": "Danh sách/khóa tài khoản theo trạng thái"
+      },
+      {
+        "index": 2561,
+        "text": "Chỉ tạo vì Admin filter status"
+      },
+      {
+        "index": 2562,
+        "text": "idx_user_roles_role"
+      },
+      {
+        "index": 2563,
+        "text": "Liệt kê user theo role"
+      },
+      {
+        "index": 2564,
+        "text": "PK đã cover user_id nên chỉ cần chiều ngược"
+      }
+    ]
+  },
+  {
+    "file": "Thiet_ke_kien_truc_Storage.docx",
+    "sha256": "d6e3d72a58b6262e2724c636c5acca7071b975c9a64b9c94e55395d392d89bc3",
+    "paragraphCount": 67,
+    "excerpts": [
+      {
+        "index": 0,
+        "text": "TÀI LIỆU THIẾT KẾ KIẾN TRÚC STORAGE "
+      },
+      {
+        "index": 1,
+        "text": "Tài liệu kiến trúc xác định MinIO là Object Storage self-hosted, đồng thời client sẽ xin Presigned URL từ backend rồi upload trực tiếp lên S3/MinIO, tránh đi qua API Gateway. Tài liệu database cũng dùng các trường avatar_key, audio_key, image_key để tham chiếu đến object trên MinIO."
+      },
+      {
+        "index": 2,
+        "text": "1. Kiến trúc Storage đề xuất"
+      },
+      {
+        "index": 3,
+        "text": "Điểm quan trọng của kiến trúc:- File không đi qua NestJS/API Gateway.- Backend chỉ chịu trách nhiệm: Xác thực user, kiểm tra quyền, sinh object key, sinh Presigned URL, và lưu audio_key/image_key/avatar_key vào PostgreSQL.- Client upload (Presigned) trực tiếp lên MinIO; download media công khai qua CDN."
+      },
+      {
+        "index": 4,
+        "text": "2. Thiết kế và Tổ chức Bucket"
+      },
+      {
+        "index": 5,
+        "text": "Không nên tạo một bucket cho mỗi file (tránh hàng nghìn bucket). Thay vào đó, thiết kế 2 bucket chính:"
+      },
+      {
+        "index": 6,
+        "text": "Bucket"
+      },
+      {
+        "index": 7,
+        "text": "Mục đích"
+      },
+      {
+        "index": 8,
+        "text": "Public"
+      },
+      {
+        "index": 9,
+        "text": "toeic-media"
+      },
+      {
+        "index": 10,
+        "text": "Audio/image phục vụ học TOEIC (chứa audio/image câu hỏi, flashcard, vocabulary)"
+      },
+      {
+        "index": 11,
+        "text": "Có (public-read + CDN)"
+      },
+      {
+        "index": 12,
+        "text": "toeic-user"
+      },
+      {
+        "index": 13,
+        "text": "Avatar, file riêng của user"
+      },
+      {
+        "index": 14,
+        "text": "Không (private, presigned)"
+      },
+      {
+        "index": 15,
+        "text": "3. Cấu trúc Object Key"
+      },
+      {
+        "index": 16,
+        "text": "Object key cần được phân cấp rõ ràng để dễ quản lý."
+      },
+      {
+        "index": 17,
+        "text": "3.1. Question Audio/Image"
+      },
+      {
+        "index": 18,
+        "text": "Audio: questions/listening/part-1/{question_id}/audio.mp3Image: questions/listening/part-1/{question_id}/image.pngOption: questions/reading/part-7/{question_id}/options/A.png"
+      },
+      {
+        "index": 19,
+        "text": "3.2. Vocabulary"
+      },
+      {
+        "index": 20,
+        "text": "Vocabulary: learning/vocabulary/{vocabulary_id}/audio.mp3"
+      },
+      {
+        "index": 21,
+        "text": "3.3 Avatar"
+      },
+      {
+        "index": 22,
+        "text": "Avatar: avatars/{user_id}/avatar.jpg"
+      },
+      {
+        "index": 23,
+        "text": "4. Thiết kế Database (PostgreSQL & MinIO)"
+      },
+      {
+        "index": 24,
+        "text": "Nguyên tắc quan trọng: MinIO lưu file, PostgreSQL lưu metadata và object key.Không nên lưu URL đầy đủ trong database (như http://minio:9000/toeic-media/...). Chỉ nên lưu key (ví dụ: audio_key = questions/listening/part-1/{question_id}/audio.mp3) để thống nhất và linh hoạt khi đổi domain."
+      },
+      {
+        "index": 25,
+        "text": "5. Luồng Upload và Download"
+      },
+      {
+        "index": 26,
+        "text": "5.1. Luồng Upload"
+      },
+      {
+        "index": 27,
+        "text": "1. Frontend gọi API POST /api/v1/questions/{id}/media/presign2. Backend (Question Service) xác thực, sinh object key và Presigned URL trả về cho Frontend.3. Frontend PUT trực tiếp file lên MinIO bằng URL vừa nhận.4. Backend cập nhật audio_key/image_key vào database. Avatar: PATCH /api/v1/users/me/avatar/presign (bucket toeic-user). Vocabulary audio: POST /api/v1/learning/vocabularies/{id}/media/presign (bucket toeic-media)."
+      },
+      {
+        "index": 28,
+        "text": "5.2. Luồng Download/Play Audio"
+      },
+      {
+        "index": 29,
+        "text": "1. Client GET thông tin câu hỏi (chứa audio_key/image_key).2. Backend trả về CDN URL công khai cho bucket toeic-media.3. Client phát/tải file trực tiếp từ CDN."
+      },
+      {
+        "index": 30,
+        "text": "6. Phân quyền và Bảo mật (MinIO)"
+      },
+      {
+        "index": 31,
+        "text": "- toeic-media: Public-read = ON (phục vụ qua CDN). toeic-user: Private (chỉ truy cập qua Presigned URL).- Phân quyền theo Microservice (IAM policy theo bucket/prefix; object key lưu trong DB không kèm bucket): "
+      }
+    ]
+  },
+  {
+    "file": "Thiết kế Event.docx",
+    "sha256": "c1bc6bb143bdaaa871bf0c07716baf0ba19ed2e25a16e535b2e4d8c86a3c734d",
+    "paragraphCount": 147,
+    "excerpts": [
+      {
+        "index": 115,
+        "text": "4. Sự kiện Đồng bộ Trạng thái (UserSyncCompletedEvent)"
+      },
+      {
+        "index": 116,
+        "text": "Mục đích: Cập nhật trạng thái đồng bộ tiến trình học giữa các thiết bị của người dùng."
+      },
+      {
+        "index": 117,
+        "text": "Producer: Auth & User ServiceBảng Outbox: auth_db.outbox_events"
+      },
+      {
+        "index": 118,
+        "text": "Điều kiện kích hoạt (Trigger): Kích hoạt sau khi tiến trình đồng bộ trạng thái đa thiết bị được ghi nhận thành công theo cơ chế Last-Write-Wins."
+      },
+      {
+        "index": 119,
+        "text": "Consumer: Learning & Theory Service"
+      },
+      {
+        "index": 120,
+        "text": "Hành động dự kiến: Nhận tín hiệu qua Message Broker để cập nhật dữ liệu tiến độ nội bộ trên server, đảm bảo dữ liệu cũ không ghi đè dữ liệu mới hơn."
+      },
+      {
+        "index": 121,
+        "text": "Cấu trúc dữ liệu (Payload)"
+      },
+      {
+        "index": 122,
+        "text": "Trường (Field)"
+      },
+      {
+        "index": 123,
+        "text": "Kiểu dữ liệu"
+      },
+      {
+        "index": 124,
+        "text": "Mô tả"
+      },
+      {
+        "index": 125,
+        "text": "event_id"
+      },
+      {
+        "index": 126,
+        "text": "UUID"
+      },
+      {
+        "index": 127,
+        "text": "Idempotency key"
+      },
+      {
+        "index": 128,
+        "text": "occurred_at"
+      },
+      {
+        "index": 129,
+        "text": "Timestamp"
+      },
+      {
+        "index": 130,
+        "text": "Thời gian sự kiện xảy ra"
+      },
+      {
+        "index": 131,
+        "text": "user_id"
+      },
+      {
+        "index": 132,
+        "text": "UUID"
+      },
+      {
+        "index": 133,
+        "text": "ID của người dùng"
+      },
+      {
+        "index": 134,
+        "text": "client_device_id"
+      },
+      {
+        "index": 135,
+        "text": "String"
+      },
+      {
+        "index": 136,
+        "text": "ID thiết bị (Client Device ID)"
+      },
+      {
+        "index": 137,
+        "text": "server_updated_at"
+      },
+      {
+        "index": 138,
+        "text": "Timestamp"
+      },
+      {
+        "index": 139,
+        "text": "Thời điểm server ghi nhận trạng thái"
+      },
+      {
+        "index": 140,
+        "text": "version"
+      },
+      {
+        "index": 141,
+        "text": "BigInt / String"
+      },
+      {
+        "index": 142,
+        "text": "Phiên bản dữ liệu monotonic (tăng đơn điệu), dùng làm khóa so sánh LWW"
+      },
+      {
+        "index": 143,
+        "text": "state_payload"
+      },
+      {
+        "index": 144,
+        "text": "JSONB"
+      },
+      {
+        "index": 145,
+        "text": "Trạng thái đồng bộ canonical"
+      },
+      {
+        "index": 146,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "file": "Thiết kế hệ thống.docx",
+    "sha256": "c766590ca504f42d54205f5c09182aae8003aa47916db8e6bb9988c354f14ecb",
+    "paragraphCount": 520,
+    "excerpts": [
+      {
+        "index": 0,
+        "text": "Phân rã dịch vụ và Quản lý dữ liệu "
+      },
+      {
+        "index": 1,
+        "text": "DỊCH VỤ XÁC THỰC & NGƯỜI DÙNG"
+      },
+      {
+        "index": 2,
+        "text": "Mục đích: quản lý danh tính, xác thực, phân quyền và trạng thái tài khoản. SRS xác định các vai trò SYSTEM_ADMIN, CONTENT_ADMIN và USER; đồng thời yêu cầu hỗ trợ JWT và cơ chế đồng bộ tiến độ đa nền tảng."
+      },
+      {
+        "index": 3,
+        "text": "Thiết kế Cơ sở dữ liệu "
+      },
+      {
+        "index": 4,
+        "text": "Bảng"
+      },
+      {
+        "index": 5,
+        "text": "Trường chính"
+      },
+      {
+        "index": 6,
+        "text": "Mục đích"
+      },
+      {
+        "index": 7,
+        "text": "users"
+      },
+      {
+        "index": 8,
+        "text": "id, email, password_hash, full_name, avatar_key, phone_number, status, failed_login_count, locked_until, created_at, updated_at"
+      },
+      {
+        "index": 9,
+        "text": "Thông tin tài khoản và trạng thái đăng nhập."
+      },
+      {
+        "index": 10,
+        "text": "roles"
+      },
+      {
+        "index": 11,
+        "text": "role_code, name"
+      },
+      {
+        "index": 12,
+        "text": "Danh mục vai trò hệ thống."
+      },
+      {
+        "index": 13,
+        "text": "user_roles"
+      },
+      {
+        "index": 14,
+        "text": "user_id, role_code"
+      },
+      {
+        "index": 15,
+        "text": "Quan hệ nhiều-nhiều giữa user và role."
+      },
+      {
+        "index": 16,
+        "text": "refresh_tokens"
+      },
+      {
+        "index": 17,
+        "text": "id, user_id, token_hash, expires_at, revoked_at, created_at"
+      },
+      {
+        "index": 18,
+        "text": "Quản lý refresh token và thu hồi token."
+      },
+      {
+        "index": 19,
+        "text": "admin_audit_logs"
+      },
+      {
+        "index": 20,
+        "text": "audit_id, actor_user_id, target_user_id, action, before_data, after_data, occurred_at"
+      },
+      {
+        "index": 21,
+        "text": "Nhật ký truy cập/quản trị."
+      },
+      {
+        "index": 22,
+        "text": "user_sync_states"
+      },
+      {
+        "index": 23,
+        "text": "user_id, client_device_id, state_payload, client_timestamp, server_updated_at, version"
+      },
+      {
+        "index": 24,
+        "text": "Theo dõi trạng thái đồng bộ và hỗ trợ Last-Write-Wins."
+      },
+      {
+        "index": 25,
+        "text": ""
+      },
+      {
+        "index": 26,
+        "text": "Thiết kế API RESTful "
+      },
+      {
+        "index": 27,
+        "text": "Method"
+      },
+      {
+        "index": 28,
+        "text": "Endpoint đề xuất"
+      },
+      {
+        "index": 29,
+        "text": "Mục đích"
+      },
+      {
+        "index": 30,
+        "text": "POST"
+      },
+      {
+        "index": 31,
+        "text": "/api/v1/auth/register"
+      },
+      {
+        "index": 32,
+        "text": "Đăng ký tài khoản mới."
+      },
+      {
+        "index": 33,
+        "text": "POST"
+      },
+      {
+        "index": 34,
+        "text": "/api/v1/auth/login"
+      },
+      {
+        "index": 35,
+        "text": "Xác thực tài khoản và cấp JWT."
+      },
+      {
+        "index": 36,
+        "text": "POST"
+      },
+      {
+        "index": 37,
+        "text": "/api/v1/auth/refresh"
+      },
+      {
+        "index": 38,
+        "text": "Đổi refresh token lấy access token mới."
+      },
+      {
+        "index": 39,
+        "text": "POST"
+      },
+      {
+        "index": 40,
+        "text": "/api/v1/auth/logout"
+      },
+      {
+        "index": 41,
+        "text": "Thu hồi phiên/refresh token."
+      },
+      {
+        "index": 42,
+        "text": "GET"
+      },
+      {
+        "index": 43,
+        "text": "/api/v1/users/me"
+      },
+      {
+        "index": 44,
+        "text": "Lấy hồ sơ người dùng hiện tại."
+      },
+      {
+        "index": 45,
+        "text": "PATCH"
+      },
+      {
+        "index": 46,
+        "text": "/api/v1/users/me"
+      },
+      {
+        "index": 47,
+        "text": "Cập nhật hồ sơ."
+      },
+      {
+        "index": 48,
+        "text": "GET"
+      },
+      {
+        "index": 49,
+        "text": "/api/v1/admin/users"
+      },
+      {
+        "index": 50,
+        "text": "Danh sách người dùng cho quản trị."
+      },
+      {
+        "index": 51,
+        "text": "PATCH"
+      },
+      {
+        "index": 52,
+        "text": "/api/v1/admin/users/{id}/roles"
+      },
+      {
+        "index": 53,
+        "text": "Cập nhật vai trò."
+      },
+      {
+        "index": 54,
+        "text": "PATCH"
+      },
+      {
+        "index": 55,
+        "text": "/api/v1/admin/users/{id}/status"
+      },
+      {
+        "index": 56,
+        "text": "Khóa/kích hoạt tài khoản."
+      },
+      {
+        "index": 57,
+        "text": "GET"
+      },
+      {
+        "index": 58,
+        "text": "/api/v1/admin/audit-logs"
+      },
+      {
+        "index": 59,
+        "text": "Tra cứu nhật ký hệ thống."
+      },
+      {
+        "index": 60,
+        "text": "POST"
+      },
+      {
+        "index": 61,
+        "text": "/api/v1/sync/users"
+      },
+      {
+        "index": 62,
+        "text": "Đồng bộ trạng thái từ thiết bị."
+      },
+      {
+        "index": 63,
+        "text": ""
+      },
+      {
+        "index": 64,
+        "text": "Nghiệp vụ & thuật toán cốt lõi "
+      },
+      {
+        "index": 65,
+        "text": "Mật khẩu được băm bằng BCrypt với work factor 12 theo SRS."
+      },
+      {
+        "index": 66,
+        "text": "Cơ chế chống brute-force: sau 5 lần đăng nhập thất bại, tài khoản bị khóa trong 15 phút."
+      },
+      {
+        "index": 67,
+        "text": "JWT dùng cho access token; refresh token có thời hạn 7 ngày theo SRS."
+      },
+      {
+        "index": 68,
+        "text": "RBAC kiểm tra role trước khi thực hiện API quản trị."
+      },
+      {
+        "index": 69,
+        "text": "Đồng bộ đa thiết bị dùng Last-Write-Wins: so sánh version (monotonic) với trạng thái server; dữ liệu cũ không được ghi đè dữ liệu mới hơn."
+      },
+      {
+        "index": 70,
+        "text": "Sự kiện UserSyncCompletedEvent được phát qua Transactional Outbox (auth_db.outbox_events) để Learning & Theory Service cập nhật dữ liệu nội bộ."
+      }
+    ]
+  }
+]

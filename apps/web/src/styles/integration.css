@@ -1,0 +1,240 @@
+.api-root,
+.api-login {
+  --api-ink: #18314b;
+  --api-blue: #315bd6;
+  color: var(--api-ink);
+  font-family: inherit;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.api-root {
+  max-width: 1280px;
+  margin: auto;
+  padding: 28px;
+}
+.api-login {
+  width: min(520px, 100%);
+  margin: 6vh auto;
+  padding: 28px;
+}
+.api-root h1,
+.api-login h1 {
+  font-weight: 700;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  line-height: 1.2;
+  margin: 20px 0;
+}
+.api-root h2 {
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 12px 0;
+}
+.api-root a,
+.api-login a {
+  color: var(--api-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.api-root button:not([class]),
+.api-login button,
+.api-nav a {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: white;
+  min-height: 44px;
+  color: #18314b;
+  font: inherit;
+}
+.api-root button:disabled,
+.api-login button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.api-root .api-primary,
+.api-login .api-primary {
+  background: #315bd6;
+  color: white;
+  border-color: #315bd6;
+}
+.api-root a.cms-link-button {
+  color: #fff;
+  text-decoration: none;
+}
+.api-label {
+  display: inline-block;
+  padding: 5px 11px;
+  border-radius: 7px;
+  background: #e8efff;
+  color: #264cc0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin: 8px;
+}
+.api-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 24px;
+}
+.api-nav a {
+  text-decoration: none;
+}
+.api-nav a[aria-current='page'] {
+  background: #e8efff;
+  border-color: #315bd6;
+}
+.api-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.api-card {
+  border: 1px solid #dce3ef;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 0;
+  margin: 16px 0;
+}
+.api-card p {
+  margin: 10px 0;
+}
+.api-field {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0;
+}
+.api-field label {
+  font-weight: 600;
+}
+.api-field input,
+.api-field select,
+.api-field textarea,
+.api-root select,
+.api-root input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #bdcadd;
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+  background: white;
+  color: #18314b;
+}
+.api-field textarea {
+  min-height: 140px;
+}
+.api-field [aria-invalid='true'] {
+  border-color: #c33232;
+}
+.api-error {
+  color: #a52525;
+  background: #fff2f1;
+  padding: 12px;
+  border-radius: 8px;
+}
+.api-blocked {
+  border-left: 4px solid #c99526;
+  background: #fff8e7;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 20px 0;
+  color: #715013;
+}
+.api-root fieldset,
+.api-login fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+.api-state {
+  padding: 24px;
+  background: #f4f7fc;
+  border-radius: 10px;
+}
+.api-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+.api-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.api-table th,
+.api-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 12px;
+  border-bottom: 1px solid #e4eaf3;
+  overflow-wrap: anywhere;
+}
+.api-scroll {
+  max-width: 100%;
+  overflow: auto;
+}
+.api-scroll table {
+  min-width: 560px;
+}
+.api-root pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.api-root :focus-visible,
+.api-login :focus-visible {
+  outline: 3px solid #315bd6;
+  outline-offset: 3px;
+}
+.api-root img {
+  max-width: 100%;
+  height: auto;
+}
+@media (max-width: 767px) {
+  .api-grid {
+    grid-template-columns: 1fr;
+  }
+  .api-root,
+  .api-login {
+    padding: 18px;
+  }
+  .api-card {
+    padding: 18px;
+  }
+  .api-nav a {
+    flex: 1 1 120px;
+  }
+}
+.ws-markdown .lesson-markdown h2,
+.api-root .lesson-markdown h2 {
+  font-weight: 700;
+  margin: 20px 0 12px;
+}
+.ws-markdown .lesson-markdown ul,
+.ws-markdown .lesson-markdown ol {
+  padding-left: 24px;
+  list-style: revert;
+}
+.ws-markdown .learning-table-wrap {
+  overflow: auto;
+  max-width: 100%;
+  margin: 16px 0;
+}
+.ws-markdown table {
+  border-collapse: collapse;
+  min-width: 320px;
+  width: 100%;
+}
+.ws-markdown td,
+.ws-markdown th {
+  border: 1px solid #dce3ef;
+  padding: 10px;
+  text-align: left;
+}
+.api-root .lesson-markdown pre {
+  max-width: 100%;
+  overflow: auto;
+}

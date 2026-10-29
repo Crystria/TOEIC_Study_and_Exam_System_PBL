@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode } from 'react';
 
-import { parseLessonMarkdown, safeMarkdownHref } from '@/lib/learning/markdown';
+import { parseLessonMarkdown, safeMarkdownHref } from '../../lib/learning/markdown';
 
 function Inline({ text }: { text: string }) {
   const pattern = /\*\*([^*]+)\*\*|`([^`]+)`|\*([^*]+)\*|\[([^\]]+)\]\(([^)]+)\)/g;

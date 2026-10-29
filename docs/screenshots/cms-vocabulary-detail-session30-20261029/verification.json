@@ -1,0 +1,50 @@
+{
+  "baselineFiles": 3707,
+  "unchangedFiles": 3702,
+  "changed": [
+    "apps/admin-cms/README.md",
+    "apps/admin-cms/src/components/vocabulary/vocabulary-list.tsx",
+    "apps/admin-cms/src/lib/demo/cms-destination.ts",
+    "docs/frontend-design-review.md",
+    "scripts/qa/cms-vocabulary.cjs"
+  ],
+  "missing": [],
+  "addedImplementationFiles": [
+    "apps/admin-cms/src/app/(dashboard)/vocabulary/[vocabularyId]/page.tsx",
+    "apps/admin-cms/src/components/vocabulary/vocabulary-detail-content.tsx",
+    "apps/admin-cms/src/components/vocabulary/vocabulary-detail.tsx",
+    "apps/admin-cms/src/lib/vocabulary/detail-availability.ts",
+    "apps/admin-cms/src/lib/vocabulary/detail-fixtures.ts",
+    "apps/admin-cms/src/lib/vocabulary/detail-navigation.ts",
+    "apps/admin-cms/src/lib/vocabulary/detail-reader.ts",
+    "apps/admin-cms/src/lib/vocabulary/detail-types.ts",
+    "apps/admin-cms/src/styles/vocabulary-detail.css",
+    "apps/admin-cms/tests/vocabulary-detail.test.ts",
+    "scripts/qa/cms-vocabulary-detail.cjs"
+  ],
+  "newEvidenceFiles": 407,
+  "reviewPrefixBytesPreserved": 573804,
+  "links": 36,
+  "documentAnchors": 0,
+  "uiIdReferences": [
+    "vd-title",
+    "vd-preview"
+  ],
+  "formattedFiles": 16,
+  "newTypeScriptFilesScanned": 9,
+  "noForbiddenRuntimeIdentifiersOrIntegrationImports": true,
+  "isolatedBuildInputHashesMatched": 143,
+  "physicalDependencyFiles": 50839,
+  "nodeSyntax": "passed (2 QA scripts)",
+  "prettier": "passed",
+  "gitDiffCheck": "passed",
+  "unitTests": {
+    "passed": 506,
+    "added": 13
+  },
+  "qa": {
+    "checks": 195,
+    "screenshots": 301
+  },
+  "inspectedScreenshots": 5
+}

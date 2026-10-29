@@ -1,0 +1,52 @@
+{
+  "baselineFiles": 3296,
+  "unchangedFiles": 3290,
+  "changed": [
+    "apps/admin-cms/README.md",
+    "apps/admin-cms/src/components/lessons/lesson-list.tsx",
+    "apps/admin-cms/src/lib/demo/cms-destination.ts",
+    "docs/frontend-design-review.md",
+    "scripts/qa/cms-lessons.cjs",
+    "scripts/qa/cms-test-detail.cjs"
+  ],
+  "missing": [],
+  "addedImplementationFiles": [
+    "apps/admin-cms/src/app/(dashboard)/lessons/[lessonId]/page.tsx",
+    "apps/admin-cms/src/components/lessons/lesson-detail-content.tsx",
+    "apps/admin-cms/src/components/lessons/lesson-detail.tsx",
+    "apps/admin-cms/src/lib/lessons/detail-availability.ts",
+    "apps/admin-cms/src/lib/lessons/detail-fixtures.ts",
+    "apps/admin-cms/src/lib/lessons/detail-navigation.ts",
+    "apps/admin-cms/src/lib/lessons/detail-reader.ts",
+    "apps/admin-cms/src/lib/lessons/detail-types.ts",
+    "apps/admin-cms/src/styles/lesson-detail.css",
+    "apps/admin-cms/tests/lesson-detail.test.ts",
+    "scripts/qa/cms-lesson-detail.cjs"
+  ],
+  "newEvidenceFiles": 400,
+  "reviewPrefixBytesPreserved": 549631,
+  "links": 36,
+  "documentAnchors": 0,
+  "contentAnchors": [
+    "ld-theory",
+    "ld-structures",
+    "ld-examples",
+    "ld-notes"
+  ],
+  "formattedFiles": 17,
+  "newTypeScriptFilesScanned": 9,
+  "noForbiddenRuntimeIdentifiersOrIntegrationImports": true,
+  "isolatedBuildInputHashesMatched": 131,
+  "nodeSyntax": "passed (3 QA scripts)",
+  "prettier": "passed",
+  "gitDiffCheck": "passed",
+  "unitTests": {
+    "passed": 493,
+    "added": 11
+  },
+  "qa": {
+    "checks": 195,
+    "screenshots": 281
+  },
+  "additionalVisualViews": 4
+}

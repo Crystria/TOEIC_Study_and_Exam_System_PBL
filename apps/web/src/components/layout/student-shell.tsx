@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
+import type { User } from '@/lib/integration/contracts';
+import { LogoutButton } from '../integration/shared';
 
 import { Badge } from '../ui/feedback';
 import { Icon, type IconName } from '../ui/icon';
@@ -71,12 +73,15 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
   );
 }
 
-export function StudentShell({ children }: { children: ReactNode }) {
+export function StudentShell({ children, apiAccount }: { children: ReactNode; apiAccount?: User }) {
   const pathname = usePathname();
   const drawer = useRef<HTMLDialogElement>(null);
   const menu = useRef<HTMLDetailsElement>(null);
   const isStandalone =
-    pathname === '/login' || pathname === '/register' || /^\/exam\/[^/]+\/take$/.test(pathname);
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname === '/register' ||
+    /^\/exam\/[^/]+\/take$/.test(pathname);
   const title =
     navigation.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))
       ?.label ?? 'Trang chủ';
@@ -157,7 +162,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
             <strong>{title}</strong>
           </div>
           <div className="header-actions">
-            <Badge tone="amber">Bản xem thử</Badge>
+            <Badge tone="amber">{apiAccount ? 'API · Local / test' : 'Bản xem thử'}</Badge>
             <span className="header-divider" />
             <details
               className="profile-menu"
@@ -169,27 +174,34 @@ export function StudentShell({ children }: { children: ReactNode }) {
                 }
               }}
             >
-              <summary aria-label="Menu tài khoản — Khách xem thử">
+              <summary aria-label={`Menu tài khoản — ${apiAccount?.fullName ?? 'Khách xem thử'}`}>
                 <span className="avatar">HV</span>
                 <span className="profile-label">
-                  Khách xem thử<small>Học viên · USER</small>
+                  {apiAccount?.fullName ?? 'Khách xem thử'}
+                  <small>{apiAccount?.roles.join(', ') ?? 'Học viên · USER'}</small>
                 </span>
                 <Icon name="down" width="16" />
               </summary>
               <div className="profile-dropdown">
-                <p>Chưa đăng nhập tài khoản</p>
+                <p>{apiAccount?.email ?? 'Chưa đăng nhập tài khoản'}</p>
                 <Link href="/profile">
-                  <Icon name="user" width="17" /> Hồ sơ học viên demo
+                  <Icon name="user" width="17" /> Hồ sơ học viên{!apiAccount && ' demo'}
                 </Link>
                 <Link href="/settings">
-                  <Icon name="book" width="17" /> Cài đặt học tập demo
+                  <Icon name="book" width="17" /> Cài đặt học tập{!apiAccount && ' demo'}
                 </Link>
-                <Link href="/login">
-                  <Icon name="logout" width="17" /> Đăng nhập
-                </Link>
-                <Link href="/register">
-                  <Icon name="user" width="17" /> Tạo tài khoản
-                </Link>
+                {apiAccount ? (
+                  <LogoutButton />
+                ) : (
+                  <>
+                    <Link href="/login">
+                      <Icon name="logout" width="17" /> Đăng nhập
+                    </Link>
+                    <Link href="/register">
+                      <Icon name="user" width="17" /> Tạo tài khoản
+                    </Link>
+                  </>
+                )}
               </div>
             </details>
           </div>

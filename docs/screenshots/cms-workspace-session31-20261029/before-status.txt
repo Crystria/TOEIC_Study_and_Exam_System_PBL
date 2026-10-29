@@ -1,0 +1,342 @@
+ M apps/admin-cms/README.md
+ M apps/admin-cms/src/app/(auth)/login/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/audit-logs/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/layout.tsx
+ M apps/admin-cms/src/app/(dashboard)/lessons/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/questions/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/tests/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/users/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/vocabulary/page.tsx
+ M apps/admin-cms/src/app/globals.css
+ M apps/admin-cms/src/app/layout.tsx
+ M apps/admin-cms/src/app/page.tsx
+ M apps/admin-cms/src/components/layout/sidebar.tsx
+ M docs/frontend-design-review.md
+ D docs/screenshots/ai-chat-review/chat-1024.jpg
+ D docs/screenshots/ai-chat-review/chat-1440.jpg
+ D docs/screenshots/ai-chat-review/chat-320.jpg
+ D docs/screenshots/ai-chat-review/chat-390.jpg
+ D docs/screenshots/ai-chat-review/chat-768.jpg
+ D docs/screenshots/ai-chat-review/empty-1440.jpg
+ D docs/screenshots/ai-chat-review/error-1440.jpg
+ D docs/screenshots/ai-chat-review/error-320.jpg
+ D docs/screenshots/ai-chat-review/error-390.jpg
+ D docs/screenshots/ai-chat-review/error-768.jpg
+ D docs/screenshots/ai-chat-review/exhausted-1440.jpg
+ D docs/screenshots/ai-chat-review/exhausted-320.jpg
+ D docs/screenshots/ai-chat-review/exhausted-390.jpg
+ D docs/screenshots/ai-chat-review/exhausted-768.jpg
+ D docs/screenshots/ai-chat-review/load-error-1440.jpg
+ D docs/screenshots/ai-chat-review/reply-error-1440.jpg
+ D docs/screenshots/ai-chat-review/success-1440.jpg
+ D docs/screenshots/ai-chat-review/timeout-1440.jpg
+ D docs/screenshots/ai-chat-review/validation-1440.jpg
+ D docs/screenshots/analytics-review/analytics-1440.jpg
+ D docs/screenshots/analytics-review/analytics-390.jpg
+ D docs/screenshots/analytics-review/analytics-768.jpg
+ D docs/screenshots/analytics-review/empty-1440.jpg
+ D docs/screenshots/analytics-review/error-1440.jpg
+ D docs/screenshots/analytics-review/insufficient-1440.jpg
+ D docs/screenshots/analytics-review/part-table-mobile-scroll.jpg
+ D docs/screenshots/analytics-review/ungraded-1440.jpg
+ D docs/screenshots/audio-playback-20261027/exam-error-1440.png
+ D docs/screenshots/audio-playback-20261027/exam-error-390.png
+ D docs/screenshots/audio-playback-20261027/exam-error-768.png
+ D docs/screenshots/audio-playback-20261027/exam-ready-1440.png
+ D docs/screenshots/audio-playback-20261027/exam-ready-390.png
+ D docs/screenshots/audio-playback-20261027/exam-ready-768.png
+ D docs/screenshots/audio-playback-20261027/vocabulary-error-1440.png
+ D docs/screenshots/audio-playback-20261027/vocabulary-error-390.png
+ D docs/screenshots/audio-playback-20261027/vocabulary-error-768.png
+ D docs/screenshots/audio-playback-20261027/vocabulary-ready-1440.png
+ D docs/screenshots/audio-playback-20261027/vocabulary-ready-390.png
+ D docs/screenshots/audio-playback-20261027/vocabulary-ready-768.png
+ D docs/screenshots/audio-review-20261027/exam-missing-1440.png
+ D docs/screenshots/audio-review-20261027/exam-missing-390.png
+ D docs/screenshots/audio-review-20261027/exam-missing-768.png
+ D docs/screenshots/audio-review-20261027/vocabulary-error-1440.png
+ D docs/screenshots/audio-review-20261027/vocabulary-error-390.png
+ D docs/screenshots/audio-review-20261027/vocabulary-error-768.png
+ D docs/screenshots/audio-review-20261027/vocabulary-missing-1440.png
+ D docs/screenshots/audio-review-20261027/vocabulary-missing-390.png
+ D docs/screenshots/audio-review-20261027/vocabulary-missing-768.png
+ D docs/screenshots/audio-review/audio-error-mobile.jpg
+ D docs/screenshots/audio-review/exam-error-1440.jpg
+ D docs/screenshots/audio-review/exam-error-320.jpg
+ D docs/screenshots/audio-review/exam-error-390.jpg
+ D docs/screenshots/audio-review/exam-error-768.jpg
+ D docs/screenshots/audio-review/exam-missing-1440.jpg
+ D docs/screenshots/audio-review/exam-missing-390.jpg
+ D docs/screenshots/audio-review/exam-missing-768.jpg
+ D docs/screenshots/audio-review/vocabulary-error-1440.jpg
+ D docs/screenshots/audio-review/vocabulary-error-320.jpg
+ D docs/screenshots/audio-review/vocabulary-error-390.jpg
+ D docs/screenshots/audio-review/vocabulary-error-768.jpg
+ D docs/screenshots/audio-review/vocabulary-missing-1440.jpg
+ D docs/screenshots/audio-review/vocabulary-missing-320.jpg
+ D docs/screenshots/audio-review/vocabulary-missing-390.jpg
+ D docs/screenshots/audio-review/vocabulary-missing-768.jpg
+ D docs/screenshots/exam-player-review/ended-desktop.jpg
+ D docs/screenshots/exam-player-review/expired-mobile.jpg
+ D docs/screenshots/exam-player-review/finish-dialog-mobile.jpg
+ D docs/screenshots/exam-player-review/listening-1440.jpg
+ D docs/screenshots/exam-player-review/listening-390.jpg
+ D docs/screenshots/exam-player-review/listening-768.jpg
+ D docs/screenshots/exam-player-review/media-error-desktop.jpg
+ D docs/screenshots/exam-player-review/player-desktop.jpg
+ D docs/screenshots/exam-player-review/question-mobile.jpg
+ D docs/screenshots/exam-player-review/reading-1440.jpg
+ D docs/screenshots/exam-player-review/reading-390.jpg
+ D docs/screenshots/exam-player-review/reading-768.jpg
+ D docs/screenshots/exam-results-review/example-part6-desktop.jpg
+ D docs/screenshots/exam-results-review/expired-result-desktop.jpg
+ D docs/screenshots/exam-results-review/history-1440.jpg
+ D docs/screenshots/exam-results-review/history-390.jpg
+ D docs/screenshots/exam-results-review/history-768.jpg
+ D docs/screenshots/exam-results-review/history-corrupt-desktop.jpg
+ D docs/screenshots/exam-results-review/history-empty-desktop.jpg
+ D docs/screenshots/exam-results-review/result-1440.jpg
+ D docs/screenshots/exam-results-review/result-390.jpg
+ D docs/screenshots/exam-results-review/result-768.jpg
+ D docs/screenshots/exam-results-review/review-1440.jpg
+ D docs/screenshots/exam-results-review/review-390.jpg
+ D docs/screenshots/exam-results-review/review-768.jpg
+ D docs/screenshots/exam-results-review/review-part2-desktop.jpg
+ D docs/screenshots/exam-results-review/review-question-mobile.jpg
+ D docs/screenshots/exam-review/detail-1440.jpg
+ D docs/screenshots/exam-review/detail-390.jpg
+ D docs/screenshots/exam-review/detail-768.jpg
+ D docs/screenshots/exam-review/invalid-selection-mobile.jpg
+ D docs/screenshots/exam-review/library-1440.jpg
+ D docs/screenshots/exam-review/library-390.jpg
+ D docs/screenshots/exam-review/library-768.jpg
+ D docs/screenshots/exam-review/prepare-1440.jpg
+ D docs/screenshots/exam-review/prepare-390.jpg
+ D docs/screenshots/exam-review/prepare-768.jpg
+ D docs/screenshots/exam-review/preview-desktop.jpg
+ D docs/screenshots/frontend-review/dashboard-desktop.jpg
+ D docs/screenshots/frontend-review/dashboard-mobile-menu.jpg
+ D docs/screenshots/frontend-review/dashboard-mobile.jpg
+ D docs/screenshots/frontend-review/login-desktop.jpg
+ D docs/screenshots/frontend-review/register-desktop.jpg
+ D docs/screenshots/frontend-review/register-mobile-validation.jpg
+ D docs/screenshots/learning-review/flashcard-long-word-320.jpg
+ D docs/screenshots/learning-review/flashcard-mobile.jpg
+ D docs/screenshots/learning-review/grammar-lesson-desktop.jpg
+ D docs/screenshots/learning-review/grammar-library-desktop.jpg
+ D docs/screenshots/learning-review/grammar-table-mobile.jpg
+ D docs/screenshots/learning-review/quiz-result-mobile.jpg
+ D docs/screenshots/learning-review/vocabulary-library-desktop.jpg
+ D docs/screenshots/profile-review/avatar-1440.jpg
+ D docs/screenshots/profile-review/empty-1440.jpg
+ D docs/screenshots/profile-review/load-error-1440.jpg
+ D docs/screenshots/profile-review/profile-1024.jpg
+ D docs/screenshots/profile-review/profile-1440.jpg
+ D docs/screenshots/profile-review/profile-320.jpg
+ D docs/screenshots/profile-review/profile-390.jpg
+ D docs/screenshots/profile-review/profile-768.jpg
+ D docs/screenshots/profile-review/save-error-1440.jpg
+ D docs/screenshots/profile-review/save-error-390.jpg
+ D docs/screenshots/profile-review/save-error-768.jpg
+ D docs/screenshots/profile-review/validation-1024.jpg
+ D docs/screenshots/profile-review/validation-1440.jpg
+ D docs/screenshots/profile-review/validation-320.jpg
+ D docs/screenshots/profile-review/validation-390.jpg
+ D docs/screenshots/profile-review/validation-768.jpg
+ D docs/screenshots/profile-review/view-1440.jpg
+ D docs/screenshots/settings-review/corrupt-desktop.jpg
+ D docs/screenshots/settings-review/empty-desktop.jpg
+ D docs/screenshots/settings-review/error-desktop.jpg
+ D docs/screenshots/settings-review/save-error-desktop.jpg
+ D docs/screenshots/settings-review/schema-desktop.jpg
+ D docs/screenshots/settings-review/settings-1024.jpg
+ D docs/screenshots/settings-review/settings-1440.jpg
+ D docs/screenshots/settings-review/settings-320.jpg
+ D docs/screenshots/settings-review/settings-390.jpg
+ D docs/screenshots/settings-review/settings-768.jpg
+ D docs/screenshots/student-regression-20261027/ai-chat-1440.png
+ D docs/screenshots/student-regression-20261027/ai-chat-390.png
+ D docs/screenshots/student-regression-20261027/ai-chat-768.png
+ D docs/screenshots/student-regression-20261027/ai-chat-composer-1440.png
+ D docs/screenshots/student-regression-20261027/ai-chat-composer-390.png
+ D docs/screenshots/student-regression-20261027/ai-chat-composer-768.png
+ D docs/screenshots/student-regression-20261027/analytics-1440.png
+ D docs/screenshots/student-regression-20261027/analytics-390.png
+ D docs/screenshots/student-regression-20261027/analytics-768.png
+ D docs/screenshots/student-regression-20261027/dashboard-1440.png
+ D docs/screenshots/student-regression-20261027/dashboard-390.png
+ D docs/screenshots/student-regression-20261027/dashboard-768.png
+ D docs/screenshots/student-regression-20261027/dashboard-empty-1440.png
+ D docs/screenshots/student-regression-20261027/dashboard-empty-390.png
+ D docs/screenshots/student-regression-20261027/dashboard-empty-768.png
+ D docs/screenshots/student-regression-20261027/dashboard-error-1440.png
+ D docs/screenshots/student-regression-20261027/dashboard-error-390.png
+ D docs/screenshots/student-regression-20261027/dashboard-error-768.png
+ D docs/screenshots/student-regression-20261027/exam-ended-1440.png
+ D docs/screenshots/student-regression-20261027/exam-ended-390.png
+ D docs/screenshots/student-regression-20261027/exam-ended-768.png
+ D docs/screenshots/student-regression-20261027/exam-history-1440.png
+ D docs/screenshots/student-regression-20261027/exam-history-390.png
+ D docs/screenshots/student-regression-20261027/exam-history-768.png
+ D docs/screenshots/student-regression-20261027/exam-library-1440.png
+ D docs/screenshots/student-regression-20261027/exam-library-390.png
+ D docs/screenshots/student-regression-20261027/exam-library-768.png
+ D docs/screenshots/student-regression-20261027/exam-loading-1440.png
+ D docs/screenshots/student-regression-20261027/exam-loading-390.png
+ D docs/screenshots/student-regression-20261027/exam-loading-768.png
+ D docs/screenshots/student-regression-20261027/exam-player-listening-1440.png
+ D docs/screenshots/student-regression-20261027/exam-player-listening-390.png
+ D docs/screenshots/student-regression-20261027/exam-player-listening-768.png
+ D docs/screenshots/student-regression-20261027/exam-prepare-1440.png
+ D docs/screenshots/student-regression-20261027/exam-prepare-390.png
+ D docs/screenshots/student-regression-20261027/exam-prepare-768.png
+ D docs/screenshots/student-regression-20261027/exam-question-1440.png
+ D docs/screenshots/student-regression-20261027/exam-question-390.png
+ D docs/screenshots/student-regression-20261027/exam-question-768.png
+ D docs/screenshots/student-regression-20261027/exam-readiness-1440.png
+ D docs/screenshots/student-regression-20261027/exam-readiness-390.png
+ D docs/screenshots/student-regression-20261027/exam-readiness-768.png
+ D docs/screenshots/student-regression-20261027/exam-result-1440.png
+ D docs/screenshots/student-regression-20261027/exam-result-390.png
+ D docs/screenshots/student-regression-20261027/exam-result-768.png
+ D docs/screenshots/student-regression-20261027/exam-review-1440.png
+ D docs/screenshots/student-regression-20261027/exam-review-390.png
+ D docs/screenshots/student-regression-20261027/exam-review-768.png
+ D docs/screenshots/student-regression-20261027/exam-selection-1440.png
+ D docs/screenshots/student-regression-20261027/exam-selection-390.png
+ D docs/screenshots/student-regression-20261027/exam-selection-768.png
+ D docs/screenshots/student-regression-20261027/failure.png
+ D docs/screenshots/student-regression-20261027/flashcard-1440.png
+ D docs/screenshots/student-regression-20261027/flashcard-390.png
+ D docs/screenshots/student-regression-20261027/flashcard-768.png
+ D docs/screenshots/student-regression-20261027/flashcard-actions-1440.png
+ D docs/screenshots/student-regression-20261027/flashcard-actions-390.png
+ D docs/screenshots/student-regression-20261027/flashcard-actions-768.png
+ D docs/screenshots/student-regression-20261027/grammar-completion-1440.png
+ D docs/screenshots/student-regression-20261027/grammar-completion-390.png
+ D docs/screenshots/student-regression-20261027/grammar-completion-768.png
+ D docs/screenshots/student-regression-20261027/grammar-lesson-1440.png
+ D docs/screenshots/student-regression-20261027/grammar-lesson-390.png
+ D docs/screenshots/student-regression-20261027/grammar-lesson-768.png
+ D docs/screenshots/student-regression-20261027/grammar-library-1440.png
+ D docs/screenshots/student-regression-20261027/grammar-library-390.png
+ D docs/screenshots/student-regression-20261027/grammar-library-768.png
+ D docs/screenshots/student-regression-20261027/grammar-load-error-1440.png
+ D docs/screenshots/student-regression-20261027/grammar-load-error-390.png
+ D docs/screenshots/student-regression-20261027/grammar-load-error-768.png
+ D docs/screenshots/student-regression-20261027/grammar-table-1440.png
+ D docs/screenshots/student-regression-20261027/grammar-table-390.png
+ D docs/screenshots/student-regression-20261027/grammar-table-768.png
+ D docs/screenshots/student-regression-20261027/learning-save-error-1440.png
+ D docs/screenshots/student-regression-20261027/learning-save-error-390.png
+ D docs/screenshots/student-regression-20261027/learning-save-error-768.png
+ D docs/screenshots/student-regression-20261027/login-validation-1440.png
+ D docs/screenshots/student-regression-20261027/login-validation-390.png
+ D docs/screenshots/student-regression-20261027/login-validation-768.png
+ D docs/screenshots/student-regression-20261027/menu-390.png
+ D docs/screenshots/student-regression-20261027/menu-768.png
+ D docs/screenshots/student-regression-20261027/player-load-error-1440.png
+ D docs/screenshots/student-regression-20261027/player-load-error-390.png
+ D docs/screenshots/student-regression-20261027/player-load-error-768.png
+ D docs/screenshots/student-regression-20261027/player-reading-highlight-1440.png
+ D docs/screenshots/student-regression-20261027/player-reading-highlight-390.png
+ D docs/screenshots/student-regression-20261027/player-reading-highlight-768.png
+ D docs/screenshots/student-regression-20261027/player-save-error-1440.png
+ D docs/screenshots/student-regression-20261027/player-save-error-390.png
+ D docs/screenshots/student-regression-20261027/player-save-error-768.png
+ D docs/screenshots/student-regression-20261027/profile-1440.png
+ D docs/screenshots/student-regression-20261027/profile-390.png
+ D docs/screenshots/student-regression-20261027/profile-768.png
+ D docs/screenshots/student-regression-20261027/profile-form-1440.png
+ D docs/screenshots/student-regression-20261027/profile-form-390.png
+ D docs/screenshots/student-regression-20261027/profile-form-768.png
+ D docs/screenshots/student-regression-20261027/reading-example-1440.png
+ D docs/screenshots/student-regression-20261027/reading-example-390.png
+ D docs/screenshots/student-regression-20261027/reading-example-768.png
+ D docs/screenshots/student-regression-20261027/register-validation-1440.png
+ D docs/screenshots/student-regression-20261027/register-validation-390.png
+ D docs/screenshots/student-regression-20261027/register-validation-768.png
+ D docs/screenshots/student-regression-20261027/settings-1440.png
+ D docs/screenshots/student-regression-20261027/settings-390.png
+ D docs/screenshots/student-regression-20261027/settings-768.png
+ D docs/screenshots/student-regression-20261027/states-failure.png
+ D docs/screenshots/student-regression-20261027/vocabulary-library-1440.png
+ D docs/screenshots/student-regression-20261027/vocabulary-library-390.png
+ D docs/screenshots/student-regression-20261027/vocabulary-library-768.png
+ D docs/screenshots/student-regression-20261027/vocabulary-load-error-1440.png
+ D docs/screenshots/student-regression-20261027/vocabulary-load-error-390.png
+ D docs/screenshots/student-regression-20261027/vocabulary-load-error-768.png
+ D docs/screenshots/student-regression-20261027/vocabulary-quiz-1440.png
+ D docs/screenshots/student-regression-20261027/vocabulary-quiz-390.png
+ D docs/screenshots/student-regression-20261027/vocabulary-quiz-768.png
+ D docs/screenshots/student-regression-20261027/vocabulary-quiz-submit-1440.png
+ D docs/screenshots/student-regression-20261027/vocabulary-quiz-submit-390.png
+ D docs/screenshots/student-regression-20261027/vocabulary-quiz-submit-768.png
+ D docs/screenshots/student-regression-20261027/vocabulary-result-1440.png
+ D docs/screenshots/student-regression-20261027/vocabulary-result-390.png
+ D docs/screenshots/student-regression-20261027/vocabulary-result-768.png
+ D docs/screenshots/student-regression-20261027/vocabulary-result-review-1440.png
+ D docs/screenshots/student-regression-20261027/vocabulary-result-review-390.png
+ D docs/screenshots/student-regression-20261027/vocabulary-result-review-768.png
+ D docs/screenshots/student-regression-20261027/vocabulary-topic-1440.png
+ D docs/screenshots/student-regression-20261027/vocabulary-topic-390.png
+ D docs/screenshots/student-regression-20261027/vocabulary-topic-768.png
+ M packages/contracts/openapi/openapi.yaml
+ M services/exam-service/src/modules/tests/tests.module.ts
+?? apps/admin-cms/src/app/(dashboard)/lessons/[lessonId]/
+?? apps/admin-cms/src/app/(dashboard)/questions/[questionId]/
+?? apps/admin-cms/src/app/(dashboard)/questions/new/
+?? apps/admin-cms/src/app/(dashboard)/tests/[testId]/
+?? apps/admin-cms/src/app/(dashboard)/vocabulary/[vocabularyId]/
+?? apps/admin-cms/src/components/audit-logs/
+?? apps/admin-cms/src/components/auth/
+?? apps/admin-cms/src/components/layout/cms-route-preview.tsx
+?? apps/admin-cms/src/components/layout/cms-shell.tsx
+?? apps/admin-cms/src/components/lessons/
+?? apps/admin-cms/src/components/questions/
+?? apps/admin-cms/src/components/tests/
+?? apps/admin-cms/src/components/users/
+?? apps/admin-cms/src/components/vocabulary/
+?? apps/admin-cms/src/lib/audit-logs/
+?? apps/admin-cms/src/lib/demo/
+?? apps/admin-cms/src/lib/lessons/
+?? apps/admin-cms/src/lib/questions/
+?? apps/admin-cms/src/lib/tests/
+?? apps/admin-cms/src/lib/users/
+?? apps/admin-cms/src/lib/vocabulary/
+?? apps/admin-cms/src/styles/
+?? apps/admin-cms/tests/
+?? apps/admin-cms/tsconfig.tests.json
+?? docs/cms-test-metadata-contract-review.md
+?? docs/screenshots/cms-audit-logs-20261028/
+?? docs/screenshots/cms-lesson-detail-session29-20261029/
+?? docs/screenshots/cms-lessons-20261027/
+?? docs/screenshots/cms-question-detail-session20-20261028/
+?? docs/screenshots/cms-question-form-session28-20261029/
+?? docs/screenshots/cms-questions-20261027/
+?? docs/screenshots/cms-shell-20261027/
+?? docs/screenshots/cms-test-detail-session21-20261028/
+?? docs/screenshots/cms-tests-20261027/
+?? docs/screenshots/cms-users-20261027/
+?? docs/screenshots/cms-vocabulary-20261027/
+?? docs/screenshots/cms-vocabulary-detail-session30-20261029/
+?? scripts/qa/cms-audit-logs.cjs
+?? scripts/qa/cms-lesson-detail.cjs
+?? scripts/qa/cms-lessons.cjs
+?? scripts/qa/cms-question-detail.cjs
+?? scripts/qa/cms-question-form.cjs
+?? scripts/qa/cms-questions.cjs
+?? scripts/qa/cms-shell.cjs
+?? scripts/qa/cms-test-detail.cjs
+?? scripts/qa/cms-tests.cjs
+?? scripts/qa/cms-users.cjs
+?? scripts/qa/cms-vocabulary-detail.cjs
+?? scripts/qa/cms-vocabulary.cjs
+?? services/api-gateway/src/gateway/cms-test-metadata-routing.spec.ts
+?? services/api-gateway/src/gateway/jwt.middleware.spec.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata-roles.guard.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.controller.spec.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.controller.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.service.spec.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.service.ts
+?? services/exam-service/src/modules/tests/dto/cms-test-metadata-response.dto.ts

@@ -1,0 +1,775 @@
+{
+  "docs\\SRS.docx": {
+    "sha256": "e1e3d2dfaac745e9b75e79769da6b945aa79d388cdac2f0e0bcd25a59f0d83fe",
+    "excerpts": [
+      {
+        "index": 114,
+        "text": "–          Sử dụng: Admin CMS - Phân hệ Hệ thống."
+      },
+      {
+        "index": 115,
+        "text": "–          Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung."
+      },
+      {
+        "index": 116,
+        "text": "•           Quản trị viên nội dung (Content Administrator / CONTENT_ADMIN):"
+      },
+      {
+        "index": 117,
+        "text": "–          Sử dụng: Admin CMS - Phân hệ Nội dung."
+      },
+      {
+        "index": 118,
+        "text": "–          Mục tiêu: Quản lý kho câu hỏi trắc nghiệm (Listening & Reading), quản lý các bộ từ vựng Flashcard kèm âm thanh/phiên âm, quản lý bài giảng lý thuyết ngữ pháp, và thiết lập cấu trúc các đề thi thử (Full Test/Mini Test)."
+      },
+      {
+        "index": 119,
+        "text": "Tóm tắt chức năng vĩ mô"
+      },
+      {
+        "index": 120,
+        "text": "Hệ thống đáp ứng 14 chức năng nghiệp vụ cốt lõi thông qua sự phối hợp của 6 service nghiệp vụ: "
+      },
+      {
+        "index": 121,
+        "text": "Đăng nhập (Login): Xác thực người dùng bằng tài khoản/mật khẩu hoặc OAuth2 (Google/Facebook), trả về Access Token dạng JWT. "
+      },
+      {
+        "index": 122,
+        "text": "Đăng ký (Register): Cho phép người dùng tạo tài khoản mới và khởi tạo hồ sơ học viên trên hệ thống. "
+      },
+      {
+        "index": 123,
+        "text": "Quản lý người dùng & phân quyền hệ thống (System & User Management): System Admin phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), quản lý trạng thái tài khoản."
+      },
+      {
+        "index": 124,
+        "text": "Quản lý ngân hàng câu hỏi (Question Bank Management): Admin thực hiện CRUD các câu hỏi TOEIC thuộc phần Listening (Part 1 - Part 4) và Reading (Part 5 - Part 7). "
+      },
+      {
+        "index": 252,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 253,
+        "text": "File phát âm (.mp3, tối đa 5MB) được lưu trữ trên Object Storage và phát lại qua CDN public; hệ thống lưu audio_key, kiểm tra object tồn tại; CDN URL chỉ dùng khi phát nội dung."
+      },
+      {
+        "index": 254,
+        "text": "3.4.2 Quản lý lý thuyết ngữ pháp (FK-11-Quan-Ly-Ly-Thuyet)"
+      },
+      {
+        "index": 255,
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+      },
+      {
+        "index": 256,
+        "text": "Mô tả chức năng: Cho phép Content Admin soạn thảo bài giảng lý thuyết ngữ pháp TOEIC theo định dạng Markdown."
+      },
+      {
+        "index": 257,
+        "text": "Dữ liệu đầu vào (Inputs): lesson_title (Chuỗi), category (Chuỗi), content_markdown (Văn bản định dạng Markdown chứa cấu trúc bài học và ví dụ)."
+      },
+      {
+        "index": 258,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm lesson_id (UUIDv4)."
+      },
+      {
+        "index": 259,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 260,
+        "text": "content_markdown bắt buộc tuân thủ chuẩn Markdown để các ứng dụng Client (Next.js/Flutter) render giao diện chuẩn xác."
+      },
+      {
+        "index": 261,
+        "text": "3.4.3 Học từ vựng & Lý thuyết (FK-12-Cac-Tac-Vu-Hoc-Tap)"
+      },
+      {
+        "index": 262,
+        "text": "Tác nhân thực hiện: Học viên (USER)."
+      },
+      {
+        "index": 263,
+        "text": "Mô tả chức năng: Học viên học từ vựng qua Flashcard (áp dụng thuật toán SM-2), làm bài trắc nghiệm nhanh 5 câu và đọc bài giảng ngữ pháp."
+      },
+      {
+        "index": 264,
+        "text": "Dữ liệu đầu vào (Inputs):"
+      },
+      {
+        "index": 265,
+        "text": "Đối với Flashcard: vocabulary_id (UUIDv4), quality (Số nguyên từ 0 đến 5 thể hiện mức độ ghi nhớ)."
+      },
+      {
+        "index": 266,
+        "text": "Đối với Lý thuyết: lesson_id (UUIDv4), status (COMPLETED)."
+      },
+      {
+        "index": 267,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) kèm thông số SM-2 mới (interval, easinessFactor, nextReviewDate)."
+      },
+      {
+        "index": 268,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      }
+    ]
+  },
+  "docs\\tai_lieu_thiet_ke_CSDL.docx": {
+    "sha256": "a6d70a829ef84efbc67c42d1386c756ecd55875389ab61d3d4590276122dba13",
+    "excerpts": [
+      {
+        "index": 316,
+        "text": "PK vocabulary_id; topic_id, word, definition bắt buộc theo đề xuất; phonetic/example/media NULL"
+      },
+      {
+        "index": 317,
+        "text": "audio key phải hợp lệ trước lưu; soft delete đề xuất"
+      },
+      {
+        "index": 318,
+        "text": "GrammarLesson"
+      },
+      {
+        "index": 319,
+        "text": "Bài ngữ pháp: lesson_id, lesson_title, category, content_markdown, timestamps, deleted_at"
+      },
+      {
+        "index": 320,
+        "text": "PK lesson_id; ba trường nội dung bắt buộc"
+      },
+      {
+        "index": 321,
+        "text": "Markdown hợp lệ"
+      },
+      {
+        "index": 322,
+        "text": "UserVocabularyProgress"
+      },
+      {
+        "index": 323,
+        "text": "Trạng thái SM-2 theo user và từ: user_id, vocabulary_id, quality, interval_days, easiness_factor, repetition_number, next_review_date, updated_at"
+      },
+      {
+        "index": 324,
+        "text": "PK ghép (user_id, vocabulary_id); user_id là logic xuyên service"
+      },
+      {
+        "index": 325,
+        "text": "quality 0-5; SM-2; mỗi user-từ chỉ một trạng thái hiện hành"
+      },
+      {
+        "index": 326,
+        "text": "UserLessonProgress"
+      },
+      {
+        "index": 327,
+        "text": "Trạng thái bài học: user_id, lesson_id, status COMPLETED, completed_at"
+      },
+      {
+        "index": 495,
+        "text": "Thông qua learning_db.user_vocabulary_progress."
+      },
+      {
+        "index": 496,
+        "text": "REL-015"
+      },
+      {
+        "index": 497,
+        "text": "User GrammarLesson"
+      },
+      {
+        "index": 498,
+        "text": "auth_db.users"
+      },
+      {
+        "index": 499,
+        "text": "learning_db.grammar_lessons"
+      },
+      {
+        "index": 500,
+        "text": "N - N"
+      },
+      {
+        "index": 501,
+        "text": "Hai phía đều 0..N"
+      },
+      {
+        "index": 502,
+        "text": "Thông qua learning_db.user_lesson_progress."
+      },
+      {
+        "index": 503,
+        "text": "REL-016"
+      },
+      {
+        "index": 504,
+        "text": "VocabularySession SessionItem"
+      },
+      {
+        "index": 505,
+        "text": "learning_db.vocabulary_sessions"
+      },
+      {
+        "index": 566,
+        "text": "Test Question. Cardinality: N N. Thông qua exam_db.test_questions; question_id là Logical Reference xuyên service."
+      },
+      {
+        "index": 567,
+        "text": "User Vocabulary. Cardinality: N N. Thông qua learning_db.user_vocabulary_progress."
+      },
+      {
+        "index": 568,
+        "text": "User GrammarLesson. Cardinality: N N. Thông qua learning_db.user_lesson_progress."
+      },
+      {
+        "index": 569,
+        "text": "Attempt TestScoreFact. Cardinality: 1 0..1. Projection được tạo từ TestSubmittedEvent và không có FK vật lý."
+      },
+      {
+        "index": 570,
+        "text": "User UserStatistic. Cardinality: 1 0..1. Read model tổng hợp được cập nhật bởi consumer idempotent."
+      },
+      {
+        "index": 571,
+        "text": "4.3 Optionality"
+      },
+      {
+        "index": 572,
+        "text": "Optionality được xác định theo hai phía của Relationship và được phản ánh bằng NULL, NOT NULL, Primary Key (hoặc quy tắc Application Logic) ."
+      },
+      {
+        "index": 573,
+        "text": "5 Thiết kế Database Schema"
+      },
+      {
+        "index": 574,
+        "text": "5.1 Danh sách Table"
+      },
+      {
+        "index": 575,
+        "text": "Class Object"
+      },
+      {
+        "index": 576,
+        "text": "Database Table"
+      },
+      {
+        "index": 600,
+        "text": "learning_db.vocabulary_topics, vocabularies"
+      },
+      {
+        "index": 601,
+        "text": "VocabularyTopic quản lý chủ đề từ vựng, còn Vocabulary lưu các từ vựng thuộc chủ đề đó. Quan hệ chủ đề 1-N"
+      },
+      {
+        "index": 602,
+        "text": "GrammarLesson Progress"
+      },
+      {
+        "index": 603,
+        "text": "learning_db.grammar_lessons, user_vocabulary_progress, user_lesson_progress"
+      },
+      {
+        "index": 604,
+        "text": "GrammarLesson lưu nội dung bài học, còn các bảng Progress lưu tiến độ học tập riêng của từng user đối với từng nội dung. Điều này giúp theo dõi tiến độ độc lập cho mỗi user. "
+      },
+      {
+        "index": 605,
+        "text": "VocabularySession SessionItem"
+      },
+      {
+        "index": 606,
+        "text": "learning_db.vocabulary_sessions, vocabulary_session_items"
+      },
+      {
+        "index": 607,
+        "text": "VocabularySession lưu thông tin phiên học và kết quả quiz, còn SessionItem lưu từng câu/từ vựng trong phiên. Idempotency và kết quả quiz 5 câu"
+      },
+      {
+        "index": 608,
+        "text": "LearningOutboxEvent"
+      },
+      {
+        "index": 609,
+        "text": "learning_db.outbox_events"
+      },
+      {
+        "index": 610,
+        "text": "LearningOutboxEvent lưu các sự kiện phát sinh từ quá trình học, giúp đảm bảo dữ liệu học tập được đồng bộ sang hệ thống Analytics để xử lý và thống kê. "
+      },
+      {
+        "index": 611,
+        "text": "Analytics objects"
+      },
+      {
+        "index": 612,
+        "text": "analytics_db.processed_events, test_score_facts, learning_activity_facts, user_statistics, user_weak_areas"
+      },
+      {
+        "index": 1565,
+        "text": "Không"
+      },
+      {
+        "index": 1566,
+        "text": "Định danh bài học ngữ pháp."
+      },
+      {
+        "index": 1567,
+        "text": "lesson_title"
+      },
+      {
+        "index": 1568,
+        "text": "VARCHAR(255)"
+      },
+      {
+        "index": 1569,
+        "text": "-"
+      },
+      {
+        "index": 1570,
+        "text": "Không"
+      },
+      {
+        "index": 1571,
+        "text": "Không"
+      },
+      {
+        "index": 1572,
+        "text": "Thuộc tính lesson title theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1573,
+        "text": "category"
+      },
+      {
+        "index": 1574,
+        "text": "VARCHAR(255)"
+      },
+      {
+        "index": 1575,
+        "text": "-"
+      },
+      {
+        "index": 1577,
+        "text": "Không"
+      },
+      {
+        "index": 1578,
+        "text": "Thuộc tính category theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1579,
+        "text": "content_markdown"
+      },
+      {
+        "index": 1580,
+        "text": "TEXT"
+      },
+      {
+        "index": 1581,
+        "text": "-"
+      },
+      {
+        "index": 1582,
+        "text": "Không"
+      },
+      {
+        "index": 1583,
+        "text": "Không"
+      },
+      {
+        "index": 1584,
+        "text": "Thuộc tính content markdown theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1585,
+        "text": "created_at"
+      },
+      {
+        "index": 1586,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1587,
+        "text": "-"
+      },
+      {
+        "index": 2543,
+        "text": "CASCADE chỉ áp dụng cho bản ghi thành phần phụ thuộc hoàn toàn vào Parent trong cùng service."
+      },
+      {
+        "index": 2544,
+        "text": "RESTRICT bảo vệ lịch sử thi, tiến độ, audit log và dữ liệu đang được tham chiếu."
+      },
+      {
+        "index": 2545,
+        "text": "Soft Delete được đề xuất cho Question, Test, Vocabulary, Topic và GrammarLesson nhằm bảo toàn Logical Reference xuyên service."
+      },
+      {
+        "index": 2546,
+        "text": "Chính sách retention & hard delete User: giữ dữ liệu học tập/thi tối thiểu 24 tháng; hard delete chỉ theo yêu cầu người dùng, xử lý ở tầng ứng dụng qua Saga; audit log giữ vĩnh viễn."
+      },
+      {
+        "index": 2547,
+        "text": "6.3 Quy tắc ON UPDATE"
+      },
+      {
+        "index": 2548,
+        "text": "Các Foreign Key nội service sử dụng ON UPDATE CASCADE theo DDL nguồn. UUID và role_code được xem là bất biến ở tầng ứng dụng; ON UPDATE CASCADE chỉ đóng vai trò bảo vệ tính toàn vẹn nếu khóa được cập nhật ngoài luồng thông thường."
+      },
+      {
+        "index": 2549,
+        "text": "7 Thiết kế Index"
+      },
+      {
+        "index": 2550,
+        "text": "7.1 Tổng quan Index"
+      },
+      {
+        "index": 2551,
+        "text": "Index được thiết kế theo truy vấn đăng nhập, quản trị, tìm kiếm và lọc, lịch sử thi, lịch ôn tập, score trend, streak, hội thoại và quét Outbox. Không tạo index lặp với Primary Key hoặc Unique Constraint nếu không phục vụ hướng truy vấn khác."
+      },
+      {
+        "index": 2552,
+        "text": "7.2 Đặc tả Index"
+      },
+      {
+        "index": 2553,
+        "text": "Index"
+      }
+    ],
+    "table_5_2_21": [
+      {
+        "index": 1544,
+        "text": "Không"
+      },
+      {
+        "index": 1545,
+        "text": "Thời điểm bản ghi được cập nhật gần nhất."
+      },
+      {
+        "index": 1546,
+        "text": "deleted_at"
+      },
+      {
+        "index": 1547,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1548,
+        "text": "-"
+      },
+      {
+        "index": 1549,
+        "text": "Có"
+      },
+      {
+        "index": 1550,
+        "text": "Không"
+      },
+      {
+        "index": 1551,
+        "text": "Thời điểm xóa logic; NULL khi bản ghi còn hiệu lực."
+      },
+      {
+        "index": 1552,
+        "text": ""
+      },
+      {
+        "index": 1553,
+        "text": "5.2.21 learning_db.grammar_lessons"
+      },
+      {
+        "index": 1554,
+        "text": "Lưu bài giảng ngữ pháp ở định dạng Markdown."
+      },
+      {
+        "index": 1555,
+        "text": "Column"
+      },
+      {
+        "index": 1556,
+        "text": "Type"
+      },
+      {
+        "index": 1557,
+        "text": "Key"
+      },
+      {
+        "index": 1558,
+        "text": "NULL"
+      },
+      {
+        "index": 1559,
+        "text": "UNIQUE"
+      },
+      {
+        "index": 1560,
+        "text": "Mô tả"
+      },
+      {
+        "index": 1561,
+        "text": "lesson_id"
+      },
+      {
+        "index": 1562,
+        "text": "UUID"
+      },
+      {
+        "index": 1563,
+        "text": "PK"
+      },
+      {
+        "index": 1564,
+        "text": "Không"
+      },
+      {
+        "index": 1565,
+        "text": "Không"
+      },
+      {
+        "index": 1566,
+        "text": "Định danh bài học ngữ pháp."
+      },
+      {
+        "index": 1567,
+        "text": "lesson_title"
+      },
+      {
+        "index": 1568,
+        "text": "VARCHAR(255)"
+      },
+      {
+        "index": 1569,
+        "text": "-"
+      },
+      {
+        "index": 1570,
+        "text": "Không"
+      },
+      {
+        "index": 1571,
+        "text": "Không"
+      },
+      {
+        "index": 1572,
+        "text": "Thuộc tính lesson title theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1573,
+        "text": "category"
+      },
+      {
+        "index": 1574,
+        "text": "VARCHAR(255)"
+      },
+      {
+        "index": 1575,
+        "text": "-"
+      },
+      {
+        "index": 1576,
+        "text": "Không"
+      },
+      {
+        "index": 1577,
+        "text": "Không"
+      },
+      {
+        "index": 1578,
+        "text": "Thuộc tính category theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1579,
+        "text": "content_markdown"
+      },
+      {
+        "index": 1580,
+        "text": "TEXT"
+      },
+      {
+        "index": 1581,
+        "text": "-"
+      },
+      {
+        "index": 1582,
+        "text": "Không"
+      },
+      {
+        "index": 1583,
+        "text": "Không"
+      },
+      {
+        "index": 1584,
+        "text": "Thuộc tính content markdown theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1585,
+        "text": "created_at"
+      },
+      {
+        "index": 1586,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1587,
+        "text": "-"
+      },
+      {
+        "index": 1588,
+        "text": "Không"
+      },
+      {
+        "index": 1589,
+        "text": "Không"
+      },
+      {
+        "index": 1590,
+        "text": "Thời điểm bản ghi được tạo."
+      },
+      {
+        "index": 1591,
+        "text": "updated_at"
+      },
+      {
+        "index": 1592,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1593,
+        "text": "-"
+      },
+      {
+        "index": 1594,
+        "text": "Không"
+      },
+      {
+        "index": 1595,
+        "text": "Không"
+      },
+      {
+        "index": 1596,
+        "text": "Thời điểm bản ghi được cập nhật gần nhất."
+      },
+      {
+        "index": 1597,
+        "text": "deleted_at"
+      },
+      {
+        "index": 1598,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1599,
+        "text": "-"
+      },
+      {
+        "index": 1600,
+        "text": "Có"
+      },
+      {
+        "index": 1601,
+        "text": "Không"
+      },
+      {
+        "index": 1602,
+        "text": "Thời điểm xóa logic; NULL khi bản ghi còn hiệu lực."
+      },
+      {
+        "index": 1603,
+        "text": ""
+      },
+      {
+        "index": 1604,
+        "text": "5.2.22 learning_db.user_vocabulary_progress"
+      },
+      {
+        "index": 1605,
+        "text": "Lưu trạng thái SM 2 hiện hành của từng cặp người dùng và từ vựng."
+      },
+      {
+        "index": 1606,
+        "text": "Column"
+      },
+      {
+        "index": 1607,
+        "text": "Type"
+      },
+      {
+        "index": 1608,
+        "text": "Key"
+      }
+    ]
+  },
+  "docs\\Thiet_ke_kien_truc_Storage.docx": {
+    "sha256": "d6e3d72a58b6262e2724c636c5acca7071b975c9a64b9c94e55395d392d89bc3",
+    "excerpts": []
+  },
+  "docs\\Thiết kế Event.docx": {
+    "sha256": "c1bc6bb143bdaaa871bf0c07716baf0ba19ed2e25a16e535b2e4d8c86a3c734d",
+    "excerpts": []
+  },
+  "docs\\Thiết kế hệ thống.docx": {
+    "sha256": "c766590ca504f42d54205f5c09182aae8003aa47916db8e6bb9988c354f14ecb",
+    "excerpts": [
+      {
+        "index": 187,
+        "text": "Nội dung flashcard."
+      },
+      {
+        "index": 188,
+        "text": "grammar_lessons"
+      },
+      {
+        "index": 189,
+        "text": "lesson_id, lesson_title, category, content_markdown"
+      },
+      {
+        "index": 190,
+        "text": "Bài học lý thuyết ngữ pháp."
+      },
+      {
+        "index": 191,
+        "text": "user_vocabulary_progress"
+      },
+      {
+        "index": 192,
+        "text": "user_id, vocabulary_id, quality, interval_days, easiness_factor, repetition_number, next_review_date, updated_at"
+      },
+      {
+        "index": 193,
+        "text": "Trạng thái SM-2 theo từng user-vocabulary."
+      },
+      {
+        "index": 194,
+        "text": "user_lesson_progress"
+      },
+      {
+        "index": 195,
+        "text": "user_id, lesson_id, status, completed_at, updated_at"
+      },
+      {
+        "index": 196,
+        "text": "Tiến độ bài học ngữ pháp."
+      },
+      {
+        "index": 197,
+        "text": "vocabulary_sessions"
+      }
+    ]
+  },
+  "sourceHashes": {
+    "services/learning-service/src/modules/learning/learning.controller.ts": "50ca9616989901654c10847fbc7aca89ee82e860371a8e20c22dda2513abe6ca",
+    "services/learning-service/src/modules/learning/learning.service.ts": "103b176f7ca53e22dd8bee531e93f56f61b23557432fc60427bbf3d43b1838c7",
+    "services/learning-service/src/modules/learning/dtos/list-lessons-query.dto.ts": "254f15fb34d6df5b5cf61e9563652671f2a521cffd37e6d5aae833199e168ff8",
+    "services/learning-service/prisma/schema.prisma": "66059a23d034a362101c5549891a94a90f6265b88d5b01da72fc96799cf1fdf6",
+    "services/learning-service/src/app.module.ts": "d30e5ef57c6519de2c7a57c9311dc1ca23e6af48d3caa3ea8b67a52984f4217c",
+    "packages/common/src/auth/jwt-auth.guard.ts": "92f08512771b5121175acaa6d6f9e6dce8e7c20820064d1e6526be902477bd5c",
+    "packages/common/src/auth/roles.guard.ts": "f2d149e7ec369f798a923e6ea21fa0371f01b67c12702bf372d8a241c3261b3c",
+    "packages/contracts/openapi/openapi.yaml": "9bd1e875d7237207232d6062764695f6b8aaa420ade129a8ddde01c7e4c4ac6f",
+    "packages/contracts/README.md": "389fec91b2e924490fd400fb32f40e6f4146bde7961f3c2387015b2008968224",
+    "packages/contracts/events/LessonCompletedEvent.avsc": "0732798b8a9b191808bf2c26a93b0baa09607670a7a6c0f86bdb3a09daa9db39"
+  }
+}

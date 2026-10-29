@@ -1,0 +1,39 @@
+{
+  "kind": "real unauthenticated local Gateway HTTP probes; no stubs",
+  "checkedAt": "2026-10-29T12:44:18.564Z",
+  "gateway": "http://127.0.0.1:3000/api/v1",
+  "requests": [
+    {
+      "endpoint": "users/me",
+      "method": "GET",
+      "status": 401,
+      "elapsedMs": 48,
+      "correlationIdPresent": true
+    },
+    {
+      "endpoint": "learning/vocabulary-topics",
+      "method": "GET",
+      "status": 401,
+      "elapsedMs": 17,
+      "correlationIdPresent": true
+    },
+    {
+      "endpoint": "tests",
+      "method": "GET",
+      "status": 401,
+      "elapsedMs": 16,
+      "correlationIdPresent": true
+    },
+    {
+      "endpoint": "admin/users",
+      "method": "GET",
+      "status": 401,
+      "elapsedMs": 15,
+      "correlationIdPresent": true
+    }
+  ],
+  "authenticatedIntegration": "NOT_VERIFIED",
+  "isolatedDataset": "NOT_ASSESSED_BY_THIS_PROBE",
+  "writesPerformed": 0,
+  "metadataVerified": false
+}

@@ -1,0 +1,70 @@
+{
+  "baselineFiles": 3043,
+  "unchangedFiles": 3037,
+  "changed": [
+    "apps/admin-cms/README.md",
+    "apps/admin-cms/src/components/questions/question-detail.tsx",
+    "apps/admin-cms/src/components/questions/question-list.tsx",
+    "apps/admin-cms/src/lib/demo/cms-destination.ts",
+    "apps/admin-cms/tests/question-detail.test.ts",
+    "docs/frontend-design-review.md"
+  ],
+  "missing": [],
+  "addedImplementationFiles": [
+    "apps/admin-cms/src/app/(dashboard)/questions/[questionId]/edit/page.tsx",
+    "apps/admin-cms/src/app/(dashboard)/questions/new/page.tsx",
+    "apps/admin-cms/src/components/questions/question-draft-preview.tsx",
+    "apps/admin-cms/src/components/questions/question-form.tsx",
+    "apps/admin-cms/src/lib/questions/form-draft.ts",
+    "apps/admin-cms/src/lib/questions/form-navigation.ts",
+    "apps/admin-cms/src/styles/question-form.css",
+    "apps/admin-cms/tests/question-form.test.ts",
+    "scripts/qa/cms-question-form.cjs"
+  ],
+  "newEvidenceFiles": 244,
+  "reviewPrefixBytesPreserved": 525742,
+  "links": 28,
+  "anchors": 0,
+  "formattedFiles": 15,
+  "newApplicationTypeScriptFilesScanned": 7,
+  "noForbiddenRuntimeIdentifiersOrIntegrationImports": true,
+  "isolatedBuildInputHashesMatched": 121,
+  "nodeSyntax": "passed",
+  "prettier": "passed",
+  "gitDiffCheck": "passed",
+  "unitTests": {
+    "passed": 482,
+    "added": 16
+  },
+  "qa": {
+    "form": {
+      "completed": true,
+      "checks": 44,
+      "screenshots": 48
+    },
+    "shell-regression": {
+      "completed": true,
+      "checks": 35,
+      "screenshots": 46
+    },
+    "questions-regression": {
+      "completed": true,
+      "checks": 25,
+      "screenshots": 27
+    },
+    "detail-regression": {
+      "completed": true,
+      "checks": 44,
+      "screenshots": 83
+    },
+    "tests-regression": {
+      "completed": true,
+      "checks": 25,
+      "screenshots": 30
+    },
+    "totals": {
+      "checks": 173,
+      "screenshots": 234
+    }
+  }
+}
