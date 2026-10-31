@@ -118,14 +118,14 @@ export class AnalyticsService {
       return Math.max(max, localMax);
     }, 990);
 
-    const weightedAverage = recentAttempts.reduce((sum, attempt, index) => {
+    const weightedAverage = recentScores.reduce((sum, score, index) => {
       const weight = index + 1;
-      return sum + attempt.score * weight;
+      return sum + score * weight;
     }, 0);
 
-    const totalWeight = recentAttempts.reduce((sum, _, index) => sum + (index + 1), 0);
-    const baseline = totalWeight > 0 ? weightedAverage / totalWeight : recentAttempts[0].score;
-    const trend = recentAttempts.length > 1 ? recentAttempts[recentAttempts.length - 1].score - recentAttempts[0].score : 0;
+    const totalWeight = recentScores.reduce((sum, _, index) => sum + (index + 1), 0);
+    const baseline = weightedAverage / totalWeight;
+    const trend = recentScores[recentScores.length - 1] - recentScores[0];
     const predictedScore = Math.round(Math.max(0, Math.min(maxScore, baseline + trend * 0.25)));
 
     return {
@@ -136,9 +136,9 @@ export class AnalyticsService {
       method: 'WEIGHTED_RECENT_TREND',
       stats: {
         averageScore: Math.round(
-          recentAttempts.reduce((sum, attempt) => sum + attempt.score, 0) / recentAttempts.length,
+          recentScores.reduce((sum, score) => sum + score, 0) / recentScores.length,
         ),
-        latestScore: recentAttempts[recentAttempts.length - 1]?.score ?? null,
+        latestScore: recentScores[recentScores.length - 1],
         trend,
       },
     };
