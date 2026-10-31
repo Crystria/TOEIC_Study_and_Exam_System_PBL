@@ -1,0 +1,291 @@
+[
+  {
+    "name": "register",
+    "definition": "RegisterRequest",
+    "valid": true,
+    "data": {
+      "email": "p0@example.test",
+      "password": "Example123",
+      "confirmPassword": "Example123",
+      "fullName": "Fixture User"
+    }
+  },
+  {
+    "name": "register-confirm-mismatch",
+    "definition": "RegisterRequest",
+    "valid": false,
+    "expectedStage": "semantic",
+    "data": {
+      "email": "p0@example.test",
+      "password": "Example123",
+      "confirmPassword": "Different123",
+      "fullName": "Fixture User"
+    }
+  },
+  {
+    "name": "register-byte-limit",
+    "definition": "RegisterRequest",
+    "valid": false,
+    "expectedStage": "semantic",
+    "data": {
+      "email": "p0@example.test",
+      "password": "A1ééééééééééééééééééééééééééééééééééééa",
+      "confirmPassword": "A1ééééééééééééééééééééééééééééééééééééa",
+      "fullName": "Fixture User"
+    }
+  },
+  {
+    "name": "register-weak-password",
+    "definition": "RegisterRequest",
+    "valid": false,
+    "expectedStage": "schema",
+    "data": {
+      "email": "p0@example.test",
+      "password": "example123",
+      "confirmPassword": "example123",
+      "fullName": "Fixture User"
+    }
+  },
+  {
+    "name": "opaque-refresh-uuid",
+    "definition": "RefreshRequest",
+    "valid": true,
+    "data": {
+      "refreshToken": "00000190-0000-4000-8000-000000000000"
+    }
+  },
+  {
+    "name": "jwt-refresh-not-accepted",
+    "definition": "RefreshRequest",
+    "valid": false,
+    "expectedStage": "schema",
+    "data": {
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.legacy.signature"
+    }
+  },
+  {
+    "name": "sync-review",
+    "definition": "SyncRequest",
+    "valid": true,
+    "data": {
+      "deviceId": "web",
+      "operationId": "0000001e-0000-4000-8000-000000000000",
+      "baseVersion": "0",
+      "clientOccurredAt": "2026-10-31T05:00:00.000Z",
+      "operation": {
+        "kind": "REVIEW_FLASHCARD",
+        "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+        "baseEntityRevision": "0",
+        "quality": 3
+      }
+    }
+  },
+  {
+    "name": "sync-client-ef-forbidden",
+    "definition": "SyncRequest",
+    "valid": false,
+    "expectedStage": "schema",
+    "data": {
+      "deviceId": "web",
+      "operationId": "0000001e-0000-4000-8000-000000000000",
+      "baseVersion": "0",
+      "clientOccurredAt": "2026-10-31T05:00:00.000Z",
+      "operation": {
+        "kind": "REVIEW_FLASHCARD",
+        "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+        "baseEntityRevision": "0",
+        "quality": 3,
+        "easinessFactor": 9
+      }
+    }
+  },
+  {
+    "name": "profile-no-role-mass-assignment",
+    "definition": "ProfilePatch",
+    "valid": false,
+    "expectedStage": "schema",
+    "data": {
+      "fullName": "Fixture User",
+      "roles": ["SYSTEM_ADMIN"]
+    }
+  },
+  {
+    "name": "session-five",
+    "definition": "SessionSubmit",
+    "valid": true,
+    "data": {
+      "operationId": "0000001e-0000-4000-8000-000000000000",
+      "reviews": [
+        {
+          "vocabularyId": "00000065-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000066-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000067-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000068-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000069-0000-4000-8000-000000000000",
+          "quality": 3
+        }
+      ],
+      "answers": [
+        {
+          "questionId": "000000c9-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000ca-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cb-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cc-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cd-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        }
+      ]
+    }
+  },
+  {
+    "name": "session-duplicate-vocabulary",
+    "data": {
+      "operationId": "0000001e-0000-4000-8000-000000000000",
+      "reviews": [
+        {
+          "vocabularyId": "00000065-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000065-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000067-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000068-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000069-0000-4000-8000-000000000000",
+          "quality": 3
+        }
+      ],
+      "answers": [
+        {
+          "questionId": "000000c9-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000ca-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cb-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cc-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cd-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        }
+      ]
+    },
+    "expectedStage": "semantic",
+    "definition": "SessionSubmit",
+    "valid": false
+  },
+  {
+    "name": "session-duplicate-question",
+    "data": {
+      "operationId": "0000001e-0000-4000-8000-000000000000",
+      "reviews": [
+        {
+          "vocabularyId": "00000065-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000066-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000067-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000068-0000-4000-8000-000000000000",
+          "quality": 3
+        },
+        {
+          "vocabularyId": "00000069-0000-4000-8000-000000000000",
+          "quality": 3
+        }
+      ],
+      "answers": [
+        {
+          "questionId": "000000c9-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000c9-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cb-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cc-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        },
+        {
+          "questionId": "000000cd-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        }
+      ]
+    },
+    "expectedStage": "semantic",
+    "definition": "SessionSubmit",
+    "valid": false
+  },
+  {
+    "name": "avatar-limit",
+    "definition": "PresignRequest",
+    "valid": false,
+    "expectedStage": "semantic",
+    "data": {
+      "kind": "AVATAR",
+      "contentType": "image/png",
+      "sizeBytes": 2097153
+    }
+  },
+  {
+    "name": "audio-size-and-content",
+    "definition": "PresignRequest",
+    "valid": true,
+    "data": {
+      "kind": "AUDIO",
+      "contentType": "audio/mpeg",
+      "sizeBytes": 5242880
+    }
+  }
+]

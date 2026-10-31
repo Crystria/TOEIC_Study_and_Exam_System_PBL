@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { AppConfigModule, JwtAuthGuard, MessagingModule, RedisModule, RolesGuard } from '@toeic/common';
+import { AppConfigModule, CorrelationIdMiddleware, JwtAuthGuard, MessagingModule, RedisModule, RolesGuard } from '@toeic/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { LearningModule } from './modules/learning/learning.module';
 import { HealthController } from './health/health.controller';
@@ -24,4 +24,8 @@ import { HealthController } from './health/health.controller';
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
+  }
+}

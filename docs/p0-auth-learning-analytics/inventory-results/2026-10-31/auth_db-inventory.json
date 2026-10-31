@@ -1,0 +1,49 @@
+{
+  "checks": {
+    "unknownRoles": 0,
+    "orphanAssignments": 0,
+    "usersWithoutRoles": 0,
+    "activeSystemAdmins": 0,
+    "orphanRefreshTokens": 0,
+    "negativeDeviceVersions": 0,
+    "activeLegacyRefreshTokens": 0,
+    "negativeFailedLoginCounts": 0,
+    "avatarReferencesToClassify": 0,
+    "duplicateRefreshHashGroups": 0,
+    "emailsNeedingNormalization": 0,
+    "nonNullLockTimesToClassify": 0,
+    "syncRowsWithoutStatePayload": 0,
+    "legacyLockedStatusToClassify": 0,
+    "unexpectedBcryptCostOrFormat": 0,
+    "expiredUnrevokedRefreshTokens": 0,
+    "normalizedEmailCollisionGroups": 0
+  },
+  "outbox": {
+    "unpublished": 0,
+    "oldestUnpublishedAt": null
+  },
+  "database": "auth_db",
+  "isolation": "repeatable read",
+  "rowCounts": {
+    "roles": 0,
+    "users": 0,
+    "audit_logs": 0,
+    "user_roles": 0,
+    "outbox_events": 0,
+    "refresh_tokens": 0,
+    "user_sync_states": 0
+  },
+  "capturedAt": "2026-10-31T22:17:33.996981+07:00",
+  "migrations": [
+    {
+      "name": "20261012083959_init",
+      "checksum": "0fb6ff02dd8a963fe0285db538500e564b0616eac11995947f317476f74805eb",
+      "finishedAt": "2026-10-12T15:39:59.614573+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    }
+  ],
+  "roleAssignments": [],
+  "userStatusGroups": [],
+  "transactionReadOnly": "on"
+}

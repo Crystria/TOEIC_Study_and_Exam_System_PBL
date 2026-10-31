@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-31",
+  "branchAtStart": "auth-analytics-learning",
+  "headAtStart": "e7f9f52",
+  "liveDataInventory": "COMPLETED_READ_ONLY",
+  "serviceRuntimeChanged": false,
+  "files": [
+    {
+      "path": "docs/SRS.docx",
+      "sha256": "e1e3d2dfaac745e9b75e79769da6b945aa79d388cdac2f0e0bcd25a59f0d83fe"
+    },
+    {
+      "path": "docs/tai_lieu_thiet_ke_CSDL.docx",
+      "sha256": "a6d70a829ef84efbc67c42d1386c756ecd55875389ab61d3d4590276122dba13"
+    },
+    {
+      "path": "docs/Thiet_ke_kien_truc_Storage.docx",
+      "sha256": "d6e3d72a58b6262e2724c636c5acca7071b975c9a64b9c94e55395d392d89bc3"
+    },
+    {
+      "path": "docs/Thiết kế Event.docx",
+      "sha256": "c1bc6bb143bdaaa871bf0c07716baf0ba19ed2e25a16e535b2e4d8c86a3c734d"
+    },
+    {
+      "path": "docs/Thiết kế hệ thống.docx",
+      "sha256": "c766590ca504f42d54205f5c09182aae8003aa47916db8e6bb9988c354f14ecb"
+    },
+    {
+      "path": "services/auth-service/prisma/schema.prisma",
+      "sha256": "844f04d8049ff63753b7da2d895e4dd394a8918438651b535849487239ab2e60"
+    },
+    {
+      "path": "services/learning-service/prisma/schema.prisma",
+      "sha256": "66059a23d034a362101c5549891a94a90f6265b88d5b01da72fc96799cf1fdf6"
+    },
+    {
+      "path": "services/analytics-service/prisma/schema.prisma",
+      "sha256": "dd359f54ac55d048325476cf5da3011a3059d59338ba6119cd61cfa2775ddc32"
+    },
+    {
+      "path": "services/exam-service/prisma/schema.prisma",
+      "sha256": "32253a6cd527c75e62855441570357a819d20b7e3588532f859c4a2a2f795e80"
+    },
+    {
+      "path": "services/exam-service/src/modules/attempts/attempts.service.ts",
+      "sha256": "6dacca6cc30836b3305d1b9735c0eec6cd296a3884bf653253119d4ad1bf0419"
+    },
+    {
+      "path": "services/api-gateway/src/gateway/proxy.ts",
+      "sha256": "ae33569605b9f14362b96720730f9a29c0f82ed0e392e975fc3d556676ba2f27"
+    },
+    {
+      "path": "packages/common/src/outbox/outbox.ts",
+      "sha256": "ba8d61d63ec66f51cc0a14d62c7cf01e1a7dd80af871235dea5180054fc19fb2"
+    },
+    {
+      "path": "packages/common/src/messaging/messaging.service.ts",
+      "sha256": "2f9103ffbe1c96fa69efbc6399f6050253e13721d36d22748552fb5e8e464f66"
+    },
+    {
+      "path": "packages/contracts/events/TestSubmittedEvent.avsc",
+      "sha256": "dd0ef9df88b8174cc74501d7b0e6568d0da20d17a953f01d73fddc6a7aec798b"
+    }
+  ],
+  "liveInventory": {
+    "date": "2026-10-31",
+    "report": "live-inventory.md",
+    "summary": "inventory-results/2026-10-31/summary.json",
+    "evidenceManifest": "inventory-results/2026-10-31/manifest.json",
+    "databases": ["auth_db", "learning_db", "analytics_db", "exam_db"],
+    "businessTables": 29,
+    "businessRows": 0,
+    "missingMigrationFilesInCheckout": 5,
+    "recoveryRef": "apiGateway-exam-question",
+    "recoveryCommit": "55a1a1244d7b110da94764ee62f8a9f846c09819",
+    "databaseChanged": false,
+    "branchesMerged": false
+  }
+}

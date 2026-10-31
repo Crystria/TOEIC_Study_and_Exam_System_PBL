@@ -1,0 +1,46 @@
+{
+  "checks": {
+    "nullModeRows": 0,
+    "unknownModeRows": 0,
+    "invalidStreakRanges": 0,
+    "invalidWeakAreaRanges": 0,
+    "duplicateAttemptGroups": 0,
+    "invalidPracticeAccuracy": 0,
+    "partRowsWithScaledScore": 0,
+    "fullRowsWithoutStoredScore": 0,
+    "placeholderPartZeroWeakAreas": 0,
+    "repeatedLessonCompletionGroups": 0,
+    "legacyScoreRowsWithoutV2SectionAndProvenanceColumns": 0,
+    "repeatedEntityActivityGroupsNotNecessarilyDuplicates": 0
+  },
+  "database": "analytics_db",
+  "isolation": "repeatable read",
+  "rowCounts": {
+    "weak_areas": 0,
+    "daily_streaks": 0,
+    "score_history": 0,
+    "processed_events": 0,
+    "learning_activity": 0,
+    "user_learning_stats": 0
+  },
+  "capturedAt": "2026-10-31T22:17:34.985024+07:00",
+  "migrations": [
+    {
+      "name": "20261012084053_init",
+      "checksum": "cd976db4629e516ccd1f4c9e6a47440d5ee8be7e0aa0f1765be24407c9570906",
+      "finishedAt": "2026-10-12T15:40:53.360081+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    },
+    {
+      "name": "20261027090200_p0_score_mode",
+      "checksum": "31a3681a0492042fd101432c8509b7d8c7108a272aa871335be4fecd012102b6",
+      "finishedAt": "2026-10-27T06:38:21.634464+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    }
+  ],
+  "scoreGroups": [],
+  "activityGroups": [],
+  "transactionReadOnly": "on"
+}

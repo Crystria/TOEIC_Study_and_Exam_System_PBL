@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-31",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "container": "toeic-postgres",
+  "mainDatabases": ["auth_db", "learning_db", "analytics_db", "exam_db"],
+  "mode": "READ_ONLY_AGGREGATE_INVENTORY",
+  "snapshotIsolation": "Independent REPEATABLE READ snapshots per database",
+  "headAtInventory": "c508cbbba58591b367815ca14950ccd338a2470a",
+  "mutatingSqlExecuted": false,
+  "migrationsExecuted": false,
+  "branchesMerged": false,
+  "files": [
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory/catalog.sql",
+      "sha256": "e25b655b14384791ae14c7b106c44bd2a498c882c04db0142fe67da5bb497ae7"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory/auth-live.sql",
+      "sha256": "1f9ecdc88d289a6650d6e69f7332a50742f0a0f83a6fe7b233ba473a869e06bb"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory/learning-live.sql",
+      "sha256": "b6d4b3a46ed8b0b258f2928c9da2de967ecd9ef171caefc7b0720df08a2be2ae"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory/analytics-live.sql",
+      "sha256": "db32bece94e9c04d94b590b808dc729932d5d2d577858a56a5d55b3ff07755b3"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory/exam-live.sql",
+      "sha256": "0c1dbec988c158d3619fc7061a8f60de5aecd9318a425f78b0cd41e8553ae44d"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/analytics_db-catalog.json",
+      "sha256": "9c80fdb410206175f12a0fc682aa77cdc2f2c21ef61eca718d53adf84dcdbd66"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/analytics_db-inventory.json",
+      "sha256": "be15ce1b2e8f0b926aeac1bbb7de8976759a6502b8fae39907a12adff1e3a922"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/auth_db-catalog.json",
+      "sha256": "b628e174d6c7235c08055a894609642b6e1136c2882596dbd97aa77aa42a272b"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/auth_db-inventory.json",
+      "sha256": "0bd1dd99fcad026479ef11e85e047ed32a105514a3eb93e232f9b9cb6e289ad1"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/baseline-recovery.json",
+      "sha256": "f028f289ffffb75502e15e289a998909518f80eb8909f173f46631a8006fb09b"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/exam_db-catalog.json",
+      "sha256": "7b273b8ca9dc0de6047de1324e50e3fe0e6840ecef28aabd4d9418b2f013f612"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/exam_db-inventory.json",
+      "sha256": "0fb0848644968c50b4862e3eb17eb42961072d5b01ff730396c91c991ed7858d"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/learning_db-catalog.json",
+      "sha256": "20ef7568a4320b3a6feff6d0c559d7e3baa783cf57b0fa9e179fb503578575a7"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/learning_db-inventory.json",
+      "sha256": "d2e407cb12658a9647bccc63c7d0977dab55df64df66e246c83769e269534c8e"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/inventory-results/2026-10-31/summary.json",
+      "sha256": "57c2c512f318741f883709bb4602f5adaa46836fc38983883e838cad2fe4bd65"
+    },
+    {
+      "path": "docs/p0-auth-learning-analytics/source-audit.json",
+      "sha256": "0b21f70232521884048e3176d32e1ec31a672ac4bff2b93d060d430b92741def"
+    }
+  ]
+}
