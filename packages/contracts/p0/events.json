@@ -1,0 +1,74 @@
+[
+  {
+    "eventType": "AuthorizationChangedEvent.v2",
+    "schema": "../events/v2/AuthorizationChangedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/AuthorizationChangedEvent.schema.json",
+    "producer": "auth-service",
+    "routingKey": "authorization.changed.v2",
+    "queues": ["authorization-cache.v2"],
+    "payloadDefinition": "AuthorizationChangedPayload"
+  },
+  {
+    "eventType": "TestSubmittedEvent.v2",
+    "schema": "../events/v2/TestSubmittedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/TestSubmittedEvent.schema.json",
+    "producer": "exam-service",
+    "routingKey": "test.submitted.v2",
+    "queues": ["analytics-service.v2"],
+    "payloadDefinition": "FullTestPayload"
+  },
+  {
+    "eventType": "PartPracticeSubmittedEvent.v2",
+    "schema": "../events/v2/PartPracticeSubmittedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/PartPracticeSubmittedEvent.schema.json",
+    "producer": "exam-service",
+    "routingKey": "part.practice.submitted.v2",
+    "queues": ["analytics-service.v2"],
+    "payloadDefinition": "PartPracticePayload"
+  },
+  {
+    "eventType": "VocabularyLearnedEvent.v2",
+    "schema": "../events/v2/VocabularyLearnedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/VocabularyLearnedEvent.schema.json",
+    "producer": "learning-service",
+    "routingKey": "vocabulary.learned.v2",
+    "queues": ["analytics-service.v2"],
+    "payloadDefinition": "VocabularyLearnedPayload"
+  },
+  {
+    "eventType": "LessonCompletedEvent.v2",
+    "schema": "../events/v2/LessonCompletedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/LessonCompletedEvent.schema.json",
+    "producer": "learning-service",
+    "routingKey": "lesson.completed.v2",
+    "queues": ["analytics-service.v2"],
+    "payloadDefinition": "LessonCompletedPayload"
+  },
+  {
+    "eventType": "UserSyncAcceptedEvent.v2",
+    "schema": "../events/v2/UserSyncAcceptedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/UserSyncAcceptedEvent.schema.json",
+    "producer": "auth-service",
+    "routingKey": "user.sync.accepted.v2",
+    "queues": ["learning-sync.v2"],
+    "payloadDefinition": "SyncAcceptedPayload"
+  },
+  {
+    "eventType": "LearningSyncResolvedEvent.v2",
+    "schema": "../events/v2/LearningSyncResolvedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/LearningSyncResolvedEvent.schema.json",
+    "producer": "learning-service",
+    "routingKey": "learning.sync.resolved.v2",
+    "queues": ["auth-learning-projection.v2"],
+    "payloadDefinition": "SyncResolvedPayload"
+  },
+  {
+    "eventType": "LearningProgressChangedEvent.v2",
+    "schema": "../events/v2/LearningProgressChangedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/LearningProgressChangedEvent.schema.json",
+    "producer": "learning-service",
+    "routingKey": "learning.progress.changed.v2",
+    "queues": ["auth-learning-projection.v2"],
+    "payloadDefinition": "ProgressChangedPayload"
+  }
+]

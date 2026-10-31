@@ -2,13 +2,18 @@
   "name": "@toeic/contracts",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared contracts: gRPC proto, OpenAPI spec, Avro event schemas",
+  "description": "Shared contracts: gRPC proto, OpenAPI, JSON event schemas and legacy Avro references",
   "files": [
     "proto",
     "events",
-    "openapi"
+    "openapi",
+    "p0"
   ],
   "scripts": {
-    "lint": "echo \"contracts: no lint\" && exit 0"
+    "lint": "echo \"contracts: no lint\" && exit 0",
+    "validate:p0": "node p0/verify.cjs"
+  },
+  "devDependencies": {
+    "ajv": "6.15.0"
   }
 }
