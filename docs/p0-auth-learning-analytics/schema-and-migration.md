@@ -2,6 +2,8 @@
 
 Đây là thiết kế, chưa có SQL DDL/Prisma migration mới. Service dùng database riêng (`auth_db`, `learning_db`, `analytics_db`) trong PostgreSQL; tên `auth_db.users` trong Word là ký hiệu sở hữu, không mặc nhiên tạo schema PostgreSQL tên auth_db bên trong DB cùng tên. Migration hiện tại tạo bảng ở schema mặc định. Không join hoặc FK giữa các DB.
 
+Kiểm kê thực ngày 2026-10-31 đã hoàn thành: bốn DB chính trống về dữ liệu nghiệp vụ, nhưng Analytics/Exam đã có thêm migration từ nhánh `apiGateway-exam-question`. Mapping “hiện tại” bên dưới mô tả source của checkout, không được dùng như DDL baseline của DB mà bỏ qua phần lệch này. Xem [live-inventory.md](live-inventory.md) và đồng bộ baseline trước khi tạo/chạy migration mới.
+
 ## Auth
 
 | Bảng/field hiện tại                                      | Đích và constraint                                                                                                                                                                                                            | Xử lý legacy                                                                                                                                           |
@@ -75,4 +77,4 @@ Upload ticket lưu service-local resource/owner, key, content type/size, expiry,
 5. Đối soát ID/count/relation, constraints, completedAt/date chuyển timezone, head bootstrap và thống kê. Backfill không tự phát learning activity mới để tạo streak/firstLearned giả.
 6. Chuyển read path và producer; chỉ xóa cột cũ ở release sau. Rollback app dựa trên schema additive; sau bước không đảo được dùng forward fix/restore đã diễn tập, không drop dữ liệu để “rollback”.
 
-Inventory thật, backup/restore rehearsal và DDL là gate trước migration P2/P3/P5; P0 hiện chỉ hoàn thành mapping/schema contract. Docker chưa sẵn sàng không được diễn giải thành DB trống hoặc dữ liệu an toàn để chuyển đổi.
+Inventory thật đã được thực hiện bằng READ ONLY: 29 bảng nghiệp vụ, 0 bản ghi. Trước migration P2/P3/P5 vẫn cần đồng bộ baseline/migration lịch sử của Exam/Analytics, backup/restore rehearsal và kiểm tra DDL trên bản sao. Kết quả count 0 không phải lý do reset schema hoặc bỏ qua lịch sử đã áp dụng.

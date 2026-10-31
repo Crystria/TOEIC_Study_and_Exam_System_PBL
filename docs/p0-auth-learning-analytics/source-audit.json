@@ -2,7 +2,7 @@
   "date": "2026-10-31",
   "branchAtStart": "auth-analytics-learning",
   "headAtStart": "e7f9f52",
-  "liveDataInventory": "NOT_RUN_DOCKER_DAEMON_UNAVAILABLE",
+  "liveDataInventory": "COMPLETED_READ_ONLY",
   "serviceRuntimeChanged": false,
   "files": [
     {
@@ -61,5 +61,19 @@
       "path": "packages/contracts/events/TestSubmittedEvent.avsc",
       "sha256": "dd0ef9df88b8174cc74501d7b0e6568d0da20d17a953f01d73fddc6a7aec798b"
     }
-  ]
+  ],
+  "liveInventory": {
+    "date": "2026-10-31",
+    "report": "live-inventory.md",
+    "summary": "inventory-results/2026-10-31/summary.json",
+    "evidenceManifest": "inventory-results/2026-10-31/manifest.json",
+    "databases": ["auth_db", "learning_db", "analytics_db", "exam_db"],
+    "businessTables": 29,
+    "businessRows": 0,
+    "missingMigrationFilesInCheckout": 5,
+    "recoveryRef": "apiGateway-exam-question",
+    "recoveryCommit": "55a1a1244d7b110da94764ee62f8a9f846c09819",
+    "databaseChanged": false,
+    "branchesMerged": false
+  }
 }

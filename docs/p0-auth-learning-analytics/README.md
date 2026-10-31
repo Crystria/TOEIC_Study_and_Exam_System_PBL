@@ -1,7 +1,7 @@
 # P0 Thiết kế Auth Learning Analytics
 
 - Ngày kiểm kê source: 2026-10-31, branch `auth-analytics-learning`, HEAD `e7f9f52` tại thời điểm bắt đầu.
-- Trạng thái: hoàn tất thiết kế và kiểm chứng contract bằng fixture; **chưa kiểm kê bản ghi DB thật vì Docker daemon không sẵn sàng**. Không chạy migration hay thay đổi service runtime.
+- Trạng thái: **P0 hoàn tất thiết kế, kiểm chứng contract và kiểm kê DB thật ngày 2026-10-31**. Bốn DB chính có 29 bảng nghiệp vụ và 0 bản ghi; đã phát hiện baseline Exam/Analytics đi trước checkout. Không chạy migration hay thay đổi service runtime.
 - Đầu vào: năm tài liệu Word ở `docs`, kế hoạch phát triển đã được thống nhất trong chat và ADR Full/Part hiện có. Các khác biệt so với Word được ghi rõ bên dưới.
 
 ## Đầu ra P0
@@ -21,6 +21,8 @@
 | SQL kiểm kê chỉ đọc cho từng service                      | [inventory](inventory)                                                                        |
 
 ## Quyết định đã cụ thể hóa
+
+Kết quả bổ sung: [kiểm kê DB thật và đối chiếu baseline migration](live-inventory.md), kèm catalog/count/checksum chỉ đọc đã lưu.
 
 - Bản đầu Full/Part. Full có score tham khảo và cần scoring provenance; Part chỉ accuracy, không dự đoán. Chỉ Full đạt contract mới đi vào score trend/prediction.
 - Polling relay thay CDC ở bản đầu. Mỗi outbox một đường publish; V2 dùng routing key/queue riêng để không phá consumer legacy.
@@ -59,6 +61,7 @@ Lệnh chỉ đọc JSON và chạy self-check specification bằng dữ liệu 
 - [x] Kiểm kê source/schema/migration, xác định producer Exam chưa tương thích.
 - [x] Có ADR, role/API matrix, schema/migration mapping, contract và fixture dương/âm/toán học.
 - [x] Chạy kiểm chứng specification và ghi kết quả trong verification.md.
-- [ ] Kiểm kê dữ liệu thực bằng SQL read-only; hiện chờ Docker/PostgreSQL sẵn sàng. Không giả định DB trống hoặc không có collision.
+- [x] Kiểm kê dữ liệu thực bằng SQL read-only: cả 29 bảng nghiệp vụ của bốn DB chính đều trống. Đã lưu catalog, count/checks, migration metadata và đối chiếu checksum.
+- [x] Ghi nhận 5 migration thiếu trong checkout Exam/Analytics; tìm thấy file khớp DB ở nhánh `apiGateway-exam-question`, chưa merge hoặc sửa lịch sử DB.
 
-Có thể bắt đầu P1 theo thiết kế đã chốt. **Chưa được coi là đủ điều kiện chạy migration P2/P3/P5 hoặc nghiệm thu tích hợp Full/Part**: cần báo cáo kiểm kê DB và producer Exam tương thích. P0 không tự triển khai phần Exam đang thiếu để che phụ thuộc đó.
+Có thể bắt đầu P1 theo thiết kế đã chốt. **Trước khi chạy source/migration phụ thuộc DB Exam/Analytics hiện có, phải đồng bộ baseline đúng nhánh và kiểm tra drift**; DB trống không loại bỏ yêu cầu giữ đúng lịch sử migration. Backup/rehearsal và producer V2 tương thích vẫn là gate của các giai đoạn sau. P0 không tự merge nhánh hoặc triển khai phần Exam còn thiếu để che phụ thuộc đó.

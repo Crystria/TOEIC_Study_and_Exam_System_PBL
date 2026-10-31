@@ -2,6 +2,7 @@
 
 - Ngày: 2026-10-31, giờ Việt Nam.
 - Phạm vi: thiết kế, source/schema inventory và self-check hợp đồng; không phải nghiệm thu implementation.
+- Cập nhật kiểm kê thực: 2026-10-31, 22:17 giờ Việt Nam; đã đọc thành công bốn DB chính bằng transaction READ ONLY. Kết quả: 29 bảng nghiệp vụ, 0 bản ghi; có chênh lệch baseline Exam/Analytics cần đồng bộ trước migration.
 
 ## Kết quả đã chạy
 
@@ -31,35 +32,33 @@ Kiểm tra bổ sung đã qua: Prettier trên toàn bộ file đặc tả/contra
 | Auth/Learning/Analytics Prisma | Ba schema và migration init tương ứng                                                    | Khác mô hình đích; mapping đã ghi, chưa tạo/chạy migration                                                                    |
 | Contract cũ                    | `.avsc`, aggregate `openapi.yaml`                                                        | Giữ nguyên; V2 thêm file riêng, không làm như producer đã phát được                                                           |
 
-## Kiểm kê dữ liệu thực còn chờ
+## Kiểm kê dữ liệu thực đã hoàn thành
 
-`docker ps --format '{{.Names}}|{{.Status}}'` không kết nối được Docker API: pipe `dockerDesktopLinuxEngine` không tồn tại. Không thấy process PostgreSQL/Docker backend trong kiểm tra local, cũng không thấy Docker Desktop tại đường dẫn cài đặt mặc định. Không khởi động service mới hoặc tạo database để giả lập một báo cáo dữ liệu hiện có.
+Blocker Docker ở lần kiểm chứng trước đã được gỡ sau khi người dùng khởi động Docker. Đã xác nhận PostgreSQL 16.15 và `default_transaction_read_only=on`, đọc catalog trước rồi dùng SQL khớp schema thực tế; các query dữ liệu chạy trong REPEATABLE READ READ ONLY, timeout 5 giây.
 
-Vì thế chưa biết số hàng thực, normalized email collisions, token đang hoạt động, khóa legacy, URL ngoài storage hoặc facts thiếu provenance. **Không suy “DB trống/an toàn” từ lỗi kết nối này.**
+| DB           | Bảng nghiệp vụ | Tổng bản ghi nghiệp vụ | Migration metadata |
+| ------------ | -------------- | ---------------------- | ------------------ |
+| auth_db      | 7              | 0                      | 1                  |
+| learning_db  | 7              | 0                      | 1                  |
+| analytics_db | 6              | 0                      | 2                  |
+| exam_db      | 9              | 0                      | 5                  |
 
-Đã chuẩn bị SQL chỉ đọc cho schema legacy hiện tại tại [inventory](inventory). Khi PostgreSQL sẵn sàng, chạy bằng tài khoản read-only cho từng DB; ví dụ nếu dùng user mặc định local `toeic`:
+Các collision/orphan/range check đều 0 trên các bảng rỗng. Không có role/admin, nội dung Learning hoặc outbox tồn đọng; seed/kiểm thử runtime vẫn chưa thực hiện.
 
-```powershell
-Get-Content -Raw -LiteralPath 'docs/p0-auth-learning-analytics/inventory/auth.sql' | docker exec -i toeic-postgres psql --username toeic --dbname auth_db --set ON_ERROR_STOP=1
-Get-Content -Raw -LiteralPath 'docs/p0-auth-learning-analytics/inventory/learning.sql' | docker exec -i toeic-postgres psql --username toeic --dbname learning_db --set ON_ERROR_STOP=1
-Get-Content -Raw -LiteralPath 'docs/p0-auth-learning-analytics/inventory/analytics.sql' | docker exec -i toeic-postgres psql --username toeic --dbname analytics_db --set ON_ERROR_STOP=1
-Get-Content -Raw -LiteralPath 'docs/p0-auth-learning-analytics/inventory/exam.sql' | docker exec -i toeic-postgres psql --username toeic --dbname exam_db --set ON_ERROR_STOP=1
-```
+Phát hiện quan trọng: DB Analytics/Exam đi trước Prisma/migration của checkout. Có 5 migration đã áp dụng nhưng thiếu file ở nhánh hiện tại; đã xác minh cả 5 file ở nhánh `apiGateway-exam-question`, commit `55a1a1244d7b110da94764ee62f8a9f846c09819`, có checksum khớp DB. Chưa merge/copy baseline hoặc sửa DB; không kết luận producer runtime đã đáp ứng V2 từ schema này.
 
-Thay username theo cấu hình môi trường; không đưa password vào command hay báo cáo. Các script dùng transaction READ ONLY và statement_timeout 5 giây, chỉ xuất count/domain aggregates. Trước chạy ở DB đã đổi schema, kiểm tra catalog và điều chỉnh script; chúng được viết cho schema legacy tại HEAD đã kiểm kê. Nếu tên cột không còn đúng thì dừng, không đổi DB cho vừa script.
-
-Sau khi chạy: ghi kết quả aggregate và phân loại các hàng không ánh xạ được, cập nhật source-audit/live inventory status và checkbox còn chờ trong kế hoạch. Collision/role lạ/score placeholder không được sửa tự động chỉ để làm báo cáo “sạch”.
+Chi tiết: [báo cáo kiểm kê thực](live-inventory.md), [summary](inventory-results/2026-10-31/summary.json), [baseline recovery](inventory-results/2026-10-31/baseline-recovery.json). SQL đã chạy là `catalog.sql` và bốn file `*-live.sql` trong [inventory](inventory); script Exam legacy được giữ tham chiếu, không dùng cho catalog hiện tại. Bằng chứng chỉ chứa metadata/aggregate, không export bản ghi người dùng hoặc payload.
 
 ## Trạng thái chuyển giai đoạn
 
-| Điều kiện                                              | Trạng thái                                                  |
-| ------------------------------------------------------ | ----------------------------------------------------------- |
-| Quyết định sản phẩm, thuật toán và phạm vi bản đầu     | Đã cụ thể hóa bằng ADR                                      |
-| API/event/schema mapping và fixture                    | Có, self-check đã qua                                       |
-| Runtime Auth/Learning/Analytics/Exam theo contract mới | Chưa triển khai, ngoài P0                                   |
-| Inventory record thật                                  | Chưa chạy, bị giới hạn bởi Docker/PostgreSQL không sẵn sàng |
-| Cho phép bắt đầu P1 common/config/messaging            | Có thể bắt đầu từ contract đã chốt                          |
-| Sẵn sàng migration lên dữ liệu hiện có                 | Chưa; cần inventory, backup và rehearsal                    |
-| Sẵn sàng nghiệm thu dữ liệu Full/Part thật ở P6        | Chưa; producer Exam chưa tương thích                        |
+| Điều kiện                                              | Trạng thái                                                     |
+| ------------------------------------------------------ | -------------------------------------------------------------- |
+| Quyết định sản phẩm, thuật toán và phạm vi bản đầu     | Đã cụ thể hóa bằng ADR                                         |
+| API/event/schema mapping và fixture                    | Có, self-check đã qua                                          |
+| Runtime Auth/Learning/Analytics/Exam theo contract mới | Chưa triển khai, ngoài P0                                      |
+| Inventory record thật                                  | Đã chạy read-only trên bốn DB chính: 29 bảng, 0 hàng nghiệp vụ |
+| Cho phép bắt đầu P1 common/config/messaging            | Có thể bắt đầu từ contract đã chốt                             |
+| Sẵn sàng migration lên dữ liệu hiện có                 | Chưa; cần đồng bộ baseline Exam/Analytics, backup và rehearsal |
+| Sẵn sàng nghiệm thu dữ liệu Full/Part thật ở P6        | Chưa; producer Exam chưa tương thích                           |
 
-P0 không được đánh dấu hoàn tất vô điều kiện khi mục inventory vẫn còn chờ. Phần thiết kế đã hoàn thành và có thể review độc lập với điều kiện môi trường này.
+P0 đã hoàn tất phần thiết kế/contract và kiểm kê dữ liệu thực. Các rủi ro baseline đã được ghi nhận, không tự giải quyết bằng reset hoặc sửa lịch sử migration. P1–P6, backup/rehearsal và nghiệm thu producer V2 vẫn là công việc tiếp theo.
