@@ -92,6 +92,21 @@ npm run apps:down
 
 > Chạy full-stack cần Docker Compose >= 2.22 (Compose Watch).
 
+QA P4 qua Gateway, chạy backend đã build trên Docker và bốn DB riêng:
+
+```bash
+npm run qa:build
+npm run qa:up
+# Generate bốn Prisma client trên host trước lần chạy đầu (xem scripts/qa/README.md).
+npm run qa:e2e        # E2E + smoke p95, tự dọn fixture
+npm run qa:seed       # Giữ lại đề demo 200 câu để thử API
+npm run qa:stop
+```
+
+Xem [hướng dẫn QA](scripts/qa/README.md) về namespace, tài khoản demo, healthcheck,
+migration và cách đọc báo cáo `artifacts/qa/latest.json`. Overlay QA dùng cùng
+cổng với dev; dừng backend đang chạy trước khi chuyển chế độ.
+
 ## Script gốc
 
 | Script                                           | Mô tả                                                                   |

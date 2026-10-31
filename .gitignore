@@ -40,6 +40,7 @@ coverage/
 junit.xml
 test-results/
 playwright-report/
+artifacts/qa/
 
 # ---------- Flutter / Dart ----------
 .dart_tool/

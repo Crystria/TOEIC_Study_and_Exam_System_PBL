@@ -1,0 +1,60 @@
+# Overlay on docker-compose.yml + docker-compose.apps.yml. Dedicated QA DBs/index/bucket.
+x-qa-node: &qa-node
+  image: toeic-qa-node:local
+  build:
+    context: .
+    dockerfile: infra/docker/dev-node.Dockerfile
+    args:
+      BUILD_BACKEND: 'true'
+x-qa-env: &qa-env
+  JWT_ACCESS_SECRET: ${QA_JWT_ACCESS_SECRET:-qa-access-local-only}
+  JWT_ISSUER: toeic-auth
+  JWT_AUDIENCE: toeic-api
+  RABBITMQ_EXCHANGE: qa.p4.events
+services:
+  migrate:
+    <<: *qa-node
+    command: node scripts/qa/migrate.mjs
+    environment:
+      QA_POSTGRES_URL: postgresql://toeic:toeic@postgres:5432/postgres
+  media-init:
+    <<: *qa-node
+    environment:
+      MINIO_BUCKET: toeic-media-p4
+  auth-service:
+    <<: *qa-node
+    command: node services/auth-service/dist/main.js
+    environment:
+      <<: *qa-env
+      JWT_REFRESH_SECRET: qa-refresh-local-only
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_p4_verify?schema=public
+  question-bank-service:
+    <<: *qa-node
+    command: node services/question-bank-service/dist/main.js
+    environment:
+      <<: *qa-env
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_p4_verify?schema=public
+      MINIO_BUCKET: toeic-media-p4
+      MEDIA_PUBLIC_BASE_URL: http://localhost:19000/toeic-media-p4
+      QUESTION_SEARCH_INDEX: questions-p4-qa
+      QUESTION_SEARCH_QUEUE: qa-p4-search
+  exam-service:
+    <<: *qa-node
+    command: node services/exam-service/dist/main.js
+    environment:
+      <<: *qa-env
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_p4_verify?schema=public
+      MEDIA_PUBLIC_BASE_URL: http://localhost:19000/toeic-media-p4
+  analytics-service:
+    <<: *qa-node
+    command: node services/analytics-service/dist/main.js
+    environment:
+      <<: *qa-env
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_p4_verify?schema=public
+      ANALYTICS_CONSUMER_QUEUE: qa-p4-analytics
+  api-gateway:
+    <<: *qa-node
+    command: node services/api-gateway/dist/main.js
+    environment:
+      <<: *qa-env
+      QA_MODE: 'true'

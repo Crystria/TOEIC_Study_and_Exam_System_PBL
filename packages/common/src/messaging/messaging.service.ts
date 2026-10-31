@@ -68,6 +68,7 @@ export class MessagingService implements OnModuleInit, OnModuleDestroy {
       this.logger.error(`RabbitMQ connection error: ${error.message}`);
     });
     connection.on('close', () => {
+      for (const subscription of this.subscriptions) subscription.started = false;
       if (!this.closing) {
         void this.scheduleReconnect();
       }
@@ -143,6 +144,13 @@ export class MessagingService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  /** Durable holding queue (e.g. an outbox DLQ), without an automatic consumer. */
+  async declareQueue(queue: string, routingKey: string): Promise<void> {
+    if (!this.publishChannel) throw new Error('RabbitMQ publish channel is not ready');
+    await this.publishChannel.assertQueue(queue, { durable: true });
+    await this.publishChannel.bindQueue(queue, this.exchange, routingKey);
+  }
+
   private async startConsumer(subscription: Subscription): Promise<void> {
     if (subscription.started) {
       return;
@@ -198,6 +206,8 @@ export class MessagingService implements OnModuleInit, OnModuleDestroy {
         channel.publish(this.exchange, routingKey, message.content, options);
       } else {
         this.logger.error(`Moving ${routingKey} to DLQ after ${retryCount + 1} attempts`);
+        channel.nack(message, false, false);
+        return;
       }
       channel.ack(message);
     }

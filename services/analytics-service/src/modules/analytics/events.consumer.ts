@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Prisma } from '../../generated/prisma';
 import { ConsumedMessage, EventEnvelope, MessagingService } from '@toeic/common';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -8,9 +9,32 @@ interface TestSubmittedPayload {
   attemptId: string;
   userId: string;
   testId: string;
-  testType: string;
+  mode?: string;
+  testType?: string;
   score: number;
   totalCorrect: number;
+  totalScore?: number;
+  completedAt?: number;
+  partDetails?: PartStat[];
+}
+interface PartStat {
+  part: number;
+  skill: string;
+  totalQuestions: number;
+  correctCount: number;
+  accuracy: number;
+}
+interface PartSubmittedPayload {
+  attemptId: string;
+  userId: string;
+  testId: string;
+  mode: 'PART';
+  parts: number[];
+  accuracy: number;
+  correctCount: number;
+  totalQuestions: number;
+  partStats: PartStat[];
+  completedAt: number;
 }
 
 interface VocabularyLearnedPayload {
@@ -24,12 +48,10 @@ interface LessonCompletedPayload {
   lessonId: string;
 }
 
-type EventApplier<T> = (
-  tx: Prisma.TransactionClient,
-  envelope: EventEnvelope<T>,
-) => Promise<void>;
+type EventApplier<T> = (tx: Prisma.TransactionClient, envelope: EventEnvelope<T>) => Promise<void>;
 
 const TOPIC_TEST_SUBMITTED = 'test.submitted';
+const TOPIC_PART_SUBMITTED = 'part-practice.submitted';
 const TOPIC_VOCABULARY_LEARNED = 'vocabulary.learned';
 const TOPIC_LESSON_COMPLETED = 'lesson.completed';
 const CONSUMER_GROUP = 'analytics-service';
@@ -38,9 +60,6 @@ const ACTIVITY_TEST_SUBMITTED = 'TEST_SUBMITTED';
 const ACTIVITY_VOCABULARY_LEARNED = 'VOCABULARY_LEARNED';
 const ACTIVITY_LESSON_COMPLETED = 'LESSON_COMPLETED';
 
-const FULL_TEST_MAX_SCORE = 990;
-const MINI_TEST_MAX_SCORE = 495;
-
 @Injectable()
 export class EventsConsumer implements OnModuleInit {
   private readonly logger = new Logger(EventsConsumer.name);
@@ -48,12 +67,18 @@ export class EventsConsumer implements OnModuleInit {
   constructor(
     private readonly messaging: MessagingService,
     private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
   ) {}
 
   async onModuleInit(): Promise<void> {
     await this.messaging.subscribe(
-      CONSUMER_GROUP,
-      [TOPIC_TEST_SUBMITTED, TOPIC_VOCABULARY_LEARNED, TOPIC_LESSON_COMPLETED],
+      this.config.get<string>('ANALYTICS_CONSUMER_QUEUE') ?? CONSUMER_GROUP,
+      [
+        TOPIC_TEST_SUBMITTED,
+        TOPIC_PART_SUBMITTED,
+        TOPIC_VOCABULARY_LEARNED,
+        TOPIC_LESSON_COMPLETED,
+      ],
       (message) => this.route(message),
     );
   }
@@ -63,6 +88,10 @@ export class EventsConsumer implements OnModuleInit {
       case TOPIC_TEST_SUBMITTED:
         return this.consume<TestSubmittedPayload>(message, (tx, envelope) =>
           this.onTestSubmitted(tx, envelope),
+        );
+      case TOPIC_PART_SUBMITTED:
+        return this.consume<PartSubmittedPayload>(message, (tx, envelope) =>
+          this.onPartSubmitted(tx, envelope),
         );
       case TOPIC_VOCABULARY_LEARNED:
         return this.consume<VocabularyLearnedPayload>(message, (tx, envelope) =>
@@ -82,10 +111,7 @@ export class EventsConsumer implements OnModuleInit {
    * `ProcessedEvent` được ghi CÙNG transaction với nghiệp vụ nên hoặc tất cả thành công
    * hoặc rollback, đảm bảo event không bị xử lý 2 lần.
    */
-  private async consume<T>(
-    message: ConsumedMessage,
-    apply: EventApplier<T>,
-  ): Promise<void> {
+  private async consume<T>(message: ConsumedMessage, apply: EventApplier<T>): Promise<void> {
     if (!message.content?.length) {
       return;
     }
@@ -113,6 +139,9 @@ export class EventsConsumer implements OnModuleInit {
       }
 
       await this.prisma.$transaction(async (tx) => {
+        const userId = (envelope.payload as { userId?: string }).userId;
+        if (userId)
+          await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`analytics-user:${userId}`}, 0))`;
         await tx.processedEvent.create({
           data: { eventId: envelope.eventId, eventType: envelope.eventType },
         });
@@ -121,6 +150,8 @@ export class EventsConsumer implements OnModuleInit {
 
       this.logger.debug(`Processed ${envelope.eventType}#${envelope.eventId}`);
     } catch (error) {
+      if (await this.prisma.processedEvent.findUnique({ where: { eventId: envelope.eventId } }))
+        return;
       // Rethrow để MessagingService retry (header x-retry) rồi đẩy DLQ sau MAX_RETRIES.
       this.logger.error(
         `Failed to process ${envelope.eventType}#${envelope.eventId}: ${(error as Error).message}`,
@@ -133,13 +164,42 @@ export class EventsConsumer implements OnModuleInit {
     tx: Prisma.TransactionClient,
     envelope: EventEnvelope<TestSubmittedPayload>,
   ): Promise<void> {
-    const { attemptId, userId, testType, score, totalCorrect } = envelope.payload;
-    const occurredAt = this.occurredAt(envelope);
+    const { attemptId, userId, totalCorrect } = envelope.payload;
+    const mode = 'FULL',
+      score = envelope.payload.totalScore ?? envelope.payload.score;
+    if (!Number.isInteger(score) || score < 10 || score > 990)
+      throw new Error('Invalid Full score');
+    const stats = envelope.payload.partDetails ?? [];
+    this.validateStats(stats);
+    if (
+      !Number.isInteger(totalCorrect) ||
+      totalCorrect < 0 ||
+      totalCorrect > 200 ||
+      (stats.length &&
+        (stats.length !== 7 ||
+          stats.reduce((n, p) => n + p.totalQuestions, 0) !== 200 ||
+          stats.reduce((n, p) => n + p.correctCount, 0) !== totalCorrect))
+    )
+      throw new Error('Invalid Full submission counts');
+    const occurredAt = envelope.payload.completedAt
+      ? new Date(envelope.payload.completedAt)
+      : this.occurredAt(envelope);
 
     await tx.scoreHistory.upsert({
       where: { attemptId },
-      create: { userId, attemptId, testType, score, takenAt: occurredAt },
-      update: { testType, score },
+      create: {
+        userId,
+        attemptId,
+        testType: mode,
+        mode,
+        score,
+        parts: stats.map((p) => p.part),
+        accuracy: stats.length
+          ? totalCorrect / stats.reduce((n, p) => n + p.totalQuestions, 0)
+          : null,
+        takenAt: occurredAt,
+      },
+      update: { testType: mode, mode, score },
     });
 
     await tx.learningActivity.create({
@@ -148,13 +208,97 @@ export class EventsConsumer implements OnModuleInit {
         activityType: ACTIVITY_TEST_SUBMITTED,
         refId: attemptId,
         occurredAt,
-        metadata: { testType, score, totalCorrect },
+        metadata: {
+          mode,
+          score,
+          totalCorrect,
+          partStats: stats as unknown as Prisma.InputJsonValue,
+        },
       },
     });
 
     await this.recomputeLearningStat(tx, userId);
-    await this.recomputeWeakAreaPlaceholder(tx, userId, testType, score);
+    await this.recomputeWeakAreas(tx, userId);
     await this.updateStreak(tx, userId, occurredAt);
+  }
+
+  private async onPartSubmitted(
+    tx: Prisma.TransactionClient,
+    envelope: EventEnvelope<PartSubmittedPayload>,
+  ) {
+    const p = envelope.payload;
+    this.validateStats(p.partStats);
+    if (
+      p.mode !== 'PART' ||
+      !Number.isFinite(p.completedAt) ||
+      !Array.isArray(p.parts) ||
+      new Set(p.parts).size !== p.parts.length ||
+      p.parts.length !== p.partStats.length ||
+      !p.parts.every((part) => p.partStats.some((s) => s.part === part))
+    )
+      throw new Error('Invalid Part submission metadata');
+    if (
+      !p.partStats.length ||
+      p.partStats.reduce((n, s) => n + s.totalQuestions, 0) !== p.totalQuestions ||
+      p.partStats.reduce((n, s) => n + s.correctCount, 0) !== p.correctCount ||
+      Math.abs(p.accuracy - p.correctCount / p.totalQuestions) > 1e-9
+    )
+      throw new Error('Invalid Part submission counts');
+    const occurredAt = new Date(p.completedAt);
+    await tx.scoreHistory.upsert({
+      where: { attemptId: p.attemptId },
+      create: {
+        userId: p.userId,
+        attemptId: p.attemptId,
+        testType: 'PART',
+        mode: 'PART',
+        score: null,
+        accuracy: p.accuracy,
+        parts: p.parts,
+        takenAt: occurredAt,
+      },
+      update: { mode: 'PART', testType: 'PART', score: null, accuracy: p.accuracy, parts: p.parts },
+    });
+    await tx.learningActivity.create({
+      data: {
+        userId: p.userId,
+        activityType: 'PART_PRACTICE_SUBMITTED',
+        refId: p.attemptId,
+        occurredAt,
+        metadata: {
+          mode: 'PART',
+          accuracy: p.accuracy,
+          correctCount: p.correctCount,
+          totalQuestions: p.totalQuestions,
+          partStats: p.partStats as unknown as Prisma.InputJsonValue,
+        },
+      },
+    });
+    await this.recomputeLearningStat(tx, p.userId);
+    await this.recomputeWeakAreas(tx, p.userId);
+    await this.updateStreak(tx, p.userId, occurredAt);
+  }
+
+  private validateStats(stats: PartStat[]) {
+    if (
+      !Array.isArray(stats) ||
+      new Set(stats.map((p) => p.part)).size !== stats.length ||
+      stats.some(
+        (p) =>
+          !Number.isInteger(p.part) ||
+          p.part < 1 ||
+          p.part > 7 ||
+          !Number.isInteger(p.totalQuestions) ||
+          p.totalQuestions < 1 ||
+          !Number.isInteger(p.correctCount) ||
+          p.correctCount < 0 ||
+          p.correctCount > p.totalQuestions ||
+          p.skill !== (p.part <= 4 ? 'LISTENING' : 'READING') ||
+          !Number.isFinite(p.accuracy) ||
+          Math.abs(p.accuracy - p.correctCount / p.totalQuestions) > 1e-9,
+      )
+    )
+      throw new Error('Invalid per-part statistics');
   }
 
   private async onVocabularyLearned(
@@ -202,10 +346,7 @@ export class EventsConsumer implements OnModuleInit {
    * Recompute thống kê tuyệt đối từ bảng hoạt động (dùng cho TestSubmittedEvent).
    * TODO: thay bằng aggregate phía DB khi khối lượng dữ liệu lớn.
    */
-  private async recomputeLearningStat(
-    tx: Prisma.TransactionClient,
-    userId: string,
-  ): Promise<void> {
+  private async recomputeLearningStat(tx: Prisma.TransactionClient, userId: string): Promise<void> {
     const activities = await tx.learningActivity.findMany({
       where: { userId },
       select: { activityType: true, occurredAt: true },
@@ -263,36 +404,35 @@ export class EventsConsumer implements OnModuleInit {
    * Placeholder cho WeakArea.
    * TODO: SRS yêu cầu điểm yếu theo part dựa trên tỉ lệ sai thực tế, nhưng
    * TestSubmittedEvent hiện chưa mang breakdown đúng/sai theo part. Tạm suy ra
-   * errorRate từ điểm và gom theo testType (part = 0 nghĩa là tổng hợp).
+   * errorRate từ điểm và gom theo mode (part = 0 nghĩa là tổng hợp).
    */
-  private async recomputeWeakAreaPlaceholder(
-    tx: Prisma.TransactionClient,
-    userId: string,
-    testType: string,
-    score: number,
-  ): Promise<void> {
-    const maxScore = testType === 'MINI' ? MINI_TEST_MAX_SCORE : FULL_TEST_MAX_SCORE;
-    const errorRate = this.clamp01(1 - score / maxScore);
-    const skillArea = testType;
-    const part = 0;
-
-    const existing = await tx.weakArea.findUnique({
-      where: { userId_skillArea_part: { userId, skillArea, part } },
+  private async recomputeWeakAreas(tx: Prisma.TransactionClient, userId: string): Promise<void> {
+    const activities = await tx.learningActivity.findMany({
+      where: { userId, activityType: { in: ['TEST_SUBMITTED', 'PART_PRACTICE_SUBMITTED'] } },
+      select: { refId: true, metadata: true },
     });
-
-    if (!existing) {
-      await tx.weakArea.create({
-        data: { userId, skillArea, part, errorRate, sampleCount: 1 },
-      });
-      return;
+    const byAttempt = new Map<string, PartStat[]>();
+    for (const activity of activities) {
+      const stats = (activity.metadata as unknown as { partStats?: PartStat[] } | null)?.partStats;
+      if (activity.refId && Array.isArray(stats)) byAttempt.set(activity.refId, stats);
     }
-
-    const sampleCount = existing.sampleCount + 1;
-    const blended = (existing.errorRate * existing.sampleCount + errorRate) / sampleCount;
-    await tx.weakArea.update({
-      where: { id: existing.id },
-      data: { errorRate: blended, sampleCount },
-    });
+    const totals = new Map<number, { total: number; correct: number }>();
+    for (const stats of byAttempt.values())
+      for (const p of stats) {
+        const existing = totals.get(p.part) ?? { total: 0, correct: 0 };
+        existing.total += p.totalQuestions;
+        existing.correct += p.correctCount;
+        totals.set(p.part, existing);
+      }
+    for (const [part, count] of totals) {
+      const skillArea = part <= 4 ? 'LISTENING' : 'READING';
+      const values = { sampleCount: count.total, errorRate: 1 - count.correct / count.total };
+      await tx.weakArea.upsert({
+        where: { userId_skillArea_part: { userId, skillArea, part } },
+        create: { userId, skillArea, part, ...values },
+        update: values,
+      });
+    }
   }
 
   private async updateStreak(
@@ -326,9 +466,5 @@ export class EventsConsumer implements OnModuleInit {
 
   private dayKey(date: Date): string {
     return startOfDay(date).toISOString().slice(0, 10);
-  }
-
-  private clamp01(value: number): number {
-    return Math.min(1, Math.max(0, value));
   }
 }

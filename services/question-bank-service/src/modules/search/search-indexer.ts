@@ -1,49 +1,38 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ConsumedMessage, MessagingService } from '@toeic/common';
 import { SearchService } from './search.service';
 
-const CONSUMER_QUEUE = 'question-bank-search';
-
-/**
- * Consumer cập nhật index Elasticsearch theo QuestionCreated/Updated.
- */
 @Injectable()
 export class SearchIndexer implements OnModuleInit {
-  private readonly logger = new Logger(SearchIndexer.name);
-
   constructor(
     private readonly messaging: MessagingService,
     private readonly search: SearchService,
+    private readonly config: ConfigService,
   ) {}
-
-  async onModuleInit(): Promise<void> {
-    const handler = async (message: ConsumedMessage) => {
-      const event = JSON.parse(message.content.toString()) as {
-        eventType: string;
-        payload: { questionId: string; part: number; difficulty: string };
-      };
-
-      if (
-        event.eventType === 'QuestionUpdatedEvent' ||
-        event.eventType === 'QuestionCreatedEvent'
-      ) {
-        await this.search.indexQuestion({
-          id: event.payload.questionId,
-          part: event.payload.part,
-          type: '',
-          stem: '',
-          difficulty: event.payload.difficulty,
-          tags: [],
-          status: 'PUBLISHED',
-        });
-      }
+  async handle(message: ConsumedMessage): Promise<void> {
+    const event = JSON.parse(message.content.toString()) as {
+      eventType: string;
+      payload: { questionId?: string; groupId?: string };
     };
-
+    if (event.eventType.startsWith('QuestionGroup') && event.payload.groupId)
+      await this.search.syncGroup(event.payload.groupId);
+    else if (event.eventType.startsWith('Question') && event.payload.questionId)
+      await this.search.syncQuestion(event.payload.questionId);
+    else throw new Error('Invalid question search event');
+  }
+  async onModuleInit(): Promise<void> {
     await this.messaging.subscribe(
-      CONSUMER_QUEUE,
-      ['question.created', 'question.updated'],
-      handler,
+      this.config.get<string>('QUESTION_SEARCH_QUEUE') ?? 'question-bank-search',
+      [
+        'question.created',
+        'question.updated',
+        'question.deleted',
+        'question-group.created',
+        'question-group.updated',
+        'question-group.deleted',
+      ],
+      (message) => this.handle(message),
     );
-    this.logger.log(`Search indexer listening on queue ${CONSUMER_QUEUE}`);
   }
 }
