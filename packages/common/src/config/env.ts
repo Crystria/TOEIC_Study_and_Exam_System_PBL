@@ -8,6 +8,8 @@ export interface EnvConfig {
   JWT_ACCESS_SECRET: string;
   JWT_ACCESS_TTL: string;
   JWT_REFRESH_TTL: string;
+  JWT_ISSUER: string;
+  JWT_AUDIENCE: string;
   ELASTICSEARCH_NODE?: string;
   MINIO_ENDPOINT?: string;
   MINIO_ACCESS_KEY?: string;
@@ -27,9 +29,11 @@ export const loadEnv = (): EnvConfig => ({
   REDIS_URL: process.env.REDIS_URL ?? 'redis://localhost:7379',
   RABBITMQ_URL: process.env.RABBITMQ_URL ?? 'amqp://toeic:toeic@localhost:5772',
   RABBITMQ_EXCHANGE: process.env.RABBITMQ_EXCHANGE,
-  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? 'change-me',
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? '',
   JWT_ACCESS_TTL: process.env.JWT_ACCESS_TTL ?? '15m',
   JWT_REFRESH_TTL: process.env.JWT_REFRESH_TTL ?? '7d',
+  JWT_ISSUER: process.env.JWT_ISSUER ?? 'toeic-auth',
+  JWT_AUDIENCE: process.env.JWT_AUDIENCE ?? 'toeic-api',
   ELASTICSEARCH_NODE: process.env.ELASTICSEARCH_NODE,
   MINIO_ENDPOINT: process.env.MINIO_ENDPOINT,
   MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY,

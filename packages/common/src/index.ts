@@ -7,6 +7,7 @@ export * from './auth/jwt-auth.guard';
 export * from './auth/roles.guard';
 export * from './auth/current-user.decorator';
 export * from './http/correlation-id.middleware';
+export * from './http/readiness';
 export * from './messaging/messaging.service';
 export * from './messaging/messaging.module';
 export * from './redis/redis.service';

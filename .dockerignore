@@ -7,6 +7,7 @@
 
 # deps / build output
 **/node_modules
+**/src/generated/prisma
 **/.next
 **/dist
 **/build
@@ -14,6 +15,7 @@
 **/coverage
 **/*.log
 **/*.tsbuildinfo
+artifacts/
 
 # env & secrets
 **/.env

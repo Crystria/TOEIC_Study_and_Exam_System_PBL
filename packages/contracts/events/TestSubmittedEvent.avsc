@@ -2,7 +2,7 @@
   "type": "record",
   "name": "TestSubmittedEvent",
   "namespace": "com.toeic.events",
-  "doc": "Phát ra khi user nộp bài; Analytics tiêu thụ để cập nhật lịch sử và dự đoán điểm.",
+  "doc": "Phát ra khi user nộp bài Full Test; Analytics tiêu thụ để cập nhật lịch sử và điểm yếu.",
   "fields": [
     { "name": "eventId", "type": "string" },
     { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
@@ -10,10 +10,40 @@
     { "name": "userId", "type": "string" },
     { "name": "testId", "type": "string" },
     {
-      "name": "testType",
-      "type": { "type": "enum", "name": "TestType", "symbols": ["FULL", "MINI"] }
+      "name": "mode",
+      "type": { "type": "enum", "name": "TestAttemptMode", "symbols": ["FULL", "PART"] }
     },
     { "name": "score", "type": "int" },
-    { "name": "totalCorrect", "type": "int" }
+    { "name": "totalCorrect", "type": "int" },
+    { "name": "scoreListening", "type": "int" },
+    { "name": "scoreReading", "type": "int" },
+    { "name": "totalScore", "type": "int" },
+    { "name": "correctListeningCount", "type": "int" },
+    { "name": "correctReadingCount", "type": "int" },
+    {
+      "name": "partDetails",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "TestPartStat",
+          "fields": [
+            { "name": "part", "type": "int" },
+            {
+              "name": "skill",
+              "type": {
+                "type": "enum",
+                "name": "TestSkillArea",
+                "symbols": ["LISTENING", "READING"]
+              }
+            },
+            { "name": "totalQuestions", "type": "int" },
+            { "name": "correctCount", "type": "int" },
+            { "name": "accuracy", "type": "double" }
+          ]
+        }
+      }
+    },
+    { "name": "completedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
   ]
 }

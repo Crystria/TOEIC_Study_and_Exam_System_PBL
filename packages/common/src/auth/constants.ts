@@ -19,3 +19,5 @@ export interface AuthenticatedUser {
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const ROLES_KEY = 'roles';
+export const DEFAULT_JWT_ISSUER = 'toeic-auth';
+export const DEFAULT_JWT_AUDIENCE = 'toeic-api';

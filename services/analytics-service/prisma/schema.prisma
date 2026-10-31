@@ -20,15 +20,21 @@ model UserLearningStat {
 }
 
 /// Lịch sử điểm theo từng lần nộp bài. `attemptId` unique để chống trùng.
+/// Full Test dùng score; Part Test dùng accuracy và để score = null.
 model ScoreHistory {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
   attemptId String   @unique @map("attempt_id")
-  testType  String   @map("test_type")
-  score     Int
+  testType  String?  @map("test_type")
+  mode      String?
+  score     Int?
+  accuracy  Float?
+  parts     Json?
   takenAt   DateTime @map("taken_at")
 
   @@index([userId])
+  @@index([userId, takenAt])
+  @@index([mode])
   @@map("score_history")
 }
 
