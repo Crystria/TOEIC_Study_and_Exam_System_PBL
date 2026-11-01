@@ -1,6 +1,16 @@
 import { ConfigService } from '@nestjs/config';
 import { partStats, ScoringService } from './scoring.service';
 describe('Full and Part scoring', () => {
+  it('records the reference lookup version and refuses formula fallback as lookup provenance', () => {
+    const scoring = new ScoringService(new ConfigService());
+    expect(scoring.provenance()).toEqual({
+      method: 'LOOKUP',
+      tableVersion: '2026.10-sample',
+      official: false,
+    });
+    Object.assign(scoring.listening, { version: 'dev-formula' });
+    expect(() => scoring.provenance()).toThrow();
+  });
   it('counts blank questions as incorrect and computes per-part ratios', () => {
     const stats = partStats(
       [

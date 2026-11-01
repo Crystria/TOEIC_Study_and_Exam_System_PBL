@@ -1,24 +1,30 @@
-import { ValidationPipe } from '@nestjs/common';
+import { readFileSync } from 'node:fs';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-
-async function bootstrap(): Promise<void> {
+import { configureLearning } from './http';
+async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api/v1');
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }),
+  configureLearning(app);
+  const document = JSON.parse(
+    readFileSync(
+      require.resolve('@toeic/contracts/openapi/auth-learning-analytics.v1.json'),
+      'utf8',
+    ),
+    (key, value) =>
+      key === 'x-contract-status'
+        ? 'P3_RUNTIME'
+        : key === 'description' &&
+            typeof value === 'string' &&
+            value.startsWith('Success. Target P0')
+          ? 'Success'
+          : value,
+  ) as ReturnType<typeof SwaggerModule.createDocument>;
+  document.paths = Object.fromEntries(
+    Object.entries(document.paths).filter(([p]) => p.startsWith('/learning/')),
   );
-
-  const config = new DocumentBuilder()
-    .setTitle('Learning Service API')
-    .setVersion('0.1.0')
-    .addBearerAuth()
-    .build();
-  SwaggerModule.setup('api/docs', app, SwaggerModule.createDocument(app, config));
-
-  const port = Number(process.env.PORT ?? 3004);
-  await app.listen(port);
+  document.info = { title: 'Learning Service API', version: '0.3.0' };
+  SwaggerModule.setup('api/docs', app, document);
+  await app.listen(Number(process.env.PORT || 3004));
 }
-
-void bootstrap();
+if (require.main === module) void bootstrap();

@@ -18,12 +18,8 @@ describe('route policy', () => {
   });
 
   it('maps upstream prefixes', () => {
-    expect(matchRoute('/api/v1/question-groups/123')?.upstream).toBe(
-      'QUESTION_BANK_SERVICE_URL',
-    );
-    expect(matchRoute('/api/v1/tests/123/part-attempts')?.upstream).toBe(
-      'EXAM_SERVICE_URL',
-    );
+    expect(matchRoute('/api/v1/question-groups/123')?.upstream).toBe('QUESTION_BANK_SERVICE_URL');
+    expect(matchRoute('/api/v1/tests/123/part-attempts')?.upstream).toBe('EXAM_SERVICE_URL');
     expect(matchRoute('/api/v1/unknown')).toBeUndefined();
   });
 
@@ -55,30 +51,22 @@ describe('route policy', () => {
       RoleCode.SYSTEM_ADMIN,
     ]);
     expect(requiredRoles('GET', '/api/v1/tests')).toEqual([]);
-    expect(requiredRoles('GET', '/api/v1/admin/users')).toEqual([
-      RoleCode.SYSTEM_ADMIN,
-    ]);
+    expect(requiredRoles('GET', '/api/v1/admin/users')).toEqual([RoleCode.SYSTEM_ADMIN]);
   });
 
   it('applies ip limits to auth and anonymous traffic', () => {
     expect(ipRateLimitPolicy('OPTIONS', '/api/v1/auth/login', false)).toBeUndefined();
     expect(ipRateLimitPolicy('GET', '/health', false)).toBeUndefined();
-    expect(ipRateLimitPolicy('POST', '/api/v1/auth/login', false)?.bucket).toBe(
-      'auth',
-    );
-    expect(ipRateLimitPolicy('GET', '/api/v1/tests', false)?.bucket).toBe(
-      'anonymous',
-    );
+    expect(ipRateLimitPolicy('POST', '/api/v1/auth/login', false)?.bucket).toBe('auth');
+    expect(ipRateLimitPolicy('GET', '/api/v1/tests', false)?.bucket).toBe('anonymous');
     expect(ipRateLimitPolicy('GET', '/api/v1/tests', true)).toBeUndefined();
   });
 
   it('selects user limits by action', () => {
-    expect(userRateLimitPolicy('POST', '/api/v1/attempts/a1/submit').bucket).toBe(
-      'submit',
+    expect(userRateLimitPolicy('POST', '/api/v1/attempts/a1/submit').bucket).toBe('submit');
+    expect(userRateLimitPolicy('POST', '/api/v1/question-groups/g1/media/presign').bucket).toBe(
+      'presign',
     );
-    expect(
-      userRateLimitPolicy('POST', '/api/v1/question-groups/g1/media/presign').bucket,
-    ).toBe('presign');
     expect(userRateLimitPolicy('POST', '/api/v1/ai/chat').bucket).toBe('ai');
     expect(userRateLimitPolicy('GET', '/api/v1/tests').bucket).toBe('read');
   });
@@ -87,5 +75,21 @@ describe('route policy', () => {
     expect(isSubmitPath('POST', '/api/v1/attempts/a1/submit')).toBe(true);
     expect(proxyTimeoutMs('POST', '/api/v1/attempts/a1/submit')).toBe(15_000);
     expect(proxyTimeoutMs('POST', '/api/v1/tests')).toBe(5_000);
+  });
+});
+
+describe('P1 public methods and Learning roles', () => {
+  it('only allows POST email activation endpoints without JWT', () => {
+    expect(isPublicPath('/api/v1/auth/verify-email', 'POST')).toBe(true);
+    expect(isPublicPath('/api/v1/auth/verify-email', 'GET')).toBe(false);
+    expect(isPublicPath('/api/v1/auth/logout', 'POST')).toBe(false);
+  });
+  it('requires content role for Learning admin reads and media writes', () => {
+    expect(requiredRoles('GET', '/api/v1/learning/admin/lessons')).toEqual([
+      RoleCode.CONTENT_ADMIN,
+    ]);
+    expect(requiredRoles('POST', '/api/v1/learning/vocabularies/id/media/confirm')).toEqual([
+      RoleCode.CONTENT_ADMIN,
+    ]);
   });
 });

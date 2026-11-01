@@ -1,4 +1,7 @@
-import { randomUUID } from 'node:crypto';
+import { AnalyticsClock } from '../../analytics-service/src/modules/analytics/calculations';
+import { AnalyticsQueries } from '../../analytics-service/src/modules/analytics/analytics.queries';
+import { ProjectionService } from '../../analytics-service/src/modules/analytics/projection.service';
+import { generateKeyPairSync, randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { createServer, AddressInfo } from 'node:net';
 import { INestApplication, ServiceUnavailableException } from '@nestjs/common';
@@ -6,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { ConsumedMessage, MessagingService, RedisService } from '@toeic/common';
+import { AuthorizationStateVerifier, MessagingService, RedisService } from '@toeic/common';
 import request from 'supertest';
 import { AppModule } from './app.module';
 import { configureHttp } from './main';
@@ -47,16 +50,22 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
     const config = app.get(ConfigService);
     return {
       id,
-      jwt: app
-        .get(JwtService)
-        .sign(
-          { sub: id, type: 'access', roles },
-          {
-            expiresIn: 1800,
-            issuer: config.get<string>('JWT_ISSUER') ?? 'toeic-auth',
-            audience: config.get<string>('JWT_AUDIENCE') ?? 'toeic-api',
-          },
-        ),
+      jwt: signer.sign(
+        {
+          sub: id,
+          type: 'access',
+          roles,
+          sid: randomUUID(),
+          jti: randomUUID(),
+          userVersion: '0',
+          sessionVersion: '0',
+        },
+        {
+          expiresIn: 1800,
+          issuer: config.get<string>('JWT_ISSUER') ?? 'toeic-auth',
+          audience: config.get<string>('JWT_AUDIENCE') ?? 'toeic-api',
+        },
+      ),
     };
   }
   async function eventually(check: () => Promise<void>) {
@@ -96,7 +105,16 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
       .auth(jwt, { type: 'bearer' })
       .send({ answers });
   }
+  let signer: JwtService;
   beforeAll(async () => {
+    const keys = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    });
+    process.env.JWT_ACCESS_PUBLIC_KEY = keys.publicKey;
+    process.env.JWT_ACCESS_PUBLIC_KEY_FILE = '';
+    signer = new JwtService({ privateKey: keys.privateKey, signOptions: { algorithm: 'RS256' } });
     for (const name of [
       'P3_EXAM_DATABASE_URL',
       'P3_QUESTION_DATABASE_URL',
@@ -169,8 +187,17 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
     redis = new RedisService({ get: () => 'redis://127.0.0.1:7379' } as unknown as ConfigService);
     const module = await Test.createTestingModule({
       imports: [AppModule],
-      providers: [{ provide: AnalyticsPrisma, useValue: analytics }, EventsConsumer],
+      providers: [
+        { provide: AnalyticsPrisma, useValue: analytics },
+        EventsConsumer,
+        AnalyticsClock,
+        AnalyticsQueries,
+        ProjectionService,
+      ],
     })
+      // Domain suite uses synthetic users; authoritative Auth transport is tested by Auth P2 E2E.
+      .overrideProvider(AuthorizationStateVerifier)
+      .useValue({ verify: async () => undefined })
       .overrideProvider(PrismaService)
       .useValue(db)
       .overrideProvider(RedisService)
@@ -180,7 +207,7 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
       .compile();
     app = module.createNestApplication();
     configureHttp(app);
-    app.get(ConfigService).set('ANALYTICS_CONSUMER_QUEUE', 'analytics-p3-tests');
+    app.get(ConfigService).set('ANALYTICS_QUEUE_PREFIX', 'p3-exam-tests-' + process.pid);
     await app.init();
     await eventually(async () => expect(await redis.getClient().ping()).toBe('PONG'));
     admin = token(['SYSTEM_ADMIN']).jwt;
@@ -210,6 +237,21 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
       await analytics.processedEvent.deleteMany({
         where: { eventId: { in: [...events.map((e) => e.id), ...syntheticEventIds] } },
       });
+      await analytics.testScoreFact.deleteMany({ where: { userId: { in: [...users] } } });
+      await analytics.practiceFact.deleteMany({ where: { userId: { in: [...users] } } });
+      await analytics.attemptPartFact.deleteMany({
+        where: { attempt: { userId: { in: [...users] } } },
+      });
+      await analytics.attemptFact.deleteMany({ where: { userId: { in: [...users] } } });
+      for (const model of [
+        analytics.learningActivityFact,
+        analytics.userStatistic,
+        analytics.userWeakArea,
+        analytics.userActivityDay,
+        analytics.firstLearnedEntity,
+        analytics.completedLessonEntity,
+      ])
+        await (model as any).deleteMany({ where: { userId: { in: [...users] } } });
       await analytics.scoreHistory.deleteMany({ where: { userId: { in: [...users] } } });
       await analytics.learningActivity.deleteMany({ where: { userId: { in: [...users] } } });
       await analytics.weakArea.deleteMany({ where: { userId: { in: [...users] } } });
@@ -492,7 +534,7 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
     expect(result.body.correctCount).toBe(1);
     expect(
       await db.outboxEvent.count({
-        where: { aggregateId: a.attemptId, eventType: 'PartPracticeSubmittedEvent' },
+        where: { aggregateId: a.attemptId, eventType: 'PartPracticeSubmittedEvent.v2' },
       }),
     ).toBe(1);
     const late = await api()
@@ -544,38 +586,36 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
     const partial = await part([5], person.jwt);
     await submit(partial.attemptId, person.jwt);
     await eventually(async () => {
-      const history = await analytics.scoreHistory.findMany({ where: { userId: person.id } });
-      expect(history).toHaveLength(2);
-      expect(history.find((h) => h.mode === 'FULL')?.score).toBe(990);
-      expect(history.find((h) => h.mode === 'PART')?.score).toBeNull();
-      const weak = await analytics.weakArea.findUniqueOrThrow({
-        where: { userId_skillArea_part: { userId: person.id, skillArea: 'READING', part: 5 } },
+      expect(
+        await analytics.testScoreFact.count({ where: { userId: person.id, totalScore: 990 } }),
+      ).toBe(1);
+      expect(await analytics.practiceFact.count({ where: { userId: person.id } })).toBe(1);
+      const weak = await analytics.userWeakArea.findUniqueOrThrow({
+        where: { userId_part: { userId: person.id, part: 5 } },
       });
-      expect(weak.sampleCount).toBe(60);
-      expect(weak.errorRate).toBe(0.5);
+      expect(weak.total).toBe(60);
+      expect(weak.weaknessScore).toBe(0.5);
     });
     const event = await db.outboxEvent.findFirstOrThrow({
       where: { aggregateId: full.body.attemptId },
     });
-    const duplicate = {
-      eventId: event.id,
-      eventType: event.eventType,
-      occurredAt: event.occurredAt.getTime(),
-      payload: event.payload,
-    };
-    await app.get(MessagingService).emit('test.submitted', full.body.attemptId, duplicate);
+    const duplicate = event.payload as unknown as Parameters<MessagingService['emit']>[2];
+    await app.get(MessagingService).emit('test.submitted.v2', full.body.attemptId, duplicate);
     await eventually(async () =>
-      expect(await analytics.learningActivity.count({ where: { userId: person.id } })).toBe(2),
+      expect(await analytics.learningActivityFact.count({ where: { userId: person.id } })).toBe(2),
     );
   }, 25_000);
   it('serializes two concurrent deliveries of the same Analytics event', async () => {
     const person = token(),
       eventId = randomUUID();
     syntheticEventIds.add(eventId);
+    const at = new Date().toISOString();
     const envelope = {
       eventId,
-      eventType: 'PartPracticeSubmittedEvent',
-      occurredAt: Date.now(),
+      eventType: 'PartPracticeSubmittedEvent.v2',
+      occurredAt: at,
+      version: 2,
+      producer: 'exam-service',
       payload: {
         userId: person.id,
         attemptId: randomUUID(),
@@ -585,28 +625,21 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
         totalQuestions: 30,
         correctCount: 15,
         accuracy: 0.5,
-        completedAt: Date.now(),
-        partStats: [
-          { part: 5, skill: 'READING', totalQuestions: 30, correctCount: 15, accuracy: 0.5 },
-        ],
+        completedAt: at,
+        partStats: [{ part: 5, total: 30, correct: 15 }],
         durationSeconds: 300,
       },
     };
-    const message = {
-      routingKey: 'part-practice.submitted',
-      content: Buffer.from(JSON.stringify(envelope)),
-      properties: {} as ConsumedMessage['properties'],
-    };
     await Promise.all([
-      app.get(EventsConsumer)['route'](message),
-      app.get(EventsConsumer)['route'](message),
+      app.get(EventsConsumer).consume(envelope),
+      app.get(EventsConsumer).consume(envelope),
     ]);
-    expect(await analytics.learningActivity.count({ where: { userId: person.id } })).toBe(1);
-    const weak = await analytics.weakArea.findUniqueOrThrow({
-      where: { userId_skillArea_part: { userId: person.id, skillArea: 'READING', part: 5 } },
+    expect(await analytics.learningActivityFact.count({ where: { userId: person.id } })).toBe(1);
+    const weak = await analytics.userWeakArea.findUniqueOrThrow({
+      where: { userId_part: { userId: person.id, part: 5 } },
     });
-    expect(weak.sampleCount).toBe(30);
-    expect(weak.errorRate).toBe(0.5);
+    expect(weak.total).toBe(30);
+    expect(weak.weaknessScore).toBe(0.5);
   });
   it('preserves legacy attempts as read-only, isolates history, and keeps snapshots readable after test archive', async () => {
     const person = token();

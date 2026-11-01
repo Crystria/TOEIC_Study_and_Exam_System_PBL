@@ -34,10 +34,14 @@
     "apps:logs": "docker compose -f docker-compose.yml -f docker-compose.apps.yml logs -f",
     "qa:build": "docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml build api-gateway",
     "qa:up": "docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml up -d --wait api-gateway",
-    "qa:stop": "docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml stop api-gateway auth-service question-bank-service exam-service analytics-service",
+    "qa:stop": "docker compose -f docker-compose.yml -f docker-compose.apps.yml -f docker-compose.qa.yml stop api-gateway auth-service question-bank-service exam-service analytics-service learning-service",
     "qa:migrate": "node scripts/qa/migrate.mjs",
     "qa:e2e": "node scripts/qa/e2e.mjs",
-    "qa:seed": "node scripts/qa/e2e.mjs --seed"
+    "qa:seed": "node scripts/qa/e2e.mjs --seed",
+    "qa:p6": "node scripts/qa/p6-run.mjs",
+    "qa:observe": "node scripts/qa/observe.mjs",
+    "qa:p6:report": "node scripts/qa/p6-report.mjs",
+    "qa:p6:profile": "node scripts/qa/p6-profile.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",

@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { validateEvent } from '../messaging/event-validation';
 
 export interface OutboxEventRecord {
   id: string;
@@ -60,4 +61,30 @@ export async function writeOutbox<T>(
   }
 
   await client.outboxEvent.create({ data });
+}
+
+/** V2 persists the complete validated envelope with the same event ID as its outbox row. */
+export async function writeV2Outbox(
+  client: OutboxPrismaClient,
+  aggregateId: string,
+  envelope: {
+    eventId: string;
+    eventType: string;
+    occurredAt: string;
+    version: 2;
+    producer: string;
+    payload: unknown;
+  },
+): Promise<void> {
+  validateEvent(envelope);
+  await client.outboxEvent.create({
+    data: {
+      id: envelope.eventId,
+      aggregateId,
+      eventType: envelope.eventType,
+      payload: envelope,
+      createdAt: new Date(envelope.occurredAt),
+      publishedAt: null,
+    },
+  });
 }

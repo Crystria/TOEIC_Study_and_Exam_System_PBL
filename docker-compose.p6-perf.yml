@@ -1,0 +1,30 @@
+# Isolated QA performance profile; never overrides development containers.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: toeic-p6-postgres
+    cpus: 2
+    mem_limit: 1g
+    environment:
+      POSTGRES_USER: toeic
+      POSTGRES_PASSWORD: toeic
+      POSTGRES_DB: postgres
+    ports: ['127.0.0.1:6543:5432']
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'toeic', '-d', 'postgres']
+      interval: 5s
+      retries: 20
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: toeic-p6-rabbitmq
+    cpus: 2
+    mem_limit: 1g
+    environment:
+      RABBITMQ_DEFAULT_USER: toeic
+      RABBITMQ_DEFAULT_PASS: toeic
+    ports: ['127.0.0.1:6772:5672']
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'check_port_connectivity']
+      interval: 5s
+      timeout: 5s
+      retries: 20

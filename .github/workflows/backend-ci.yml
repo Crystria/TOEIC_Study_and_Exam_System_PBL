@@ -2,7 +2,7 @@ name: Backend CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, BE]
     paths:
       - 'services/**'
       - 'packages/**'
@@ -55,8 +55,20 @@ jobs:
       - name: Build @toeic/common
         working-directory: .
         run: npm run build -w @toeic/common
-      - name: Generate Prisma client
-        run: npm run prisma:generate --if-present
+      - name: P1 shared infrastructure checks
+        working-directory: .
+        run: npm run test:p1 -w @toeic/common
+      - name: P2 shared authorization checks
+        working-directory: .
+        run: npm run test:p2 -w @toeic/common
+      - name: Generate Prisma clients for cross-service test imports
+        working-directory: .
+        shell: bash
+        run: |
+          set -euo pipefail
+          for service in auth question-bank exam learning analytics; do
+            npm run prisma:generate -w "@toeic/$service-service"
+          done
       - name: Lint
         run: npm run lint --if-present
       - name: Build
@@ -110,9 +122,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Provision local verification keys
+        run: |
+          node scripts/generate-access-keys.mjs
+          node scripts/generate-auth-secrets.mjs
       - name: Generate host clients for QA runner
         run: |
-          for service in auth question-bank exam analytics; do
+          for service in auth question-bank exam analytics learning; do
             npm run prisma:generate -w "@toeic/$service-service"
           done
       - run: npm run qa:build
@@ -122,7 +138,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gateway-p4-qa
+          name: gateway-p6-qa
           path: artifacts/qa/
           if-no-files-found: ignore
       - name: Collect service logs on failure

@@ -7,10 +7,14 @@ x-qa-node: &qa-node
     args:
       BUILD_BACKEND: 'true'
 x-qa-env: &qa-env
-  JWT_ACCESS_SECRET: ${QA_JWT_ACCESS_SECRET:-qa-access-local-only}
+  AUTHORIZATION_QUEUE_PREFIX: qa.p6.authorization
+  ANALYTICS_QUEUE_PREFIX: qa.p6.domain
+  LEARNING_V2_QUEUE_PREFIX: qa.p6.domain
+  SYNC_QUEUE_PREFIX: qa.p6.sync
+  SYNC_ENABLED: 'true'
   JWT_ISSUER: toeic-auth
   JWT_AUDIENCE: toeic-api
-  RABBITMQ_EXCHANGE: qa.p4.events
+  RABBITMQ_EXCHANGE: qa.p6.events
 services:
   migrate:
     <<: *qa-node
@@ -20,38 +24,48 @@ services:
   media-init:
     <<: *qa-node
     environment:
-      MINIO_BUCKET: toeic-media-p4
+      MINIO_BUCKET: toeic-media-p6
   auth-service:
     <<: *qa-node
     command: node services/auth-service/dist/main.js
     environment:
       <<: *qa-env
       JWT_REFRESH_SECRET: qa-refresh-local-only
-      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_p4_verify?schema=public
+      AUTH_AVATAR_BUCKET: toeic-user-p6
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_p6_verify?schema=public
   question-bank-service:
     <<: *qa-node
     command: node services/question-bank-service/dist/main.js
     environment:
       <<: *qa-env
-      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_p4_verify?schema=public
-      MINIO_BUCKET: toeic-media-p4
-      MEDIA_PUBLIC_BASE_URL: http://localhost:19000/toeic-media-p4
-      QUESTION_SEARCH_INDEX: questions-p4-qa
-      QUESTION_SEARCH_QUEUE: qa-p4-search
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_p6_verify?schema=public
+      MINIO_BUCKET: toeic-media-p6
+      MEDIA_PUBLIC_BASE_URL: http://localhost:19000/toeic-media-p6
+      QUESTION_SEARCH_INDEX: questions-p6-qa
+      QUESTION_SEARCH_QUEUE: qa-p6-search
+      QUESTION_OUTBOX_DLQ: qa.p6.question-bank-outbox-dlq
   exam-service:
     <<: *qa-node
     command: node services/exam-service/dist/main.js
     environment:
       <<: *qa-env
-      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_p4_verify?schema=public
-      MEDIA_PUBLIC_BASE_URL: http://localhost:19000/toeic-media-p4
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_p6_verify?schema=public
+      MEDIA_PUBLIC_BASE_URL: http://localhost:19000/toeic-media-p6
   analytics-service:
     <<: *qa-node
     command: node services/analytics-service/dist/main.js
     environment:
       <<: *qa-env
-      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_p4_verify?schema=public
-      ANALYTICS_CONSUMER_QUEUE: qa-p4-analytics
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_p6_verify?schema=public
+      ANALYTICS_CONSUMER_ENABLED: 'true'
+  learning-service:
+    <<: *qa-node
+    command: node services/learning-service/dist/main.js
+    environment:
+      <<: *qa-env
+      DATABASE_URL: postgresql://toeic:toeic@postgres:5432/learning_p6_verify?schema=public
+      MINIO_BUCKET: toeic-media-p6
+      MEDIA_PUBLIC_BASE_URL: http://localhost:19000/toeic-media-p6
   api-gateway:
     <<: *qa-node
     command: node services/api-gateway/dist/main.js

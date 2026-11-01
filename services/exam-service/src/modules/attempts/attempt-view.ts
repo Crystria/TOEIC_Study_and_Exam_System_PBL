@@ -69,6 +69,7 @@ export function attemptView(
       ? {
           partDetails: stats,
           scoreDisclaimer: SCORE_DISCLAIMER,
+          scoring: a.scoring,
           correctListeningCount: a.parts
             .filter((p) => p.part <= 4)
             .reduce((n, p) => n + p.correctCount, 0),

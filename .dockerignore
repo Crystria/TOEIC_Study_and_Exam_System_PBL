@@ -33,3 +33,7 @@ infra/argocd/
 apps/mobile/
 **/.venv
 **/__pycache__/
+
+# RSA access keys are mounted at runtime only
+secrets/
+*.pem

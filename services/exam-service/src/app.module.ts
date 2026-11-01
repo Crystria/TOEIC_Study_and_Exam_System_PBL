@@ -1,3 +1,4 @@
+import { accessJwtOptions } from '@toeic/common';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -6,6 +7,7 @@ import { ExamAuthGuard } from './exam-auth.guard';
 import { ExamOutboxRelay } from './modules/outbox/outbox-relay';
 import {
   AppConfigModule,
+  AuthorizationModule,
   CorrelationIdMiddleware,
   MessagingModule,
   RedisModule,
@@ -21,23 +23,13 @@ import { ReadinessController } from './health/readiness.controller';
 @Module({
   imports: [
     AppConfigModule,
+    AuthorizationModule.forService('exam-service'),
     RedisModule,
     MessagingModule,
     JwtModule.registerAsync({
       global: true,
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const secret = config.get<string>('JWT_ACCESS_SECRET')?.trim();
-        if (!secret) throw new Error('JWT_ACCESS_SECRET is required');
-        return {
-          secret,
-          verifyOptions: {
-            issuer: config.get<string>('JWT_ISSUER') ?? 'toeic-auth',
-            audience: config.get<string>('JWT_AUDIENCE') ?? 'toeic-api',
-            algorithms: ['HS256' as const],
-          },
-        };
-      },
+      useFactory: (config: ConfigService) => accessJwtOptions(config, false),
     }),
     PrismaModule,
     GrpcModule,

@@ -1,6 +1,8 @@
+import { accessJwtOptions } from '@toeic/common';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthorizationModule } from '@toeic/common';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigModule, MessagingModule, RedisModule, RolesGuard } from '@toeic/common';
 import { PrismaModule } from './prisma/prisma.module';
@@ -16,23 +18,13 @@ import { QuestionBankAuthGuard } from './question-bank-auth.guard';
 @Module({
   imports: [
     AppConfigModule,
+    AuthorizationModule.forService('question-bank-service'),
     RedisModule,
     MessagingModule,
     JwtModule.registerAsync({
       global: true,
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const secret = config.get<string>('JWT_ACCESS_SECRET')?.trim();
-        if (!secret) throw new Error('JWT_ACCESS_SECRET is required');
-        return {
-          secret,
-          verifyOptions: {
-            issuer: config.get<string>('JWT_ISSUER') ?? 'toeic-auth',
-            audience: config.get<string>('JWT_AUDIENCE') ?? 'toeic-api',
-            algorithms: ['HS256' as const],
-          },
-        };
-      },
+      useFactory: (config: ConfigService) => accessJwtOptions(config, false),
     }),
     PrismaModule,
     SearchModule,

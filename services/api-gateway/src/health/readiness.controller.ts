@@ -17,6 +17,7 @@ export class ReadinessController {
       ['questions', 'QUESTION_BANK_SERVICE_URL', '/api/v1/ready'],
       ['exam', 'EXAM_SERVICE_URL', '/api/v1/ready'],
       ['analytics', 'ANALYTICS_SERVICE_URL', '/api/v1/ready'],
+      ['learning', 'LEARNING_SERVICE_URL', '/api/v1/ready'],
     ]) {
       checks[name] = async () => {
         const target = this.config.get<string>(key);

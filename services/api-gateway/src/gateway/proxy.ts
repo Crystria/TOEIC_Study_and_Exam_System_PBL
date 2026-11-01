@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { CORRELATION_ID_HEADER } from '@toeic/common';
 import { Request, Response, RequestHandler } from 'express';
 import { createProxyServer } from 'http-proxy';
-import { IncomingMessage, Server, ServerResponse } from 'node:http';
+import { Agent as HttpAgent, IncomingMessage, Server, ServerResponse } from 'node:http';
+import { Agent as HttpsAgent } from 'node:https';
 import { Readable } from 'node:stream';
 import { BufferedRequest } from './body-limit.middleware';
 import { sendGatewayError } from './http-error';
@@ -25,7 +26,7 @@ function correlationIdOf(req: IncomingMessage): string {
   return typeof value === 'string' ? value : '';
 }
 
-export function createGatewayProxy(config: ConfigService): RequestHandler {
+export function createGatewayProxy(config: ConfigService, maxSockets = 128): RequestHandler {
   const resolveTarget = (req: IncomingMessage): string | undefined => {
     const rule = matchRoute(pathnameOf(req.url));
     if (!rule) {
@@ -41,7 +42,6 @@ export function createGatewayProxy(config: ConfigService): RequestHandler {
 
   const handlers = {
     proxyReq: (proxyReq: import('node:http').ClientRequest, req: IncomingMessage) => {
-      const correlationId = correlationIdOf(req);
       const connectTimer = setTimeout(() => {
         const error = Object.assign(new Error('Upstream connection timed out'), {
           code: 'ETIMEDOUT',
@@ -62,9 +62,6 @@ export function createGatewayProxy(config: ConfigService): RequestHandler {
           Object.assign(new Error('Upstream response timed out'), { code: 'ETIMEDOUT' }),
         );
       });
-      if (correlationId) {
-        proxyReq.setHeader(CORRELATION_ID_HEADER, correlationId);
-      }
     },
     proxyRes: (proxyRes: IncomingMessage, req: IncomingMessage, res: ServerResponse) => {
       const correlationId = correlationIdOf(req);
@@ -104,6 +101,9 @@ export function createGatewayProxy(config: ConfigService): RequestHandler {
 
   // Reuse one proxy: a new HPM instance per request retains a server close listener.
   const proxy = createProxyServer({ changeOrigin: true, xfwd: true });
+  const pool = { keepAlive: true, maxSockets, maxFreeSockets: 32, timeout: 4000 };
+  const httpAgent = new HttpAgent(pool),
+    httpsAgent = new HttpsAgent(pool);
   proxy.on('proxyReq', handlers.proxyReq);
   proxy.on('proxyRes', handlers.proxyRes);
   proxy.on('error', handlers.error);
@@ -126,10 +126,18 @@ export function createGatewayProxy(config: ConfigService): RequestHandler {
     const server = (req.socket as import('node:net').Socket & { server?: Server }).server;
     if (server && !servers.has(server)) {
       servers.add(server);
-      server.once('close', () => proxy.close());
+      server.once('close', () => {
+        proxy.close();
+        httpAgent.destroy();
+        httpsAgent.destroy();
+      });
     }
+    // Headers must be fixed before creation: queued pooled requests can have
+    // headersSent=true before http-proxy emits proxyReq on socket assignment.
     proxy.web(req, res, {
       target,
+      agent: new URL(target).protocol === 'https:' ? httpsAgent : httpAgent,
+      headers: { connection: 'keep-alive' },
       ...(body ? { buffer: Readable.from(body.length ? [body] : []) } : {}),
     });
   }) as RequestHandler;

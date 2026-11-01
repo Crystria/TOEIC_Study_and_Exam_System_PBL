@@ -21,7 +21,7 @@ Run from repository root:
 npm run validate:p0 -w @toeic/contracts
 ```
 
-Ajv is explicitly declared at the version already in the lockfile. The check compiles every domain/event schema, validates positive/negative fixtures, checks cross-field constraints, recomputes golden examples, and checks OpenAPI local references/route parity/security. It is **not** a complete OpenAPI meta-schema validator, a general compatibility checker, a runtime middleware, or evidence of correct DB transactions/concurrency. Runtime validators/CI integration belong to P1; production implementations must execute these fixtures again at P2–P5.
+Ajv is explicitly declared at the version already in the lockfile. The check compiles every domain/event schema, validates positive/negative fixtures, checks cross-field constraints, recomputes golden examples, and checks OpenAPI local references/route parity/security. It is **not** a complete OpenAPI meta-schema validator, a general compatibility checker, a runtime middleware, or evidence of correct DB transactions/concurrency. P1 adds `runtime.cjs` (typed through `runtime.d.cts`) and the shared event validator, reusing `semantics.cjs` with the same schemas/fixtures; CI now runs both specification and runtime checks. Business implementations must execute these fixtures again at P2–P5.
 
 REST documents: [public API](../openapi/auth-learning-analytics.v1.json), [internal API](../openapi/auth-learning-analytics.internal.v1.json). Design decisions: [P0 dossier](../../../docs/p0-auth-learning-analytics/README.md).
 

@@ -55,6 +55,8 @@ export const PUBLIC_PATHS = new Set([
   '/api/v1/auth/register',
   '/api/v1/auth/login',
   '/api/v1/auth/refresh',
+  '/api/v1/auth/verify-email',
+  '/api/v1/auth/resend-verification',
   '/health',
   '/status',
   '/ready',
@@ -64,6 +66,8 @@ const AUTH_PUBLIC_PREFIXES = [
   '/api/v1/auth/register',
   '/api/v1/auth/login',
   '/api/v1/auth/refresh',
+  '/api/v1/auth/verify-email',
+  '/api/v1/auth/resend-verification',
 ];
 
 const TEST_ATTEMPT_START = /^\/api\/v1\/tests\/[^/]+\/(?:part-)?attempts$/;
@@ -82,8 +86,13 @@ export function isHealthPath(path: string): boolean {
   return normalized === '/health' || normalized === '/status' || normalized === '/ready';
 }
 
-export function isPublicPath(path: string): boolean {
-  return PUBLIC_PATHS.has(normalizePath(path));
+export function isPublicPath(path: string, method?: string): boolean {
+  const normalized = normalizePath(path);
+  if (!PUBLIC_PATHS.has(normalized)) return false;
+  if (!method) return true;
+  return normalized.startsWith('/api/v1/auth/')
+    ? method === 'POST'
+    : method === 'GET' || method === 'HEAD';
 }
 
 export function isAuthPublicPath(path: string): boolean {
@@ -113,11 +122,21 @@ export function isSubmitPath(method: string, path: string): boolean {
 }
 
 export function isPresignPath(method: string, path: string): boolean {
-  return method === 'POST' && /\/media\/presign$/.test(normalizePath(path));
+  return (
+    (method === 'POST' && /\/media\/presign$/.test(normalizePath(path))) ||
+    (method === 'PATCH' && normalizePath(path) === '/api/v1/users/me/avatar/presign')
+  );
 }
 
 export function requiredRoles(method: string, path: string): RoleCode[] {
   const normalized = normalizePath(path);
+
+  if (
+    matchPrefix(normalized, '/api/v1/learning/admin') ||
+    (method === 'POST' &&
+      /^\/api\/v1\/learning\/vocabularies\/[^/]+\/media\/(presign|confirm)$/.test(normalized))
+  )
+    return [RoleCode.CONTENT_ADMIN];
 
   if (matchPrefix(normalized, '/api/v1/admin')) {
     return [RoleCode.SYSTEM_ADMIN];

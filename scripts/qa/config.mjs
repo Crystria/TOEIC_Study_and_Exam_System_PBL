@@ -8,18 +8,20 @@ export const services = [
   'question-bank-service',
   'exam-service',
   'analytics-service',
+  'learning-service',
 ];
 export const names = [
-  'auth_p4_verify',
-  'question_p4_verify',
-  'exam_p4_verify',
-  'analytics_p4_verify',
+  'auth_p6_verify',
+  'question_p6_verify',
+  'exam_p6_verify',
+  'analytics_p6_verify',
+  'learning_p6_verify',
 ];
 export const postgres =
   process.env.QA_POSTGRES_URL ?? 'postgresql://toeic:toeic@localhost:5432/postgres';
 export const baseUrl = process.env.QA_BASE_URL ?? 'http://localhost:3000';
-export const searchIndex = process.env.QA_SEARCH_INDEX ?? 'questions-p4-qa';
-export const bucket = process.env.QA_MINIO_BUCKET ?? 'toeic-media-p4';
+export const searchIndex = process.env.QA_SEARCH_INDEX ?? 'questions-p6-qa';
+export const bucket = process.env.QA_MINIO_BUCKET ?? 'toeic-media-p6';
 export function databaseUrl(index) {
   const url = new URL(postgres);
   if (!['localhost', '127.0.0.1', 'postgres', 'host.docker.internal'].includes(url.hostname))

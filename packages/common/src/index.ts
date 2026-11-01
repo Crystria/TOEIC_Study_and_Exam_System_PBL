@@ -13,3 +13,14 @@ export * from './messaging/messaging.module';
 export * from './redis/redis.service';
 export * from './redis/redis.module';
 export * from './outbox/outbox';
+
+export * from './auth/access-config';
+export * from './outbox/polling-relay';
+export * from './storage/storage';
+export * from './messaging/event-validation';
+export * from './outbox/prisma-outbox-store';
+export * from './storage/minio-adapter';
+export * from './auth/authorization-state';
+export * from './auth/authorization.module';
+export * from './sync/protocol';
+export * from './sync/learning-service-auth';

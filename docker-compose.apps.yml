@@ -61,6 +61,8 @@ services:
     ports:
       - '3001:3001'
     depends_on:
+      mailpit:
+        condition: service_started
       postgres:
         condition: service_healthy
       redis:
@@ -69,17 +71,52 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/auth-mail-encryption.key
+        target: /run/toeic-keys/auth-mail-encryption.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-private.pem
+        target: /run/toeic-keys/access-private.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
+      AUTH_MAIL_ENCRYPTION_KEY_FILE: /run/toeic-keys/auth-mail-encryption.key
+      MAILPIT_URL: http://mailpit:8025
+      AUTH_ACTIVATION_URL: ${AUTH_ACTIVATION_URL:-http://localhost:3006/verify-email}
+      MINIO_ENDPOINT: minio:9000
+      MINIO_PUBLIC_ENDPOINT: http://localhost:19000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
       NODE_ENV: development
       PORT: '3001'
+      SYNC_ENABLED: 'true'
+      LEARNING_INTERNAL_URL: http://learning-service:3004
       HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
+      JWT_ACCESS_PRIVATE_KEY_FILE: /run/toeic-keys/access-private.pem
       JWT_ACCESS_TTL: 15m
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me}
-      JWT_REFRESH_TTL: 7d
       JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
     develop:
@@ -120,7 +157,22 @@ services:
         condition: service_completed_successfully
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3002'
       GRPC_PORT: '50052'
@@ -128,7 +180,7 @@ services:
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
       JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
       ELASTICSEARCH_NODE: http://elasticsearch:9200
@@ -172,14 +224,29 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3003'
       HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
       QUESTION_BANK_GRPC_URL: question-bank-service:50052
       JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
@@ -214,13 +281,34 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3004'
+      SYNC_ENABLED: 'true'
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:19000}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:19000/toeic-media}
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/learning_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
     develop:
       watch:
         - action: sync
@@ -252,14 +340,29 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3005'
       HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
     develop:
       watch:
         - action: sync
@@ -293,12 +396,21 @@ services:
         condition: service_healthy
       analytics-service:
         condition: service_healthy
+      learning-service:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
       NODE_ENV: development
       PORT: '3000'
       HEALTHCHECK_PATH: /ready
       REDIS_URL: redis://redis:6379
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
       JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
       CORS_ORIGINS: http://localhost:3006,http://localhost:3007

@@ -50,6 +50,7 @@ model TestQuestion {
 }
 
 model Attempt {
+  scoring Json?
   id              String        @id @default(uuid()) @map("attempt_id")
   testId          String        @map("test_id")
   userId          String        @map("user_id")

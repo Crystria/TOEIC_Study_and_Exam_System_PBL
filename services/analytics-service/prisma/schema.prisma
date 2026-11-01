@@ -78,9 +78,149 @@ model WeakArea {
 
 /// Bảng chống xử lý trùng event (idempotency). `eventId` là khóa chính unique.
 model ProcessedEvent {
-  eventId     String   @id @map("event_id")
-  eventType   String   @map("event_type")
-  processedAt DateTime @default(now()) @map("processed_at")
+  eventId       String   @id @map("event_id")
+  eventType     String   @map("event_type")
+  processedAt   DateTime @default(now()) @map("processed_at")
+  payloadHash   String?  @map("payload_hash")
+  schemaVersion Int?     @map("schema_version")
 
   @@map("processed_events")
+}
+
+model AttemptFact {
+  attemptId   String            @id @map("attempt_id")
+  userId      String            @map("user_id")
+  testId      String            @map("test_id")
+  mode        String
+  completedAt DateTime          @map("completed_at")
+  payloadHash String            @map("payload_hash")
+  payload     Json
+  full        TestScoreFact?
+  practice    PracticeFact?
+  parts       AttemptPartFact[]
+
+  @@index([userId, completedAt])
+  @@map("attempt_facts")
+}
+
+model TestScoreFact {
+  attemptId      String      @id @map("attempt_id")
+  userId         String      @map("user_id")
+  completedAt    DateTime    @map("completed_at")
+  scoreListening Int         @map("score_listening")
+  scoreReading   Int         @map("score_reading")
+  totalScore     Int         @map("total_score")
+  scoring        Json
+  attempt        AttemptFact @relation(fields: [attemptId], references: [attemptId], onDelete: Restrict)
+
+  @@index([userId, completedAt])
+  @@map("test_score_facts")
+}
+
+model PracticeFact {
+  attemptId      String      @id @map("attempt_id")
+  userId         String      @map("user_id")
+  completedAt    DateTime    @map("completed_at")
+  correctCount   Int         @map("correct_count")
+  totalQuestions Int         @map("total_questions")
+  accuracy       Float
+  attempt        AttemptFact @relation(fields: [attemptId], references: [attemptId], onDelete: Restrict)
+
+  @@index([userId, completedAt])
+  @@map("practice_facts")
+}
+
+model AttemptPartFact {
+  attemptId String      @map("attempt_id")
+  part      Int
+  correct   Int
+  total     Int
+  attempt   AttemptFact @relation(fields: [attemptId], references: [attemptId], onDelete: Restrict)
+
+  @@id([attemptId, part])
+  @@map("attempt_part_facts")
+}
+
+model LearningActivityFact {
+  id          String   @id @default(uuid())
+  eventId     String   @unique @map("event_id")
+  businessKey String   @unique @map("business_key")
+  userId      String   @map("user_id")
+  kind        String
+  entityId    String   @map("entity_id")
+  operationId String?  @map("operation_id")
+  revision    BigInt?
+  activityAt  DateTime @map("activity_at")
+  payloadHash String   @map("payload_hash")
+  payload     Json
+
+  @@unique([userId, kind, entityId, revision])
+  @@index([userId, activityAt])
+  @@map("learning_activity_facts")
+}
+
+model FirstLearnedEntity {
+  userId       String   @map("user_id")
+  vocabularyId String   @map("vocabulary_id")
+  firstAt      DateTime @map("first_at")
+
+  @@id([userId, vocabularyId])
+  @@index([userId, firstAt])
+  @@map("first_learned_entities")
+}
+
+model CompletedLessonEntity {
+  userId   String   @map("user_id")
+  lessonId String   @map("lesson_id")
+  firstAt  DateTime @map("first_at")
+
+  @@id([userId, lessonId])
+  @@index([userId, firstAt])
+  @@map("completed_lesson_entities")
+}
+
+model UserActivityDay {
+  userId       String   @map("user_id")
+  activityDate DateTime @map("activity_date") @db.Date
+
+  @@id([userId, activityDate])
+  @@map("user_activity_days")
+}
+
+model UserStatistic {
+  userId                  String   @id @map("user_id")
+  vocabulariesLearned     Int      @map("vocabularies_learned")
+  reviewCount             Int      @map("review_count")
+  grammarLessonsCompleted Int      @map("grammar_lessons_completed")
+  mockTestCount           Int      @map("mock_test_count")
+  practiceCount           Int      @map("practice_count")
+  studyDays               Int      @map("study_days")
+  learningStreakDays      Int      @map("learning_streak_days")
+  longestStreak           Int      @map("longest_streak")
+  predictedToeicScore     Int?     @map("predicted_toeic_score")
+  updatedAt               DateTime @map("updated_at")
+
+  @@map("user_statistics")
+}
+
+model UserWeakArea {
+  userId        String   @map("user_id")
+  part          Int
+  correct       Int
+  total         Int
+  weaknessScore Float?   @map("weakness_score")
+  isWeak        Boolean? @map("is_weak")
+  calculatedAt  DateTime @map("calculated_at")
+
+  @@id([userId, part])
+  @@map("user_weak_areas")
+}
+
+model AnalyticsQuarantine {
+  eventId   String   @id @map("event_id")
+  reason    String
+  payload   Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("analytics_quarantine")
 }

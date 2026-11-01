@@ -14,7 +14,7 @@ Hợp đồng dùng chung giữa các service.
 - Thay đổi proto/event schema phải giữ tương thích (compatibility) — kiểm tra ở CI.
 - Không xóa field cũ; chỉ thêm field mới có default.
 - Thay đổi phá vỡ phải có version/routing key/queue mới và kế hoạch rollout. Bộ P0 V2 giữ nguyên file Avro và spec legacy; không phát payload mới vào consumer cũ.
-- Kiểm tra specification P0: `npm run validate:p0 -w @toeic/contracts`. Lệnh này chưa được gắn vào workflow CI ở P0; tích hợp runtime/CI thuộc P1.
+- Kiểm tra specification P0: `npm run validate:p0 -w @toeic/contracts`. P1 đã tích hợp vào CI; `p0/runtime.cjs` kiểm tra schema và semantics V2 tại publisher/consumer qua `@toeic/common`.
 - Proto canonical nằm trong `packages/contracts/proto`; service không giữ bản copy.
 - P3: `Question.revision` và `AnswerKeyItem.revision` phải khớp trước khi Exam lưu snapshot.
   Các field legacy và field number cũ được giữ nguyên; mismatch trả 409 để retry start.

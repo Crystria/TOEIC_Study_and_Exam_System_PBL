@@ -4,10 +4,10 @@ const bcrypt = require('bcrypt');
 export const password = process.env.QA_ACCOUNT_PASSWORD ?? 'QA-Local-2026!';
 export async function accounts(auth, namespace) {
   const roles = {};
-  for (const code of ['USER', 'SYSTEM_ADMIN'])
+  for (const code of ['USER', 'SYSTEM_ADMIN', 'CONTENT_ADMIN'])
     roles[code] = await auth.role.upsert({
-      where: { code },
-      create: { code, name: code },
+      where: { roleCode: code },
+      create: { roleCode: code, name: code },
       update: {},
     });
   const hash = await bcrypt.hash(password, 12),
@@ -20,10 +20,16 @@ export async function accounts(auth, namespace) {
         email,
         passwordHash: hash,
         fullName: `QA ${index}`,
+        status: 'ACTIVE',
         roles: {
           create: [
-            { roleId: roles.USER.id },
-            ...(index < 3 ? [{ roleId: roles.SYSTEM_ADMIN.id }] : []),
+            { roleCode: roles.USER.roleCode },
+            ...(index < 3
+              ? [
+                  { roleCode: roles.SYSTEM_ADMIN.roleCode },
+                  { roleCode: roles.CONTENT_ADMIN.roleCode },
+                ]
+              : []),
           ],
         },
       },

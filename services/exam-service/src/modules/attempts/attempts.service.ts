@@ -1,3 +1,4 @@
+import { validateEvent } from '@toeic/contracts/p0/runtime.cjs';
 import { createHash, randomUUID } from 'node:crypto';
 import {
   BadRequestException,
@@ -354,6 +355,7 @@ export class AttemptsService {
       totalQuestions = a.questionSnapshots.length;
     if (!totalQuestions) throw new ConflictException('Attempt has no snapshots');
     const full = a.mode === 'FULL' ? this.scoring.full(stats) : null;
+    const scoring = full ? this.scoring.provenance() : null;
     await tx.attemptAnswer.createMany({
       data: a.questionSnapshots.map((q) => ({
         attemptId: a.id,
@@ -389,45 +391,59 @@ export class AttemptsService {
         score: full?.totalScore ?? null,
         scoreListening: full?.scoreListening ?? null,
         scoreReading: full?.scoreReading ?? null,
+        scoring: scoring ?? Prisma.DbNull,
       },
     });
     const eventId = randomUUID(),
       occurredAt = new Date(),
-      eventType = a.mode === 'FULL' ? 'TestSubmittedEvent' : 'PartPracticeSubmittedEvent';
-    const common = {
-      eventId,
-      occurredAt: occurredAt.getTime(),
-      attemptId: a.id,
-      userId: a.userId,
-      testId: a.testId,
-      mode: a.mode,
-      completedAt: completedAt.getTime(),
-    };
+      partBreakdown = stats.map((p) => ({
+        part: p.part,
+        correct: p.correctCount,
+        total: p.totalQuestions,
+      }));
     const payload = full
       ? {
-          ...common,
+          attemptId: a.id,
+          userId: a.userId,
+          testId: a.testId,
+          mode: 'FULL',
           ...full,
-          score: full.totalScore,
-          totalCorrect: correctCount,
-          partDetails: stats,
+          correctCount,
+          totalQuestions,
+          partStats: partBreakdown,
+          completedAt: completedAt.toISOString(),
+          scoring,
         }
       : {
-          ...common,
+          attemptId: a.id,
+          userId: a.userId,
+          testId: a.testId,
+          mode: 'PART',
           parts: stats.map((p) => p.part),
-          totalQuestions,
           correctCount,
-          accuracy: correctCount / totalQuestions,
-          partStats: stats,
-          durationSeconds: a.durationSeconds,
+          totalQuestions,
+          accuracy:
+            Math.floor((correctCount * 1000000 + totalQuestions / 2) / totalQuestions) / 1000000,
+          partStats: partBreakdown,
+          completedAt: completedAt.toISOString(),
         };
+    const envelope = {
+      eventId,
+      eventType: full ? 'TestSubmittedEvent.v2' : 'PartPracticeSubmittedEvent.v2',
+      version: 2,
+      producer: 'exam-service',
+      occurredAt: occurredAt.toISOString(),
+      payload,
+    };
+    validateEvent(envelope);
     await tx.outboxEvent.create({
       data: {
         id: eventId,
         aggregateType: 'Attempt',
         aggregateId: a.id,
-        eventType,
+        eventType: envelope.eventType,
         occurredAt,
-        payload: payload as unknown as Prisma.InputJsonValue,
+        payload: envelope as unknown as Prisma.InputJsonValue,
       },
     });
     return this.record(a.id, tx);

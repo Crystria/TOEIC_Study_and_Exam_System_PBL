@@ -59,6 +59,16 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "No matching user/session; caller treats this as revoked, not as a dependency outage.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }

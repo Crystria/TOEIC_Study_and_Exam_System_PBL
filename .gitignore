@@ -165,3 +165,5 @@ uv.lock.bak
 !.gitkeep
 # ---------- private-folder ----------
 private/
+
+artifacts/p6/

@@ -1,5 +1,6 @@
 /** @type {import('jest').Config} */
 module.exports = {
+  cacheDirectory: '<rootDir>/../../../node_modules/.cache/jest-gateway',
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: 'src',
   testRegex: '.*\\.spec\\.ts$',

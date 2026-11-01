@@ -1,5 +1,6 @@
+import { accessJwtOptions } from '@toeic/common';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_JWT_AUDIENCE, DEFAULT_JWT_ISSUER } from '@toeic/common';
+
 import { JwtMiddlewareOptions } from '../gateway/jwt.middleware';
 
 export function requiredConfig(config: ConfigService, key: string): string {
@@ -11,9 +12,11 @@ export function requiredConfig(config: ConfigService, key: string): string {
 }
 
 export function jwtMiddlewareOptions(config: ConfigService): JwtMiddlewareOptions {
+  const options = accessJwtOptions(config);
   return {
-    secret: requiredConfig(config, 'JWT_ACCESS_SECRET'),
-    issuer: config.get<string>('JWT_ISSUER') ?? DEFAULT_JWT_ISSUER,
-    audience: config.get<string>('JWT_AUDIENCE') ?? DEFAULT_JWT_AUDIENCE,
+    secret: options.publicKey as string,
+    algorithm: 'RS256',
+    issuer: options.verifyOptions!.issuer as string,
+    audience: options.verifyOptions!.audience as string,
   };
 }

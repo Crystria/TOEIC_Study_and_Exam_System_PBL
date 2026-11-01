@@ -1,3 +1,4 @@
+import { generateKeyPairSync } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -26,7 +27,11 @@ import {
   createUserRateLimitMiddleware,
 } from './rate-limit.middleware';
 
-const SECRET = 'test-secret';
+const { publicKey: SECRET, privateKey: PRIVATE_KEY } = generateKeyPairSync('rsa', {
+  modulusLength: 2048,
+  publicKeyEncoding: { type: 'spki', format: 'pem' },
+  privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+});
 const ISSUER = 'toeic-auth';
 const AUDIENCE = 'toeic-api';
 
@@ -45,7 +50,7 @@ function fakeConfig(upstreamUrl: string): ConfigService {
     LEARNING_SERVICE_URL: upstreamUrl,
     ANALYTICS_SERVICE_URL: upstreamUrl,
     AI_CHATBOX_SERVICE_URL: upstreamUrl,
-    JWT_ACCESS_SECRET: SECRET,
+    JWT_ACCESS_PUBLIC_KEY: SECRET,
     JWT_ISSUER: ISSUER,
     JWT_AUDIENCE: AUDIENCE,
     CORS_ORIGINS: 'http://localhost:3006',
@@ -61,17 +66,32 @@ function fakeRedis(): jest.Mocked<Pick<RedisService, 'consumeToken'>> {
   };
 }
 
-function createTestApp(upstreamUrl: string, redis: ReturnType<typeof fakeRedis>): Express {
+function createTestApp(
+  upstreamUrl: string,
+  redis: ReturnType<typeof fakeRedis>,
+  maxSockets = 128,
+): Express {
   const app = express();
-  const jwt = new JwtService({ secret: SECRET });
+  const jwt = new JwtService({
+    publicKey: SECRET,
+    privateKey: PRIVATE_KEY,
+    signOptions: { algorithm: 'RS256' },
+  });
 
   app.use(correlationIdMiddleware);
   app.use(createBodyLimitMiddleware());
   app.use(createIpRateLimitMiddleware(redis as unknown as RedisService, fakeConfig(upstreamUrl)));
-  app.use(createJwtMiddleware(jwt, { secret: SECRET, issuer: ISSUER, audience: AUDIENCE }));
+  app.use(
+    createJwtMiddleware(jwt, {
+      secret: SECRET,
+      algorithm: 'RS256',
+      issuer: ISSUER,
+      audience: AUDIENCE,
+    }),
+  );
   app.use(createUserRateLimitMiddleware(redis as unknown as RedisService, fakeConfig(upstreamUrl)));
   app.use(createAuthorizationMiddleware());
-  app.use(createGatewayProxy(fakeConfig(upstreamUrl)));
+  app.use(createGatewayProxy(fakeConfig(upstreamUrl), maxSockets));
   app.use(gatewayNotFoundMiddleware);
   return app;
 }
@@ -79,6 +99,10 @@ function createTestApp(upstreamUrl: string, redis: ReturnType<typeof fakeRedis>)
 function signToken(jwt: JwtService, overrides: Partial<JwtPayload> = {}): string {
   const payload: JwtPayload = {
     sub: 'user-1',
+    sid: 'test-session',
+    jti: 'test-jti',
+    userVersion: '0',
+    sessionVersion: '0',
     email: 'user@example.com',
     roles: [RoleCode.USER],
     type: 'access',
@@ -130,7 +154,11 @@ describe('API Gateway e2e', () => {
   let jwt: JwtService;
 
   beforeAll(async () => {
-    jwt = new JwtService({ secret: SECRET });
+    jwt = new JwtService({
+      publicKey: SECRET,
+      privateKey: PRIVATE_KEY,
+      signOptions: { algorithm: 'RS256' },
+    });
     upstream = createServer((req: IncomingMessage, res: ServerResponse) => {
       const chunks: Buffer[] = [];
       req.on('data', (chunk: Buffer) => chunks.push(chunk));
@@ -222,6 +250,11 @@ describe('API Gateway e2e', () => {
   });
 
   it('does not retain one server-close listener per proxied request', async () => {
+    let connections = 0;
+    const connected = () => {
+      connections++;
+    };
+    upstream.on('connection', connected);
     const app = createTestApp(upstreamUrl, fakeRedis());
     const server = app.listen(0, '127.0.0.1');
     await new Promise<void>((resolve) => server.once('listening', resolve));
@@ -235,8 +268,51 @@ describe('API Gateway e2e', () => {
           ).status,
         ).toBe(200);
       expect(server.listenerCount('close')).toBeLessThanOrEqual(2);
+      expect(connections).toBeLessThan(3);
+    } finally {
+      upstream.off('connection', connected);
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+  });
+
+  it('preserves correlation headers when concurrent requests queue for upstream sockets', async () => {
+    let active = 0,
+      peak = 0;
+    const slow = createServer((req, res) => {
+      peak = Math.max(peak, ++active);
+      req.resume();
+      setTimeout(() => {
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ correlationId: req.headers['x-correlation-id'] }));
+        active--;
+      }, 100);
+    });
+    await new Promise<void>((resolve) => slow.listen(0, '127.0.0.1', resolve));
+    const app = createTestApp(
+      `http://127.0.0.1:${(slow.address() as AddressInfo).port}`,
+      fakeRedis(),
+      2,
+    );
+    const server = app.listen(0, '127.0.0.1');
+    await new Promise<void>((resolve) => server.once('listening', resolve));
+    const token = signToken(jwt);
+    try {
+      const responses = await Promise.all(
+        Array.from({ length: 8 }, (_, i) =>
+          request(server)
+            .get('/api/v1/tests')
+            .set('Authorization', `Bearer ${token}`)
+            .set('X-Correlation-ID', `queued-${i}`),
+        ),
+      );
+      responses.forEach((response, i) => {
+        expect(response.status).toBe(200);
+        expect(response.body.correlationId).toBe(`queued-${i}`);
+      });
+      expect(peak).toBe(2);
     } finally {
       await new Promise<void>((resolve) => server.close(() => resolve()));
+      await new Promise<void>((resolve) => slow.close(() => resolve()));
     }
   });
 
@@ -262,7 +338,18 @@ describe('API Gateway e2e', () => {
       { issuer: ISSUER, audience: AUDIENCE, expiresIn: -1 },
       { issuer: ISSUER, audience: AUDIENCE },
     ]) {
-      const token = jwt.sign({ sub: 'user-1', type: 'access', roles: ['USER'] }, options);
+      const token = jwt.sign(
+        {
+          sub: 'user-1',
+          type: 'access',
+          roles: ['USER'],
+          sid: 'test-session',
+          jti: 'test-jti',
+          userVersion: '0',
+          sessionVersion: '0',
+        },
+        options,
+      );
       expect(
         (await request(app).get('/api/v1/tests').set('Authorization', `Bearer ${token}`)).status,
       ).toBe(401);
@@ -356,7 +443,11 @@ describe('gateway bootstrap middleware', () => {
       app,
       fakeConfig('http://127.0.0.1:1'),
       redis as unknown as RedisService,
-      new JwtService({ secret: SECRET }),
+      new JwtService({
+        publicKey: SECRET,
+        privateKey: PRIVATE_KEY,
+        signOptions: { algorithm: 'RS256' },
+      }),
     );
     await app.init();
   });

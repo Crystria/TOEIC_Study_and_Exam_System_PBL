@@ -1,4 +1,5 @@
 import { MessagingService } from '@toeic/common';
+import goldenEvents from '../../../../../packages/contracts/p0/fixtures/events.valid.json';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ExamOutboxRelay } from './outbox-relay';
 describe('Exam outbox relay', () => {
@@ -16,7 +17,10 @@ describe('Exam outbox relay', () => {
       $queryRaw: jest.fn().mockResolvedValue([event]),
       outboxEvent: { update: jest.fn().mockResolvedValue({}) },
     };
-    const messaging = { emit: jest.fn().mockResolvedValue(undefined) };
+    const messaging = {
+      emit: jest.fn().mockResolvedValue(undefined),
+      declareConsumerQueue: jest.fn().mockResolvedValue(undefined),
+    };
     const relay = new ExamOutboxRelay(
       {
         $transaction: (callback: (tx: unknown) => Promise<unknown>) => callback(tx),
@@ -51,6 +55,37 @@ describe('Exam outbox relay', () => {
     const { relay, messaging, tx } = setup('TestSubmittedEvent', 10);
     await relay.poll();
     expect(messaging.emit.mock.calls[0][0]).toBe('exam.outbox.dead');
+    expect(tx.outboxEvent.update.mock.calls[0][0].data.deadLetteredAt).toBeInstanceOf(Date);
+  });
+  it('publishes the stored V2 envelope with its original ID', async () => {
+    const envelope = goldenEvents[0].data;
+    const { relay, tx, messaging } = setup(envelope.eventType);
+    tx.$queryRaw.mockResolvedValue([
+      {
+        id: envelope.eventId,
+        aggregate_id: envelope.payload.attemptId,
+        event_type: envelope.eventType,
+        payload: envelope,
+        retry_count: 0,
+      },
+    ]);
+    await relay.poll();
+    expect(messaging.declareConsumerQueue).toHaveBeenCalled();
+    expect(messaging.emit).toHaveBeenCalledWith(
+      'test.submitted.v2',
+      envelope.payload.attemptId,
+      envelope,
+    );
+    expect(tx.outboxEvent.update.mock.calls[0][0].where.id).toBe(envelope.eventId);
+    expect(tx.outboxEvent.update.mock.calls[0][0].data.publishedAt).toBeInstanceOf(Date);
+  });
+  it('dead letters an exhausted corrupt V2 outbox row for inspection', async () => {
+    const { relay, tx, messaging } = setup('TestSubmittedEvent.v2', 10);
+    await relay.poll();
+    expect(messaging.emit.mock.calls[0][0]).toBe('exam.outbox.dead');
+    expect(messaging.emit.mock.calls[0][2].payload.originalEvent).toEqual({
+      attemptId: 'attempt-1',
+    });
     expect(tx.outboxEvent.update.mock.calls[0][0].data.deadLetteredAt).toBeInstanceOf(Date);
   });
 });

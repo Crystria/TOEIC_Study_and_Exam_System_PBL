@@ -1,11 +1,12 @@
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from '@toeic/common';
+import { JwtPayload, RoleCode } from '@toeic/common';
 import { Request, RequestHandler } from 'express';
 import { sendGatewayError } from './http-error';
 import { isPublicPath, normalizePath } from './route-policy';
 
 export interface JwtMiddlewareOptions {
   secret: string;
+  algorithm: 'RS256';
   issuer: string;
   audience: string;
 }
@@ -37,7 +38,7 @@ export function createJwtMiddleware(
     }
 
     const path = normalizePath(req.path);
-    if (isPublicPath(path) || !path.startsWith('/api/v1')) {
+    if (isPublicPath(path, req.method) || !path.startsWith('/api/v1')) {
       return next();
     }
 
@@ -49,21 +50,31 @@ export function createJwtMiddleware(
 
     try {
       const payload = await jwt.verifyAsync<JwtPayload>(token, {
-        algorithms: ['HS256'],
+        algorithms: [options.algorithm],
         secret: options.secret,
         issuer: options.issuer,
         audience: options.audience,
       });
 
-      const claims = payload as JwtPayload & { exp?: number };
+      const claims = payload as JwtPayload & { exp?: number; iat?: number };
       if (
         payload.type !== 'access' ||
         typeof payload.sub !== 'string' ||
         payload.sub.length === 0 ||
         typeof claims.exp !== 'number' ||
         !Number.isFinite(claims.exp) ||
+        typeof claims.iat !== 'number' ||
+        typeof payload.sid !== 'string' ||
+        !payload.sid ||
+        typeof payload.jti !== 'string' ||
+        !payload.jti ||
+        typeof payload.userVersion !== 'string' ||
+        !/^(0|[1-9]\d{0,18})$/.test(payload.userVersion) ||
+        typeof payload.sessionVersion !== 'string' ||
+        !/^(0|[1-9]\d{0,18})$/.test(payload.sessionVersion) ||
         !Array.isArray(payload.roles) ||
-        !payload.roles.every((role) => typeof role === 'string')
+        payload.roles.length === 0 ||
+        !payload.roles.every((role) => Object.values(RoleCode).includes(role))
       ) {
         throw new Error('Invalid access token payload');
       }

@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { MessagingService } from '@toeic/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -28,9 +29,13 @@ export class OutboxRelay implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly prisma: PrismaService,
     private readonly messaging: MessagingService,
+    private readonly config: ConfigService = new ConfigService(),
   ) {}
   async onModuleInit() {
-    await this.messaging.declareQueue('question-bank-outbox-dlq', 'question-bank.outbox.dead');
+    await this.messaging.declareQueue(
+      this.config.get<string>('QUESTION_OUTBOX_DLQ') || 'question-bank-outbox-dlq',
+      'question-bank.outbox.dead',
+    );
     this.timer = setInterval(() => {
       if (!this.running && !this.closing) {
         this.running = this.poll()

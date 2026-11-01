@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { generateKeyPairSync, randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { createServer } from 'node:net';
 import { AddressInfo } from 'node:net';
@@ -13,7 +13,7 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
-import { RedisService } from '@toeic/common';
+import { AuthorizationStateVerifier, RedisService } from '@toeic/common';
 import { Client as EsClient } from '@elastic/elasticsearch';
 import { Client as MinioClient } from 'minio';
 import request from 'supertest';
@@ -102,7 +102,16 @@ integration('Question Bank with PostgreSQL, RabbitMQ, MinIO and Elasticsearch', 
     response.body.questionIds.forEach((id: string) => questionIds.add(id));
     return response.body as { groupId: string; questionIds: string[]; isComplete: boolean };
   }
+  let signer: JwtService;
   beforeAll(async () => {
+    const keys = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    });
+    process.env.JWT_ACCESS_PUBLIC_KEY = keys.publicKey;
+    process.env.JWT_ACCESS_PUBLIC_KEY_FILE = '';
+    signer = new JwtService({ privateKey: keys.privateKey, signOptions: { algorithm: 'RS256' } });
     // This suite requires an explicit, separate verification database.
     const url = process.env.P2_INTEGRATION_DATABASE_URL!;
     if (!new URL(url).pathname.includes('p2_verify'))
@@ -114,6 +123,9 @@ integration('Question Bank with PostgreSQL, RabbitMQ, MinIO and Elasticsearch', 
       get: () => 'redis://127.0.0.1:7379',
     } as unknown as ConfigService);
     const module = await Test.createTestingModule({ imports: [AppModule] })
+      // Domain suite uses synthetic users; authoritative Auth transport is tested by Auth P2 E2E.
+      .overrideProvider(AuthorizationStateVerifier)
+      .useValue({ verify: async () => undefined })
       .overrideProvider(PrismaService)
       .useValue(prisma)
       .overrideProvider(RedisService)
@@ -140,11 +152,19 @@ integration('Question Bank with PostgreSQL, RabbitMQ, MinIO and Elasticsearch', 
     grpcClient = ClientProxyFactory.create({ transport: Transport.GRPC, options: grpcOptions });
     grpcService = grpcClient.getService('QuestionBankService');
     await app.init();
-    const jwt = app.get(JwtService),
+    const jwt = signer,
       config = app.get(ConfigService);
     const sign = (roles: string[]) =>
       jwt.sign(
-        { sub: randomUUID(), type: 'access', roles },
+        {
+          sub: randomUUID(),
+          type: 'access',
+          roles,
+          sid: randomUUID(),
+          jti: randomUUID(),
+          userVersion: '0',
+          sessionVersion: '0',
+        },
         {
           expiresIn: 300,
           issuer: config.get<string>('JWT_ISSUER') ?? 'toeic-auth',
@@ -202,12 +222,10 @@ integration('Question Bank with PostgreSQL, RabbitMQ, MinIO and Elasticsearch', 
       .get(`/api/v1/questions/${q.questionId}`)
       .auth(admin, { type: 'bearer' });
     expect(adminResponse.body.correctOption).toBe('A');
-    const invalidJwt = app
-      .get(JwtService)
-      .sign(
-        { sub: randomUUID(), type: 'refresh', roles: ['SYSTEM_ADMIN'] },
-        { expiresIn: 300, issuer: 'toeic-auth', audience: 'toeic-api' },
-      );
+    const invalidJwt = signer.sign(
+      { sub: randomUUID(), type: 'refresh', roles: ['SYSTEM_ADMIN'] },
+      { expiresIn: 300, issuer: 'toeic-auth', audience: 'toeic-api' },
+    );
     expect((await api().get('/api/v1/questions').auth(invalidJwt, { type: 'bearer' })).status).toBe(
       401,
     );

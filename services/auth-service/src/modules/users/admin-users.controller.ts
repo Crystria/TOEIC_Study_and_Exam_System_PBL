@@ -1,39 +1,37 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RoleCode, Roles } from '@toeic/common';
-import { ListUsersQueryDto } from './dto/list-users-query.dto';
-import { UpdateRolesDto } from './dto/update-roles.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Query, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CurrentUser, RoleCode, Roles } from '@toeic/common';
+import { Request } from 'express';
+import { UserStatus } from '../../generated/prisma';
+import { ContractPipe, auditContext } from '../../http';
+import { ListUsersQueryDto, AuditQueryDto } from './dto/list-users-query.dto';
 import { UsersService } from './users.service';
-
 @ApiTags('admin-users')
 @ApiBearerAuth()
 @Roles(RoleCode.SYSTEM_ADMIN)
 @Controller('admin')
 export class AdminUsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  @Get('users')
-  @ApiOperation({ summary: 'Danh sách người dùng cho quản trị' })
-  listUsers(@Query() query: ListUsersQueryDto) {
-    return this.usersService.listUsers(query);
+  constructor(private readonly users: UsersService) {}
+  @Get('users') list(@Query() query: ListUsersQueryDto) {
+    return this.users.listUsers(query);
   }
-
-  @Patch('users/:id/roles')
-  @ApiOperation({ summary: 'Cập nhật vai trò' })
-  updateRoles(@Param('id') id: string, @Body() dto: UpdateRolesDto) {
-    return this.usersService.updateRoles(id, dto.roles);
+  @Patch('users/:id/roles') roles(
+    @CurrentUser('sub') actor: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(new ContractPipe('RolesPatch')) dto: { roles: RoleCode[] },
+    @Req() req: Request,
+  ) {
+    return this.users.change(actor, id, dto, auditContext(req));
   }
-
-  @Patch('users/:id/status')
-  @ApiOperation({ summary: 'Khóa/kích hoạt tài khoản' })
-  updateStatus(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
-    return this.usersService.updateStatus(id, dto);
+  @Patch('users/:id/status') status(
+    @CurrentUser('sub') actor: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(new ContractPipe('StatusPatch')) dto: { status: UserStatus },
+    @Req() req: Request,
+  ) {
+    return this.users.change(actor, id, dto, auditContext(req));
   }
-
-  @Get('audit-logs')
-  @ApiOperation({ summary: 'Tra cứu nhật ký hệ thống' })
-  listAuditLogs(@Query('page') page = '1', @Query('size') size = '20') {
-    return this.usersService.listAuditLogs(Number(page), Number(size));
+  @Get('audit-logs') audit(@Query() query: AuditQueryDto) {
+    return this.users.listAuditLogs(query);
   }
 }

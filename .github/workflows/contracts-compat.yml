@@ -15,6 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run validate:p0 -w @toeic/contracts
+      - run: npm run build -w @toeic/common
+      - run: npm run test:p1 -w @toeic/common
       - name: Validate Avro schemas (JSON syntax)
         run: |
           for f in packages/contracts/events/*.avsc; do

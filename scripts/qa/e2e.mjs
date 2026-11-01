@@ -48,14 +48,18 @@ function percentiles(samples) {
     maxMs: +values.at(-1).toFixed(2),
   };
 }
-export async function run({ base = baseUrl, keep = process.argv.includes('--seed') } = {}) {
+export async function run({
+  base = baseUrl,
+  keep = process.argv.includes('--seed'),
+  cleanup = false,
+} = {}) {
   const id = runId(),
-    label = keep ? 'QA Demo 200 Questions' : `qa-p4-${id}`;
+    label = keep ? 'QA Demo 200 Questions' : `qa-p6-${id}`;
   const track = tracking(),
     graded = new Map(),
     users = [];
   const report = {
-    phase: 'P4',
+    phase: 'P6',
     startedAt: new Date().toISOString(),
     baseUrl: base,
     node: process.version,
@@ -68,7 +72,7 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
   await mkdir(out, { recursive: true });
   let databases, es, minio, redis, tokens, fixture;
   async function raw(method, path, token, body, headers = {}) {
-    const correlation = `p4-${id}-${Math.random().toString(16).slice(2)}`;
+    const correlation = `p6-${id}-${Math.random().toString(16).slice(2)}`;
     const started = performance.now();
     const response = await fetch(`${base}${path}`, {
       method,
@@ -101,6 +105,8 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
     };
   }
   async function api(method, path, token, body, status = 200, headers = {}) {
+    if (method === 'POST' && path.startsWith('/api/v1/learning/admin/'))
+      headers = { 'Idempotency-Key': crypto.randomUUID(), ...headers };
     const response = await raw(method, path, token, body, headers);
     assert.equal(
       response.status,
@@ -142,11 +148,11 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
     const ready = await api('GET', '/ready');
     assert.equal(ready.qa, true, 'Refusing to seed a gateway that is not explicitly in QA_MODE');
     assert(
-      /^questions-p4-/.test(searchIndex) && /-p4$/.test(bucket),
+      /^questions-p6-/.test(searchIndex) && /-p6$/.test(bucket),
       'QA search index/bucket must use the QA namespace',
     );
     databases = clients();
-    const [auth, questions, exam, analytics] = databases;
+    const [auth, questions, exam, analytics, learning] = databases;
     es = new EsClient({ node: process.env.QA_ELASTICSEARCH_NODE ?? 'http://localhost:19200' });
     const endpoint = new URL(process.env.QA_MINIO_ENDPOINT ?? 'http://localhost:19000');
     minio = new MinioClient({
@@ -166,12 +172,13 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
         const response = await raw('POST', '/api/v1/auth/login', undefined, {
           email: user.email,
           password,
+          deviceId: 'qa-p6',
         });
         if (response.status === 429) {
           await sleep(6000);
           throw new Error('Waiting for auth rate limit refill');
         }
-        assert.equal(response.status, 201);
+        assert.equal(response.status, 200);
         return response.body;
       }, 65_000);
       tokens.push(login.accessToken);
@@ -214,6 +221,85 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
       questions: 200,
       accounts: users.map(({ id, email }) => ({ id, email })),
     };
+    await check(
+      'Learning CRUD/review/completion and two-device sync converge into Analytics',
+      async () => {
+        const topic = await api(
+          'POST',
+          '/api/v1/learning/admin/vocabulary-topics',
+          tokens[0],
+          { topicName: label },
+          201,
+        );
+        const vocabulary = await api(
+          'POST',
+          '/api/v1/learning/admin/vocabularies',
+          tokens[0],
+          { topicId: topic.topicId, word: 'P6 word', definition: 'P6 meaning' },
+          201,
+        );
+        await api(
+          'POST',
+          '/api/v1/learning/flashcards/' + vocabulary.vocabularyId + '/review',
+          tokens[3],
+          { quality: 5, operationId: crypto.randomUUID(), baseEntityRevision: '0' },
+          200,
+        );
+        const lesson = await api(
+          'POST',
+          '/api/v1/learning/admin/lessons',
+          tokens[0],
+          {
+            lessonTitle: label,
+            category: 'TENSE',
+            status: 'PUBLISHED',
+            contentMarkdown: '# P6 lesson',
+          },
+          201,
+        );
+        await api(
+          'POST',
+          '/api/v1/learning/lessons/' + lesson.lessonId + '/complete',
+          tokens[3],
+          { operationId: crypto.randomUUID(), baseEntityRevision: '0' },
+          200,
+        );
+        const state = await api('GET', '/api/v1/sync/users/me', tokens[3]);
+        await until(async () => {
+          const synced = await api('GET', '/api/v1/sync/users/me', tokens[3]);
+          assert.equal(synced.projectionReady, true);
+          assert(synced.progress.length >= 2);
+        });
+        const head = await api('GET', '/api/v1/sync/users/me', tokens[3]);
+        const item = head.progress.find((p) => p.entityId === vocabulary.vocabularyId);
+        const operationId = crypto.randomUUID();
+        const request = {
+          deviceId: 'p6-device-2',
+          operationId,
+          baseVersion: head.syncVersion,
+          clientOccurredAt: new Date().toISOString(),
+          operation: {
+            kind: 'REVIEW_FLASHCARD',
+            vocabularyId: vocabulary.vocabularyId,
+            quality: 3,
+            baseEntityRevision: item.revision,
+          },
+        };
+        const accepted = await api('POST', '/api/v1/sync/users', tokens[3], request);
+        assert.equal(accepted.accepted, true);
+        await until(async () => {
+          const applied = await api('GET', '/api/v1/sync/operations/' + operationId, tokens[3]);
+          assert.equal(applied.status, 'APPLIED');
+        });
+        await api('POST', '/api/v1/sync/users', tokens[3], request);
+        await until(async () => {
+          const p = await api('GET', '/api/v1/analytics/progress', tokens[3]);
+          assert.equal(p.lifetime.vocabulariesLearned, 1);
+          assert.equal(p.lifetime.reviewCount, 2);
+          assert.equal(p.lifetime.grammarLessonsCompleted, 1);
+        });
+      },
+    );
     await check('outbox-to-search indexing and USER answer redaction', async () => {
       if (!keep || track.questions.size)
         await until(async () => {
@@ -394,7 +480,10 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
     await check('Full/Part events reach Analytics with weighted per-Part weak areas', async () => {
       await until(async () => {
         const scores = await api('GET', '/api/v1/analytics/scores', tokens[3]);
-        assert.equal(scores.items.length, graded.size);
+        assert.equal(scores.total, [...graded.values()].filter((r) => r.mode === 'FULL').length);
+        const practices = await api('GET', '/api/v1/analytics/practices', tokens[3]);
+        assert.equal(practices.total, [...graded.values()].filter((r) => r.mode === 'PART').length);
+        assert(practices.items.every((p) => p.mode === 'PART' && !('totalScore' in p)));
         assert(scores.items.filter((s) => s.mode === 'PART').every((s) => s.score === null));
         const expected = new Map();
         for (const result of graded.values())
@@ -408,8 +497,8 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
         for (const [part, count] of expected) {
           const actual = weak.items.find((p) => p.part === part);
           assert(actual);
-          assert.equal(actual.sampleCount, count.total);
-          assert(Math.abs(actual.errorRate - (1 - count.correct / count.total)) < 1e-9);
+          assert.equal(actual.total, count.total);
+          assert(Math.abs(actual.weaknessScore - (1 - count.correct / count.total)) < 1e-6);
         }
       });
     });
@@ -465,8 +554,8 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
     report.error = scrub(error.stack ?? error.message);
     throw error;
   } finally {
-    if (!keep && databases && tokens) {
-      const [auth, questions, exam, analytics] = databases;
+    if (!keep && cleanup && databases && tokens) {
+      const [auth, questions, exam, analytics, learning] = databases;
       try {
         // Archive first; keep versioned ES tombstones so late deliveries cannot resurrect fixtures.
         for (const groupId of track.groups) {
@@ -518,6 +607,19 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
         await questions.questionGroup.deleteMany({ where: { id: { in: [...track.groups] } } });
         await questions.tag.deleteMany({ where: { name: label, questions: { none: {} } } });
         const owned = { userId: { in: users.map((u) => u.id) } };
+        await analytics.attemptPartFact.deleteMany({ where: { attemptId: { in: attemptIds } } });
+        for (const model of [
+          'testScoreFact',
+          'practiceFact',
+          'attemptFact',
+          'learningActivityFact',
+          'firstLearnedEntity',
+          'completedLessonEntity',
+          'userActivityDay',
+          'userStatistic',
+          'userWeakArea',
+        ])
+          await analytics[model].deleteMany({ where: owned });
         for (const model of [
           'scoreHistory',
           'learningActivity',
@@ -555,6 +657,7 @@ export async function run({ base = baseUrl, keep = process.argv.includes('--seed
       es?.close(),
       redis?.quit(),
     ]);
+    if (!cleanup) report.cleanup={retained:'isolated QA fixtures; whole QA database reset belongs to qa:p6, never developer databases'};
     report.completedAt = new Date().toISOString();
     await writeFile(
       resolve(out, keep ? 'seed.json' : 'latest.json'),

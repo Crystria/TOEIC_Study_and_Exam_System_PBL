@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EtsScoreTable, loadEtsScoreTable, lookupEtsScore } from './ets-score-table';
 
@@ -55,6 +55,21 @@ export class ScoringService {
     };
     this.listening = load('listening');
     this.reading = load('reading');
+  }
+  provenance() {
+    if (
+      this.listening.version === 'dev-formula' ||
+      this.reading.version === 'dev-formula' ||
+      this.listening.version !== this.reading.version
+    )
+      throw new ServiceUnavailableException(
+        'A versioned reference lookup table is required for Full events',
+      );
+    return {
+      method: 'LOOKUP' as const,
+      tableVersion: this.listening.version,
+      official: false as const,
+    };
   }
   full(stats: PartStat[]) {
     const correctListeningCount = stats

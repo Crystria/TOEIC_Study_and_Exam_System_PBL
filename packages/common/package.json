@@ -5,11 +5,16 @@
   "description": "Shared libraries: auth guards, RBAC, messaging (RabbitMQ), Redis, outbox, logger, correlation-id",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "echo \"common: lint\" && exit 0",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "test:p1": "node --test test/p1.test.cjs",
+    "test:p2": "node --test test/p2.test.cjs",
+    "test:p4": "node --test test/p4.test.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.4",
@@ -23,13 +28,16 @@
     "amqplib": "^0.10.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "@toeic/contracts": "*"
   },
   "peerDependencies": {
     "@prisma/client": "^5.20.0"
   },
   "peerDependenciesMeta": {
-    "@prisma/client": { "optional": true }
+    "@prisma/client": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

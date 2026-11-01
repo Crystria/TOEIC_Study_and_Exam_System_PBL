@@ -27,9 +27,15 @@ async function consume(
   identifier: string,
 ): Promise<boolean> {
   const key = `ratelimit:${policy.scope}:${identifier}:${policy.bucket}`;
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   try {
-    const allowed = await redis.consumeToken(key, policy.capacity, policy.refillPerSecond);
+    const allowed = await Promise.race([
+      redis.consumeToken(key, policy.capacity, policy.refillPerSecond),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Rate limit Redis timed out')), 250);
+      }),
+    ]);
     if (!allowed) {
       res.setHeader('Retry-After', String(Math.max(1, Math.ceil(1 / policy.refillPerSecond))));
       sendGatewayError(req, res, 429, 'RATE_LIMITED', 'Too Many Requests');
@@ -43,6 +49,8 @@ async function consume(
       }`,
     );
     return true;
+  } finally {
+    clearTimeout(timer);
   }
 }
 

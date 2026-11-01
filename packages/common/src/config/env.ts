@@ -5,7 +5,11 @@ export interface EnvConfig {
   REDIS_URL: string;
   RABBITMQ_URL: string;
   RABBITMQ_EXCHANGE?: string;
-  JWT_ACCESS_SECRET: string;
+  JWT_ACCESS_PUBLIC_KEY?: string;
+  JWT_ACCESS_PUBLIC_KEY_FILE?: string;
+  JWT_ACCESS_PRIVATE_KEY?: string;
+  JWT_ACCESS_PRIVATE_KEY_FILE?: string;
+  JWT_REFRESH_SECRET?: string;
   JWT_ACCESS_TTL: string;
   JWT_REFRESH_TTL: string;
   JWT_ISSUER: string;
@@ -29,8 +33,12 @@ export const loadEnv = (): EnvConfig => ({
   REDIS_URL: process.env.REDIS_URL ?? 'redis://localhost:7379',
   RABBITMQ_URL: process.env.RABBITMQ_URL ?? 'amqp://toeic:toeic@localhost:5772',
   RABBITMQ_EXCHANGE: process.env.RABBITMQ_EXCHANGE,
-  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? '',
-  JWT_ACCESS_TTL: process.env.JWT_ACCESS_TTL ?? '15m',
+  JWT_ACCESS_PUBLIC_KEY: process.env.JWT_ACCESS_PUBLIC_KEY,
+  JWT_ACCESS_PUBLIC_KEY_FILE: process.env.JWT_ACCESS_PUBLIC_KEY_FILE,
+  JWT_ACCESS_PRIVATE_KEY: process.env.JWT_ACCESS_PRIVATE_KEY,
+  JWT_ACCESS_PRIVATE_KEY_FILE: process.env.JWT_ACCESS_PRIVATE_KEY_FILE,
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+  JWT_ACCESS_TTL: '15m',
   JWT_REFRESH_TTL: process.env.JWT_REFRESH_TTL ?? '7d',
   JWT_ISSUER: process.env.JWT_ISSUER ?? 'toeic-auth',
   JWT_AUDIENCE: process.env.JWT_AUDIENCE ?? 'toeic-api',

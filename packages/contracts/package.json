@@ -13,7 +13,7 @@
     "lint": "echo \"contracts: no lint\" && exit 0",
     "validate:p0": "node p0/verify.cjs"
   },
-  "devDependencies": {
+  "dependencies": {
     "ajv": "6.15.0"
   }
 }

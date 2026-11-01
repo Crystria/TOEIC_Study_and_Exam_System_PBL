@@ -6,7 +6,11 @@ export enum RoleCode {
 
 export interface JwtPayload {
   sub: string;
-  email: string;
+  email?: string;
+  sid?: string;
+  userVersion?: string;
+  sessionVersion?: string;
+  jti?: string;
   roles: RoleCode[];
   type?: 'access' | 'refresh';
 }

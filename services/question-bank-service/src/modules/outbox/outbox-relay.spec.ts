@@ -1,7 +1,22 @@
 import { MessagingService } from '@toeic/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { OutboxRelay } from './outbox-relay';
 describe('outbox relay', () => {
+  it('keeps the QA producer dead-letter queue separate from the developer queue', async () => {
+    const messaging = { declareQueue: jest.fn().mockResolvedValue(undefined) };
+    const relay = new OutboxRelay(
+      {} as PrismaService,
+      messaging as unknown as MessagingService,
+      new ConfigService({ QUESTION_OUTBOX_DLQ: 'qa.p6.question-bank-outbox-dlq' }),
+    );
+    await relay.onModuleInit();
+    expect(messaging.declareQueue).toHaveBeenCalledWith(
+      'qa.p6.question-bank-outbox-dlq',
+      'question-bank.outbox.dead',
+    );
+    await relay.onModuleDestroy();
+  });
   const event = {
     id: 'event-1',
     aggregate_id: 'q1',

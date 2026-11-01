@@ -14,7 +14,9 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "test:p5": "node test/run-p5.cjs",
+    "rebuild": "node dist/rebuild.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.4",
@@ -29,7 +31,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@toeic/contracts": "*"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",

@@ -1,73 +1,107 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, Public } from '@toeic/common';
-import { ListLessonsQueryDto } from './dtos/list-lessons-query.dto';
-import { ListVocabulariesQueryDto } from './dtos/list-vocabularies-query.dto';
-import { ReviewFlashcardDto } from './dtos/review-flashcard.dto';
-import { LearningService } from './learning.service';
-
-@ApiTags('learning')
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
+import { CurrentUser, RoleCode, Roles } from '@toeic/common';
+import { Request } from 'express';
+import { ContractPipe } from '../../http';
+import { ProgressService } from './progress.service';
+import { SessionService, SessionReview, QuizAnswer } from './session.service';
+import { LearningMediaService } from './media.service';
+import { ReviewQuery } from './queries';
 @Controller('learning')
 export class LearningController {
-  constructor(private readonly learningService: LearningService) {}
-
-  @Public()
-  @Get('vocabulary-topics')
-  @ApiOperation({ summary: 'Danh sách chủ đề từ vựng' })
-  listVocabularyTopics() {
-    return this.learningService.listVocabularyTopics();
+  constructor(
+    private readonly progress: ProgressService,
+    private readonly sessions: SessionService,
+    private readonly media: LearningMediaService,
+  ) {}
+  @Get('review-today') due(@CurrentUser('sub') user: string, @Query() query: ReviewQuery) {
+    return this.progress.due(user, query);
   }
-
-  @Public()
-  @Get('vocabularies')
-  @ApiOperation({ summary: 'Tìm kiếm/lọc từ vựng theo chủ đề hoặc từ khóa' })
-  listVocabularies(@Query() query: ListVocabulariesQueryDto) {
-    return this.learningService.listVocabularies(query);
+  @Get('progress') summary(@CurrentUser('sub') user: string) {
+    return this.progress.summary(user);
   }
-
-  @ApiBearerAuth()
-  @Get('review-today')
-  @ApiOperation({ summary: 'Danh sách từ vựng cần ôn tập hôm nay' })
-  getReviewToday(@CurrentUser('sub') userId: string) {
-    return this.learningService.getReviewToday(userId);
-  }
-
-  @ApiBearerAuth()
-  @Post('flashcards/:vocabularyId/review')
-  @ApiOperation({ summary: 'Đánh giá flashcard và cập nhật lịch ôn tập (SM-2)' })
-  reviewFlashcard(
-    @Param('vocabularyId') vocabularyId: string,
-    @Body() dto: ReviewFlashcardDto,
-    @CurrentUser('sub') userId: string,
+  @Post('flashcards/:id/review') @HttpCode(200) review(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(new ContractPipe('ReviewRequest'))
+    body: { operationId: string; quality: number; baseEntityRevision: string },
   ) {
-    return this.learningService.reviewFlashcard(vocabularyId, dto.quality, userId);
+    return this.progress.review(user, id, body);
   }
-
-  @Public()
-  @Get('lessons')
-  @ApiOperation({ summary: 'Danh sách bài học ngữ pháp' })
-  listLessons(@Query() query: ListLessonsQueryDto) {
-    return this.learningService.listLessons(query);
+  @Post('lessons/:id/complete') @HttpCode(200) complete(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(new ContractPipe('CompleteLessonRequest'))
+    body: { operationId: string; baseEntityRevision: string },
+  ) {
+    return this.progress.complete(user, id, body);
   }
-
-  @Public()
-  @Get('lessons/:id')
-  @ApiOperation({ summary: 'Chi tiết bài học ngữ pháp' })
-  findLesson(@Param('id') id: string) {
-    return this.learningService.findLesson(id);
+  @Post('vocabulary-sessions') create(
+    @CurrentUser('sub') user: string,
+    @Headers('idempotency-key') key: string,
+    @Body(new ContractPipe('SessionCreate')) body: { topicId: string; mode: 'NEW' | 'REVIEW' },
+  ) {
+    return this.sessions.create(user, body, key);
   }
-
-  @ApiBearerAuth()
-  @Post('lessons/:id/complete')
-  @ApiOperation({ summary: 'Đánh dấu hoàn thành bài học' })
-  completeLesson(@Param('id') id: string, @CurrentUser('sub') userId: string) {
-    return this.learningService.completeLesson(id, userId);
+  @Get('vocabulary-sessions/:id') session(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ) {
+    return this.sessions.get(user, id);
   }
-
-  @ApiBearerAuth()
-  @Get('progress')
-  @ApiOperation({ summary: 'Tiến độ học tập tổng quan của người học' })
-  getProgress(@CurrentUser('sub') userId: string) {
-    return this.learningService.getProgress(userId);
+  @Post('vocabulary-sessions/:id/reviews') @HttpCode(200) draft(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(new ContractPipe('SessionDraft')) body: { reviews: SessionReview[] },
+  ) {
+    return this.sessions.draft(user, id, body.reviews);
+  }
+  @Post('vocabulary-sessions/:id/submit') @HttpCode(200) submit(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body(new ContractPipe('SessionSubmit'))
+    body: { operationId: string; reviews: SessionReview[]; answers: QuizAnswer[] },
+  ) {
+    return this.sessions.submit(user, id, body);
+  }
+  @Post('vocabulary-sessions/:id/cancel') @HttpCode(200) cancel(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ) {
+    return this.sessions.cancel(user, id);
+  }
+  @Roles(RoleCode.CONTENT_ADMIN) @Post('vocabularies/:id/media/presign') @HttpCode(200) presign(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Headers('idempotency-key') key: string,
+    @Body(new ContractPipe('VocabularyMediaPresignRequest'))
+    body: { kind: 'AUDIO' | 'IMAGE'; contentType: string; sizeBytes: number },
+  ) {
+    return this.media.presign(user, id, key, body);
+  }
+  @Roles(RoleCode.CONTENT_ADMIN) @Post('vocabularies/:id/media/confirm') @HttpCode(200) confirm(
+    @CurrentUser('sub') user: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Headers('idempotency-key') key: string,
+    @Body(new ContractPipe('ConfirmUploadRequest')) body: { uploadId: string },
+    @Req() req: Request,
+  ) {
+    return this.media.confirm(
+      user,
+      id,
+      key,
+      body.uploadId,
+      String(req.res?.getHeader('X-Correlation-ID') || 'local'),
+    );
   }
 }
