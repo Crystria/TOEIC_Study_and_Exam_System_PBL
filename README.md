@@ -56,6 +56,8 @@ docker-compose.apps.yml    full-stack dev (backend + frontend, hot-reload)
 
 ## Cài đặt
 
+Hướng dẫn ngắn cho người mới: [Chạy Backend local (PowerShell)](docs/backend-quickstart.md).
+
 ```bash
 npm install
 npm run setup:env     # copy .env.example -> .env (root + từng service + app)
