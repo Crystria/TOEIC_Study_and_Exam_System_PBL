@@ -555,7 +555,10 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
     expect((await post('flashcards/' + id + '/review', body)).status).toBe(200);
   });
   it('presigns real browser PUT; verifies ownership, MIME/size/expiry and disallows arbitrary keys', async () => {
-    const id = cards[1].vocabularyId,
+    // The session snapshot test soft-deletes a shared card selected by session order.
+    // Own this vocabulary so media checks cannot depend on that earlier selection.
+    const media = await createTopic(1),
+      id = media.cards[0].vocabularyId,
       path = 'vocabularies/' + id + '/media/';
     for (const body of [
       { kind: 'IMAGE', contentType: 'image/png', sizeBytes: 2097153 },
@@ -629,6 +632,16 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
     expect(
       (await post(path + 'confirm', { uploadId: wrong.body.uploadId }, 'CONTENT_ADMIN')).body.code,
     ).toBe('UPLOAD_EXPIRED');
+    expect((await del('vocabularies/' + id)).status).toBe(200);
+    expect(
+      (
+        await post(
+          path + 'presign',
+          { kind: 'IMAGE', contentType: 'image/png', sizeBytes: 3 },
+          'CONTENT_ADMIN',
+        )
+      ).status,
+    ).toBe(404);
   });
   it('paginates due dates and creates REVIEW from server progress only', async () => {
     const t = await createTopic(5);
