@@ -1,0 +1,953 @@
+{
+  "word": {
+    "docs\\SRS.docx": {
+      "sha256": "e1e3d2dfaac745e9b75e79769da6b945aa79d388cdac2f0e0bcd25a59f0d83fe",
+      "paragraphs": [
+        {
+          "index": 110,
+          "text": "•           Học viên (User):"
+        },
+        {
+          "index": 111,
+          "text": "–          Sử dụng: Web App và Mobile App (iOS/Android)."
+        },
+        {
+          "index": 112,
+          "text": "–          Mục tiêu: Học từ vựng Flashcard, đọc bài giảng ngữ pháp, làm bài thi thử TOEIC, xem lịch sử và thống kê tiến độ."
+        },
+        {
+          "index": 113,
+          "text": "•           Quản trị viên hệ thống (System Administrator / SYSTEM_ADMIN):"
+        },
+        {
+          "index": 114,
+          "text": "–          Sử dụng: Admin CMS - Phân hệ Hệ thống."
+        },
+        {
+          "index": 115,
+          "text": "–          Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung."
+        },
+        {
+          "index": 116,
+          "text": "•           Quản trị viên nội dung (Content Administrator / CONTENT_ADMIN):"
+        },
+        {
+          "index": 117,
+          "text": "–          Sử dụng: Admin CMS - Phân hệ Nội dung."
+        },
+        {
+          "index": 118,
+          "text": "–          Mục tiêu: Quản lý kho câu hỏi trắc nghiệm (Listening & Reading), quản lý các bộ từ vựng Flashcard kèm âm thanh/phiên âm, quản lý bài giảng lý thuyết ngữ pháp, và thiết lập cấu trúc các đề thi thử (Full Test/Mini Test)."
+        },
+        {
+          "index": 119,
+          "text": "Tóm tắt chức năng vĩ mô"
+        },
+        {
+          "index": 245,
+          "text": "DỊCH VỤ HỌC TẬP & LÝ THUYẾT"
+        },
+        {
+          "index": 246,
+          "text": "Dịch vụ quản trị từ vựng Flashcards, biên soạn lý thuyết ngữ pháp và điều phối thuật toán lặp lại ngắt quãng SuperMemo-2."
+        },
+        {
+          "index": 247,
+          "text": "3.4.1 Quản lý từ vựng & Flashcards (FK-10-Quan-Ly-Tu-Vung)"
+        },
+        {
+          "index": 248,
+          "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+        },
+        {
+          "index": 249,
+          "text": "Mô tả chức năng: Cho phép Content Admin biên tập kho từ vựng theo chủ đề, nạp từ mới, IPA, định nghĩa, ví dụ và file âm thanh."
+        },
+        {
+          "index": 250,
+          "text": "Dữ liệu đầu vào (Inputs): topic_id (UUIDv4), topic_name (Chuỗi), vocabularies (Mảng JSON: [{word, phonetic, definition, example, audio_key, image_key}])."
+        },
+        {
+          "index": 251,
+          "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm topic_id."
+        },
+        {
+          "index": 252,
+          "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+        },
+        {
+          "index": 253,
+          "text": "File phát âm (.mp3, tối đa 5MB) được lưu trữ trên Object Storage và phát lại qua CDN public; hệ thống lưu audio_key, kiểm tra object tồn tại; CDN URL chỉ dùng khi phát nội dung."
+        }
+      ]
+    },
+    "docs\\tai_lieu_thiet_ke_CSDL.docx": {
+      "sha256": "a6d70a829ef84efbc67c42d1386c756ecd55875389ab61d3d4590276122dba13",
+      "paragraphs": [
+        {
+          "index": 309,
+          "text": ""
+        },
+        {
+          "index": 310,
+          "text": "VocabularyTopic"
+        },
+        {
+          "index": 311,
+          "text": "Chủ đề: topic_id, topic_name"
+        },
+        {
+          "index": 312,
+          "text": "PK topic_id; topic_name bắt buộc"
+        },
+        {
+          "index": 313,
+          "text": "Một topic có nhiều vocabulary"
+        },
+        {
+          "index": 314,
+          "text": "Vocabulary"
+        },
+        {
+          "index": 315,
+          "text": "Từ: vocabulary_id, topic_id, word, phonetic, definition, example, audio_key, image_key, timestamps, deleted_at"
+        },
+        {
+          "index": 316,
+          "text": "PK vocabulary_id; topic_id, word, definition bắt buộc theo đề xuất; phonetic/example/media NULL"
+        },
+        {
+          "index": 317,
+          "text": "audio key phải hợp lệ trước lưu; soft delete đề xuất"
+        },
+        {
+          "index": 1436,
+          "text": "Không"
+        },
+        {
+          "index": 1437,
+          "text": "Số lần thử xuất bản lại sự kiện."
+        },
+        {
+          "index": 1438,
+          "text": ""
+        },
+        {
+          "index": 1439,
+          "text": "5.2.19 learning_db.vocabulary_topics"
+        },
+        {
+          "index": 1440,
+          "text": "Lưu chủ đề dùng để phân nhóm từ vựng."
+        },
+        {
+          "index": 1441,
+          "text": "Column"
+        },
+        {
+          "index": 1442,
+          "text": "Type"
+        },
+        {
+          "index": 1443,
+          "text": "Key"
+        },
+        {
+          "index": 1444,
+          "text": "NULL"
+        },
+        {
+          "index": 1445,
+          "text": "UNIQUE"
+        },
+        {
+          "index": 1446,
+          "text": "Mô tả"
+        },
+        {
+          "index": 1447,
+          "text": "topic_id"
+        },
+        {
+          "index": 1448,
+          "text": "UUID"
+        },
+        {
+          "index": 1449,
+          "text": "PK"
+        },
+        {
+          "index": 1450,
+          "text": "Không"
+        },
+        {
+          "index": 1451,
+          "text": "Không"
+        },
+        {
+          "index": 1452,
+          "text": "Thuộc tính topic id theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1453,
+          "text": "topic_name"
+        },
+        {
+          "index": 1454,
+          "text": "VARCHAR(255)"
+        },
+        {
+          "index": 1455,
+          "text": "-"
+        },
+        {
+          "index": 1456,
+          "text": "Không"
+        },
+        {
+          "index": 1457,
+          "text": "Không"
+        },
+        {
+          "index": 1458,
+          "text": "Thuộc tính topic name theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1459,
+          "text": "created_at"
+        },
+        {
+          "index": 1460,
+          "text": "TIMESTAMPTZ"
+        },
+        {
+          "index": 1461,
+          "text": "-"
+        },
+        {
+          "index": 1462,
+          "text": "Không"
+        },
+        {
+          "index": 1463,
+          "text": "Không"
+        },
+        {
+          "index": 1464,
+          "text": "Thời điểm bản ghi được tạo."
+        },
+        {
+          "index": 1465,
+          "text": "updated_at"
+        },
+        {
+          "index": 1466,
+          "text": "TIMESTAMPTZ"
+        },
+        {
+          "index": 1467,
+          "text": "-"
+        },
+        {
+          "index": 1468,
+          "text": "Không"
+        },
+        {
+          "index": 1469,
+          "text": "Không"
+        },
+        {
+          "index": 1470,
+          "text": "Thời điểm bản ghi được cập nhật gần nhất."
+        },
+        {
+          "index": 1471,
+          "text": "deleted_at"
+        },
+        {
+          "index": 1472,
+          "text": "TIMESTAMPTZ"
+        },
+        {
+          "index": 1473,
+          "text": "-"
+        },
+        {
+          "index": 1474,
+          "text": "Có"
+        },
+        {
+          "index": 1475,
+          "text": "Không"
+        },
+        {
+          "index": 1476,
+          "text": "Thời điểm xóa logic; NULL khi bản ghi còn hiệu lực."
+        },
+        {
+          "index": 1477,
+          "text": ""
+        },
+        {
+          "index": 1478,
+          "text": "5.2.20 learning_db.vocabularies"
+        },
+        {
+          "index": 1479,
+          "text": "Lưu từ vựng, phiên âm, định nghĩa, ví dụ và đường dẫn phương tiện."
+        },
+        {
+          "index": 1480,
+          "text": "Column"
+        },
+        {
+          "index": 1481,
+          "text": "Type"
+        },
+        {
+          "index": 1482,
+          "text": "Key"
+        },
+        {
+          "index": 1483,
+          "text": "NULL"
+        },
+        {
+          "index": 1484,
+          "text": "UNIQUE"
+        },
+        {
+          "index": 1485,
+          "text": "Mô tả"
+        },
+        {
+          "index": 1486,
+          "text": "vocabulary_id"
+        },
+        {
+          "index": 1487,
+          "text": "UUID"
+        },
+        {
+          "index": 1488,
+          "text": "PK"
+        },
+        {
+          "index": 1489,
+          "text": "Không"
+        },
+        {
+          "index": 1490,
+          "text": "Không"
+        },
+        {
+          "index": 1491,
+          "text": "Định danh từ vựng."
+        },
+        {
+          "index": 1492,
+          "text": "topic_id"
+        },
+        {
+          "index": 1493,
+          "text": "UUID"
+        },
+        {
+          "index": 1494,
+          "text": "FK"
+        },
+        {
+          "index": 1495,
+          "text": "Không"
+        },
+        {
+          "index": 1496,
+          "text": "Không"
+        },
+        {
+          "index": 1497,
+          "text": "Thuộc tính topic id theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1498,
+          "text": "word"
+        },
+        {
+          "index": 1499,
+          "text": "VARCHAR(255)"
+        },
+        {
+          "index": 1500,
+          "text": "-"
+        },
+        {
+          "index": 1501,
+          "text": "Không"
+        },
+        {
+          "index": 1502,
+          "text": "Không"
+        },
+        {
+          "index": 1503,
+          "text": "Thuộc tính word theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1504,
+          "text": "phonetic"
+        },
+        {
+          "index": 1505,
+          "text": "VARCHAR(255)"
+        },
+        {
+          "index": 1506,
+          "text": "-"
+        },
+        {
+          "index": 1507,
+          "text": "Có"
+        },
+        {
+          "index": 1508,
+          "text": "Không"
+        },
+        {
+          "index": 1509,
+          "text": "Thuộc tính phonetic theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1510,
+          "text": "definition"
+        },
+        {
+          "index": 1511,
+          "text": "TEXT"
+        },
+        {
+          "index": 1512,
+          "text": "-"
+        },
+        {
+          "index": 1513,
+          "text": "Không"
+        },
+        {
+          "index": 1514,
+          "text": "Không"
+        },
+        {
+          "index": 1515,
+          "text": "Thuộc tính definition theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1516,
+          "text": "example"
+        },
+        {
+          "index": 1517,
+          "text": "TEXT"
+        },
+        {
+          "index": 1518,
+          "text": "-"
+        },
+        {
+          "index": 1519,
+          "text": "Có"
+        },
+        {
+          "index": 1520,
+          "text": "Không"
+        },
+        {
+          "index": 1521,
+          "text": "Thuộc tính example theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1522,
+          "text": "audio_key"
+        },
+        {
+          "index": 1523,
+          "text": "TEXT"
+        },
+        {
+          "index": 1524,
+          "text": "-"
+        },
+        {
+          "index": 1525,
+          "text": "Có"
+        },
+        {
+          "index": 1526,
+          "text": "Không"
+        },
+        {
+          "index": 1527,
+          "text": "Thuộc tính audio key theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1528,
+          "text": "image_key"
+        },
+        {
+          "index": 1529,
+          "text": "TEXT"
+        },
+        {
+          "index": 1530,
+          "text": "-"
+        },
+        {
+          "index": 1531,
+          "text": "Có"
+        },
+        {
+          "index": 1532,
+          "text": "Không"
+        },
+        {
+          "index": 1533,
+          "text": "Thuộc tính image key theo định nghĩa và ràng buộc trong DDL nguồn."
+        },
+        {
+          "index": 1534,
+          "text": "created_at"
+        },
+        {
+          "index": 1535,
+          "text": "TIMESTAMPTZ"
+        },
+        {
+          "index": 1536,
+          "text": "-"
+        },
+        {
+          "index": 1537,
+          "text": "Không"
+        },
+        {
+          "index": 1538,
+          "text": "Không"
+        },
+        {
+          "index": 1539,
+          "text": "Thời điểm bản ghi được tạo."
+        },
+        {
+          "index": 1540,
+          "text": "updated_at"
+        },
+        {
+          "index": 1541,
+          "text": "TIMESTAMPTZ"
+        },
+        {
+          "index": 1542,
+          "text": "-"
+        },
+        {
+          "index": 1543,
+          "text": "Không"
+        },
+        {
+          "index": 1544,
+          "text": "Không"
+        },
+        {
+          "index": 1545,
+          "text": "Thời điểm bản ghi được cập nhật gần nhất."
+        },
+        {
+          "index": 1546,
+          "text": "deleted_at"
+        },
+        {
+          "index": 1547,
+          "text": "TIMESTAMPTZ"
+        },
+        {
+          "index": 1548,
+          "text": "-"
+        },
+        {
+          "index": 1549,
+          "text": "Có"
+        },
+        {
+          "index": 1550,
+          "text": "Không"
+        },
+        {
+          "index": 1551,
+          "text": "Thời điểm xóa logic; NULL khi bản ghi còn hiệu lực."
+        },
+        {
+          "index": 1552,
+          "text": ""
+        },
+        {
+          "index": 1553,
+          "text": "5.2.21 learning_db.grammar_lessons"
+        }
+      ]
+    },
+    "docs\\Thiet_ke_kien_truc_Storage.docx": {
+      "sha256": "d6e3d72a58b6262e2724c636c5acca7071b975c9a64b9c94e55395d392d89bc3",
+      "paragraphs": [
+        {
+          "index": 16,
+          "text": "Object key cần được phân cấp rõ ràng để dễ quản lý."
+        },
+        {
+          "index": 17,
+          "text": "3.1. Question Audio/Image"
+        },
+        {
+          "index": 18,
+          "text": "Audio: questions/listening/part-1/{question_id}/audio.mp3Image: questions/listening/part-1/{question_id}/image.pngOption: questions/reading/part-7/{question_id}/options/A.png"
+        },
+        {
+          "index": 19,
+          "text": "3.2. Vocabulary"
+        },
+        {
+          "index": 20,
+          "text": "Vocabulary: learning/vocabulary/{vocabulary_id}/audio.mp3"
+        },
+        {
+          "index": 21,
+          "text": "3.3 Avatar"
+        },
+        {
+          "index": 22,
+          "text": "Avatar: avatars/{user_id}/avatar.jpg"
+        },
+        {
+          "index": 23,
+          "text": "4. Thiết kế Database (PostgreSQL & MinIO)"
+        },
+        {
+          "index": 24,
+          "text": "Nguyên tắc quan trọng: MinIO lưu file, PostgreSQL lưu metadata và object key.Không nên lưu URL đầy đủ trong database (như http://minio:9000/toeic-media/...). Chỉ nên lưu key (ví dụ: audio_key = questions/listening/part-1/{question_id}/audio.mp3) để thống nhất và linh hoạt khi đổi domain."
+        },
+        {
+          "index": 25,
+          "text": "5. Luồng Upload và Download"
+        },
+        {
+          "index": 26,
+          "text": "5.1. Luồng Upload"
+        },
+        {
+          "index": 27,
+          "text": "1. Frontend gọi API POST /api/v1/questions/{id}/media/presign2. Backend (Question Service) xác thực, sinh object key và Presigned URL trả về cho Frontend.3. Frontend PUT trực tiếp file lên MinIO bằng URL vừa nhận.4. Backend cập nhật audio_key/image_key vào database. Avatar: PATCH /api/v1/users/me/avatar/presign (bucket toeic-user). Vocabulary audio: POST /api/v1/learning/vocabularies/{id}/media/presign (bucket toeic-media)."
+        }
+      ]
+    },
+    "docs\\Thiết kế hệ thống.docx": {
+      "sha256": "c766590ca504f42d54205f5c09182aae8003aa47916db8e6bb9988c354f14ecb",
+      "paragraphs": [
+        {
+          "index": 177,
+          "text": "Mục đích: cung cấp nội dung học từ vựng, flashcard, bài học ngữ pháp và lưu tiến độ học. Đây cũng là nơi thực hiện thuật toán Spaced Repetition SM-2 theo SRS."
+        },
+        {
+          "index": 178,
+          "text": "Thiết kế Cơ sở dữ liệu "
+        },
+        {
+          "index": 179,
+          "text": "Bảng"
+        },
+        {
+          "index": 180,
+          "text": "Trường chính"
+        },
+        {
+          "index": 181,
+          "text": "Mục đích"
+        },
+        {
+          "index": 182,
+          "text": "vocabulary_topics"
+        },
+        {
+          "index": 183,
+          "text": "topic_id, topic_name"
+        },
+        {
+          "index": 184,
+          "text": "Nhóm/chủ đề từ vựng."
+        },
+        {
+          "index": 185,
+          "text": "vocabularies"
+        },
+        {
+          "index": 186,
+          "text": "vocabulary_id, topic_id, word, phonetic, definition, example, audio_key, image_key"
+        },
+        {
+          "index": 187,
+          "text": "Nội dung flashcard."
+        },
+        {
+          "index": 188,
+          "text": "grammar_lessons"
+        },
+        {
+          "index": 189,
+          "text": "lesson_id, lesson_title, category, content_markdown"
+        },
+        {
+          "index": 207,
+          "text": "Thiết kế API RESTful "
+        },
+        {
+          "index": 208,
+          "text": "Method"
+        },
+        {
+          "index": 209,
+          "text": "Endpoint đề xuất"
+        },
+        {
+          "index": 210,
+          "text": "Mục đích"
+        },
+        {
+          "index": 211,
+          "text": "GET"
+        },
+        {
+          "index": 212,
+          "text": "/api/v1/learning/vocabulary-topics"
+        },
+        {
+          "index": 213,
+          "text": "Danh sách chủ đề."
+        },
+        {
+          "index": 214,
+          "text": "GET"
+        },
+        {
+          "index": 215,
+          "text": "/api/v1/learning/vocabularies"
+        },
+        {
+          "index": 216,
+          "text": "Danh sách/tìm từ vựng."
+        },
+        {
+          "index": 217,
+          "text": "GET"
+        },
+        {
+          "index": 218,
+          "text": "/api/v1/learning/review-today"
+        },
+        {
+          "index": 219,
+          "text": "Lấy các flashcard đến hạn ôn."
+        },
+        {
+          "index": 220,
+          "text": "POST"
+        },
+        {
+          "index": 221,
+          "text": "/api/v1/learning/flashcards/{vocabularyId}/review"
+        },
+        {
+          "index": 222,
+          "text": "Gửi chất lượng nhớ q và cập nhật SM-2."
+        },
+        {
+          "index": 223,
+          "text": "GET"
+        },
+        {
+          "index": 224,
+          "text": "/api/v1/learning/lessons"
+        },
+        {
+          "index": 225,
+          "text": "Danh sách bài ngữ pháp."
+        },
+        {
+          "index": 226,
+          "text": "GET"
+        },
+        {
+          "index": 227,
+          "text": "/api/v1/learning/lessons/{id}"
+        },
+        {
+          "index": 228,
+          "text": "Chi tiết bài học."
+        },
+        {
+          "index": 229,
+          "text": "POST"
+        },
+        {
+          "index": 230,
+          "text": "/api/v1/learning/lessons/{id}/complete"
+        },
+        {
+          "index": 231,
+          "text": "Đánh dấu hoàn thành bài học."
+        },
+        {
+          "index": 232,
+          "text": "POST"
+        },
+        {
+          "index": 233,
+          "text": "/api/v1/learning/vocabulary-sessions"
+        },
+        {
+          "index": 234,
+          "text": "Bắt đầu/nộp phiên học từ vựng (quiz 5 câu)."
+        },
+        {
+          "index": 235,
+          "text": "GET"
+        },
+        {
+          "index": 236,
+          "text": "/api/v1/learning/progress"
+        },
+        {
+          "index": 237,
+          "text": "Lấy tiến độ học của user."
+        },
+        {
+          "index": 238,
+          "text": ""
+        },
+        {
+          "index": 239,
+          "text": "Nghiệp vụ & thuật toán cốt lõi "
+        },
+        {
+          "index": 240,
+          "text": "SRS yêu cầu SM-2. Với chất lượng trả lời q từ 0 đến 5, hệ số dễ nhớ được cập nhật theo công thức:"
+        },
+        {
+          "index": 241,
+          "text": "EF_new = EF_old + (0.1 - (5-q) * (0.08 + (5-q)*0.02))"
+        },
+        {
+          "index": 242,
+          "text": "Quy tắc chính: nếu q < 3 thì chu kỳ lặp lại được reset; nếu q >= 3 thì tăng repetition và tính lại interval/nextReviewDate. Giao diện có thể quy đổi đánh giá đơn giản về thang q phù hợp, nhưng giá trị lưu trữ nên giữ được mức 0-5 để đúng thuật toán."
+        },
+        {
+          "index": 243,
+          "text": "Review Today: truy vấn user_vocabulary_progress với next_review_date <= thời điểm hiện tại."
+        },
+        {
+          "index": 244,
+          "text": "Lesson completion: cập nhật user_lesson_progress và phát LessonCompletedEvent."
+        },
+        {
+          "index": 245,
+          "text": "Vocabulary review: cập nhật user_vocabulary_progress và phát VocabularyLearnedEvent khi đạt điều kiện nghiệp vụ tương ứng."
+        },
+        {
+          "index": 246,
+          "text": "DỊCH VỤ LỊCH SỬ & THỐNG KÊ"
+        },
+        {
+          "index": 247,
+          "text": "Mục đích: nhận các sự kiện từ các service nghiệp vụ, lưu lịch sử và tạo các chỉ số tiến độ học tập. SRS nêu các nhóm thông tin như lịch sử điểm, streak, weak areas và dự đoán điểm TOEIC"
+        },
+        {
+          "index": 248,
+          "text": "Thiết kế Cơ sở dữ liệu "
+        },
+        {
+          "index": 249,
+          "text": "Bảng"
+        },
+        {
+          "index": 250,
+          "text": "Trường chính"
+        },
+        {
+          "index": 251,
+          "text": "Mục đích"
+        },
+        {
+          "index": 252,
+          "text": "user_statistics"
+        },
+        {
+          "index": 253,
+          "text": "user_id, learning_streak_days, longest_streak, vocabularies_learned, grammar_lessons_completed, mock_test_count, predicted_toeic_score, updated_at"
+        },
+        {
+          "index": 254,
+          "text": "Tổng hợp tiến độ và streak."
+        },
+        {
+          "index": 255,
+          "text": "processed_events"
+        },
+        {
+          "index": 256,
+          "text": "event_id, event_type, processed_at"
+        }
+      ]
+    }
+  },
+  "source": {
+    "services/learning-service/src/modules/learning/learning.controller.ts": {
+      "sha256": "50ca9616989901654c10847fbc7aca89ee82e860371a8e20c22dda2513abe6ca"
+    },
+    "services/learning-service/src/modules/learning/learning.service.ts": {
+      "sha256": "103b176f7ca53e22dd8bee531e93f56f61b23557432fc60427bbf3d43b1838c7"
+    },
+    "services/learning-service/src/modules/learning/dtos/list-vocabularies-query.dto.ts": {
+      "sha256": "5d1e2c61691dee2f3da43c7dd66fdca07e31bbc995ca9c8fffd6418aba8259f0"
+    },
+    "services/learning-service/prisma/schema.prisma": {
+      "sha256": "66059a23d034a362101c5549891a94a90f6265b88d5b01da72fc96799cf1fdf6"
+    },
+    "services/learning-service/src/app.module.ts": {
+      "sha256": "d30e5ef57c6519de2c7a57c9311dc1ca23e6af48d3caa3ea8b67a52984f4217c"
+    },
+    "services/learning-service/src/main.ts": {
+      "sha256": "fb8063ae9e75ff2472ffa2e011928691838d64697ed1c94b839621fba0199462"
+    },
+    "packages/common/src/auth/jwt-auth.guard.ts": {
+      "sha256": "92f08512771b5121175acaa6d6f9e6dce8e7c20820064d1e6526be902477bd5c"
+    },
+    "packages/common/src/auth/roles.guard.ts": {
+      "sha256": "f2d149e7ec369f798a923e6ea21fa0371f01b67c12702bf372d8a241c3261b3c"
+    },
+    "packages/contracts/README.md": {
+      "sha256": "389fec91b2e924490fd400fb32f40e6f4146bde7961f3c2387015b2008968224"
+    },
+    "packages/contracts/openapi/openapi.yaml": {
+      "sha256": "9bd1e875d7237207232d6062764695f6b8aaa420ade129a8ddde01c7e4c4ac6f"
+    },
+    "packages/contracts/events/VocabularyLearnedEvent.avsc": {
+      "sha256": "d459670e0582d93bcf29477b30dd769215aa57e6b94e19a5c3ad2a927a81bd6a"
+    }
+  },
+  "findings": {
+    "detailEndpoint": false,
+    "vocabularyCrudDtosAndHandlers": false,
+    "publicGets": [
+      "/api/v1/learning/vocabulary-topics",
+      "/api/v1/learning/vocabularies"
+    ],
+    "example": "Prisma String?; Word nullable example",
+    "cmsPersona": "UI only, no real backend authorization"
+  }
+}

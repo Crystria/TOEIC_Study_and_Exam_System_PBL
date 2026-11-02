@@ -1,0 +1,9 @@
+{
+  "services/learning-service/src/modules/learning/dtos/list-lessons-query.dto.ts": "254f15fb34d6df5b5cf61e9563652671f2a521cffd37e6d5aae833199e168ff8",
+  "services/learning-service/src/modules/learning/learning.controller.ts": "50ca9616989901654c10847fbc7aca89ee82e860371a8e20c22dda2513abe6ca",
+  "services/learning-service/src/modules/learning/learning.service.ts": "103b176f7ca53e22dd8bee531e93f56f61b23557432fc60427bbf3d43b1838c7",
+  "services/learning-service/prisma/schema.prisma": "66059a23d034a362101c5549891a94a90f6265b88d5b01da72fc96799cf1fdf6",
+  "packages/contracts/README.md": "389fec91b2e924490fd400fb32f40e6f4146bde7961f3c2387015b2008968224",
+  "packages/contracts/openapi/openapi.yaml": "b17833061739593906a3f8c2abfb68a8938009b97f8afe09eb4926cfb74ddb67",
+  "packages/contracts/events/LessonCompletedEvent.avsc": "0732798b8a9b191808bf2c26a93b0baa09607670a7a6c0f86bdb3a09daa9db39"
+}

@@ -1,0 +1,31 @@
+{
+  "form": {
+    "completed": true,
+    "checks": 44,
+    "screenshots": 48
+  },
+  "shell-regression": {
+    "completed": true,
+    "checks": 35,
+    "screenshots": 46
+  },
+  "questions-regression": {
+    "completed": true,
+    "checks": 25,
+    "screenshots": 27
+  },
+  "detail-regression": {
+    "completed": true,
+    "checks": 44,
+    "screenshots": 83
+  },
+  "tests-regression": {
+    "completed": true,
+    "checks": 25,
+    "screenshots": 30
+  },
+  "totals": {
+    "checks": 173,
+    "screenshots": 234
+  }
+}

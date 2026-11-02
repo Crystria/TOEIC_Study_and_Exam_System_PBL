@@ -1,0 +1,37 @@
+﻿{
+    "Assembly":  "System.Speech, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+    "Voices":  [
+                   {
+                       "Culture":  "en-US",
+                       "AdditionalInfo":  {
+                                              "Age":  "Adult",
+                                              "Gender":  "Male",
+                                              "Language":  "409",
+                                              "Name":  "Microsoft David Desktop",
+                                              "SharedPronunciation":  "",
+                                              "SpLexicon":  "{0655E396-25D0-11D3-9C26-00C04F8EF87C}",
+                                              "Vendor":  "Microsoft",
+                                              "Version":  "11.0"
+                                          },
+                       "Name":  "Microsoft David Desktop",
+                       "Id":  "TTS_MS_EN-US_DAVID_11.0",
+                       "Gender":  "Male"
+                   },
+                   {
+                       "Culture":  "en-US",
+                       "AdditionalInfo":  {
+                                              "Age":  "Adult",
+                                              "Gender":  "Female",
+                                              "Language":  "409",
+                                              "Name":  "Microsoft Zira Desktop",
+                                              "SharedPronunciation":  "",
+                                              "Vendor":  "Microsoft",
+                                              "Version":  "11.0"
+                                          },
+                       "Name":  "Microsoft Zira Desktop",
+                       "Id":  "TTS_MS_EN-US_ZIRA_11.0",
+                       "Gender":  "Female"
+                   }
+               ],
+    "WindowsVersion":  "Microsoft Windows NT 10.0.26200.0"
+}

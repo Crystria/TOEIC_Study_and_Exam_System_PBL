@@ -3,8 +3,8 @@ info:
   title: TOEIC Study & Exam System API
   version: 0.2.0
   description: >
-    Spec REST tổng hợp cho các endpoint đi qua API Gateway.
-    Contract P4 cho QuestionGroup, Dynamic Part Test, Attempt snapshot và readiness.
+    Spec REST tổng hợp cho các endpoint đi qua API Gateway. Contract P4 cho QuestionGroup, Dynamic
+    Part Test, Attempt snapshot và readiness.
 servers:
   - url: https://api.example.com
     description: Production (qua API Gateway)
@@ -46,9 +46,9 @@ paths:
       tags: [health]
       summary: Gateway và các dependency bắt buộc sẵn sàng
       description: >
-        Không yêu cầu JWT hoặc rate limit. Probe Redis và HTTP Auth, Question Bank,
-        Exam, Analytics; mọi upstream probe PostgreSQL, Auth/Exam probe cả Redis.
-        Mỗi probe có timeout; không trả connection string hoặc lỗi nội bộ.
+        Không yêu cầu JWT hoặc rate limit. Probe Redis và HTTP Auth, Question Bank, Exam, Analytics;
+        mọi upstream probe PostgreSQL, Auth/Exam probe cả Redis. Mỗi probe có timeout; không trả
+        connection string hoặc lỗi nội bộ.
       responses:
         '200':
           description: Sẵn sàng nhận request
@@ -686,6 +686,104 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/v1/tests/cms-metadata:
+    get:
+      tags:
+        - tests
+      operationId: listCmsTestMetadata
+      summary: Danh sách metadata đề thi CMS
+      description:
+        JWT và CONTENT_ADMIN bắt buộc. Chỉ đọc đề chưa xóa mềm. Hỗ trợ keyword, page, size;
+        type/status không có trong model hiện tại và không hỗ trợ lọc. Sắp createdAt giảm dần rồi id
+        tăng dần. Page quá cuối trả items rỗng.
+      security:
+        - bearerAuth: []
+      x-required-roles:
+        - CONTENT_ADMIN
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Metadata và số Test khớp bộ lọc; total không phải số câu.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmsTestMetadataPage'
+        '400':
+          description: Query sai kiểu/giá trị hoặc có parameter không được hỗ trợ.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/MetadataReadFailure'
+  /api/v1/tests/cms-metadata/{id}:
+    get:
+      tags:
+        - tests
+      operationId: getCmsTestMetadata
+      summary: Chi tiết metadata đề thi CMS
+      description:
+        JWT và CONTENT_ADMIN bắt buộc; trả metadata đề chưa xóa mềm. Không trả cấu trúc câu
+        hỏi. type và status luôn null vì model hiện tại không có hai trường này.
+      security:
+        - bearerAuth: []
+      x-required-roles:
+        - CONTENT_ADMIN
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Opaque Test ID, không áp đặt format UUID.
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Sáu trường metadata của Test tồn tại.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CmsTestMetadata'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Không tìm thấy Test.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/MetadataReadFailure'
 components:
   securitySchemes:
     bearerAuth:
@@ -746,6 +844,22 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
     Conflict:
       description: Xung đột trạng thái
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    RateLimited:
+      description: Gateway rate limit có thể xảy ra trước JWT/proxy.
+      headers:
+        Retry-After:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    MetadataReadFailure:
+      description: Lỗi đọc dữ liệu hoặc ID lưu không hợp lệ; không trả item null/count 0 thay lỗi.
       content:
         application/json:
           schema:
@@ -972,7 +1086,8 @@ components:
     CreateQuestionGroupRequest:
       type: object
       required: [part, type, questions]
-      description: Tạo group cùng câu con trong một transaction. Media chưa upload được đánh dấu isComplete=false; Part 3/4 cần transcript, Part 6/7 cần passage/asset hợp lệ.
+      description: Tạo group cùng câu con trong một transaction. Media chưa upload được đánh dấu
+        isComplete=false; Part 3/4 cần transcript, Part 6/7 cần passage/asset hợp lệ.
       properties:
         part:
           type: integer
@@ -1398,3 +1513,76 @@ components:
       properties:
         questionId: { type: string, format: uuid }
         selectedOption: { type: string, nullable: true, enum: [A, B, C, D, null] }
+    CmsTestMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - type
+        - durationSeconds
+        - questionCount
+        - status
+      description:
+        Sáu trường metadata từ dữ liệu hiện hành. type và status là null; không tạo metadata
+        thay thế. ID trong ví dụ là dữ liệu minh họa.
+      properties:
+        id:
+          type: string
+          minLength: 1
+          description: Định danh opaque, bắt buộc có giá trị.
+        title:
+          type: string
+          nullable: true
+          description: Tên lưu thật; thiếu hoặc chỉ có khoảng trắng thành null.
+        type:
+          type: string
+          enum:
+            - FULL
+            - MINI
+            - null
+          nullable: true
+          description: 'Luôn null: model Test hiện tại không lưu loại đề. Không suy diễn loại từ số câu.'
+        durationSeconds:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Giây lưu thật; thiếu/sai thành null, không suy từ loại đề.
+        questionCount:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: >
+            Aggregate số hàng TestQuestion liên kết với Test, không DISTINCT questionId. Cả
+            list/detail dùng _count.questions, không trả relation. 0 là không có hàng; null là thiếu
+            nguồn count hợp lệ, không phải số 0. Query hợp lệ với Test tồn tại bình thường trả một
+            số. Không chứng minh đề đầy đủ hoặc câu hỏi tồn tại/hợp lệ.
+        status:
+          type: string
+          nullable: true
+          description:
+            'Luôn null: model Test hiện tại không có trạng thái xuất bản. deleted_at chỉ dùng để
+            lọc bản ghi đã xóa mềm.'
+    CmsTestMetadataPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+        - total
+        - page
+        - size
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CmsTestMetadata'
+        total:
+          type: integer
+          minimum: 0
+        page:
+          type: integer
+          minimum: 1
+        size:
+          type: integer
+          minimum: 1
+          maximum: 50

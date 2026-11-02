@@ -1,0 +1,66 @@
+[
+  {
+    "file": "docs/SRS.docx",
+    "sha256": "e1e3d2dfaac745e9b75e79769da6b945aa79d388cdac2f0e0bcd25a59f0d83fe"
+  },
+  {
+    "file": "docs/tai_lieu_thiet_ke_CSDL.docx",
+    "sha256": "a6d70a829ef84efbc67c42d1386c756ecd55875389ab61d3d4590276122dba13"
+  },
+  {
+    "file": "docs/Thiết kế hệ thống.docx",
+    "sha256": "c766590ca504f42d54205f5c09182aae8003aa47916db8e6bb9988c354f14ecb"
+  },
+  {
+    "file": "services/question-bank-service/src/modules/questions/questions.controller.ts",
+    "sha256": "f8dffb342d47526041622b3f13b4fa8587aa395720f9d115f0abebbb26be3a56"
+  },
+  {
+    "file": "services/question-bank-service/src/modules/questions/questions.service.ts",
+    "sha256": "e00324948a9454cc1ab12e9c49115b521b1bd1437784d6730f29a6a8a7991d47"
+  },
+  {
+    "file": "services/question-bank-service/src/modules/questions/dto/create-question.dto.ts",
+    "sha256": "b8cdbcca9cdd350ff6d7e8ea6136f283cb09c76c1a105652ec897572ca0d6928"
+  },
+  {
+    "file": "services/question-bank-service/src/modules/questions/dto/list-questions-query.dto.ts",
+    "sha256": "9c98cc9bf1c7c6ab639fc0d884c1effc57aa640bc2e63535fb22bea2c3a4cb51"
+  },
+  {
+    "file": "services/question-bank-service/src/modules/questions/dto/update-question.dto.ts",
+    "sha256": "37aac165c1a25220b8399225a83a0bc95f56772031b84af97f4f5f8baf748de7"
+  },
+  {
+    "file": "services/question-bank-service/prisma/schema.prisma",
+    "sha256": "6b4142dde41da50c05cd2a00b762697c49aa40a06aff094820476e1ca1bae37a"
+  },
+  {
+    "file": "services/question-bank-service/src/app.module.ts",
+    "sha256": "40dfa1a87cbcbb76c712ac5ae93686e639277708b6c445beaf9887d5f4b2e1bf"
+  },
+  {
+    "file": "services/question-bank-service/src/modules/search/search.service.ts",
+    "sha256": "9ec7eeb104f35dbd5ef9d4d0adc42b91e1ca3d476fd22c2fac40e387a0cdecfa"
+  },
+  {
+    "file": "services/question-bank-service/src/grpc/question-bank.grpc.controller.ts",
+    "sha256": "92a2c2457a88bbb576c06f710fb0fbe33f9db0eca84057503f82925e38ef057d"
+  },
+  {
+    "file": "packages/common/src/auth/jwt-auth.guard.ts",
+    "sha256": "92f08512771b5121175acaa6d6f9e6dce8e7c20820064d1e6526be902477bd5c"
+  },
+  {
+    "file": "packages/common/src/auth/roles.guard.ts",
+    "sha256": "f2d149e7ec369f798a923e6ea21fa0371f01b67c12702bf372d8a241c3261b3c"
+  },
+  {
+    "file": "packages/contracts/proto/question_bank.proto",
+    "sha256": "4d002ac1d92fc67a7e3acbd9d28825f1e935d069a4343d89b1bcc0e8cff92952"
+  },
+  {
+    "file": "packages/contracts/openapi/openapi.yaml",
+    "sha256": "b17833061739593906a3f8c2abfb68a8938009b97f8afe09eb4926cfb74ddb67"
+  }
+]

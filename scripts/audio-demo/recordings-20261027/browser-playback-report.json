@@ -1,0 +1,498 @@
+{
+  "checks": [
+    "Vocabulary metadata, no autoplay, pause/resume, seek/seeked, rate, replay and ended",
+    "Native keyboard Space play/pause and ArrowRight seek; labels and focus",
+    "All 28 published MP3s decode and actually play in Chromium",
+    "Vocabulary stops previous clip on word change and unmount; no autoplay next word",
+    "Real loading and first-request failure; keyboard retry then successful playback",
+    "Exam Part 1-4 playback; same-group/other-group pause and no autoplay",
+    "Audio/retry/seek/reload preserve exam answers, mode, Parts, duration and fixed deadline",
+    "Exam first-request load error, keyboard retry and successful playback preserve draft",
+    "Exam route unmount stops playing; resume retains answers/deadline without autoplay",
+    "Existing missing-media scenario renders without empty audio source"
+  ],
+  "responsive": [
+    {
+      "name": "vocabulary-ready",
+      "width": 1440,
+      "height": 900,
+      "pngWidth": 1440,
+      "pngHeight": 900,
+      "client": 1440,
+      "scroll": 1440
+    },
+    {
+      "name": "vocabulary-ready",
+      "width": 768,
+      "height": 900,
+      "pngWidth": 768,
+      "pngHeight": 900,
+      "client": 768,
+      "scroll": 768
+    },
+    {
+      "name": "vocabulary-ready",
+      "width": 390,
+      "height": 900,
+      "pngWidth": 390,
+      "pngHeight": 900,
+      "client": 390,
+      "scroll": 390
+    },
+    {
+      "name": "vocabulary-error",
+      "width": 1440,
+      "height": 900,
+      "pngWidth": 1440,
+      "pngHeight": 900,
+      "client": 1440,
+      "scroll": 1440
+    },
+    {
+      "name": "vocabulary-error",
+      "width": 768,
+      "height": 900,
+      "pngWidth": 768,
+      "pngHeight": 900,
+      "client": 768,
+      "scroll": 768
+    },
+    {
+      "name": "vocabulary-error",
+      "width": 390,
+      "height": 900,
+      "pngWidth": 390,
+      "pngHeight": 900,
+      "client": 390,
+      "scroll": 390
+    },
+    {
+      "name": "exam-ready",
+      "width": 1440,
+      "height": 900,
+      "pngWidth": 1440,
+      "pngHeight": 900,
+      "client": 1440,
+      "scroll": 1440
+    },
+    {
+      "name": "exam-ready",
+      "width": 768,
+      "height": 900,
+      "pngWidth": 768,
+      "pngHeight": 900,
+      "client": 768,
+      "scroll": 768
+    },
+    {
+      "name": "exam-ready",
+      "width": 390,
+      "height": 900,
+      "pngWidth": 390,
+      "pngHeight": 900,
+      "client": 390,
+      "scroll": 390
+    },
+    {
+      "name": "exam-error",
+      "width": 1440,
+      "height": 900,
+      "pngWidth": 1440,
+      "pngHeight": 900,
+      "client": 1440,
+      "scroll": 1440
+    },
+    {
+      "name": "exam-error",
+      "width": 768,
+      "height": 900,
+      "pngWidth": 768,
+      "pngHeight": 900,
+      "client": 768,
+      "scroll": 768
+    },
+    {
+      "name": "exam-error",
+      "width": 390,
+      "height": 900,
+      "pngWidth": 390,
+      "pngHeight": 900,
+      "client": 390,
+      "scroll": 390
+    }
+  ],
+  "media": [
+    {
+      "id": "vocabulary-appointment",
+      "duration": 6.348821,
+      "currentTime": 0.176531,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-colleague",
+      "duration": 5.298866,
+      "currentTime": 0.151708,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-deadline",
+      "duration": 5.863764,
+      "currentTime": 0.163527,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-department",
+      "duration": 5.748753,
+      "currentTime": 0.177107,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-negotiate",
+      "duration": 6.073741,
+      "currentTime": 0.170723,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-proposal",
+      "duration": 5.81873,
+      "currentTime": 0.146397,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-schedule",
+      "duration": 5.713832,
+      "currentTime": 0.170751,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-supervisor",
+      "duration": 6.338639,
+      "currentTime": 0.158714,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-reservation",
+      "duration": 6.253787,
+      "currentTime": 0.177463,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-departure",
+      "duration": 5.768889,
+      "currentTime": 0.170156,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-luggage",
+      "duration": 5.448889,
+      "currentTime": 0.159817,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-destination",
+      "duration": 6.188889,
+      "currentTime": 0.177316,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-itinerary",
+      "duration": 6.438594,
+      "currentTime": 0.172797,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-commute",
+      "duration": 5.768934,
+      "currentTime": 0.160302,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-accommodation",
+      "duration": 6.233832,
+      "currentTime": 0.174383,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-boarding",
+      "duration": 5.493832,
+      "currentTime": 0.162812,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-receipt",
+      "duration": 5.523855,
+      "currentTime": 0.157174,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-discount",
+      "duration": 6.248798,
+      "currentTime": 0.175921,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-refund",
+      "duration": 6.403764,
+      "currentTime": 0.165137,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-warranty",
+      "duration": 6.068934,
+      "currentTime": 0.159826,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-purchase",
+      "duration": 6.193741,
+      "currentTime": 0.177915,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-delivery",
+      "duration": 5.888844,
+      "currentTime": 0.170583,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-available",
+      "duration": 6.193741,
+      "currentTime": 0.16164,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "vocabulary-customer",
+      "duration": 6.353605,
+      "currentTime": 0.177272,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "listening-part-1",
+      "duration": 15.387211,
+      "currentTime": 0.172971,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "listening-part-2",
+      "duration": 12.962902,
+      "currentTime": 0.158452,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "listening-part-3",
+      "duration": 24.818141,
+      "currentTime": 0.172983,
+      "playing": true,
+      "paused": false,
+      "error": null
+    },
+    {
+      "id": "listening-part-4",
+      "duration": 27.354875,
+      "currentTime": 0.160302,
+      "playing": true,
+      "paused": false,
+      "error": null
+    }
+  ],
+  "errors": [],
+  "apiRequests": [],
+  "physicalListeningVerified": false,
+  "vocabularyEvents": [
+    {
+      "name": "loadedmetadata",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "seeking",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "seeked",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "playing",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "pause",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0.161946
+    },
+    {
+      "name": "playing",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0.20898
+    },
+    {
+      "name": "pause",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.17441
+    },
+    {
+      "name": "seeking",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.17441
+    },
+    {
+      "name": "seeked",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.17441
+    },
+    {
+      "name": "ratechange",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.17441
+    },
+    {
+      "name": "playing",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.17441
+    },
+    {
+      "name": "pause",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.417591
+    },
+    {
+      "name": "ratechange",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.417591
+    },
+    {
+      "name": "playing",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.449434
+    },
+    {
+      "name": "pause",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 3.862687
+    },
+    {
+      "name": "seeking",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "seeked",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "playing",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "seeking",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 6.198821
+    },
+    {
+      "name": "seeked",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 6.198821
+    },
+    {
+      "name": "playing",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 6.198821
+    },
+    {
+      "name": "pause",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 6.348821
+    },
+    {
+      "name": "ended",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 6.348821
+    },
+    {
+      "name": "seeking",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "seeked",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "playing",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0
+    },
+    {
+      "name": "pause",
+      "source": "http://localhost:3006/demo/audio/vocabulary-appointment.mp3",
+      "time": 0.168604
+    }
+  ],
+  "deadlineCheck": {
+    "deadlineBefore": 1793085167721,
+    "deadlineAfter": 1793085167721,
+    "answers": {
+      "full-test-01-p1-q1": "B"
+    }
+  },
+  "browserPlaybackVerified": true
+}

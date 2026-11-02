@@ -1,0 +1,25 @@
+{
+  "screenshots": [
+    {
+      "file": "detail-verified/word-1-1440.png",
+      "review": "Reviewed at native viewport; text wraps, no visible overlap or horizontal clipping in inspected area."
+    },
+    {
+      "file": "detail-verified/example-2-768.png",
+      "review": "Reviewed at native viewport; text wraps, no visible overlap or horizontal clipping in inspected area."
+    },
+    {
+      "file": "detail-verified/example-2-390.png",
+      "review": "Reviewed at native viewport; text wraps, no visible overlap or horizontal clipping in inspected area."
+    },
+    {
+      "file": "detail-verified/missing-fields-320.png",
+      "review": "Reviewed at native viewport; text wraps, no visible overlap or horizontal clipping in inspected area."
+    },
+    {
+      "file": "detail-verified/long-ipa-320.png",
+      "review": "Reviewed at native viewport; text wraps, no visible overlap or horizontal clipping in inspected area."
+    }
+  ],
+  "notes": "Same final source and test scenarios as the earlier reviewed detail-final image set; final set inspected again before delivery."
+}

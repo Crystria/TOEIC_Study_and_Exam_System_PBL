@@ -1,0 +1,581 @@
+{
+  "schemaVersion": 1,
+  "notice": "Original demonstration text for synthetic Windows voices; not official ETS audio. MP3 generation record and original inputs preserved under recordings-20261027. Current hashes reflect audio URL integration only.",
+  "sourceSha256": {
+    "apps/web/src/lib/learning/mock-data.ts": "f9ea70c6ef0617ed62b19afc2749ce0495456fe4fb5e443c0e6cd6e6ca53b160",
+    "apps/web/src/lib/exams/question-fixtures.ts": "5ccff3c713e0dd56c7c15063bb1a5ab1d6c6d4d546673fee1584feb25604f0e5",
+    "apps/web/src/lib/exams/mock-data.ts": "2038fdf0ef76f4f0c0a6dfd1ec754f5521a4b9947cadd7ae55da541e8d2964b8",
+    "apps/web/public/demo/exam/office.svg": "0a3702c1dfae51e9fefb03cbdbc8d7fa38fe19854116561eed602e09a6ab6a2d"
+  },
+  "clips": [
+    {
+      "id": "vocabulary-appointment",
+      "publicUrl": "/demo/audio/vocabulary-appointment.mp3",
+      "fixtureIds": ["appointment"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "appointment."
+        },
+        {
+          "speaker": "primary",
+          "text": "I have an appointment with the manager at ten."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-colleague",
+      "publicUrl": "/demo/audio/vocabulary-colleague.mp3",
+      "fixtureIds": ["colleague"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "colleague."
+        },
+        {
+          "speaker": "primary",
+          "text": "My colleague will join the meeting."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-deadline",
+      "publicUrl": "/demo/audio/vocabulary-deadline.mp3",
+      "fixtureIds": ["deadline"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "deadline."
+        },
+        {
+          "speaker": "primary",
+          "text": "The deadline for the report is Friday."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-department",
+      "publicUrl": "/demo/audio/vocabulary-department.mp3",
+      "fixtureIds": ["department"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "department."
+        },
+        {
+          "speaker": "primary",
+          "text": "She works in the sales department."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-negotiate",
+      "publicUrl": "/demo/audio/vocabulary-negotiate.mp3",
+      "fixtureIds": ["negotiate"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "negotiate."
+        },
+        {
+          "speaker": "primary",
+          "text": "We need to negotiate a better price."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-proposal",
+      "publicUrl": "/demo/audio/vocabulary-proposal.mp3",
+      "fixtureIds": ["proposal"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "proposal."
+        },
+        {
+          "speaker": "primary",
+          "text": "The director approved our proposal."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-schedule",
+      "publicUrl": "/demo/audio/vocabulary-schedule.mp3",
+      "fixtureIds": ["schedule"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "schedule."
+        },
+        {
+          "speaker": "primary",
+          "text": "Please check the training schedule."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-supervisor",
+      "publicUrl": "/demo/audio/vocabulary-supervisor.mp3",
+      "fixtureIds": ["supervisor"],
+      "topicId": "business-office",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "supervisor."
+        },
+        {
+          "speaker": "primary",
+          "text": "Ask your supervisor for assistance."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-reservation",
+      "publicUrl": "/demo/audio/vocabulary-reservation.mp3",
+      "fixtureIds": ["reservation"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "reservation."
+        },
+        {
+          "speaker": "primary",
+          "text": "I would like to confirm my reservation."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-departure",
+      "publicUrl": "/demo/audio/vocabulary-departure.mp3",
+      "fixtureIds": ["departure"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "departure."
+        },
+        {
+          "speaker": "primary",
+          "text": "The departure time has changed."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-luggage",
+      "publicUrl": "/demo/audio/vocabulary-luggage.mp3",
+      "fixtureIds": ["luggage"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "luggage."
+        },
+        {
+          "speaker": "primary",
+          "text": "Please keep your luggage with you."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-destination",
+      "publicUrl": "/demo/audio/vocabulary-destination.mp3",
+      "fixtureIds": ["destination"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "destination."
+        },
+        {
+          "speaker": "primary",
+          "text": "Paris is our final destination."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-itinerary",
+      "publicUrl": "/demo/audio/vocabulary-itinerary.mp3",
+      "fixtureIds": ["itinerary"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "itinerary."
+        },
+        {
+          "speaker": "primary",
+          "text": "The travel agent emailed the itinerary."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-commute",
+      "publicUrl": "/demo/audio/vocabulary-commute.mp3",
+      "fixtureIds": ["commute"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "commute."
+        },
+        {
+          "speaker": "primary",
+          "text": "Many employees commute by train."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-accommodation",
+      "publicUrl": "/demo/audio/vocabulary-accommodation.mp3",
+      "fixtureIds": ["accommodation"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "accommodation."
+        },
+        {
+          "speaker": "primary",
+          "text": "The company will arrange accommodation."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-boarding",
+      "publicUrl": "/demo/audio/vocabulary-boarding.mp3",
+      "fixtureIds": ["boarding"],
+      "topicId": "travel-transport",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "boarding."
+        },
+        {
+          "speaker": "primary",
+          "text": "Boarding will begin in ten minutes."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-receipt",
+      "publicUrl": "/demo/audio/vocabulary-receipt.mp3",
+      "fixtureIds": ["receipt"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "receipt."
+        },
+        {
+          "speaker": "primary",
+          "text": "Keep your receipt for a refund."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-discount",
+      "publicUrl": "/demo/audio/vocabulary-discount.mp3",
+      "fixtureIds": ["discount"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "discount."
+        },
+        {
+          "speaker": "primary",
+          "text": "Members receive a ten percent discount."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-refund",
+      "publicUrl": "/demo/audio/vocabulary-refund.mp3",
+      "fixtureIds": ["refund"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "refund."
+        },
+        {
+          "speaker": "primary",
+          "text": "You can request a refund within seven days."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-warranty",
+      "publicUrl": "/demo/audio/vocabulary-warranty.mp3",
+      "fixtureIds": ["warranty"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "warranty."
+        },
+        {
+          "speaker": "primary",
+          "text": "The laptop comes with a one-year warranty."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-purchase",
+      "publicUrl": "/demo/audio/vocabulary-purchase.mp3",
+      "fixtureIds": ["purchase"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "purchase."
+        },
+        {
+          "speaker": "primary",
+          "text": "Customers can purchase tickets online."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-delivery",
+      "publicUrl": "/demo/audio/vocabulary-delivery.mp3",
+      "fixtureIds": ["delivery"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "delivery."
+        },
+        {
+          "speaker": "primary",
+          "text": "Free delivery is available this week."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-available",
+      "publicUrl": "/demo/audio/vocabulary-available.mp3",
+      "fixtureIds": ["available"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "available."
+        },
+        {
+          "speaker": "primary",
+          "text": "This product is available in three colors."
+        }
+      ]
+    },
+    {
+      "id": "vocabulary-customer",
+      "publicUrl": "/demo/audio/vocabulary-customer.mp3",
+      "fixtureIds": ["customer"],
+      "topicId": "shopping-services",
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "customer."
+        },
+        {
+          "speaker": "primary",
+          "text": "Customer satisfaction is our priority."
+        }
+      ]
+    },
+    {
+      "id": "listening-part-1",
+      "part": 1,
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "Look at the illustration. A. A computer monitor is on a desk. B. A woman is writing in a notebook. C. Two people are standing by the window. D. A man is watering a plant."
+        }
+      ],
+      "publicUrl": "/demo/audio/listening-part-1.mp3",
+      "fixtureIds": [
+        "full-test-01-p1-g1",
+        "full-test-01-p1-g2",
+        "full-test-01-p1-g3",
+        "full-test-01-p1-g4",
+        "full-test-01-p1-g5",
+        "full-test-01-p1-g6",
+        "full-test-02-p1-g1",
+        "full-test-02-p1-g2",
+        "full-test-02-p1-g3",
+        "full-test-02-p1-g4",
+        "full-test-02-p1-g5",
+        "full-test-02-p1-g6"
+      ]
+    },
+    {
+      "id": "listening-part-2",
+      "part": 2,
+      "segments": [
+        {
+          "speaker": "primary",
+          "text": "What time does the meeting start? A. At ten o’clock. B. In the meeting room. C. Yes, I sent it yesterday. D. The blue folder."
+        }
+      ],
+      "publicUrl": "/demo/audio/listening-part-2.mp3",
+      "fixtureIds": [
+        "full-test-01-p2-g1",
+        "full-test-01-p2-g2",
+        "full-test-01-p2-g3",
+        "full-test-01-p2-g4",
+        "full-test-01-p2-g5",
+        "full-test-01-p2-g6",
+        "full-test-01-p2-g7",
+        "full-test-01-p2-g8",
+        "full-test-01-p2-g9",
+        "full-test-01-p2-g10",
+        "full-test-01-p2-g11",
+        "full-test-01-p2-g12",
+        "full-test-01-p2-g13",
+        "full-test-01-p2-g14",
+        "full-test-01-p2-g15",
+        "full-test-01-p2-g16",
+        "full-test-01-p2-g17",
+        "full-test-01-p2-g18",
+        "full-test-01-p2-g19",
+        "full-test-01-p2-g20",
+        "full-test-01-p2-g21",
+        "full-test-01-p2-g22",
+        "full-test-01-p2-g23",
+        "full-test-01-p2-g24",
+        "full-test-01-p2-g25",
+        "full-test-02-p2-g1",
+        "full-test-02-p2-g2",
+        "full-test-02-p2-g3",
+        "full-test-02-p2-g4",
+        "full-test-02-p2-g5",
+        "full-test-02-p2-g6",
+        "full-test-02-p2-g7",
+        "full-test-02-p2-g8",
+        "full-test-02-p2-g9",
+        "full-test-02-p2-g10",
+        "full-test-02-p2-g11",
+        "full-test-02-p2-g12",
+        "full-test-02-p2-g13",
+        "full-test-02-p2-g14",
+        "full-test-02-p2-g15",
+        "full-test-02-p2-g16",
+        "full-test-02-p2-g17",
+        "full-test-02-p2-g18",
+        "full-test-02-p2-g19",
+        "full-test-02-p2-g20",
+        "full-test-02-p2-g21",
+        "full-test-02-p2-g22",
+        "full-test-02-p2-g23",
+        "full-test-02-p2-g24",
+        "full-test-02-p2-g25",
+        "mini-test-01-p2-g1",
+        "mini-test-01-p2-g2",
+        "mini-test-01-p2-g3",
+        "mini-test-01-p2-g4",
+        "mini-test-01-p2-g5",
+        "mini-test-01-p2-g6",
+        "mini-test-01-p2-g7",
+        "mini-test-01-p2-g8",
+        "mini-test-01-p2-g9",
+        "mini-test-01-p2-g10"
+      ]
+    },
+    {
+      "id": "listening-part-3",
+      "part": 3,
+      "segments": [
+        {
+          "speaker": "second",
+          "text": "Do you have an update on the office equipment delivery? We need the new printers for the sales department."
+        },
+        {
+          "speaker": "primary",
+          "text": "The supplier says the delivery will arrive tomorrow afternoon."
+        },
+        {
+          "speaker": "second",
+          "text": "Could you confirm the delivery time and make sure all three printers are included?"
+        },
+        {
+          "speaker": "primary",
+          "text": "Of course. I will contact the supplier now and let you know."
+        }
+      ],
+      "publicUrl": "/demo/audio/listening-part-3.mp3",
+      "fixtureIds": [
+        "full-test-01-p3-g1",
+        "full-test-01-p3-g2",
+        "full-test-01-p3-g3",
+        "full-test-01-p3-g4",
+        "full-test-01-p3-g5",
+        "full-test-01-p3-g6",
+        "full-test-01-p3-g7",
+        "full-test-01-p3-g8",
+        "full-test-01-p3-g9",
+        "full-test-01-p3-g10",
+        "full-test-01-p3-g11",
+        "full-test-01-p3-g12",
+        "full-test-01-p3-g13",
+        "full-test-02-p3-g1",
+        "full-test-02-p3-g2",
+        "full-test-02-p3-g3",
+        "full-test-02-p3-g4",
+        "full-test-02-p3-g5",
+        "full-test-02-p3-g6",
+        "full-test-02-p3-g7",
+        "full-test-02-p3-g8",
+        "full-test-02-p3-g9",
+        "full-test-02-p3-g10",
+        "full-test-02-p3-g11",
+        "full-test-02-p3-g12",
+        "full-test-02-p3-g13",
+        "mini-test-01-p3-g1",
+        "mini-test-01-p3-g2",
+        "mini-test-01-p3-g3"
+      ]
+    },
+    {
+      "id": "listening-part-4",
+      "part": 4,
+      "segments": [
+        {
+          "speaker": "second",
+          "text": "Attention, all new employees. Welcome to the company. Your orientation session will begin at nine tomorrow morning in the third-floor training room. Please bring your employee ID so that we can record your attendance. Training materials will be provided, and there is no need to print any documents. If you need directions to the room, please ask at reception."
+        }
+      ],
+      "publicUrl": "/demo/audio/listening-part-4.mp3",
+      "fixtureIds": [
+        "full-test-01-p4-g1",
+        "full-test-01-p4-g2",
+        "full-test-01-p4-g3",
+        "full-test-01-p4-g4",
+        "full-test-01-p4-g5",
+        "full-test-01-p4-g6",
+        "full-test-01-p4-g7",
+        "full-test-01-p4-g8",
+        "full-test-01-p4-g9",
+        "full-test-01-p4-g10",
+        "full-test-02-p4-g1",
+        "full-test-02-p4-g2",
+        "full-test-02-p4-g3",
+        "full-test-02-p4-g4",
+        "full-test-02-p4-g5",
+        "full-test-02-p4-g6",
+        "full-test-02-p4-g7",
+        "full-test-02-p4-g8",
+        "full-test-02-p4-g9",
+        "full-test-02-p4-g10"
+      ]
+    }
+  ]
+}

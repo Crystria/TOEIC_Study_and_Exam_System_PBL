@@ -1,0 +1,7 @@
+{
+  "url": "http://localhost:3007/tests/demo-test-001?demoRole=CONTENT_ADMIN",
+  "status": "valid child route blocked by existing resolver",
+  "heading": "Không gian quản trị",
+  "detailCount": 0,
+  "panel": "PHẠM VI VAI TRÒ DEMO\nKhông gian quản trị\n\nMục này thuộc menu khác. Vai trò xem thử hiện tại là quản trị nội dung.\n\nĐây chỉ là minh họa UI; trang chưa tải dữ liệu hoặc kiểm tra quyền truy cập thật.\n\nVề không gian quản trị nội dung"
+}

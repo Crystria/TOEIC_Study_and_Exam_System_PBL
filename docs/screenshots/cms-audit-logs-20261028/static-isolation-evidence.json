@@ -1,0 +1,27 @@
+{
+  "checked": [
+    {
+      "path": "apps/admin-cms/src/components/audit-logs/audit-log-list.tsx",
+      "unsafeDependencyOrIo": false
+    },
+    {
+      "path": "apps/admin-cms/src/lib/audit-logs/demo-repository.ts",
+      "unsafeDependencyOrIo": false
+    },
+    {
+      "path": "apps/admin-cms/src/lib/audit-logs/fixtures.ts",
+      "unsafeDependencyOrIo": false
+    },
+    {
+      "path": "apps/admin-cms/src/lib/audit-logs/query.ts",
+      "unsafeDependencyOrIo": false
+    },
+    {
+      "path": "apps/admin-cms/src/lib/audit-logs/types.ts",
+      "unsafeDependencyOrIo": false
+    }
+  ],
+  "fixtureFields": ["id", "userId", "action", "targetType", "targetId", "createdAt"],
+  "rawPayloadFieldsPresent": false,
+  "confirmedBy": "fixture allowlist test plus source review"
+}

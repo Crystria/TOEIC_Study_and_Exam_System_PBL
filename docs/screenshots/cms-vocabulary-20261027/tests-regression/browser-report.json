@@ -1,0 +1,577 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Read-only catalog, 24 total, default 20, controlled loading; no row action/detail links",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard Tab follows keyword, type, status and apply; associated labels",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Title search applies on Enter, preserves focus/reload/persona; type+status+keyword AND and Back/Forward",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All types/statuses; stable pagination; Enter transfers focus to results; reload/Back/Forward and filter resets page",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "No-match differs from catalog empty; clear preserves size; error/retry/reload; retry respects user-moved focus and draft",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Stale slow reads cancel and typing focus is retained",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Malformed/repeated URLs; source size bounds and custom size=3; past-end page; absent duration/count/status never inferred",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Persona switch and Back preserved; SYSTEM_ADMIN sees shell explanation; storage/cookies/IndexedDB empty",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Read-only catalog, 24 total, default 20, controlled loading; no row action/detail links",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard Tab follows keyword, type, status and apply; associated labels",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Title search applies on Enter, preserves focus/reload/persona; type+status+keyword AND and Back/Forward",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "All types/statuses; stable pagination; Enter transfers focus to results; reload/Back/Forward and filter resets page",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "No-match differs from catalog empty; clear preserves size; error/retry/reload; retry respects user-moved focus and draft",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Stale slow reads cancel and typing focus is retained",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Malformed/repeated URLs; source size bounds and custom size=3; past-end page; absent duration/count/status never inferred",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Persona switch and Back preserved; SYSTEM_ADMIN sees shell explanation; storage/cookies/IndexedDB empty",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Read-only catalog, 24 total, default 20, controlled loading; no row action/detail links",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard Tab follows keyword, type, status and apply; associated labels",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Title search applies on Enter, preserves focus/reload/persona; type+status+keyword AND and Back/Forward",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "All types/statuses; stable pagination; Enter transfers focus to results; reload/Back/Forward and filter resets page",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "No-match differs from catalog empty; clear preserves size; error/retry/reload; retry respects user-moved focus and draft",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Stale slow reads cancel and typing focus is retained",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Malformed/repeated URLs; source size bounds and custom size=3; past-end page; absent duration/count/status never inferred",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Persona switch and Back preserved; SYSTEM_ADMIN sees shell explanation; storage/cookies/IndexedDB empty",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "320px form/cards/pagination without horizontal overflow",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "loading-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "list-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "rows-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "combined-filters-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "pagination-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "no-match-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "empty-catalog-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "error-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "missing-metadata-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "loading-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "list-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "rows-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "combined-filters-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "pagination-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "no-match-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "empty-catalog-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "error-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "missing-metadata-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "loading-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "list-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "rows-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "combined-filters-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "pagination-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "no-match-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "empty-catalog-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "error-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "missing-metadata-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "list-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "cards-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "pagination-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "browser": "156.0.8078.48",
+  "completed": true
+}

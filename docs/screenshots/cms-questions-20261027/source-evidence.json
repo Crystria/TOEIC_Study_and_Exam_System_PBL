@@ -1,0 +1,933 @@
+[
+  {
+    "excerpts": [
+      {
+        "text": "Tài liệu tham chiếu và tiêu chuẩn áp dụng",
+        "paragraphIndex": 69
+      },
+      {
+        "text": "ISO/IEC/IEEE 29148:2018: Systems and software engineering — Life cycle processes — Requirements engineering.",
+        "paragraphIndex": 70
+      },
+      {
+        "text": "Writing Effective Use Cases (Alistair Cockburn): Tiêu chuẩn định dạng cấu trúc Use Case chi tiết (Fully Dressed).",
+        "paragraphIndex": 71
+      },
+      {
+        "text": "Microservices Patterns (Chris Richardson): Các mẫu thiết kế quản lý dữ liệu phân tán (Database per Service, Saga, Outbox, CDC).",
+        "paragraphIndex": 72
+      },
+      {
+        "text": "–Mục tiêu: Học từ vựng Flashcard, đọc bài giảng ngữ pháp, làm bài thi thử TOEIC, xem lịch sử và thống kê tiến độ.",
+        "paragraphIndex": 112
+      },
+      {
+        "text": "•Quản trị viên hệ thống (System Administrator / SYSTEM_ADMIN):",
+        "paragraphIndex": 113
+      },
+      {
+        "text": "–Sử dụng: Admin CMS - Phân hệ Hệ thống.",
+        "paragraphIndex": 114
+      },
+      {
+        "text": "–Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung.",
+        "paragraphIndex": 115
+      },
+      {
+        "text": "•Quản trị viên nội dung (Content Administrator / CONTENT_ADMIN):",
+        "paragraphIndex": 116
+      },
+      {
+        "text": "–Sử dụng: Admin CMS - Phân hệ Nội dung.",
+        "paragraphIndex": 117
+      },
+      {
+        "text": "–Mục tiêu: Quản lý kho câu hỏi trắc nghiệm (Listening & Reading), quản lý các bộ từ vựng Flashcard kèm âm thanh/phiên âm, quản lý bài giảng lý thuyết ngữ pháp, và thiết lập cấu trúc các đề thi thử (Full Test/Mini Test).",
+        "paragraphIndex": 118
+      },
+      {
+        "text": "Đăng ký (Register): Cho phép người dùng tạo tài khoản mới và khởi tạo hồ sơ học viên trên hệ thống. ",
+        "paragraphIndex": 122
+      },
+      {
+        "text": "Quản lý người dùng & phân quyền hệ thống (System & User Management): System Admin phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), quản lý trạng thái tài khoản.",
+        "paragraphIndex": 123
+      },
+      {
+        "text": "Quản lý ngân hàng câu hỏi (Question Bank Management): Admin thực hiện CRUD các câu hỏi TOEIC thuộc phần Listening (Part 1 - Part 4) và Reading (Part 5 - Part 7). ",
+        "paragraphIndex": 124
+      },
+      {
+        "text": "Quản lý từ vựng & Flashcards (Vocabulary Management): Content Admin quản lý bộ từ vựng, từ mới, phiên âm IPA, định nghĩa, ví dụ, audio phát âm .mp3.",
+        "paragraphIndex": 125
+      },
+      {
+        "text": "Tìm kiếm và lọc câu hỏi (Search & Filter): Cho phép tìm kiếm câu hỏi, lọc bài luyện tập theo dạng bài, độ khó hoặc chủ đề. ",
+        "paragraphIndex": 130
+      },
+      {
+        "text": "Xem lịch sử và lời giải chi tiết (History & Solutions): Hiển thị danh sách các bài thi đã thực hiện, chấm điểm từng phần, hiển thị đáp án đúng, băng ghi âm (transcript) cho bài nghe và lời giải thích ngữ pháp chi tiết cho bài đọc.",
+        "paragraphIndex": 131
+      },
+      {
+        "text": "Theo dõi tiến độ và thống kê kết quả (Progress Tracking): Thu thập dữ liệu làm bài và học tập để thống kê biểu đồ tiến trình học, đồng thời dự đoán mức điểm TOEIC hiện tại của người dùng. ",
+        "paragraphIndex": 132
+      },
+      {
+        "text": "Tích hợp AI Chatbox (AI Integration): Cung cấp trợ lý học tập AI giải thích ngữ pháp, dịch nghĩa câu hỏi, gợi ý lộ trình học tập trực tiếp 24/7. ",
+        "paragraphIndex": 133
+      },
+      {
+        "text": "DỊCH VỤ XÁC THỰC & NGƯỜI DÙNG",
+        "paragraphIndex": 150
+      },
+      {
+        "text": "Dịch vụ chịu trách nhiệm quản lý thông tin tài khoản, xác thực quyền hạn theo mô hình RBAC (SYSTEM_ADMIN, CONTENT_ADMIN, USER) và đồng bộ hóa phiên làm việc của người dùng trên nhiều nền tảng.",
+        "paragraphIndex": 151
+      },
+      {
+        "text": "3.1.1 Đăng ký tài khoản (FK-01-Dang-Ky)",
+        "paragraphIndex": 152
+      },
+      {
+        "text": "Tác nhân thực hiện: Khách (Guest).",
+        "paragraphIndex": 153
+      },
+      {
+        "text": "3.1.2 Đăng nhập hệ thống (FK-02-Dang-Nhap)",
+        "paragraphIndex": 167
+      },
+      {
+        "text": "Tác nhân thực hiện: Tất cả người dùng (USER, SYSTEM_ADMIN, CONTENT_ADMIN).",
+        "paragraphIndex": 168
+      },
+      {
+        "text": "Mô tả chức năng: Xác thực thông tin người dùng và cấp cặp Token JWT bảo mật để truy cập các tài nguyên hệ thống.",
+        "paragraphIndex": 169
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs):",
+        "paragraphIndex": 170
+      },
+      {
+        "text": "3.1.3 Quản lý người dùng & phân quyền hệ thống (FK-03-Quan-Ly-Nguoi-Dung)",
+        "paragraphIndex": 179
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên hệ thống (SYSTEM_ADMIN) đối với phân quyền/trạng thái; Học viên (USER) đối với hồ sơ cá nhân.",
+        "paragraphIndex": 180
+      },
+      {
+        "text": "Mô tả chức năng: Cho phép học viên sửa hồ sơ cá nhân và System Admin quản lý, phân quyền, thay đổi trạng thái tài khoản toàn hệ thống.",
+        "paragraphIndex": 181
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs):",
+        "paragraphIndex": 182
+      },
+      {
+        "text": "Đối với Học viên: full_name (Chuỗi), avatar_key (Chuỗi), phone_number (Chuỗi).",
+        "paragraphIndex": 183
+      },
+      {
+        "text": "Đối với System Admin: user_id (UUIDv4), status (Enum: ACTIVE, SUSPENDED, INACTIVE), roles (Mảng Enum: SYSTEM_ADMIN, CONTENT_ADMIN, USER).",
+        "paragraphIndex": 184
+      },
+      {
+        "text": "Dữ liệu đầu ra (Outputs):",
+        "paragraphIndex": 185
+      },
+      {
+        "text": "HTTP 200 (OK): Trả về thực thể người dùng đã cập nhật.",
+        "paragraphIndex": 186
+      },
+      {
+        "text": "HTTP 403 (Forbidden): Trả về lỗi nếu tài khoản không có quyền SYSTEM_ADMIN mà cố tình gọi API phân quyền.",
+        "paragraphIndex": 187
+      },
+      {
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):",
+        "paragraphIndex": 188
+      },
+      {
+        "text": "Chỉ tài khoản có vai trò SYSTEM_ADMIN mới có quyền gán/thay đổi thuộc tính roles và status của tài khoản khác.",
+        "paragraphIndex": 189
+      },
+      {
+        "text": "Ghi vết nhật ký quản trị (Audit Log) cho mọi thao tác nâng/hạ quyền hạn tài khoản.",
+        "paragraphIndex": 190
+      },
+      {
+        "text": "3.1.4 Đồng bộ dữ liệu đa nền tảng (FK-04-Dong-Bo-Du-Lieu)",
+        "paragraphIndex": 191
+      },
+      {
+        "text": "Dịch vụ quản trị kho dữ liệu câu hỏi thi TOEIC 2 kỹ năng (Listening & Reading), hỗ trợ tìm kiếm phân loại đa tiêu chí.",
+        "paragraphIndex": 201
+      },
+      {
+        "text": "3.2.1 Quản lý ngân hàng câu hỏi (FK-05-Quan-Ly-Ngan-Hang-Cau-Hoi)",
+        "paragraphIndex": 202
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 203
+      },
+      {
+        "text": "Mô tả chức năng: Cho phép Content Admin thực hiện CRUD các câu hỏi trắc nghiệm thuộc Part 1 đến Part 7.",
+        "paragraphIndex": 204
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs): question_text (Chuỗi), audio_key (Bắt buộc cho Part 1-4), image_key (Part 1 và câu hỏi có hình), options (Mảng 4 phương án A, B, C, D), correct_option (Enum: 'A', 'B', 'C', 'D'), part (1-7), difficulty (Enum: EASY, MEDIUM, HARD), tags (Mảng chuỗi), explanation (Chuỗi giải thích), transcript (Chuỗi băng ghi âm, bắt buộc cho Part 1-4)",
+        "paragraphIndex": 205
+      },
+      {
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm question_id (UUIDv4) / HTTP 200 (OK) khi sửa/xóa thành công.",
+        "paragraphIndex": 206
+      },
+      {
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):",
+        "paragraphIndex": 207
+      },
+      {
+        "text": "Sử dụng mẫu Transactional Outbox & CDC phát sự kiện QuestionCreatedEvent / QuestionUpdatedEvent lên Message Broker để đồng bộ chỉ mục Elasticsearch.",
+        "paragraphIndex": 209
+      },
+      {
+        "text": "3.2.2 Tìm kiếm và lọc câu hỏi (FK-06-Tim-Kiem-Va-Loc-Cau-Hoi)",
+        "paragraphIndex": 210
+      },
+      {
+        "text": "Tác nhân thực hiện: Học viên (USER), Content Admin (CONTENT_ADMIN).",
+        "paragraphIndex": 211
+      },
+      {
+        "text": "Mô tả chức năng: Cung cấp bộ lọc câu hỏi đa tiêu chí phục vụ luyện tập và quản trị.",
+        "paragraphIndex": 212
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs): keyword (Chuỗi), part (1-7), difficulty (Enum), tag (Chuỗi), page (Mặc định 1), size (Giới hạn từ 1 đến 50).",
+        "paragraphIndex": 213
+      },
+      {
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) trả về đối tượng phân trang chứa danh sách câu hỏi và Metadata (total_records, total_pages).",
+        "paragraphIndex": 214
+      },
+      {
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):",
+        "paragraphIndex": 215
+      },
+      {
+        "text": "Bắt buộc giới hạn size <= 50 để bảo vệ hiệu năng Database/Elasticsearch.",
+        "paragraphIndex": 216
+      },
+      {
+        "text": "3.3.1 Quản lý bài kiểm tra / đề thi (FK-07-Quan-Ly-De-Thi)",
+        "paragraphIndex": 221
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 222
+      },
+      {
+        "text": "Mô tả chức năng: Cho phép Content Admin đóng gói đề thi thử TOEIC (Full Test 200 câu hoặc Mini Test) từ kho câu hỏi.",
+        "paragraphIndex": 223
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs): test_title (Chuỗi), test_type (Enum: FULL_TEST, MINI_TEST), duration_seconds (Số nguyên: 7200 giây cho Full Test 120 phút; 1800 giây cho Mini Test 30 phút), question_ids (Mảng UUID câu hỏi).",
+        "paragraphIndex": 224
+      },
+      {
+        "text": "Tác nhân thực hiện: Học viên (USER).",
+        "paragraphIndex": 237
+      },
+      {
+        "text": "Mô tả chức năng: Cho phép học viên xem lại chi tiết bài thi đã làm, đáp án đúng/sai, audio, transcript bài nghe và lời giải thích ngữ pháp bài đọc.",
+        "paragraphIndex": 238
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs): attempt_id (UUIDv4, bắt buộc).",
+        "paragraphIndex": 239
+      },
+      {
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) kèm cấu trúc bài làm đầy đủ.",
+        "paragraphIndex": 240
+      },
+      {
+        "text": "3.4.1 Quản lý từ vựng & Flashcards (FK-10-Quan-Ly-Tu-Vung)",
+        "paragraphIndex": 247
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 248
+      },
+      {
+        "text": "Mô tả chức năng: Cho phép Content Admin biên tập kho từ vựng theo chủ đề, nạp từ mới, IPA, định nghĩa, ví dụ và file âm thanh.",
+        "paragraphIndex": 249
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs): topic_id (UUIDv4), topic_name (Chuỗi), vocabularies (Mảng JSON: [{word, phonetic, definition, example, audio_key, image_key}]).",
+        "paragraphIndex": 250
+      },
+      {
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm topic_id.",
+        "paragraphIndex": 251
+      },
+      {
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):",
+        "paragraphIndex": 252
+      },
+      {
+        "text": "File phát âm (.mp3, tối đa 5MB) được lưu trữ trên Object Storage và phát lại qua CDN public; hệ thống lưu audio_key, kiểm tra object tồn tại; CDN URL chỉ dùng khi phát nội dung.",
+        "paragraphIndex": 253
+      },
+      {
+        "text": "3.4.2 Quản lý lý thuyết ngữ pháp (FK-11-Quan-Ly-Ly-Thuyet)",
+        "paragraphIndex": 254
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 255
+      },
+      {
+        "text": "Mô tả chức năng: Cho phép Content Admin soạn thảo bài giảng lý thuyết ngữ pháp TOEIC theo định dạng Markdown.",
+        "paragraphIndex": 256
+      },
+      {
+        "text": "Dữ liệu đầu vào (Inputs): lesson_title (Chuỗi), category (Chuỗi), content_markdown (Văn bản định dạng Markdown chứa cấu trúc bài học và ví dụ).",
+        "paragraphIndex": 257
+      },
+      {
+        "text": "Hành động của Tác nhân (Actor Action)",
+        "paragraphIndex": 335
+      },
+      {
+        "text": "Phản hồi của Hệ thống (System Response)",
+        "paragraphIndex": 336
+      },
+      {
+        "text": "1",
+        "paragraphIndex": 337
+      },
+      {
+        "text": "Học viên lựa chọn đề thi từ danh sách và nhấn nút “Bắt đầu làm bài”.",
+        "paragraphIndex": 338
+      },
+      {
+        "text": "Hành động của Tác nhân (Actor Action)",
+        "paragraphIndex": 395
+      },
+      {
+        "text": "Phản hồi của Hệ thống (System Response)",
+        "paragraphIndex": 396
+      },
+      {
+        "text": "1",
+        "paragraphIndex": 397
+      },
+      {
+        "text": "Học viên nhập nội dung thắc mắc hoặc nhấn nút hỗ trợ trên màn hình lời giải câu hỏi cụ thể.",
+        "paragraphIndex": 398
+      },
+      {
+        "text": "Hệ thống chuẩn bị dữ liệu gửi đi.",
+        "paragraphIndex": 401
+      },
+      {
+        "text": "AI Chatbox Service kiểm tra quota nghiệp vụ trong daily_chat_usage (Gateway đã giới hạn Redis Token Bucket) và định dạng lại dữ liệu theo cấu trúc System Prompt, sau đó gọi API của LLM Engine bên ngoài.",
+        "paragraphIndex": 402
+      },
+      {
+        "text": "3",
+        "paragraphIndex": 403
+      },
+      {
+        "text": "Mô hình LLM trả về kết quả phản hồi.",
+        "paragraphIndex": 404
+      },
+      {
+        "text": "Hành động của Tác nhân (Actor Action)",
+        "paragraphIndex": 447
+      },
+      {
+        "text": "Phản hồi của Hệ thống (System Response)",
+        "paragraphIndex": 448
+      },
+      {
+        "text": "1",
+        "paragraphIndex": 449
+      },
+      {
+        "text": "Học viên hoàn thành hoạt động học tập (đánh dấu thuộc từ vựng hoặc học xong bài ngữ pháp) trên thiết bị hiện tại.",
+        "paragraphIndex": 450
+      },
+      {
+        "text": "Điều kiện tiên quyết",
+        "paragraphIndex": 494
+      },
+      {
+        "text": "Quản trị viên đã đăng nhập thành công vào hệ thống Admin CMS và được cấp Token JWT có quyền CONTENT_ADMIN.",
+        "paragraphIndex": 495
+      },
+      {
+        "text": "Kích hoạt",
+        "paragraphIndex": 496
+      },
+      {
+        "text": "Quản trị viên nhấn nút “Lưu câu hỏi” trên giao diện quản trị sau khi đã điền đầy đủ dữ liệu và tải lên các tệp đa phương tiện.",
+        "paragraphIndex": 497
+      },
+      {
+        "text": "Hành động của Tác nhân (Actor Action)",
+        "paragraphIndex": 503
+      },
+      {
+        "text": "Phản hồi của Hệ thống (System Response)",
+        "paragraphIndex": 504
+      },
+      {
+        "text": "1",
+        "paragraphIndex": 505
+      },
+      {
+        "text": "Admin hoàn tất nhập thông tin câu hỏi và kéo thả tệp âm thanh (.mp3) hoặc hình ảnh (.png) vào khung tải tệp của giao diện.",
+        "paragraphIndex": 506
+      },
+      {
+        "text": "Admin nhấn nút “Lưu câu hỏi”.",
+        "paragraphIndex": 515
+      },
+      {
+        "text": "Client gửi yêu cầu lưu câu hỏi (chứa thông tin văn bản và các audio_key/image_key của tệp nghe/ảnh vừa upload) lên Question Bank Service.",
+        "paragraphIndex": 516
+      },
+      {
+        "text": "5",
+        "paragraphIndex": 517
+      },
+      {
+        "text": "Question Bank Service xác thực và lưu trữ dữ liệu.",
+        "paragraphIndex": 518
+      },
+      {
+        "text": "Hành động của Tác nhân (Actor Action)",
+        "paragraphIndex": 564
+      },
+      {
+        "text": "Phản hồi của Hệ thống (System Response)",
+        "paragraphIndex": 565
+      },
+      {
+        "text": "1",
+        "paragraphIndex": 566
+      },
+      {
+        "text": "Học viên truy cập phân hệ từ vựng và chọn nút học tập.",
+        "paragraphIndex": 567
+      }
+    ],
+    "sha256": "E1E3D2DFAAC745E9B75E79769DA6B945AA79D388CDAC2F0E0BCD25A59F0D83FE",
+    "file": "SRS.docx",
+    "paragraphs": 726
+  },
+  {
+    "excerpts": [
+      {
+        "text": "quest_db",
+        "paragraphIndex": 40
+      },
+      {
+        "text": "Câu hỏi, bốn phương án, đáp án đúng, tag, media key (audio_key, image_key), outbox",
+        "paragraphIndex": 41
+      },
+      {
+        "text": "Test and Exam",
+        "paragraphIndex": 42
+      },
+      {
+        "text": "exam_db",
+        "paragraphIndex": 43
+      },
+      {
+        "text": "3.2 Mô tả Entity",
+        "paragraphIndex": 214
+      },
+      {
+        "text": "3.2.1 Auth and User",
+        "paragraphIndex": 215
+      },
+      {
+        "text": "Class Object",
+        "paragraphIndex": 216
+      },
+      {
+        "text": "Ý nghĩa và thuộc tính",
+        "paragraphIndex": 217
+      },
+      {
+        "text": "Role",
+        "paragraphIndex": 224
+      },
+      {
+        "text": "Danh mục vai trò: role_code, name (SYSTEM_ADMIN, CONTENT_ADMIN, USER)",
+        "paragraphIndex": 225
+      },
+      {
+        "text": "PK role_code; không NULL",
+        "paragraphIndex": 226
+      },
+      {
+        "text": "Miền giá trị đóng; quản lý RBAC",
+        "paragraphIndex": 227
+      },
+      {
+        "text": "PK ghép (user_id, role_code)",
+        "paragraphIndex": 230
+      },
+      {
+        "text": "Mỗi user đăng ký mới phải có USER; chỉ SYSTEM_ADMIN được thay đổi",
+        "paragraphIndex": 231
+      },
+      {
+        "text": "RefreshToken",
+        "paragraphIndex": 232
+      },
+      {
+        "text": "Phiên đăng nhập dài hạn: token UUID được lưu, hết hạn 7 ngày; thiết kế lưu token_hash, expires_at, revoked_at",
+        "paragraphIndex": 233
+      },
+      {
+        "text": "",
+        "paragraphIndex": 252
+      },
+      {
+        "text": "3.2.2 Question Bank",
+        "paragraphIndex": 253
+      },
+      {
+        "text": "Class Object",
+        "paragraphIndex": 254
+      },
+      {
+        "text": "Ý nghĩa và thuộc tính",
+        "paragraphIndex": 255
+      },
+      {
+        "text": "Question",
+        "paragraphIndex": 258
+      },
+      {
+        "text": "Câu TOEIC: id, question_text, audio_key, image_key, correct_option, part 1-7, difficulty, explanation, timestamps, deleted_at",
+        "paragraphIndex": 259
+      },
+      {
+        "text": "PK question_id; part, difficulty, correct_option bắt buộc; text/media/explanation có thể NULL theo dữ liệu hiện có; deleted_at NULL",
+        "paragraphIndex": 260
+      },
+      {
+        "text": "Part 1-4 bắt buộc audio; soft delete đề xuất để bảo toàn đề/lịch sử",
+        "paragraphIndex": 261
+      },
+      {
+        "text": "QuestionOption",
+        "paragraphIndex": 262
+      },
+      {
+        "text": "Vocabulary",
+        "paragraphIndex": 314
+      },
+      {
+        "text": "Từ: vocabulary_id, topic_id, word, phonetic, definition, example, audio_key, image_key, timestamps, deleted_at",
+        "paragraphIndex": 315
+      },
+      {
+        "text": "PK vocabulary_id; topic_id, word, definition bắt buộc theo đề xuất; phonetic/example/media NULL",
+        "paragraphIndex": 316
+      },
+      {
+        "text": "audio key phải hợp lệ trước lưu; soft delete đề xuất",
+        "paragraphIndex": 317
+      },
+      {
+        "text": "ChatMessage",
+        "paragraphIndex": 378
+      },
+      {
+        "text": "Tin nhắn: message_id, conversation_id, role USER/ASSISTANT/SYSTEM, content Markdown, context_question_id logic, status, created_at",
+        "paragraphIndex": 379
+      },
+      {
+        "text": "PK message_id; conversation_id/role/content bắt buộc; context nullable",
+        "paragraphIndex": 380
+      },
+      {
+        "text": "message_content tối đa 1000 cho USER; response lưu lịch sử; question ref không FK",
+        "paragraphIndex": 381
+      },
+      {
+        "text": "Định danh câu hỏi; là Logical Reference khi nằm ngoài Question DB.",
+        "paragraphIndex": 990
+      },
+      {
+        "text": "question_text",
+        "paragraphIndex": 991
+      },
+      {
+        "text": "TEXT",
+        "paragraphIndex": 992
+      },
+      {
+        "text": "-",
+        "paragraphIndex": 993
+      },
+      {
+        "text": "Thuộc tính question text theo định nghĩa và ràng buộc trong DDL nguồn.",
+        "paragraphIndex": 996
+      },
+      {
+        "text": "transcript",
+        "paragraphIndex": 997
+      },
+      {
+        "text": "TEXT",
+        "paragraphIndex": 998
+      },
+      {
+        "text": "-",
+        "paragraphIndex": 999
+      },
+      {
+        "text": "Không",
+        "paragraphIndex": 1001
+      },
+      {
+        "text": "Thuộc tính transcript theo định nghĩa và ràng buộc trong DDL nguồn.",
+        "paragraphIndex": 1002
+      },
+      {
+        "text": "audio_key",
+        "paragraphIndex": 1003
+      },
+      {
+        "text": "TEXT",
+        "paragraphIndex": 1004
+      },
+      {
+        "text": "-",
+        "paragraphIndex": 1005
+      },
+      {
+        "text": "Thuộc tính audio key theo định nghĩa và ràng buộc trong DDL nguồn.",
+        "paragraphIndex": 1008
+      },
+      {
+        "text": "image_key",
+        "paragraphIndex": 1009
+      },
+      {
+        "text": "TEXT",
+        "paragraphIndex": 1010
+      },
+      {
+        "text": "-",
+        "paragraphIndex": 1011
+      },
+      {
+        "text": "Thuộc tính part theo định nghĩa và ràng buộc trong DDL nguồn.",
+        "paragraphIndex": 1026
+      },
+      {
+        "text": "difficulty",
+        "paragraphIndex": 1027
+      },
+      {
+        "text": "VARCHAR(16)",
+        "paragraphIndex": 1028
+      },
+      {
+        "text": "-",
+        "paragraphIndex": 1029
+      },
+      {
+        "text": "Thuộc tính example theo định nghĩa và ràng buộc trong DDL nguồn.",
+        "paragraphIndex": 1521
+      },
+      {
+        "text": "audio_key",
+        "paragraphIndex": 1522
+      },
+      {
+        "text": "TEXT",
+        "paragraphIndex": 1523
+      },
+      {
+        "text": "-",
+        "paragraphIndex": 1524
+      },
+      {
+        "text": "Thuộc tính audio key theo định nghĩa và ràng buộc trong DDL nguồn.",
+        "paragraphIndex": 1527
+      },
+      {
+        "text": "image_key",
+        "paragraphIndex": 1528
+      },
+      {
+        "text": "TEXT",
+        "paragraphIndex": 1529
+      },
+      {
+        "text": "-",
+        "paragraphIndex": 1530
+      },
+      {
+        "text": "Partial WHERE published_at IS NULL trên từng schema",
+        "paragraphIndex": 2573
+      },
+      {
+        "text": "idx_questions_part_difficulty_active",
+        "paragraphIndex": 2574
+      },
+      {
+        "text": "Search/filter Part và difficulty",
+        "paragraphIndex": 2575
+      },
+      {
+        "text": "Search keyword/tag chính qua Elasticsearch; không tạo nhiều B-tree đơn",
+        "paragraphIndex": 2576
+      },
+      {
+        "text": "ux_tags_name_ci",
+        "paragraphIndex": 2577
+      }
+    ],
+    "sha256": "A6D70A829EF84EFBC67C42D1386C756ECD55875389AB61D3D4590276122DBA13",
+    "file": "tai_lieu_thiet_ke_CSDL.docx",
+    "paragraphs": 2627
+  },
+  {
+    "excerpts": [
+      {
+        "text": "JSONB",
+        "paragraphIndex": 77
+      },
+      {
+        "text": "Khối dữ liệu chứa thông tin câu hỏi để lập chỉ mục (nội dung, TOEIC Part 1-7, difficulty EASY/MEDIUM/HARD, danh sách tags)",
+        "paragraphIndex": 78
+      },
+      {
+        "text": "",
+        "paragraphIndex": 79
+      },
+      {
+        "text": "",
+        "paragraphIndex": 80
+      }
+    ],
+    "sha256": "C1BC6BB143BDAAA871BF0C07716BAF0BA19ED2E25A16E535B2E4D8C86A3C734D",
+    "file": "Thiết kế Event.docx",
+    "paragraphs": 147
+  },
+  {
+    "excerpts": [
+      {
+        "text": "DỊCH VỤ XÁC THỰC & NGƯỜI DÙNG",
+        "paragraphIndex": 1
+      },
+      {
+        "text": "Mục đích: quản lý danh tính, xác thực, phân quyền và trạng thái tài khoản. SRS xác định các vai trò SYSTEM_ADMIN, CONTENT_ADMIN và USER; đồng thời yêu cầu hỗ trợ JWT và cơ chế đồng bộ tiến độ đa nền tảng.",
+        "paragraphIndex": 2
+      },
+      {
+        "text": "Thiết kế Cơ sở dữ liệu ",
+        "paragraphIndex": 3
+      },
+      {
+        "text": "Bảng",
+        "paragraphIndex": 4
+      },
+      {
+        "text": "questions",
+        "paragraphIndex": 77
+      },
+      {
+        "text": "question_id, question_text, transcript, audio_key, image_key, correct_option, part, difficulty, explanation, created_at, updated_at, deleted_at",
+        "paragraphIndex": 78
+      },
+      {
+        "text": "Thông tin câu hỏi và metadata.",
+        "paragraphIndex": 79
+      },
+      {
+        "text": "question_options",
+        "paragraphIndex": 80
+      },
+      {
+        "text": "/api/v1/questions",
+        "paragraphIndex": 104
+      },
+      {
+        "text": "Tìm kiếm/lọc theo keyword, part, difficulty, tag; size <= 50.",
+        "paragraphIndex": 105
+      },
+      {
+        "text": "PATCH",
+        "paragraphIndex": 106
+      },
+      {
+        "text": "/api/v1/questions/{id}",
+        "paragraphIndex": 107
+      },
+      {
+        "text": "CDC/consumer đọc outbox và cập nhật Elasticsearch theo các sự kiện QuestionCreated/Updated/...",
+        "paragraphIndex": 119
+      },
+      {
+        "text": "Tìm kiếm kết hợp keyword + bộ lọc part/difficulty/tag và phân trang; kích thước page không vượt 50 theo SRS.",
+        "paragraphIndex": 120
+      },
+      {
+        "text": "DỊCH VỤ BÀI THI & THI THỬ",
+        "paragraphIndex": 121
+      },
+      {
+        "text": "Mục đích: quản lý cấu trúc đề thi Full Test/Mini Test và phiên làm bài. Use Case thi thử trong SRS yêu cầu gọi Question Bank qua gRPC khi tải câu hỏi, đếm giờ thực tế, tự động nộp khi hết giờ, chấm điểm và ghi nhận lịch sử attempt.",
+        "paragraphIndex": 122
+      },
+      {
+        "text": "vocabularies",
+        "paragraphIndex": 185
+      },
+      {
+        "text": "vocabulary_id, topic_id, word, phonetic, definition, example, audio_key, image_key",
+        "paragraphIndex": 186
+      },
+      {
+        "text": "Nội dung flashcard.",
+        "paragraphIndex": 187
+      },
+      {
+        "text": "grammar_lessons",
+        "paragraphIndex": 188
+      },
+      {
+        "text": "message_id, conversation_id, role, content, context_question_id, status, created_at",
+        "paragraphIndex": 304
+      },
+      {
+        "text": "Các message user/assistant/system.",
+        "paragraphIndex": 305
+      },
+      {
+        "text": "daily_chat_usage",
+        "paragraphIndex": 306
+      },
+      {
+        "text": "user_id, usage_date, used_count, updated_at",
+        "paragraphIndex": 307
+      },
+      {
+        "text": "2. Rate limit dùng Redis Token Bucket; SRS giới hạn tối đa 20 tin nhắn/ngày/user.",
+        "paragraphIndex": 335
+      },
+      {
+        "text": "3. Xây dựng System Prompt và ngữ cảnh trước khi gọi LLM Engine bên ngoài.",
+        "paragraphIndex": 336
+      },
+      {
+        "text": "4. Nếu LLM phản hồi thành công, lưu message vào ai_db và cập nhật usage.",
+        "paragraphIndex": 337
+      },
+      {
+        "text": "5. Nếu LLM timeout quá 10 giây, Circuit Breaker (thư viện pybreaker/tenacity) chuyển Open, trả fallback mặc định và hoàn lại lượt chat cho user theo SRS.",
+        "paragraphIndex": 338
+      },
+      {
+        "text": "Elasticsearch",
+        "paragraphIndex": 386
+      },
+      {
+        "text": "Full-text search, filter theo part/difficulty/tag ",
+        "paragraphIndex": 387
+      },
+      {
+        "text": "Authentication ",
+        "paragraphIndex": 388
+      },
+      {
+        "text": "User Service chỉ giữ profile ",
+        "paragraphIndex": 389
+      }
+    ],
+    "sha256": "C766590CA504F42D54205F5C09182AAE8003AA47916DB8E6BB9988C354F14ECB",
+    "file": "Thiết kế hệ thống.docx",
+    "paragraphs": 520
+  },
+  {
+    "excerpts": [
+      {
+        "text": "TÀI LIỆU THIẾT KẾ KIẾN TRÚC STORAGE ",
+        "paragraphIndex": 0
+      },
+      {
+        "text": "Tài liệu kiến trúc xác định MinIO là Object Storage self-hosted, đồng thời client sẽ xin Presigned URL từ backend rồi upload trực tiếp lên S3/MinIO, tránh đi qua API Gateway. Tài liệu database cũng dùng các trường avatar_key, audio_key, image_key để tham chiếu đến object trên MinIO.",
+        "paragraphIndex": 1
+      },
+      {
+        "text": "1. Kiến trúc Storage đề xuất",
+        "paragraphIndex": 2
+      },
+      {
+        "text": "Điểm quan trọng của kiến trúc:- File không đi qua NestJS/API Gateway.- Backend chỉ chịu trách nhiệm: Xác thực user, kiểm tra quyền, sinh object key, sinh Presigned URL, và lưu audio_key/image_key/avatar_key vào PostgreSQL.- Client upload (Presigned) trực tiếp lên MinIO; download media công khai qua CDN.",
+        "paragraphIndex": 3
+      },
+      {
+        "text": "2. Thiết kế và Tổ chức Bucket",
+        "paragraphIndex": 4
+      },
+      {
+        "text": "Không nên tạo một bucket cho mỗi file (tránh hàng nghìn bucket). Thay vào đó, thiết kế 2 bucket chính:",
+        "paragraphIndex": 5
+      },
+      {
+        "text": "4. Thiết kế Database (PostgreSQL & MinIO)",
+        "paragraphIndex": 23
+      },
+      {
+        "text": "Nguyên tắc quan trọng: MinIO lưu file, PostgreSQL lưu metadata và object key.Không nên lưu URL đầy đủ trong database (như http://minio:9000/toeic-media/...). Chỉ nên lưu key (ví dụ: audio_key = questions/listening/part-1/{question_id}/audio.mp3) để thống nhất và linh hoạt khi đổi domain.",
+        "paragraphIndex": 24
+      },
+      {
+        "text": "5. Luồng Upload và Download",
+        "paragraphIndex": 25
+      },
+      {
+        "text": "5.1. Luồng Upload",
+        "paragraphIndex": 26
+      },
+      {
+        "text": "1. Frontend gọi API POST /api/v1/questions/{id}/media/presign2. Backend (Question Service) xác thực, sinh object key và Presigned URL trả về cho Frontend.3. Frontend PUT trực tiếp file lên MinIO bằng URL vừa nhận.4. Backend cập nhật audio_key/image_key vào database. Avatar: PATCH /api/v1/users/me/avatar/presign (bucket toeic-user). Vocabulary audio: POST /api/v1/learning/vocabularies/{id}/media/presign (bucket toeic-media).",
+        "paragraphIndex": 27
+      },
+      {
+        "text": "5.2. Luồng Download/Play Audio",
+        "paragraphIndex": 28
+      },
+      {
+        "text": "1. Client GET thông tin câu hỏi (chứa audio_key/image_key).2. Backend trả về CDN URL công khai cho bucket toeic-media.3. Client phát/tải file trực tiếp từ CDN.",
+        "paragraphIndex": 29
+      },
+      {
+        "text": "6. Phân quyền và Bảo mật (MinIO)",
+        "paragraphIndex": 30
+      },
+      {
+        "text": "- toeic-media: Public-read = ON (phục vụ qua CDN). toeic-user: Private (chỉ truy cập qua Presigned URL).- Phân quyền theo Microservice (IAM policy theo bucket/prefix; object key lưu trong DB không kèm bucket):",
+        "paragraphIndex": 31
+      }
+    ],
+    "sha256": "D6E3D72A58B6262E2724C636C5ACCA7071B975C9A64B9C94E55395D392D89BC3",
+    "file": "Thiet_ke_kien_truc_Storage.docx",
+    "paragraphs": 67
+  }
+]

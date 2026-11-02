@@ -7,6 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  distDir: process.env.FRONTEND_BUILD_DIR || '.next',
   // Trace dependencies from the monorepo root so the standalone server can be
   // copied and run from a container image built at the repository root.
   experimental: {

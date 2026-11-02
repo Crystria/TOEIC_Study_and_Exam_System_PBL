@@ -1,0 +1,1812 @@
+{
+  "SRS.docx": [
+    {
+      "paragraph": 67,
+      "text": "Đội ngũ Đảm bảo Chất lượng (QC): Tập trung vào kịch bản luồng chính (Main Success Scenario) và các luồng ngoại lệ (Extensions) của Use Case ở Mục 3 kết hợp với tiêu chí chấp nhận định lượng ở Mục 6."
+    },
+    {
+      "paragraph": 68,
+      "text": "Quản trị viên Dự án (PM/PO): Sử dụng các ID yêu cầu (FK-xx-xxx, UC-xx-xxx) để quản lý tiến độ Sprint và theo dõi Ma trận truy xuất nguồn gốc yêu cầu."
+    },
+    {
+      "paragraph": 69,
+      "text": "Tài liệu tham chiếu và tiêu chuẩn áp dụng"
+    },
+    {
+      "paragraph": 70,
+      "text": "ISO/IEC/IEEE 29148:2018: Systems and software engineering — Life cycle processes — Requirements engineering."
+    },
+    {
+      "paragraph": 114,
+      "text": "–          Sử dụng: Admin CMS - Phân hệ Hệ thống."
+    },
+    {
+      "paragraph": 115,
+      "text": "–          Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung."
+    },
+    {
+      "paragraph": 116,
+      "text": "•           Quản trị viên nội dung (Content Administrator / CONTENT_ADMIN):"
+    },
+    {
+      "paragraph": 117,
+      "text": "–          Sử dụng: Admin CMS - Phân hệ Nội dung."
+    },
+    {
+      "paragraph": 151,
+      "text": "Dịch vụ chịu trách nhiệm quản lý thông tin tài khoản, xác thực quyền hạn theo mô hình RBAC (SYSTEM_ADMIN, CONTENT_ADMIN, USER) và đồng bộ hóa phiên làm việc của người dùng trên nhiều nền tảng."
+    },
+    {
+      "paragraph": 152,
+      "text": "3.1.1 Đăng ký tài khoản (FK-01-Dang-Ky)"
+    },
+    {
+      "paragraph": 153,
+      "text": "Tác nhân thực hiện: Khách (Guest)."
+    },
+    {
+      "paragraph": 154,
+      "text": "Mô tả chức năng: Cho phép người dùng tạo tài khoản học viên mới bằng địa chỉ email cá nhân."
+    },
+    {
+      "paragraph": 160,
+      "text": "Dữ liệu đầu ra (Outputs):"
+    },
+    {
+      "paragraph": 161,
+      "text": "HTTP 201 (Created): Trả về đối tượng User gồm user_id (UUIDv4), email, full_name, role (USER), status (INACTIVE), created_at."
+    },
+    {
+      "paragraph": 162,
+      "text": "HTTP 400 (Bad Request): Thông báo lỗi dữ liệu không hợp lệ. HTTP 409 (Conflict): Email đã tồn tại trong hệ thống."
+    },
+    {
+      "paragraph": 163,
+      "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+    },
+    {
+      "paragraph": 165,
+      "text": "Mật khẩu bắt buộc phải được mã hóa băm một chiều bằng thuật toán BCrypt (Salt Work Factor = 12) trước khi lưu vào database."
+    },
+    {
+      "paragraph": 166,
+      "text": "Tài khoản mới mặc định ở trạng thái INACTIVE; hệ thống gửi email kích hoạt và tự động chuyển sang ACTIVE sau khi người dùng xác thực liên kết. Tự động gán vai trò mặc định là USER cho mọi tài khoản đăng ký mới."
+    },
+    {
+      "paragraph": 167,
+      "text": "3.1.2 Đăng nhập hệ thống (FK-02-Dang-Nhap)"
+    },
+    {
+      "paragraph": 168,
+      "text": "Tác nhân thực hiện: Tất cả người dùng (USER, SYSTEM_ADMIN, CONTENT_ADMIN)."
+    },
+    {
+      "paragraph": 169,
+      "text": "Mô tả chức năng: Xác thực thông tin người dùng và cấp cặp Token JWT bảo mật để truy cập các tài nguyên hệ thống."
+    },
+    {
+      "paragraph": 176,
+      "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+    },
+    {
+      "paragraph": 177,
+      "text": "Tài khoản ở trạng thái SUSPENDED hoặc INACTIVE không thể đăng nhập."
+    },
+    {
+      "paragraph": 178,
+      "text": "Tự động tăng biến đếm nhập sai mật khẩu; khóa tài khoản tạm thời 15 phút nếu nhập sai 5 lần liên tiếp."
+    },
+    {
+      "paragraph": 179,
+      "text": "3.1.3 Quản lý người dùng & phân quyền hệ thống (FK-03-Quan-Ly-Nguoi-Dung)"
+    },
+    {
+      "paragraph": 180,
+      "text": "Tác nhân thực hiện: Quản trị viên hệ thống (SYSTEM_ADMIN) đối với phân quyền/trạng thái; Học viên (USER) đối với hồ sơ cá nhân."
+    },
+    {
+      "paragraph": 181,
+      "text": "Mô tả chức năng: Cho phép học viên sửa hồ sơ cá nhân và System Admin quản lý, phân quyền, thay đổi trạng thái tài khoản toàn hệ thống."
+    },
+    {
+      "paragraph": 182,
+      "text": "Dữ liệu đầu vào (Inputs):"
+    },
+    {
+      "paragraph": 183,
+      "text": "Đối với Học viên: full_name (Chuỗi), avatar_key (Chuỗi), phone_number (Chuỗi)."
+    },
+    {
+      "paragraph": 184,
+      "text": "Đối với System Admin: user_id (UUIDv4), status (Enum: ACTIVE, SUSPENDED, INACTIVE), roles (Mảng Enum: SYSTEM_ADMIN, CONTENT_ADMIN, USER)."
+    },
+    {
+      "paragraph": 185,
+      "text": "Dữ liệu đầu ra (Outputs):"
+    },
+    {
+      "paragraph": 186,
+      "text": "HTTP 200 (OK): Trả về thực thể người dùng đã cập nhật."
+    },
+    {
+      "paragraph": 190,
+      "text": "Ghi vết nhật ký quản trị (Audit Log) cho mọi thao tác nâng/hạ quyền hạn tài khoản."
+    },
+    {
+      "paragraph": 191,
+      "text": "3.1.4 Đồng bộ dữ liệu đa nền tảng (FK-04-Dong-Bo-Du-Lieu)"
+    },
+    {
+      "paragraph": 192,
+      "text": "Tác nhân thực hiện: Học viên (USER)."
+    },
+    {
+      "paragraph": 193,
+      "text": "Mô tả chức năng: Đồng bộ cấu hình, trạng thái phiên học và tiến độ làm bài giữa Web App và Mobile App."
+    },
+    {
+      "paragraph": 201,
+      "text": "Dịch vụ quản trị kho dữ liệu câu hỏi thi TOEIC 2 kỹ năng (Listening & Reading), hỗ trợ tìm kiếm phân loại đa tiêu chí."
+    },
+    {
+      "paragraph": 202,
+      "text": "3.2.1 Quản lý ngân hàng câu hỏi (FK-05-Quan-Ly-Ngan-Hang-Cau-Hoi)"
+    },
+    {
+      "paragraph": 203,
+      "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+    },
+    {
+      "paragraph": 204,
+      "text": "Mô tả chức năng: Cho phép Content Admin thực hiện CRUD các câu hỏi trắc nghiệm thuộc Part 1 đến Part 7."
+    },
+    {
+      "paragraph": 207,
+      "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+    },
+    {
+      "paragraph": 208,
+      "text": "File ghi âm (.mp3, tối đa 5MB) và ảnh (.png/.jpg/.webp, tối đa 2MB) tải lên qua S3 Presigned URL trực tiếp từ Client để giải phóng băng thông Gateway."
+    },
+    {
+      "paragraph": 209,
+      "text": "Sử dụng mẫu Transactional Outbox & CDC phát sự kiện QuestionCreatedEvent / QuestionUpdatedEvent lên Message Broker để đồng bộ chỉ mục Elasticsearch."
+    },
+    {
+      "paragraph": 210,
+      "text": "3.2.2 Tìm kiếm và lọc câu hỏi (FK-06-Tim-Kiem-Va-Loc-Cau-Hoi)"
+    },
+    {
+      "paragraph": 211,
+      "text": "Tác nhân thực hiện: Học viên (USER), Content Admin (CONTENT_ADMIN)."
+    },
+    {
+      "paragraph": 212,
+      "text": "Mô tả chức năng: Cung cấp bộ lọc câu hỏi đa tiêu chí phục vụ luyện tập và quản trị."
+    },
+    {
+      "paragraph": 220,
+      "text": "Dịch vụ điều phối đề thi, chấm điểm tự động bảo mật qua gRPC, quản lý tiến trình thi và lịch sử làm bài."
+    },
+    {
+      "paragraph": 221,
+      "text": "3.3.1 Quản lý bài kiểm tra / đề thi (FK-07-Quan-Ly-De-Thi)"
+    },
+    {
+      "paragraph": 222,
+      "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+    },
+    {
+      "paragraph": 223,
+      "text": "Mô tả chức năng: Cho phép Content Admin đóng gói đề thi thử TOEIC (Full Test 200 câu hoặc Mini Test) từ kho câu hỏi."
+    },
+    {
+      "paragraph": 224,
+      "text": "Dữ liệu đầu vào (Inputs): test_title (Chuỗi), test_type (Enum: FULL_TEST, MINI_TEST), duration_seconds (Số nguyên: 7200 giây cho Full Test 120 phút; 1800 giây cho Mini Test 30 phút), question_ids (Mảng UUID câu hỏi)."
+    },
+    {
+      "paragraph": 225,
+      "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm test_id (UUIDv4)."
+    },
+    {
+      "paragraph": 226,
+      "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+    },
+    {
+      "paragraph": 227,
+      "text": "Xác thực tính tồn tại của danh sách question_ids bằng cuộc gọi gRPC nội bộ sang Question Bank Service trước khi đóng gói đề thi."
+    },
+    {
+      "paragraph": 228,
+      "text": "3.3.2 Làm bài thi thử (FK-08-lam-bai-thi-thu)"
+    },
+    {
+      "paragraph": 229,
+      "text": "Tác nhân thực hiện: Học viên (USER)."
+    },
+    {
+      "paragraph": 230,
+      "text": "Mô tả chức năng: Cho phép học viên thi thử TOEIC trực tuyến có tính giờ thời gian thực và chấm điểm tự động."
+    },
+    {
+      "paragraph": 235,
+      "text": "Đồng bộ Saga Hướng sự kiện: Ghi kết quả vào exam_db.attempts, đồng thời ghi sự kiện TestSubmittedEvent vào Outbox Table để CDC đẩy lên RabbitMQ cho phân hệ Analytics tiêu thụ."
+    },
+    {
+      "paragraph": 236,
+      "text": "3.3.3 Xem lịch sử và lời giải chi tiết (FK-09-Xem-Lich-Su-Va-Loi-Giai)"
+    },
+    {
+      "paragraph": 237,
+      "text": "Tác nhân thực hiện: Học viên (USER)."
+    },
+    {
+      "paragraph": 238,
+      "text": "Mô tả chức năng: Cho phép học viên xem lại chi tiết bài thi đã làm, đáp án đúng/sai, audio, transcript bài nghe và lời giải thích ngữ pháp bài đọc."
+    },
+    {
+      "paragraph": 246,
+      "text": "Dịch vụ quản trị từ vựng Flashcards, biên soạn lý thuyết ngữ pháp và điều phối thuật toán lặp lại ngắt quãng SuperMemo-2."
+    },
+    {
+      "paragraph": 247,
+      "text": "3.4.1 Quản lý từ vựng & Flashcards (FK-10-Quan-Ly-Tu-Vung)"
+    },
+    {
+      "paragraph": 248,
+      "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+    },
+    {
+      "paragraph": 249,
+      "text": "Mô tả chức năng: Cho phép Content Admin biên tập kho từ vựng theo chủ đề, nạp từ mới, IPA, định nghĩa, ví dụ và file âm thanh."
+    },
+    {
+      "paragraph": 253,
+      "text": "File phát âm (.mp3, tối đa 5MB) được lưu trữ trên Object Storage và phát lại qua CDN public; hệ thống lưu audio_key, kiểm tra object tồn tại; CDN URL chỉ dùng khi phát nội dung."
+    },
+    {
+      "paragraph": 254,
+      "text": "3.4.2 Quản lý lý thuyết ngữ pháp (FK-11-Quan-Ly-Ly-Thuyet)"
+    },
+    {
+      "paragraph": 255,
+      "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+    },
+    {
+      "paragraph": 256,
+      "text": "Mô tả chức năng: Cho phép Content Admin soạn thảo bài giảng lý thuyết ngữ pháp TOEIC theo định dạng Markdown."
+    },
+    {
+      "paragraph": 257,
+      "text": "Dữ liệu đầu vào (Inputs): lesson_title (Chuỗi), category (Chuỗi), content_markdown (Văn bản định dạng Markdown chứa cấu trúc bài học và ví dụ)."
+    },
+    {
+      "paragraph": 258,
+      "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm lesson_id (UUIDv4)."
+    },
+    {
+      "paragraph": 259,
+      "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+    },
+    {
+      "paragraph": 260,
+      "text": "content_markdown bắt buộc tuân thủ chuẩn Markdown để các ứng dụng Client (Next.js/Flutter) render giao diện chuẩn xác."
+    },
+    {
+      "paragraph": 261,
+      "text": "3.4.3 Học từ vựng & Lý thuyết (FK-12-Cac-Tac-Vu-Hoc-Tap)"
+    },
+    {
+      "paragraph": 262,
+      "text": "Tác nhân thực hiện: Học viên (USER)."
+    },
+    {
+      "paragraph": 263,
+      "text": "Mô tả chức năng: Học viên học từ vựng qua Flashcard (áp dụng thuật toán SM-2), làm bài trắc nghiệm nhanh 5 câu và đọc bài giảng ngữ pháp."
+    },
+    {
+      "paragraph": 264,
+      "text": "Dữ liệu đầu vào (Inputs):"
+    },
+    {
+      "paragraph": 265,
+      "text": "Đối với Flashcard: vocabulary_id (UUIDv4), quality (Số nguyên từ 0 đến 5 thể hiện mức độ ghi nhớ)."
+    },
+    {
+      "paragraph": 266,
+      "text": "Đối với Lý thuyết: lesson_id (UUIDv4), status (COMPLETED)."
+    },
+    {
+      "paragraph": 267,
+      "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) kèm thông số SM-2 mới (interval, easinessFactor, nextReviewDate)."
+    },
+    {
+      "paragraph": 268,
+      "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+    },
+    {
+      "paragraph": 269,
+      "text": "Thuật toán SuperMemo-2 (SM-2)."
+    },
+    {
+      "paragraph": 270,
+      "text": "Phát sự kiện VocabularyLearnedEvent hoặc LessonCompletedEvent lên Message Broker để cập nhật tiến độ học tập."
+    },
+    {
+      "paragraph": 271,
+      "text": ""
+    },
+    {
+      "paragraph": 274,
+      "text": "Dịch vụ thu thập sự kiện bất đồng bộ, tổng hợp biểu đồ học tập, quản lý streak ngày học và dự đoán điểm thi TOEIC."
+    },
+    {
+      "paragraph": 275,
+      "text": "3.5.1 Theo dõi tiến độ và thống kê kết quả (FK-13-Theo-Doi-Tien-Do-Va-Thong-Ke-Ket-Qua)"
+    },
+    {
+      "paragraph": 276,
+      "text": "Tác nhân thực hiện: Học viên (USER)."
+    },
+    {
+      "paragraph": 277,
+      "text": "Mô tả chức năng: Cung cấp báo cáo phân tích năng lực, biểu đồ Score Trend và điểm số TOEIC dự đoán hiện tại."
+    },
+    {
+      "paragraph": 281,
+      "text": "Lắng nghe các sự kiện TestSubmittedEvent, VocabularyLearnedEvent, LessonCompletedEvent qua RabbitMQ Consumer."
+    },
+    {
+      "paragraph": 282,
+      "text": "Thuật toán dự đoán điểm TOEIC: Chỉ kích hoạt tính toán khi học viên làm tối thiểu 3 bài thi thử trong 30 ngày gần nhất."
+    },
+    {
+      "paragraph": 283,
+      "text": "Công thức:"
+    },
+    {
+      "paragraph": 284,
+      "text": "Quy đổi số câu đúng → điểm TOEIC"
+    },
+    {
+      "paragraph": 289,
+      "text": "Dự đoán điểm TOEIC:"
+    },
+    {
+      "paragraph": 290,
+      "text": "Lấy tối đa 3 bài thi thử gần nhất trong 30 ngày (theo completed_at)."
+    },
+    {
+      "paragraph": 291,
+      "text": "Trọng số theo độ mới: w = [0.5, 0.3, 0.2] (bài mới nhất w=0.5)."
+    },
+    {
+      "paragraph": 292,
+      "text": "predicted_toeic_score = clamp( round5( Σ(wᵢ · total_scoreᵢ) / Σwᵢ ), 10, 990 )"
+    },
+    {
+      "paragraph": 293,
+      "text": "Chỉ kích hoạt khi có ≥3 bài trong 30 ngày gần nhất; nếu chưa đủ → trả null/không hiển thị."
+    },
+    {
+      "paragraph": 294,
+      "text": "(Tùy chọn) tính riêng predicted cho Listening/Reading cùng công thức rồi cộng lại."
+    },
+    {
+      "paragraph": 295,
+      "text": ""
+    },
+    {
+      "paragraph": 298,
+      "text": "Dịch vụ tích hợp trí tuệ nhân tạo (LLM Engine) giải thích ngữ pháp và hỗ trợ học tập trực tiếp theo ngữ cảnh."
+    },
+    {
+      "paragraph": 299,
+      "text": "3.6.1 Tích hợp trợ lý AI Chatbox (FK-14-Tich-Hop-AI-Chatbox)"
+    },
+    {
+      "paragraph": 300,
+      "text": "Tác nhân thực hiện: Học viên (USER)."
+    },
+    {
+      "paragraph": 301,
+      "text": "Mô tả chức năng: Hộp thoại chat hỏi đáp trực tiếp với AI giải thích thắc mắc về câu hỏi, từ vựng hoặc bài ngữ pháp đang xem."
+    },
+    {
+      "paragraph": 302,
+      "text": "Dữ liệu đầu vào (Inputs): user_id (lấy từ JWT), message_content (Chuỗi, max 1000 ký tự), context_question_id (UUIDv4, tùy chọn)."
+    },
+    {
+      "paragraph": 303,
+      "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) trả về response_content (Markdown), conversation_id."
+    },
+    {
+      "paragraph": 304,
+      "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+    },
+    {
+      "paragraph": 327,
+      "text": "Học viên đã đăng nhập thành công vào hệ thống và được cấp Token JWT hợp lệ."
+    },
+    {
+      "paragraph": 328,
+      "text": "Kích hoạt"
+    },
+    {
+      "paragraph": 329,
+      "text": "Học viên nhấn nút “Bắt đầu làm bài” trên giao diện danh sách đề thi thử."
+    },
+    {
+      "paragraph": 330,
+      "text": "Điều kiện sau"
+    },
+    {
+      "paragraph": 338,
+      "text": "Học viên lựa chọn đề thi từ danh sách và nhấn nút “Bắt đầu làm bài”."
+    },
+    {
+      "paragraph": 339,
+      "text": "Hệ thống (API Gateway & Test/Exam Service) xác thực quyền truy cập, tải cấu trúc đề thi, gọi Question Bank Service qua gRPC để lấy danh sách câu hỏi và kích hoạt đồng hồ đếm ngược thời gian làm bài thực tế."
+    },
+    {
+      "paragraph": 340,
+      "text": "2"
+    },
+    {
+      "paragraph": 341,
+      "text": "Học viên tiến hành làm bài bằng cách chọn các đáp án trắc nghiệm A, B, C, D trên màn hình."
+    },
+    {
+      "paragraph": 360,
+      "text": "1. Hệ thống tự động khóa giao diện làm bài của học viên."
+    },
+    {
+      "paragraph": 361,
+      "text": "2. Tự động gom toàn bộ các câu trả lời học viên đã thực hiện tính tới thời điểm hiện tại và tự động kích hoạt tiến trình gửi bài nộp về Server."
+    },
+    {
+      "paragraph": 362,
+      "text": "3. Tiếp tục từ bước 4 của luồng chính."
+    },
+    {
+      "paragraph": 363,
+      "text": "3b"
+    },
+    {
+      "paragraph": 387,
+      "text": "Học viên đã đăng nhập và chưa vượt quá giới hạn số lượt chat trong ngày (Rate limit)."
+    },
+    {
+      "paragraph": 388,
+      "text": "Kích hoạt"
+    },
+    {
+      "paragraph": 389,
+      "text": "Học viên truy cập mục Chatbox hoặc nhấn nút “Hỏi trợ lý AI về câu này” trong màn hình xem lời giải chi tiết."
+    },
+    {
+      "paragraph": 390,
+      "text": "Điều kiện sau"
+    },
+    {
+      "paragraph": 415,
+      "text": "1. Hệ thống chặn không cho gửi tin nhắn đi."
+    },
+    {
+      "paragraph": 416,
+      "text": "2. Hiển thị thông báo gợi ý: “Bạn đã dùng hết 20 lượt chat trong ngày hôm nay."
+    },
+    {
+      "paragraph": 417,
+      "text": "3a"
+    },
+    {
+      "paragraph": 418,
+      "text": "API mô hình ngôn ngữ lớn (LLM Engine) bên ngoài bị quá tải hoặc gặp lỗi timeout."
+    },
+    {
+      "paragraph": 419,
+      "text": "1. Bộ ngắt mạch (Circuit Breaker) của AI Chatbox Service kích hoạt sau 10 giây không có phản hồi."
+    },
+    {
+      "paragraph": 420,
+      "text": "2. Trả về phản hồi fallback mặc định: “Hệ thống AI đang bận xử lý, xin vui lòng gửi lại câu hỏi sau ít phút”."
+    },
+    {
+      "paragraph": 421,
+      "text": "3. Hệ thống hoàn lại lượt chat cho học viên và không tính phí lượt chat đó."
+    },
+    {
+      "paragraph": 439,
+      "text": "Học viên đã đăng nhập cùng một tài khoản trên các thiết bị và thiết bị thực hiện đồng bộ có kết nối mạng."
+    },
+    {
+      "paragraph": 440,
+      "text": "Kích hoạt"
+    },
+    {
+      "paragraph": 441,
+      "text": "Học viên mở ứng dụng trên thiết bị mới, hoặc thiết bị định kỳ (mỗi 5 phút) tự động kích hoạt kiểm tra đồng bộ dữ liệu với máy chủ."
+    },
+    {
+      "paragraph": 442,
+      "text": "Điều kiện sau"
+    },
+    {
+      "paragraph": 443,
+      "text": "Trường hợp thành công:- Tiến độ học từ vựng và ngữ pháp của học viên được đồng nhất hoàn toàn giữa các nền tảng Web và Mobile App.- Bản ghi có version lớn nhất được áp dụng làm trạng thái chung."
+    },
+    {
+      "paragraph": 492,
+      "text": "Mô tả"
+    },
+    {
+      "paragraph": 493,
+      "text": "Quản trị viên tiến hành thêm, sửa đổi, hoặc xóa câu hỏi trong hệ thống CMS quản trị. Để tối ưu băng thông API Gateway, các tệp âm thanh nghe (.mp3) và hình ảnh minh họa (.png) được tải trực tiếp lên Object Storage (S3/MinIO) thông qua cơ chế Presigned URL. Sau khi ghi nhận dữ liệu câu hỏi thành công, hệ thống sử dụng Transactional Outbox để đồng bộ bất đồng bộ sang module Search (trong Question Bank Service) nhằm cập nhật chỉ mục tìm kiếm gần thời gian thực."
+    },
+    {
+      "paragraph": 494,
+      "text": "Điều kiện tiên quyết"
+    },
+    {
+      "paragraph": 495,
+      "text": "Quản trị viên đã đăng nhập thành công vào hệ thống Admin CMS và được cấp Token JWT có quyền CONTENT_ADMIN."
+    },
+    {
+      "paragraph": 496,
+      "text": "Kích hoạt"
+    },
+    {
+      "paragraph": 497,
+      "text": "Quản trị viên nhấn nút “Lưu câu hỏi” trên giao diện quản trị sau khi đã điền đầy đủ dữ liệu và tải lên các tệp đa phương tiện."
+    },
+    {
+      "paragraph": 498,
+      "text": "Điều kiện sau"
+    },
+    {
+      "paragraph": 506,
+      "text": "Admin hoàn tất nhập thông tin câu hỏi và kéo thả tệp âm thanh (.mp3) hoặc hình ảnh (.png) vào khung tải tệp của giao diện."
+    },
+    {
+      "paragraph": 507,
+      "text": "Giao diện tự động kích hoạt tiến trình gửi yêu cầu tạo Presigned URL lên Question Bank Service thông qua API Gateway."
+    },
+    {
+      "paragraph": 508,
+      "text": "2"
+    },
+    {
+      "paragraph": 509,
+      "text": "Hệ thống tạo đường dẫn tải trực tiếp."
+    },
+    {
+      "paragraph": 510,
+      "text": "Question Bank Service gọi API Object Storage (S3/MinIO) để lấy đường dẫn tải tệp trực tiếp (Presigned URL) có thời gian hết hạn ngắn (5 phút), phản hồi về cho Client kèm token bảo mật."
+    },
+    {
+      "paragraph": 511,
+      "text": "3"
+    },
+    {
+      "paragraph": 512,
+      "text": "Client tiến hành tải tệp phương tiện."
+    },
+    {
+      "paragraph": 513,
+      "text": "Ứng dụng Client thực hiện gửi yêu cầu HTTP PUT trực tiếp lên Object Storage bằng Presigned URL để upload file, nhận mã HTTP 200 (OK) báo upload thành công."
+    },
+    {
+      "paragraph": 514,
+      "text": "4"
+    },
+    {
+      "paragraph": 515,
+      "text": "Admin nhấn nút “Lưu câu hỏi”."
+    },
+    {
+      "paragraph": 532,
+      "text": "Quá trình ghi nhận thông tin câu hỏi vào cơ sở dữ liệu quest_db bị lỗi transaction hoặc trùng khóa chính."
+    },
+    {
+      "paragraph": 533,
+      "text": "1. Question Bank Service kích hoạt tiến trình dọn dẹp (Cleanup) tự động xóa tệp đã upload lên Object Storage để tránh lãng phí bộ nhớ."
+    },
+    {
+      "paragraph": 534,
+      "text": "2. Trả về mã lỗi HTTP 500 (Internal Server Error) kèm thông tin lỗi."
+    },
+    {
+      "paragraph": 535,
+      "text": "3. Giữ nguyên toàn bộ dữ liệu văn bản Admin đã nhập trên form giao diện để tránh việc phải nhập lại."
+    },
+    {
+      "paragraph": 553,
+      "text": "Mô tả"
+    },
+    {
+      "paragraph": 554,
+      "text": "Học viên tiến hành học từ vựng mới và ôn tập từ cũ theo từng chủ đề thông qua Flashcard thông minh. Hệ thống tự động phát âm giọng đọc chuẩn của từ vựng từ Object Storage (CDN) và hỗ trợ học viên tự đánh giá mức độ ghi nhớ của mình. Dựa trên đánh giá đó, hệ thống áp dụng Thuật toán lặp lại ngắt quãng SuperMemo-2 (SM-2) để tự động tính toán thời điểm và khoảng cách ngày ôn tập tối ưu tiếp theo cho từ vựng đó. Sau khi hoàn thành thẻ học, học viên thực hiện một bài trắc nghiệm nhanh 5 câu để củng cố và ghi nhận tiến độ."
+    },
+    {
+      "paragraph": 555,
+      "text": "Điều kiện tiên quyết"
+    },
+    {
+      "paragraph": 556,
+      "text": "Học viên đã đăng nhập thành công vào hệ thống và chọn một chủ đề từ vựng cụ thể để bắt đầu học."
+    },
+    {
+      "paragraph": 557,
+      "text": "Kích hoạt"
+    },
+    {
+      "paragraph": 558,
+      "text": "Học viên nhấn nút “Học từ mới” hoặc “Ôn tập hôm nay” trong phân hệ học từ vựng."
+    },
+    {
+      "paragraph": 559,
+      "text": "Điều kiện sau"
+    },
+    {
+      "paragraph": 581,
+      "text": "6"
+    },
+    {
+      "paragraph": 582,
+      "text": "Hệ thống áp dụng thuật toán SM-2, lưu trữ và đồng bộ."
+    },
+    {
+      "paragraph": 583,
+      "text": "Learning & Theory Service chấm điểm bài trắc nghiệm, chạy Thuật toán SuperMemo-2 để cập nhật Interval và EF cho từng từ vựng, ghi nhận vào learning_db và xuất bản sự kiện VocabularyLearnedEvent lên Message Broker để History & Analytics Service tăng streak ngày học liên tiếp. Hệ thống trả về kết quả phiên học và danh sách ngày ôn tập tiếp theo lên màn hình."
+    },
+    {
+      "paragraph": 584,
+      "text": "BẢNG LUỒNG MỞ RỘNG & NGOẠI LỆ (EXTENSIONS)"
+    },
+    {
+      "paragraph": 606,
+      "text": "Thông lượng Message Broker: Hệ thống Message Broker (RabbitMQ) phải đảm bảo khả năng xử lý thông lượng tối thiểu 5000 sự kiện/giây mà không xảy ra hiện tượng tắc nghẽn hoặc mất dữ liệu."
+    },
+    {
+      "paragraph": 607,
+      "text": "Tải đồng thời: Hệ thống phải duy trì hoạt động ổn định và không sụt giảm hiệu năng khi có ít nhất 1000 học viên truy cập và làm bài thi đồng thời trong giờ cao điểm."
+    },
+    {
+      "paragraph": 608,
+      "text": "Yêu cầu an toàn & bảo mật"
+    },
+    {
+      "paragraph": 609,
+      "text": "Xác thực và phân quyền: Sử dụng JWT để xác thực các cuộc gọi API. Khóa ký token phải được bảo vệ nghiêm ngặt bằng Hashicorp Vault hoặc AWS Secrets Manager."
+    },
+    {
+      "paragraph": 653,
+      "text": "Cách thức thực hiện chi tiết (Dành cho QC/Dev)"
+    },
+    {
+      "paragraph": 654,
+      "text": "FK-01-Dang-Ky"
+    },
+    {
+      "paragraph": 655,
+      "text": "Đăng ký tài khoản"
+    },
+    {
+      "paragraph": 656,
+      "text": "1. Hệ thống gửi email kích hoạt tài khoản thành công trong vòng 5 giây sau khi nhấn đăng ký."
+    },
+    {
+      "paragraph": 657,
+      "text": "2. Mật khẩu lưu trữ trong database phải được mã hóa BCrypt hoàn toàn."
+    },
+    {
+      "paragraph": 658,
+      "text": "Testing (T)Inspection (I)"
+    },
+    {
+      "paragraph": 659,
+      "text": "1. Gửi yêu cầu đăng ký trên giao diện người dùng, sử dụng đồng hồ đo thời gian thực để đo độ trễ gửi email kích hoạt."
+    },
+    {
+      "paragraph": 660,
+      "text": "2. Thực hiện duyệt mã nguồn (Code Review) phần băm mật khẩu ở Backend và truy vấn trực tiếp cơ sở dữ liệu auth_db.users để đảm bảo password được băm thành chuỗi dài bắt đầu bằng $2b$."
+    },
+    {
+      "paragraph": 661,
+      "text": "FK-02-Dang-Nhap"
+    },
+    {
+      "paragraph": 662,
+      "text": "Đăng nhập hệ thống"
+    },
+    {
+      "paragraph": 663,
+      "text": "1. Đăng nhập thành công trả về đúng mã JWT Access Token (hạn 15 phút) và Refresh Token."
+    },
+    {
+      "paragraph": 667,
+      "text": "2. Sử dụng kịch bản kiểm thử tự động (Automation Test) gửi liên tiếp 6 request đăng nhập sai thông tin, xác nhận request thứ 6 trả về HTTP 401 kèm thông tin khóa tài khoản."
+    },
+    {
+      "paragraph": 668,
+      "text": "FK-05-Quan-Ly-Ngan-Hang-Cau-Hoi"
+    },
+    {
+      "paragraph": 669,
+      "text": "Quản lý ngân hàng câu hỏi"
+    },
+    {
+      "paragraph": 670,
+      "text": "1. Admin có thể CRUD câu hỏi thông qua giao diện CMS."
+    },
+    {
+      "paragraph": 688,
+      "text": "1. Thực hiện làm đề thi thử mới, truy cập trang Dashboard cá nhân để kiểm tra trực quan biểu đồ xu hướng điểm số có tự động cập nhật điểm mới hay không."
+    },
+    {
+      "paragraph": 689,
+      "text": "2. Chạy bộ Unit Test tích hợp để kiểm chứng thuật toán tính điểm dự đoán dựa trên trọng số [0.5, 0.3, 0.2] theo 3 bài thi gần nhất hoạt động đúng thiết kế toán học."
+    },
+    {
+      "paragraph": 690,
+      "text": "UC-02-Tra-Cuu-Hoc-Tap-AI"
+    },
+    {
+      "paragraph": 691,
+      "text": "Use Case: Tra cứu học tập AI"
+    },
+    {
+      "paragraph": 692,
+      "text": "1. Phản hồi câu hỏi học tập bằng văn bản định dạng Markdown rõ ràng."
+    },
+    {
+      "paragraph": 693,
+      "text": "2. Thời gian phản hồi của AI không quá 10 giây (hoặc trả về fallback hợp lý nếu LLM bên ngoài bị lỗi timeout).3. Kiểm soát chính xác rate limit tối đa 20 lượt chat/ngày đối với tài khoản học viên thông thường."
+    },
+    {
+      "paragraph": 694,
+      "text": "Testing (T)Analysis (A)"
+    },
+    {
+      "paragraph": 695,
+      "text": "1. QC gửi câu hỏi học tập cho AI Chatbox, kiểm tra định dạng và tính thẩm mỹ của Markdown. Chạy kiểm thử tự động đo đạc thời gian phản hồi."
+    },
+    {
+      "paragraph": 696,
+      "text": "2. Gửi liên tục 21 tin nhắn trong ngày để kiểm tra cơ chế chặn Rate Limiter tại API Gateway. Giả lập lỗi timeout của LLM ngoài để kiểm tra bộ ngắt mạch (Circuit Breaker) có kích hoạt trả về kết quả fallback mặc định hay không."
+    },
+    {
+      "paragraph": 697,
+      "text": "UC-03-Dong-Bo-Tien-Do-Hoc-Tap-Da-Nen-Tang"
+    },
+    {
+      "paragraph": 698,
+      "text": "Use Case: Đồng bộ đa nền tảng"
+    },
+    {
+      "paragraph": 706,
+      "text": "1. Admin có thể CRUD câu hỏi thông qua giao diện CMS và tải tệp tin phương tiện thành công."
+    },
+    {
+      "paragraph": 707,
+      "text": "2. Sử dụng cơ chế Presigned URL để upload file trực tiếp, và đồng bộ bất đồng bộ thành công sang module Search qua Outbox Pattern."
+    },
+    {
+      "paragraph": 708,
+      "text": "Testing (T)Analysis (A)"
+    },
+    {
+      "paragraph": 709,
+      "text": "1. Sử dụng công cụ giám sát mạng (Chrome DevTools Network), xác nhận file âm thanh được upload trực tiếp từ client lên S3/MinIO bằng Presigned URL thành công mà không đi qua payload REST chính của API Gateway."
+    },
+    {
+      "paragraph": 710,
+      "text": "2. Giả lập lỗi lưu database để kiểm tra cơ chế dọn dẹp (Cleanup) tệp mồ côi trên S3. Phân tích log CDC quét bảng outbox để đồng bộ Elasticsearch thông qua RabbitMQ."
+    },
+    {
+      "paragraph": 711,
+      "text": "UC-05-Hoc-Tu-Vung-Thong-Minh"
+    },
+    {
+      "paragraph": 722,
+      "text": "Testing (T)"
+    },
+    {
+      "paragraph": 723,
+      "text": "1. Chạy kịch bản Load Test (sử dụng k6 hoặc Apache JMeter) giả lập 1000 CCU thực hiện thao tác truy cập đồng thời trên hệ thống trong vòng 15 phút."
+    },
+    {
+      "paragraph": 724,
+      "text": "2. Sử dụng Grafana Dashboard để giám sát và xuất báo cáo hiệu năng: đảm bảo tỷ lệ lỗi (Error Rate) < 1% và thời gian phản hồi p95 tại API Gateway luôn nằm dưới mức 500ms."
+    },
+    {
+      "paragraph": 725,
+      "text": ""
+    }
+  ],
+  "tai_lieu_thiet_ke_CSDL.docx": [
+    {
+      "paragraph": 46,
+      "text": "learning_db"
+    },
+    {
+      "paragraph": 47,
+      "text": "Chủ đề, từ vựng, bài ngữ pháp, SM-2, phiên học, quiz nhanh, outbox"
+    },
+    {
+      "paragraph": 48,
+      "text": "History and Analytics"
+    },
+    {
+      "paragraph": 49,
+      "text": "analytics_db"
+    },
+    {
+      "paragraph": 220,
+      "text": "User"
+    },
+    {
+      "paragraph": 221,
+      "text": "Tài khoản và hồ sơ: user_id UUID, email varchar(320), password_hash varchar(60), full_name varchar(255), avatar_key text, phone_number varchar(32), status, failed_login_count, locked_until, timestamps"
+    },
+    {
+      "paragraph": 222,
+      "text": "PK user_id; candidate key email; email, full_name bắt buộc khi đăng ký; avatar, phone, locked_until NULL; status mặc định INACTIVE; failed count mặc định 0"
+    },
+    {
+      "paragraph": 223,
+      "text": "Email duy nhất; password BCrypt cost 12; khóa 15 phút sau 5 lần sai; FK-01, FK-02, FK-03"
+    },
+    {
+      "paragraph": 224,
+      "text": "Role"
+    },
+    {
+      "paragraph": 225,
+      "text": "Danh mục vai trò: role_code, name (SYSTEM_ADMIN, CONTENT_ADMIN, USER)"
+    },
+    {
+      "paragraph": 284,
+      "text": "Test"
+    },
+    {
+      "paragraph": 285,
+      "text": "Đề thi: test_id, title, type FULL_TEST/MINI_TEST, duration_seconds, timestamps, deleted_at"
+    },
+    {
+      "paragraph": 286,
+      "text": "PK test_id; title/type/duration bắt buộc"
+    },
+    {
+      "paragraph": 287,
+      "text": "FULL_TEST 120 phút và 200 câu; MINI_TEST 30 phút"
+    },
+    {
+      "paragraph": 288,
+      "text": "TestQuestion"
+    },
+    {
+      "paragraph": 289,
+      "text": "Cấu trúc đề: test_id, question_id logic, position"
+    },
+    {
+      "paragraph": 318,
+      "text": "GrammarLesson"
+    },
+    {
+      "paragraph": 319,
+      "text": "Bài ngữ pháp: lesson_id, lesson_title, category, content_markdown, timestamps, deleted_at"
+    },
+    {
+      "paragraph": 320,
+      "text": "PK lesson_id; ba trường nội dung bắt buộc"
+    },
+    {
+      "paragraph": 321,
+      "text": "Markdown hợp lệ"
+    },
+    {
+      "paragraph": 322,
+      "text": "UserVocabularyProgress"
+    },
+    {
+      "paragraph": 323,
+      "text": "Trạng thái SM-2 theo user và từ: user_id, vocabulary_id, quality, interval_days, easiness_factor, repetition_number, next_review_date, updated_at"
+    },
+    {
+      "paragraph": 324,
+      "text": "PK ghép (user_id, vocabulary_id); user_id là logic xuyên service"
+    },
+    {
+      "paragraph": 325,
+      "text": "quality 0-5; SM-2; mỗi user-từ chỉ một trạng thái hiện hành"
+    },
+    {
+      "paragraph": 326,
+      "text": "UserLessonProgress"
+    },
+    {
+      "paragraph": 327,
+      "text": "Trạng thái bài học: user_id, lesson_id, status COMPLETED, completed_at"
+    },
+    {
+      "paragraph": 336,
+      "text": "PK ghép (session_id, vocabulary_id)"
+    },
+    {
+      "paragraph": 337,
+      "text": "Chứng cứ đầu vào cho SM-2 và kết quả phiên"
+    },
+    {
+      "paragraph": 338,
+      "text": "LearningOutboxEvent"
+    },
+    {
+      "paragraph": 339,
+      "text": "VocabularyLearnedEvent LessonCompletedEvent"
+    },
+    {
+      "paragraph": 380,
+      "text": "PK message_id; conversation_id/role/content bắt buộc; context nullable"
+    },
+    {
+      "paragraph": 381,
+      "text": "message_content tối đa 1000 cho USER; response lưu lịch sử; question ref không FK"
+    },
+    {
+      "paragraph": 382,
+      "text": "DailyChatUsage"
+    },
+    {
+      "paragraph": 383,
+      "text": "Bộ đếm user/ngày: user_id, usage_date, used_count, updated_at"
+    },
+    {
+      "paragraph": 650,
+      "text": "Thuộc tính full name theo định nghĩa và ràng buộc trong DDL nguồn."
+    },
+    {
+      "paragraph": 651,
+      "text": "avatar_key"
+    },
+    {
+      "paragraph": 652,
+      "text": "TEXT"
+    },
+    {
+      "paragraph": 653,
+      "text": "-"
+    },
+    {
+      "paragraph": 655,
+      "text": "Không"
+    },
+    {
+      "paragraph": 656,
+      "text": "Thuộc tính avatar key theo định nghĩa và ràng buộc trong DDL nguồn."
+    },
+    {
+      "paragraph": 657,
+      "text": "phone_number"
+    },
+    {
+      "paragraph": 658,
+      "text": "VARCHAR(32)"
+    },
+    {
+      "paragraph": 1578,
+      "text": "Thuộc tính category theo định nghĩa và ràng buộc trong DDL nguồn."
+    },
+    {
+      "paragraph": 1579,
+      "text": "content_markdown"
+    },
+    {
+      "paragraph": 1580,
+      "text": "TEXT"
+    },
+    {
+      "paragraph": 1581,
+      "text": "-"
+    },
+    {
+      "paragraph": 2200,
+      "text": "status"
+    },
+    {
+      "paragraph": 2201,
+      "text": "‘INACTIVE’"
+    },
+    {
+      "paragraph": 2202,
+      "text": "auth_db.users"
+    },
+    {
+      "paragraph": 2203,
+      "text": "failed_login_count"
+    },
+    {
+      "paragraph": 2380,
+      "text": "Giải thích"
+    },
+    {
+      "paragraph": 2381,
+      "text": "FK-001"
+    },
+    {
+      "paragraph": 2382,
+      "text": "auth.user_roles"
+    },
+    {
+      "paragraph": 2383,
+      "text": "user_id"
+    },
+    {
+      "paragraph": 2388,
+      "text": "RESTRICT; hard delete User xử lý ở tầng ứng dụng."
+    },
+    {
+      "paragraph": 2389,
+      "text": "FK-002"
+    },
+    {
+      "paragraph": 2390,
+      "text": "auth.user_roles"
+    },
+    {
+      "paragraph": 2391,
+      "text": "role_code"
+    },
+    {
+      "paragraph": 2396,
+      "text": "Không xóa role đang được dùng"
+    },
+    {
+      "paragraph": 2397,
+      "text": "FK-003"
+    },
+    {
+      "paragraph": 2398,
+      "text": "auth.refresh_tokens"
+    },
+    {
+      "paragraph": 2399,
+      "text": "user_id"
+    },
+    {
+      "paragraph": 2404,
+      "text": "Token phụ thuộc vòng đời account"
+    },
+    {
+      "paragraph": 2405,
+      "text": "FK-004"
+    },
+    {
+      "paragraph": 2406,
+      "text": "auth.oauth_identities"
+    },
+    {
+      "paragraph": 2407,
+      "text": "user_id"
+    },
+    {
+      "paragraph": 2412,
+      "text": "Identity phụ thuộc account"
+    },
+    {
+      "paragraph": 2413,
+      "text": "FK-005"
+    },
+    {
+      "paragraph": 2414,
+      "text": "auth.admin_audit_logs"
+    },
+    {
+      "paragraph": 2415,
+      "text": "actor_user_id"
+    },
+    {
+      "paragraph": 2420,
+      "text": "Giữ bằng chứng người thao tác"
+    },
+    {
+      "paragraph": 2421,
+      "text": "FK-006"
+    },
+    {
+      "paragraph": 2422,
+      "text": "auth.admin_audit_logs"
+    },
+    {
+      "paragraph": 2423,
+      "text": "target_user_id"
+    },
+    {
+      "paragraph": 2428,
+      "text": "Giữ lịch sử tài khoản bị tác động"
+    },
+    {
+      "paragraph": 2429,
+      "text": "FK-007"
+    },
+    {
+      "paragraph": 2430,
+      "text": "auth.user_sync_states"
+    },
+    {
+      "paragraph": 2431,
+      "text": "user_id"
+    },
+    {
+      "paragraph": 2436,
+      "text": "RESTRICT; xóa state theo chính sách ở tầng ứng dụng."
+    },
+    {
+      "paragraph": 2437,
+      "text": "FK-008"
+    },
+    {
+      "paragraph": 2438,
+      "text": "quest.question_options"
+    },
+    {
+      "paragraph": 2439,
+      "text": "question_id"
+    },
+    {
+      "paragraph": 2444,
+      "text": "Option là thành phần vòng đời của Question"
+    },
+    {
+      "paragraph": 2445,
+      "text": "FK-009"
+    },
+    {
+      "paragraph": 2446,
+      "text": "quest.question_tags"
+    },
+    {
+      "paragraph": 2447,
+      "text": "question_id"
+    },
+    {
+      "paragraph": 2452,
+      "text": "Liên kết tag phụ thuộc Question"
+    },
+    {
+      "paragraph": 2453,
+      "text": "FK-010"
+    },
+    {
+      "paragraph": 2454,
+      "text": "quest.question_tags"
+    },
+    {
+      "paragraph": 2455,
+      "text": "tag_id"
+    },
+    {
+      "paragraph": 2460,
+      "text": "Xóa tag chỉ xóa liên kết, không xóa Question"
+    },
+    {
+      "paragraph": 2461,
+      "text": "FK-011"
+    },
+    {
+      "paragraph": 2462,
+      "text": "exam.test_questions"
+    },
+    {
+      "paragraph": 2463,
+      "text": "test_id"
+    },
+    {
+      "paragraph": 2468,
+      "text": "RESTRICT; không hard delete Test đã có attempt; xử lý ở tầng ứng dụng."
+    },
+    {
+      "paragraph": 2469,
+      "text": "FK-012"
+    },
+    {
+      "paragraph": 2470,
+      "text": "exam.attempts"
+    },
+    {
+      "paragraph": 2471,
+      "text": "test_id"
+    },
+    {
+      "paragraph": 2476,
+      "text": "Bảo toàn lịch sử thi"
+    },
+    {
+      "paragraph": 2477,
+      "text": "FK-013"
+    },
+    {
+      "paragraph": 2478,
+      "text": "exam.attempt_answers"
+    },
+    {
+      "paragraph": 2479,
+      "text": "attempt_id"
+    },
+    {
+      "paragraph": 2484,
+      "text": "Answer phụ thuộc hoàn toàn Attempt"
+    },
+    {
+      "paragraph": 2485,
+      "text": "FK-014"
+    },
+    {
+      "paragraph": 2486,
+      "text": "learning.vocabularies"
+    },
+    {
+      "paragraph": 2487,
+      "text": "topic_id"
+    },
+    {
+      "paragraph": 2492,
+      "text": "Không xóa topic còn vocabulary"
+    },
+    {
+      "paragraph": 2493,
+      "text": "FK-015"
+    },
+    {
+      "paragraph": 2494,
+      "text": "learning.user_vocabulary_progress"
+    },
+    {
+      "paragraph": 2495,
+      "text": "vocabulary_id"
+    },
+    {
+      "paragraph": 2500,
+      "text": "Bảo toàn tiến độ"
+    },
+    {
+      "paragraph": 2501,
+      "text": "FK-016"
+    },
+    {
+      "paragraph": 2502,
+      "text": "learning.user_lesson_progress"
+    },
+    {
+      "paragraph": 2503,
+      "text": "lesson_id"
+    },
+    {
+      "paragraph": 2508,
+      "text": "Bảo toàn completion"
+    },
+    {
+      "paragraph": 2509,
+      "text": "FK-017"
+    },
+    {
+      "paragraph": 2510,
+      "text": "learning.vocabulary_sessions"
+    },
+    {
+      "paragraph": 2511,
+      "text": "topic_id"
+    },
+    {
+      "paragraph": 2516,
+      "text": "Bảo toàn kết quả phiên"
+    },
+    {
+      "paragraph": 2517,
+      "text": "FK-018"
+    },
+    {
+      "paragraph": 2518,
+      "text": "learning.vocabulary_session_items"
+    },
+    {
+      "paragraph": 2519,
+      "text": "session_id"
+    },
+    {
+      "paragraph": 2524,
+      "text": "Item phụ thuộc Session"
+    },
+    {
+      "paragraph": 2525,
+      "text": "FK-019"
+    },
+    {
+      "paragraph": 2526,
+      "text": "learning.vocabulary_session_items"
+    },
+    {
+      "paragraph": 2527,
+      "text": "vocabulary_id"
+    },
+    {
+      "paragraph": 2532,
+      "text": "Bảo toàn nguồn từ của kết quả"
+    },
+    {
+      "paragraph": 2533,
+      "text": "FK-020"
+    },
+    {
+      "paragraph": 2534,
+      "text": "ai.chat_messages"
+    },
+    {
+      "paragraph": 2535,
+      "text": "conversation_id"
+    },
+    {
+      "paragraph": 2607,
+      "text": "idx_testfacts_user_completed"
+    },
+    {
+      "paragraph": 2608,
+      "text": "Score trend/3 bài gần nhất/30 ngày"
+    },
+    {
+      "paragraph": 2609,
+      "text": "Core analytics query"
+    },
+    {
+      "paragraph": 2610,
+      "text": "idx_activity_user_time"
+    }
+  ],
+  "Thiet_ke_kien_truc_Storage.docx": [
+    {
+      "paragraph": 0,
+      "text": "TÀI LIỆU THIẾT KẾ KIẾN TRÚC STORAGE "
+    },
+    {
+      "paragraph": 1,
+      "text": "Tài liệu kiến trúc xác định MinIO là Object Storage self-hosted, đồng thời client sẽ xin Presigned URL từ backend rồi upload trực tiếp lên S3/MinIO, tránh đi qua API Gateway. Tài liệu database cũng dùng các trường avatar_key, audio_key, image_key để tham chiếu đến object trên MinIO."
+    },
+    {
+      "paragraph": 2,
+      "text": "1. Kiến trúc Storage đề xuất"
+    },
+    {
+      "paragraph": 3,
+      "text": "Điểm quan trọng của kiến trúc:- File không đi qua NestJS/API Gateway.- Backend chỉ chịu trách nhiệm: Xác thực user, kiểm tra quyền, sinh object key, sinh Presigned URL, và lưu audio_key/image_key/avatar_key vào PostgreSQL.- Client upload (Presigned) trực tiếp lên MinIO; download media công khai qua CDN."
+    },
+    {
+      "paragraph": 4,
+      "text": "2. Thiết kế và Tổ chức Bucket"
+    },
+    {
+      "paragraph": 5,
+      "text": "Không nên tạo một bucket cho mỗi file (tránh hàng nghìn bucket). Thay vào đó, thiết kế 2 bucket chính:"
+    },
+    {
+      "paragraph": 12,
+      "text": "toeic-user"
+    },
+    {
+      "paragraph": 13,
+      "text": "Avatar, file riêng của user"
+    },
+    {
+      "paragraph": 14,
+      "text": "Không (private, presigned)"
+    },
+    {
+      "paragraph": 15,
+      "text": "3. Cấu trúc Object Key"
+    },
+    {
+      "paragraph": 16,
+      "text": "Object key cần được phân cấp rõ ràng để dễ quản lý."
+    },
+    {
+      "paragraph": 20,
+      "text": "Vocabulary: learning/vocabulary/{vocabulary_id}/audio.mp3"
+    },
+    {
+      "paragraph": 21,
+      "text": "3.3 Avatar"
+    },
+    {
+      "paragraph": 22,
+      "text": "Avatar: avatars/{user_id}/avatar.jpg"
+    },
+    {
+      "paragraph": 23,
+      "text": "4. Thiết kế Database (PostgreSQL & MinIO)"
+    },
+    {
+      "paragraph": 24,
+      "text": "Nguyên tắc quan trọng: MinIO lưu file, PostgreSQL lưu metadata và object key.Không nên lưu URL đầy đủ trong database (như http://minio:9000/toeic-media/...). Chỉ nên lưu key (ví dụ: audio_key = questions/listening/part-1/{question_id}/audio.mp3) để thống nhất và linh hoạt khi đổi domain."
+    },
+    {
+      "paragraph": 26,
+      "text": "5.1. Luồng Upload"
+    },
+    {
+      "paragraph": 27,
+      "text": "1. Frontend gọi API POST /api/v1/questions/{id}/media/presign2. Backend (Question Service) xác thực, sinh object key và Presigned URL trả về cho Frontend.3. Frontend PUT trực tiếp file lên MinIO bằng URL vừa nhận.4. Backend cập nhật audio_key/image_key vào database. Avatar: PATCH /api/v1/users/me/avatar/presign (bucket toeic-user). Vocabulary audio: POST /api/v1/learning/vocabularies/{id}/media/presign (bucket toeic-media)."
+    },
+    {
+      "paragraph": 28,
+      "text": "5.2. Luồng Download/Play Audio"
+    },
+    {
+      "paragraph": 29,
+      "text": "1. Client GET thông tin câu hỏi (chứa audio_key/image_key).2. Backend trả về CDN URL công khai cho bucket toeic-media.3. Client phát/tải file trực tiếp từ CDN."
+    },
+    {
+      "paragraph": 30,
+      "text": "6. Phân quyền và Bảo mật (MinIO)"
+    },
+    {
+      "paragraph": 31,
+      "text": "- toeic-media: Public-read = ON (phục vụ qua CDN). toeic-user: Private (chỉ truy cập qua Presigned URL).- Phân quyền theo Microservice (IAM policy theo bucket/prefix; object key lưu trong DB không kèm bucket): "
+    },
+    {
+      "paragraph": 32,
+      "text": "Question Service chỉ được R/W/D trên toeic-media/questions/*"
+    },
+    {
+      "paragraph": 33,
+      "text": "Learning Service trên toeic-media/learning/*"
+    },
+    {
+      "paragraph": 34,
+      "text": "Auth Service trên toeic-user/avatars/*. Các service còn lại (Exam, Analytics, AI) không sở hữu prefix media và không truy cập trực tiếp bucket."
+    },
+    {
+      "paragraph": 35,
+      "text": "7. Giới hạn File đề xuất"
+    },
+    {
+      "paragraph": 36,
+      "text": "Loại"
+    },
+    {
+      "paragraph": 42,
+      "text": "audio/mpeg"
+    },
+    {
+      "paragraph": 43,
+      "text": "5 MB"
+    },
+    {
+      "paragraph": 44,
+      "text": "Question image"
+    },
+    {
+      "paragraph": 45,
+      "text": ".png, .jpg, .webp"
+    },
+    {
+      "paragraph": 46,
+      "text": "image/*"
+    },
+    {
+      "paragraph": 47,
+      "text": "2 MB"
+    },
+    {
+      "paragraph": 48,
+      "text": "Option image"
+    },
+    {
+      "paragraph": 49,
+      "text": ".png, .jpg, .webp"
+    },
+    {
+      "paragraph": 50,
+      "text": "image/*"
+    },
+    {
+      "paragraph": 51,
+      "text": "2 MB"
+    },
+    {
+      "paragraph": 52,
+      "text": "Vocabulary audio"
+    },
+    {
+      "paragraph": 53,
+      "text": ".mp3"
+    },
+    {
+      "paragraph": 54,
+      "text": "audio/mpeg"
+    },
+    {
+      "paragraph": 55,
+      "text": "5 MB"
+    },
+    {
+      "paragraph": 56,
+      "text": "Avatar"
+    },
+    {
+      "paragraph": 57,
+      "text": ".jpg, .png, .webp"
+    },
+    {
+      "paragraph": 58,
+      "text": "image/*"
+    },
+    {
+      "paragraph": 59,
+      "text": "2 MB"
+    },
+    {
+      "paragraph": 60,
+      "text": "8. Triển khai Hạ tầng & Code"
+    },
+    {
+      "paragraph": 61,
+      "text": "8.1. Docker Compose"
+    },
+    {
+      "paragraph": 65,
+      "text": "9. Kiến trúc Storage Cuối cùng"
+    },
+    {
+      "paragraph": 66,
+      "text": "Kết luận thiết kế:- PostgreSQL = metadata + business data.- MinIO = binary/object data.- Presigned URL = upload; download/play qua CDN (media công khai) hoặc Presigned (file riêng tư).- toeic-media = public-read qua CDN; toeic-user = private.- Microservice sở hữu prefix/domain của mình."
+    }
+  ],
+  "Thiết kế Event.docx": [
+    {
+      "paragraph": 6,
+      "text": "Producer: Exam & Test ServiceBảng Outbox: exam_db.outbox_events"
+    },
+    {
+      "paragraph": 7,
+      "text": "Điều kiện kích hoạt (Trigger): Phát ra sau khi hệ thống lưu attempt (kết quả làm"
+    },
+    {
+      "paragraph": 8,
+      "text": " bài), attempt_answers (đáp án chi tiết) và outbox event thành công trong cùng một transaction database."
+    },
+    {
+      "paragraph": 9,
+      "text": "Consumer: History & Analytics Service"
+    },
+    {
+      "paragraph": 59,
+      "text": "Bảng Outbox: quest_db.outbox_events"
+    },
+    {
+      "paragraph": 60,
+      "text": "Điều kiện kích hoạt (Trigger): Phát ra khi dữ liệu ở các bảng questions, question_options, và tags được ghi/thay đổi trong cùng một transaction."
+    },
+    {
+      "paragraph": 61,
+      "text": "Consumer: module Search (trong Question Bank Service)"
+    },
+    {
+      "paragraph": 62,
+      "text": "Hành động dự kiến: Cập nhật hoặc xóa chỉ mục tìm kiếm trên Elasticsearch để hệ thống có thể tìm kiếm kết hợp keyword và bộ lọc."
+    },
+    {
+      "paragraph": 84,
+      "text": "Bảng Outbox: learning_db.outbox_events"
+    },
+    {
+      "paragraph": 85,
+      "text": "Điều kiện kích hoạt (Trigger): Phát ra khi đánh dấu hoàn thành bài học ngữ pháp hoặc khi đạt điều kiện nghiệp vụ trong thuật toán Spaced Repetition (SM-2) lúc ôn tập từ vựng."
+    },
+    {
+      "paragraph": 86,
+      "text": "Consumer: History & Analytics Service"
+    },
+    {
+      "paragraph": 87,
+      "text": "Hành động dự kiến: Consumer lắng nghe qua RabbitMQ để cập nhật thông tin tổng hợp tiến độ và tính toán chuỗi ngày học (Streak) của người dùng vào bảng user_statistics (cột learning_streak_days, longest_streak) dựa trên ngày hoạt động liên tiếp."
+    },
+    {
+      "paragraph": 117,
+      "text": "Producer: Auth & User ServiceBảng Outbox: auth_db.outbox_events"
+    },
+    {
+      "paragraph": 118,
+      "text": "Điều kiện kích hoạt (Trigger): Kích hoạt sau khi tiến trình đồng bộ trạng thái đa thiết bị được ghi nhận thành công theo cơ chế Last-Write-Wins."
+    },
+    {
+      "paragraph": 119,
+      "text": "Consumer: Learning & Theory Service"
+    },
+    {
+      "paragraph": 120,
+      "text": "Hành động dự kiến: Nhận tín hiệu qua Message Broker để cập nhật dữ liệu tiến độ nội bộ trên server, đảm bảo dữ liệu cũ không ghi đè dữ liệu mới hơn."
+    }
+  ],
+  "Thiết kế hệ thống.docx": [
+    {
+      "paragraph": 7,
+      "text": "users"
+    },
+    {
+      "paragraph": 8,
+      "text": "id, email, password_hash, full_name, avatar_key, phone_number, status, failed_login_count, locked_until, created_at, updated_at"
+    },
+    {
+      "paragraph": 9,
+      "text": "Thông tin tài khoản và trạng thái đăng nhập."
+    },
+    {
+      "paragraph": 10,
+      "text": "roles"
+    },
+    {
+      "paragraph": 55,
+      "text": "/api/v1/admin/users/{id}/status"
+    },
+    {
+      "paragraph": 56,
+      "text": "Khóa/kích hoạt tài khoản."
+    },
+    {
+      "paragraph": 57,
+      "text": "GET"
+    },
+    {
+      "paragraph": 58,
+      "text": "/api/v1/admin/audit-logs"
+    },
+    {
+      "paragraph": 112,
+      "text": "POST"
+    },
+    {
+      "paragraph": 113,
+      "text": "/api/v1/questions/{id}/media/presign"
+    },
+    {
+      "paragraph": 114,
+      "text": "Tạo presigned URL để upload media trực tiếp lên S3/MinIO."
+    },
+    {
+      "paragraph": 115,
+      "text": ""
+    },
+    {
+      "paragraph": 116,
+      "text": "Nghiệp vụ & thuật toán cốt lõi "
+    },
+    {
+      "paragraph": 176,
+      "text": "DỊCH VỤ HỌC TẬP & LÝ THUYẾT"
+    },
+    {
+      "paragraph": 177,
+      "text": "Mục đích: cung cấp nội dung học từ vựng, flashcard, bài học ngữ pháp và lưu tiến độ học. Đây cũng là nơi thực hiện thuật toán Spaced Repetition SM-2 theo SRS."
+    },
+    {
+      "paragraph": 178,
+      "text": "Thiết kế Cơ sở dữ liệu "
+    },
+    {
+      "paragraph": 179,
+      "text": "Bảng"
+    },
+    {
+      "paragraph": 188,
+      "text": "grammar_lessons"
+    },
+    {
+      "paragraph": 189,
+      "text": "lesson_id, lesson_title, category, content_markdown"
+    },
+    {
+      "paragraph": 190,
+      "text": "Bài học lý thuyết ngữ pháp."
+    },
+    {
+      "paragraph": 191,
+      "text": "user_vocabulary_progress"
+    },
+    {
+      "paragraph": 192,
+      "text": "user_id, vocabulary_id, quality, interval_days, easiness_factor, repetition_number, next_review_date, updated_at"
+    },
+    {
+      "paragraph": 193,
+      "text": "Trạng thái SM-2 theo từng user-vocabulary."
+    },
+    {
+      "paragraph": 194,
+      "text": "user_lesson_progress"
+    },
+    {
+      "paragraph": 195,
+      "text": "user_id, lesson_id, status, completed_at, updated_at"
+    },
+    {
+      "paragraph": 221,
+      "text": "/api/v1/learning/flashcards/{vocabularyId}/review"
+    },
+    {
+      "paragraph": 222,
+      "text": "Gửi chất lượng nhớ q và cập nhật SM-2."
+    },
+    {
+      "paragraph": 223,
+      "text": "GET"
+    },
+    {
+      "paragraph": 224,
+      "text": "/api/v1/learning/lessons"
+    },
+    {
+      "paragraph": 239,
+      "text": "Nghiệp vụ & thuật toán cốt lõi "
+    },
+    {
+      "paragraph": 240,
+      "text": "SRS yêu cầu SM-2. Với chất lượng trả lời q từ 0 đến 5, hệ số dễ nhớ được cập nhật theo công thức:"
+    },
+    {
+      "paragraph": 241,
+      "text": "EF_new = EF_old + (0.1 - (5-q) * (0.08 + (5-q)*0.02))"
+    },
+    {
+      "paragraph": 242,
+      "text": "Quy tắc chính: nếu q < 3 thì chu kỳ lặp lại được reset; nếu q >= 3 thì tăng repetition và tính lại interval/nextReviewDate. Giao diện có thể quy đổi đánh giá đơn giản về thang q phù hợp, nhưng giá trị lưu trữ nên giữ được mức 0-5 để đúng thuật toán."
+    },
+    {
+      "paragraph": 292,
+      "text": "Weak areas có thể tính từ tỷ lệ sai theo part/skill khi có đủ dữ liệu."
+    },
+    {
+      "paragraph": 293,
+      "text": "Thuật toán dự đoán kích hoạt khi user có tối thiểu 3 bài thi thử trong 30 ngày gần nhất. Công thức: lấy tối đa 3 bài gần nhất với trọng số [0.5, 0.3, 0.2] (bài mới nhất 0.5). predicted_toeic_score = clamp(round5(Σ(wᵢ·total_scoreᵢ)/Σwᵢ), 10, 990)."
+    },
+    {
+      "paragraph": 294,
+      "text": "DỊCH VỤ AI HỖ TRỢ"
+    },
+    {
+      "paragraph": 295,
+      "text": "Mục đích: hỗ trợ học viên hỏi đáp theo ngữ cảnh câu hỏi, từ vựng hoặc bài ngữ pháp đang xem. SRS quy định giới hạn nội dung, giới hạn lượt chat hàng ngày và cơ chế Circuit Breaker khi LLM bên ngoài gặp timeout."
+    },
+    {
+      "paragraph": 333,
+      "text": "Nghiệp vụ & thuật toán cốt lõi"
+    },
+    {
+      "paragraph": 334,
+      "text": "1. API nhận user_id từ JWT, message_content tối đa 1000 ký tự và context_question_id tùy chọn."
+    },
+    {
+      "paragraph": 335,
+      "text": "2. Rate limit dùng Redis Token Bucket; SRS giới hạn tối đa 20 tin nhắn/ngày/user."
+    },
+    {
+      "paragraph": 336,
+      "text": "3. Xây dựng System Prompt và ngữ cảnh trước khi gọi LLM Engine bên ngoài."
+    },
+    {
+      "paragraph": 344,
+      "text": "Sử dụng giao thức HTTPS (TLS 1.3) qua cổng 443. "
+    },
+    {
+      "paragraph": 345,
+      "text": "Tải tệp Đa phương tiện (Presigned URL): Khi tải lên các tệp audio .mp3 hoặc ảnh .png (Part 1-4, Flashcard), Client xin cấp Presigned URL từ dịch vụ backend, sau đó đẩy trực tiếp dữ liệu lên AWS S3/MinIO nhằm tránh nghẽn băng thông tại API Gateway."
+    },
+    {
+      "paragraph": 346,
+      "text": "Giao tiếp Nội bộ giữa các Microservices (Service-to-Service)"
+    },
+    {
+      "paragraph": 347,
+      "text": "Giao tiếp Đồng bộ qua gRPC (HTTP/2): "
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "nativeBeforeunloadDismissAndAccept": true,
+  "avatarOnlyGuard": true,
+  "errorAndLongFilenameWidths": [
+    390,
+    768
+  ],
+  "errors": []
+}

@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-29T09:22:19.688Z",
+  "kind": "actual standalone HTTP; NO stub; NO credentials",
+  "results": [
+    {
+      "url": "http://127.0.0.1:3000/health",
+      "status": null,
+      "error": "TypeError"
+    },
+    {
+      "url": "http://127.0.0.1:3000/api/v1/learning/lessons",
+      "status": null,
+      "error": "TypeError"
+    },
+    {
+      "url": "http://127.0.0.1:3006/api/frontend/auth/session",
+      "status": 503,
+      "body": "{\"code\":\"API_NOT_CONFIGURED\"}"
+    },
+    {
+      "url": "http://127.0.0.1:3007/api/frontend/auth/session",
+      "status": 503,
+      "body": "{\"code\":\"API_NOT_CONFIGURED\"}"
+    }
+  ]
+}

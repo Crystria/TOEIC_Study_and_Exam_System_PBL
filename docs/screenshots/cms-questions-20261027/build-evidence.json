@@ -1,0 +1,142 @@
+{
+  "mismatchCount": 0,
+  "buildDirectory": "tmp/frontend-cms-questions-build-20261027",
+  "files": [
+    {
+      "matches": true,
+      "sha256": "5E6EBA98556CA66454C166A7A282509701FF7F1EA22837F33D8A12441CC35DD9",
+      "file": "src/app/globals.css"
+    },
+    {
+      "matches": true,
+      "sha256": "79B0F2E993CE184A5218947DA2F388AD06DFEDB9CA06D6C3BBB0BCC0B041A1BA",
+      "file": "src/app/layout.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "36236BEB778B189E301A77DCD26DE941A89EB00CAAFDBD63166CFA7383274C50",
+      "file": "src/app/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "911BA06863A7258B5E09F8BF8EAB5BCA559ECC4423C3E61F0FDB25EE8040650D",
+      "file": "src/app/(auth)/login/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "2CC376E4EF1A6C325482B27BB7A6B8A0D2D277DCF6E22F79802179515B9CDC6C",
+      "file": "src/app/(dashboard)/layout.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "F7691F51B77D7A6FDA834C94BFC9C93507AC6B0465EA7D1B298ED0A826449124",
+      "file": "src/app/(dashboard)/audit-logs/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "9E4253C56356843E7AC943E9A8E46113F8216ED0EAFB5C205E47D4E8176FFADB",
+      "file": "src/app/(dashboard)/lessons/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "FA114D6E1EB19B286B0292D81BF6EC17CCDC36403BB03A6737A8D804A87ED909",
+      "file": "src/app/(dashboard)/questions/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "7E8A69B5808874E5FA31576D7B0ABDF93817C507CC9B474358E231A08E567021",
+      "file": "src/app/(dashboard)/tests/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "65FF8457ACE39591313CF9EA8F81EBBC5B4D3F1A0C1B9E82505F2065B7E08A92",
+      "file": "src/app/(dashboard)/users/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "EF721F305AAA32A4E08F431CD41D90BCCE85DF95E349ADA71D5C2AEEC90CF22E",
+      "file": "src/app/(dashboard)/vocabulary/page.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "7AD4CB6D93FD08292DC14D2A35FE4E7B48BCF388BF8711E6DC14D952E9CF6A1D",
+      "file": "src/components/auth/login-preview.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "B6153609CCD6EA7F2700E59DACED90DBA2D87AFAE7F108D04AE239B4E432859D",
+      "file": "src/components/layout/cms-route-preview.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "9895AE6A1B7B732FF8DF401C93117EDD29A297C3F6065CE1018D82D423A46AAB",
+      "file": "src/components/layout/cms-shell.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "88694E97C31E66CA616828DAED67AE8320BC6A9F24AF3EC7C2047D6B53AD531D",
+      "file": "src/components/layout/sidebar.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "35E5DDC2ED70325054392CE937AE971A1A8DD27BFC1AA430E52180E807D44A01",
+      "file": "src/components/questions/question-list.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "D7DC5564FEBDF1A192A7445D3C69B373A47E2979A5683A911CBECE2873531598",
+      "file": "src/components/ui/button.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "9AD3F301125D416C60917F15AF74EAE5A2FB56F5A5CE4288C007B927C63ACD9D",
+      "file": "src/components/ui/card.tsx"
+    },
+    {
+      "matches": true,
+      "sha256": "CDCFC6285BF455749EF752600F1041B85BE4EA22CA708ABA648EF6DA6C2932B3",
+      "file": "src/lib/api-client.ts"
+    },
+    {
+      "matches": true,
+      "sha256": "FB84FAB16B54D402A222D6CD13120319CD4595D19349F51AC875A6C249065ED5",
+      "file": "src/lib/auth.ts"
+    },
+    {
+      "matches": true,
+      "sha256": "3E57291B6C381AEC28BEA7B20A9F4DD23271AC297B4AB446FEDBA53F36C97C74",
+      "file": "src/lib/demo/cms-fixtures.ts"
+    },
+    {
+      "matches": true,
+      "sha256": "73063ADF759647A55A4BAB9A579353859C08C400E2391D53E920216C7F50176B",
+      "file": "src/lib/questions/demo-repository.ts"
+    },
+    {
+      "matches": true,
+      "sha256": "F96F95B2A75ED810AC2F68668027C71E8C787B64368C10B554090FD2EDDBA10A",
+      "file": "src/lib/questions/fixtures.ts"
+    },
+    {
+      "matches": true,
+      "sha256": "B0E1C6BB30BDDBAC767E2770D066AF7EE7E5CC3031074D13BCD83E32D30AE4D9",
+      "file": "src/lib/questions/query.ts"
+    },
+    {
+      "matches": true,
+      "sha256": "CBB7E3D90836C82E91055108C5BD09EAD54C0C68A94FB2B415C45FB4E45DF6DF",
+      "file": "src/lib/questions/types.ts"
+    },
+    {
+      "matches": true,
+      "sha256": "5EC44E8D22D8FC2DD2E3E280DE0C9718DDBCB818A9ECDA233812AEFF7B7BB06F",
+      "file": "src/styles/questions.css"
+    },
+    {
+      "matches": true,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "file": "public/.gitkeep"
+    }
+  ],
+  "buildId": "thYiQQ-1gBxPVmMhe00pl"
+}

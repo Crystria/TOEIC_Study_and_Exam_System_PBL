@@ -1,0 +1,36 @@
+{
+  "kind": "real service health GET, not authenticated business/API acceptance",
+  "userConfirmedIsolatedTestData": true,
+  "requests": [
+    {
+      "port": 3000,
+      "endpoint": "/health",
+      "status": 200
+    },
+    {
+      "port": 3001,
+      "endpoint": "/api/v1/health",
+      "status": 200
+    },
+    {
+      "port": 3002,
+      "endpoint": "/api/v1/health",
+      "status": 200
+    },
+    {
+      "port": 3003,
+      "endpoint": "/api/v1/health",
+      "status": null
+    },
+    {
+      "port": 3004,
+      "endpoint": "/api/v1/health",
+      "status": 200
+    },
+    {
+      "port": 3005,
+      "endpoint": "/api/v1/health",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,660 @@
+{
+  "readDirectlyFromCurrentWordOOXML": true,
+  "files": [
+    {
+      "file": "docs/SRS.docx",
+      "sha256": "e1e3d2dfaac745e9b75e79769da6b945aa79d388cdac2f0e0bcd25a59f0d83fe"
+    },
+    {
+      "file": "docs/tai_lieu_thiet_ke_CSDL.docx",
+      "sha256": "a6d70a829ef84efbc67c42d1386c756ecd55875389ab61d3d4590276122dba13"
+    },
+    {
+      "file": "docs/Thiết kế hệ thống.docx",
+      "sha256": "c766590ca504f42d54205f5c09182aae8003aa47916db8e6bb9988c354f14ecb"
+    },
+    {
+      "file": "services/exam-service/src/modules/tests/tests.controller.ts",
+      "sha256": "2344cb1e52fefec3bf0baad3bae889322f8511a54f58aed861c4c79902435ffb"
+    },
+    {
+      "file": "services/exam-service/src/modules/tests/tests.service.ts",
+      "sha256": "428aacecd2aefe4e644efa9edd185ba116943eafd5f7aa64e9444e316133bd6e"
+    },
+    {
+      "file": "services/exam-service/src/modules/tests/dto/create-test.dto.ts",
+      "sha256": "f70d003883b79876c19e6d7204abc54a26052d336e222f91dde24c60c1e24a1b"
+    },
+    {
+      "file": "services/exam-service/src/modules/tests/dto/list-tests-query.dto.ts",
+      "sha256": "4be16ee82b736d863dd6d79342b52498116492f25a83c215ce1e15474dc85668"
+    },
+    {
+      "file": "services/exam-service/src/modules/tests/dto/update-test.dto.ts",
+      "sha256": "011fdcee5b017927447b137e399fd6c40e16bce645f7820d687073d95680631f"
+    },
+    {
+      "file": "services/exam-service/prisma/schema.prisma",
+      "sha256": "32253a6cd527c75e62855441570357a819d20b7e3588532f859c4a2a2f795e80"
+    },
+    {
+      "file": "services/exam-service/src/app.module.ts",
+      "sha256": "bbf01271df464a6dc4938e80688ba36fb843fd3631076545ec2bac8086efc354"
+    },
+    {
+      "file": "packages/common/src/auth/jwt-auth.guard.ts",
+      "sha256": "92f08512771b5121175acaa6d6f9e6dce8e7c20820064d1e6526be902477bd5c"
+    },
+    {
+      "file": "packages/common/src/auth/roles.guard.ts",
+      "sha256": "f2d149e7ec369f798a923e6ea21fa0371f01b67c12702bf372d8a241c3261b3c"
+    },
+    {
+      "file": "packages/contracts/openapi/openapi.yaml",
+      "sha256": "b17833061739593906a3f8c2abfb68a8938009b97f8afe09eb4926cfb74ddb67"
+    },
+    {
+      "file": "packages/contracts/proto/question_bank.proto",
+      "sha256": "4d002ac1d92fc67a7e3acbd9d28825f1e935d069a4343d89b1bcc0e8cff92952"
+    },
+    {
+      "file": "services/api-gateway/src/gateway/jwt.middleware.ts",
+      "sha256": "32bbdc3f5f99206ce0668713d5104e79253a40a0875569ac7d8ef307f39ec00b"
+    },
+    {
+      "file": "services/api-gateway/src/gateway/proxy.ts",
+      "sha256": "ae33569605b9f14362b96720730f9a29c0f82ed0e392e975fc3d556676ba2f27"
+    },
+    {
+      "file": "services/api-gateway/src/main.ts",
+      "sha256": "c2c85d95b820f0c2c416259c02a54d6905a0e53af139b41f65c1eef889ec860e"
+    },
+    {
+      "file": "apps/admin-cms/src/lib/tests/fixtures.ts",
+      "sha256": "b07635db8c6c64aa9697ede241530ab10985b9da3f48a99f80528c9f4662fdb6"
+    },
+    {
+      "file": "apps/admin-cms/src/lib/tests/query.ts",
+      "sha256": "ae37a1703695a18645cc058dc65c144c421e3b68c4a3e6c33ecd4eb8f097b6e5"
+    },
+    {
+      "file": "apps/admin-cms/src/lib/tests/types.ts",
+      "sha256": "f6117a5dd10e22b26ebfa988db9c0a3e16f94d63d4b20750a7432fd234114c12"
+    },
+    {
+      "file": "private/task.txt",
+      "sha256": "2de942e5513743d348d2012504aed16ad6aecb0c2afb6c89e356f7dc5b39070e"
+    }
+  ],
+  "excerpts": {
+    "srs": [
+      {
+        "paragraph": 219,
+        "text": "DỊCH VỤ BÀI THI & THI THỬ"
+      },
+      {
+        "paragraph": 220,
+        "text": "Dịch vụ điều phối đề thi, chấm điểm tự động bảo mật qua gRPC, quản lý tiến trình thi và lịch sử làm bài."
+      },
+      {
+        "paragraph": 221,
+        "text": "3.3.1 Quản lý bài kiểm tra / đề thi (FK-07-Quan-Ly-De-Thi)"
+      },
+      {
+        "paragraph": 222,
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+      },
+      {
+        "paragraph": 223,
+        "text": "Mô tả chức năng: Cho phép Content Admin đóng gói đề thi thử TOEIC (Full Test 200 câu hoặc Mini Test) từ kho câu hỏi."
+      },
+      {
+        "paragraph": 224,
+        "text": "Dữ liệu đầu vào (Inputs): test_title (Chuỗi), test_type (Enum: FULL_TEST, MINI_TEST), duration_seconds (Số nguyên: 7200 giây cho Full Test 120 phút; 1800 giây cho Mini Test 30 phút), question_ids (Mảng UUID câu hỏi)."
+      },
+      {
+        "paragraph": 225,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm test_id (UUIDv4)."
+      },
+      {
+        "paragraph": 226,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "paragraph": 227,
+        "text": "Xác thực tính tồn tại của danh sách question_ids bằng cuộc gọi gRPC nội bộ sang Question Bank Service trước khi đóng gói đề thi."
+      }
+    ],
+    "dbModel": [
+      {
+        "paragraph": 284,
+        "text": "Test"
+      },
+      {
+        "paragraph": 285,
+        "text": "Đề thi: test_id, title, type FULL_TEST/MINI_TEST, duration_seconds, timestamps, deleted_at"
+      },
+      {
+        "paragraph": 286,
+        "text": "PK test_id; title/type/duration bắt buộc"
+      },
+      {
+        "paragraph": 287,
+        "text": "FULL_TEST 120 phút và 200 câu; MINI_TEST 30 phút"
+      },
+      {
+        "paragraph": 288,
+        "text": "TestQuestion"
+      },
+      {
+        "paragraph": 289,
+        "text": "Cấu trúc đề: test_id, question_id logic, position"
+      },
+      {
+        "paragraph": 290,
+        "text": "PK ghép (test_id, question_id); UNIQUE (test_id, position)"
+      },
+      {
+        "paragraph": 291,
+        "text": "N-N Test-Question; question_id được xác thực qua gRPC, không FK sang quest_db"
+      }
+    ],
+    "dbTables": [
+      {
+        "paragraph": 1183,
+        "text": ""
+      },
+      {
+        "paragraph": 1184,
+        "text": "5.2.14 exam_db.tests"
+      },
+      {
+        "paragraph": 1185,
+        "text": "Lưu thông tin đề thi Full Test và Mini Test."
+      },
+      {
+        "paragraph": 1186,
+        "text": "Column"
+      },
+      {
+        "paragraph": 1187,
+        "text": "Type"
+      },
+      {
+        "paragraph": 1188,
+        "text": "Key"
+      },
+      {
+        "paragraph": 1189,
+        "text": "NULL"
+      },
+      {
+        "paragraph": 1190,
+        "text": "UNIQUE"
+      },
+      {
+        "paragraph": 1191,
+        "text": "Mô tả"
+      },
+      {
+        "paragraph": 1192,
+        "text": "test_id"
+      },
+      {
+        "paragraph": 1193,
+        "text": "UUID"
+      },
+      {
+        "paragraph": 1194,
+        "text": "PK"
+      },
+      {
+        "paragraph": 1195,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1196,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1197,
+        "text": "Định danh đề thi."
+      },
+      {
+        "paragraph": 1198,
+        "text": "test_title"
+      },
+      {
+        "paragraph": 1199,
+        "text": "VARCHAR(255)"
+      },
+      {
+        "paragraph": 1200,
+        "text": "-"
+      },
+      {
+        "paragraph": 1201,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1202,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1203,
+        "text": "Thuộc tính test title theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "paragraph": 1204,
+        "text": "test_type"
+      },
+      {
+        "paragraph": 1205,
+        "text": "VARCHAR(16)"
+      },
+      {
+        "paragraph": 1206,
+        "text": "-"
+      },
+      {
+        "paragraph": 1207,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1208,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1209,
+        "text": "Thuộc tính test type theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "paragraph": 1210,
+        "text": "duration_seconds"
+      },
+      {
+        "paragraph": 1211,
+        "text": "SMALLINT"
+      },
+      {
+        "paragraph": 1212,
+        "text": "-"
+      },
+      {
+        "paragraph": 1213,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1214,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1215,
+        "text": "Thời lượng đề thi tính bằng giây (Full Test 7200; Mini Test 1800)."
+      },
+      {
+        "paragraph": 1216,
+        "text": "created_at"
+      },
+      {
+        "paragraph": 1217,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "paragraph": 1218,
+        "text": "-"
+      },
+      {
+        "paragraph": 1219,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1220,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1221,
+        "text": "Thời điểm bản ghi được tạo."
+      },
+      {
+        "paragraph": 1222,
+        "text": "updated_at"
+      },
+      {
+        "paragraph": 1223,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "paragraph": 1224,
+        "text": "-"
+      },
+      {
+        "paragraph": 1225,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1226,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1227,
+        "text": "Thời điểm bản ghi được cập nhật gần nhất."
+      },
+      {
+        "paragraph": 1228,
+        "text": "deleted_at"
+      },
+      {
+        "paragraph": 1229,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "paragraph": 1230,
+        "text": "-"
+      },
+      {
+        "paragraph": 1231,
+        "text": "Có"
+      },
+      {
+        "paragraph": 1232,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1233,
+        "text": "Thời điểm xóa logic; NULL khi bản ghi còn hiệu lực."
+      },
+      {
+        "paragraph": 1234,
+        "text": ""
+      },
+      {
+        "paragraph": 1235,
+        "text": "5.2.15 exam_db.test_questions"
+      },
+      {
+        "paragraph": 1236,
+        "text": "Lưu cấu trúc và thứ tự câu hỏi của từng đề thi."
+      },
+      {
+        "paragraph": 1237,
+        "text": "Column"
+      },
+      {
+        "paragraph": 1238,
+        "text": "Type"
+      },
+      {
+        "paragraph": 1239,
+        "text": "Key"
+      },
+      {
+        "paragraph": 1240,
+        "text": "NULL"
+      },
+      {
+        "paragraph": 1241,
+        "text": "UNIQUE"
+      },
+      {
+        "paragraph": 1242,
+        "text": "Mô tả"
+      },
+      {
+        "paragraph": 1243,
+        "text": "test_id"
+      },
+      {
+        "paragraph": 1244,
+        "text": "UUID"
+      },
+      {
+        "paragraph": 1245,
+        "text": "PK, FK"
+      },
+      {
+        "paragraph": 1246,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1247,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1248,
+        "text": "Định danh đề thi."
+      },
+      {
+        "paragraph": 1249,
+        "text": "question_id"
+      },
+      {
+        "paragraph": 1250,
+        "text": "UUID"
+      },
+      {
+        "paragraph": 1251,
+        "text": "PK"
+      },
+      {
+        "paragraph": 1252,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1253,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1254,
+        "text": "Định danh câu hỏi; là Logical Reference khi nằm ngoài Question DB."
+      },
+      {
+        "paragraph": 1255,
+        "text": "position"
+      },
+      {
+        "paragraph": 1256,
+        "text": "INTEGER"
+      },
+      {
+        "paragraph": 1257,
+        "text": "-"
+      },
+      {
+        "paragraph": 1258,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1259,
+        "text": "Không"
+      },
+      {
+        "paragraph": 1260,
+        "text": "Thuộc tính position theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "paragraph": 1261,
+        "text": ""
+      },
+      {
+        "paragraph": 1262,
+        "text": "5.2.16 exam_db.attempts"
+      },
+      {
+        "paragraph": 1263,
+        "text": "Lưu một lần làm bài, trạng thái, thời gian và kết quả chấm điểm."
+      },
+      {
+        "paragraph": 1264,
+        "text": "Column"
+      },
+      {
+        "paragraph": 1265,
+        "text": "Type"
+      },
+      {
+        "paragraph": 1266,
+        "text": "Key"
+      },
+      {
+        "paragraph": 1267,
+        "text": "NULL"
+      },
+      {
+        "paragraph": 1268,
+        "text": "UNIQUE"
+      },
+      {
+        "paragraph": 1269,
+        "text": "Mô tả"
+      }
+    ],
+    "system": [
+      {
+        "paragraph": 124,
+        "text": "Bảng"
+      },
+      {
+        "paragraph": 125,
+        "text": "Trường chính"
+      },
+      {
+        "paragraph": 126,
+        "text": "Mục đích"
+      },
+      {
+        "paragraph": 127,
+        "text": "tests"
+      },
+      {
+        "paragraph": 128,
+        "text": "test_id, test_title, test_type, duration_seconds, created_at, updated_at, deleted_at"
+      },
+      {
+        "paragraph": 129,
+        "text": "Thông tin đề thi."
+      },
+      {
+        "paragraph": 130,
+        "text": "test_questions"
+      },
+      {
+        "paragraph": 131,
+        "text": "test_id, question_id, position"
+      },
+      {
+        "paragraph": 132,
+        "text": "Cấu trúc đề thi và thứ tự câu."
+      },
+      {
+        "paragraph": 133,
+        "text": "attempts"
+      },
+      {
+        "paragraph": 134,
+        "text": "attempt_id, test_id, user_id, started_at, submitted_at, completed_at, status, score_listening, score_reading, total_score, correct_listening_count, correct_reading_count"
+      },
+      {
+        "paragraph": 135,
+        "text": "Một lần làm bài của user."
+      },
+      {
+        "paragraph": 136,
+        "text": "attempt_answers"
+      },
+      {
+        "paragraph": 137,
+        "text": "attempt_id, question_id, selected_option, is_correct, answered_at"
+      },
+      {
+        "paragraph": 138,
+        "text": "Đáp án từng câu trong attempt."
+      },
+      {
+        "paragraph": 139,
+        "text": "outbox_events"
+      },
+      {
+        "paragraph": 140,
+        "text": "event_id, aggregate_type, aggregate_id, event_type, payload, occurred_at, published_at"
+      },
+      {
+        "paragraph": 141,
+        "text": "Phát TestSubmittedEvent sau khi lưu kết quả."
+      },
+      {
+        "paragraph": 142,
+        "text": ""
+      },
+      {
+        "paragraph": 143,
+        "text": "Thiết kế API RESTful "
+      },
+      {
+        "paragraph": 144,
+        "text": "Method"
+      },
+      {
+        "paragraph": 145,
+        "text": "Endpoint đề xuất"
+      },
+      {
+        "paragraph": 146,
+        "text": "Mục đích"
+      },
+      {
+        "paragraph": 147,
+        "text": "GET"
+      },
+      {
+        "paragraph": 148,
+        "text": "/api/v1/tests"
+      },
+      {
+        "paragraph": 149,
+        "text": "Danh sách đề thi."
+      },
+      {
+        "paragraph": 150,
+        "text": "GET"
+      },
+      {
+        "paragraph": 151,
+        "text": "/api/v1/tests/{id}"
+      },
+      {
+        "paragraph": 152,
+        "text": "Chi tiết cấu trúc đề."
+      },
+      {
+        "paragraph": 153,
+        "text": "POST"
+      },
+      {
+        "paragraph": 154,
+        "text": "/api/v1/tests"
+      },
+      {
+        "paragraph": 155,
+        "text": "Tạo đề thi (admin)."
+      },
+      {
+        "paragraph": 156,
+        "text": "PATCH"
+      },
+      {
+        "paragraph": 157,
+        "text": "/api/v1/tests/{id}"
+      },
+      {
+        "paragraph": 158,
+        "text": "Cập nhật đề thi."
+      },
+      {
+        "paragraph": 159,
+        "text": "POST"
+      }
+    ]
+  },
+  "permissionFinding": "Exam GET handlers @Public with no Roles. Gateway createJwtMiddleware still requires JWT for /api/v1/tests. Demo persona is not either policy."
+}

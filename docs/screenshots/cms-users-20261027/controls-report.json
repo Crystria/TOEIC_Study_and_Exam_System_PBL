@@ -1,0 +1,86 @@
+{
+  "browser": "156.0.8078.48",
+  "checks": [
+    {
+      "name": "Entire filter form including both actions is visible in one exact viewport",
+      "width": 1440
+    },
+    {
+      "name": "Entire filter form including both actions is visible in one exact viewport",
+      "width": 768
+    },
+    {
+      "name": "Entire filter form including both actions is visible in one exact viewport",
+      "width": 390
+    },
+    {
+      "name": "Entire filter form including both actions is visible in one exact viewport",
+      "width": 320
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "filter-controls-complete-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "top": 24.15625,
+        "bottom": 155.34375,
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "filter-controls-complete-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "top": 23.953125,
+        "bottom": 206.328125,
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "filter-controls-complete-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "top": 24.140625,
+        "bottom": 363.296875,
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "filter-controls-complete-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "top": 23.9375,
+        "bottom": 363.09375,
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "completed": true
+}

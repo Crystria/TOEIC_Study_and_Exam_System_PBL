@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["ES2022", "DOM"],
+    "rootDir": ".",
+    "outDir": "../../tmp/cms-questions-tests",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": [
+    "tests/**/*.ts",
+    "src/lib/questions/**/*.ts",
+    "src/lib/tests/**/*.ts",
+    "src/lib/lessons/**/*.ts",
+    "src/lib/vocabulary/**/*.ts",
+    "src/lib/users/**/*.ts",
+    "src/lib/audit-logs/**/*.ts",
+    "src/lib/demo/*.ts"
+  ]
+}

@@ -1,0 +1,516 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-27T06:03:48.559537+00:00",
+  "synthetic": true,
+  "officialETS": false,
+  "tool": "Windows System.Speech (.NET Framework)",
+  "voice": "Microsoft David Desktop",
+  "secondVoice": "Microsoft Zira Desktop",
+  "speechRate": -1,
+  "volume": 100,
+  "segmentPauseMs": 550,
+  "encoder": "libmp3lame",
+  "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "ffprobe": "ffprobe version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+  "voiceInformation": {
+    "Assembly": "System.Speech, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+    "Voices": [
+      {
+        "Culture": "en-US",
+        "AdditionalInfo": {
+          "Age": "Adult",
+          "Gender": "Male",
+          "Language": "409",
+          "Name": "Microsoft David Desktop",
+          "SharedPronunciation": "",
+          "SpLexicon": "{0655E396-25D0-11D3-9C26-00C04F8EF87C}",
+          "Vendor": "Microsoft",
+          "Version": "11.0"
+        },
+        "Name": "Microsoft David Desktop",
+        "Id": "TTS_MS_EN-US_DAVID_11.0",
+        "Gender": "Male"
+      },
+      {
+        "Culture": "en-US",
+        "AdditionalInfo": {
+          "Age": "Adult",
+          "Gender": "Female",
+          "Language": "409",
+          "Name": "Microsoft Zira Desktop",
+          "SharedPronunciation": "",
+          "Vendor": "Microsoft",
+          "Version": "11.0"
+        },
+        "Name": "Microsoft Zira Desktop",
+        "Id": "TTS_MS_EN-US_ZIRA_11.0",
+        "Gender": "Female"
+      }
+    ],
+    "WindowsVersion": "Microsoft Windows NT 10.0.26200.0"
+  },
+  "transcriptSha256": "4f22fa7abe62df43b259756a1cfe7a7ce70bbd504522153c27721f99bf4cb08a",
+  "sourceSha256": {
+    "apps/web/src/lib/learning/mock-data.ts": "608524a23512c92adf632bdf99afa8724402b632b1e5db051196b80545d2156d",
+    "apps/web/src/lib/exams/question-fixtures.ts": "752b1b7767515943ecd5c4fb7618a85e18719ad7943f73cf93d197fdfcac19c0",
+    "apps/web/src/lib/exams/mock-data.ts": "2038fdf0ef76f4f0c0a6dfd1ec754f5521a4b9947cadd7ae55da541e8d2964b8",
+    "apps/web/public/demo/exam/office.svg": "0a3702c1dfae51e9fefb03cbdbc8d7fa38fe19854116561eed602e09a6ab6a2d"
+  },
+  "physicalListeningVerified": false,
+  "browserPlaybackVerified": false,
+  "files": [
+    {
+      "id": "vocabulary-appointment",
+      "publicUrl": "/demo/audio/vocabulary-appointment.mp3",
+      "fixtureIds": [
+        "appointment"
+      ],
+      "bytes": 77157,
+      "durationSeconds": 6.348821,
+      "sha256": "cbcee62039411a4a74679b650853f5d0f3d64fdef049aa02166d28a5cdd17fee",
+      "decodedRms": 0.07041817938878527,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-colleague",
+      "publicUrl": "/demo/audio/vocabulary-colleague.mp3",
+      "fixtureIds": [
+        "colleague"
+      ],
+      "bytes": 64305,
+      "durationSeconds": 5.298866,
+      "sha256": "37dfc6435b9c2cef3c749de976cba63d87f89494029e09b307aea281e5fd17d3",
+      "decodedRms": 0.07668814090511868,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-deadline",
+      "publicUrl": "/demo/audio/vocabulary-deadline.mp3",
+      "fixtureIds": [
+        "deadline"
+      ],
+      "bytes": 71201,
+      "durationSeconds": 5.863764,
+      "sha256": "258a7d42dd52a895b129b105aa8123e48834963acebeb1e589fa749829f2b54b",
+      "decodedRms": 0.0726238549593974,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-department",
+      "publicUrl": "/demo/audio/vocabulary-department.mp3",
+      "fixtureIds": [
+        "department"
+      ],
+      "bytes": 69947,
+      "durationSeconds": 5.748753,
+      "sha256": "e7cd5b023ed71ccc10a52faa6138056e0428993e6117553a358bc326802b0914",
+      "decodedRms": 0.06816552923963895,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-negotiate",
+      "publicUrl": "/demo/audio/vocabulary-negotiate.mp3",
+      "fixtureIds": [
+        "negotiate"
+      ],
+      "bytes": 73709,
+      "durationSeconds": 6.073741,
+      "sha256": "1a7acf86ea67310a141b4db295351b6694d473a0d2bddc8d8400b654ac7c5519",
+      "decodedRms": 0.0683756730492774,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-proposal",
+      "publicUrl": "/demo/audio/vocabulary-proposal.mp3",
+      "fixtureIds": [
+        "proposal"
+      ],
+      "bytes": 70574,
+      "durationSeconds": 5.81873,
+      "sha256": "c94e764e534cc6b580024b0f17a91eec17fe033f036055e3bd778daf3314ca7b",
+      "decodedRms": 0.06519118211132027,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-schedule",
+      "publicUrl": "/demo/audio/vocabulary-schedule.mp3",
+      "fixtureIds": [
+        "schedule"
+      ],
+      "bytes": 69320,
+      "durationSeconds": 5.713832,
+      "sha256": "a2344a683039f2b78f4666aed3b0aeab40a30d889363f00e0876cb611aa56245",
+      "decodedRms": 0.062350661511627346,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-supervisor",
+      "publicUrl": "/demo/audio/vocabulary-supervisor.mp3",
+      "fixtureIds": [
+        "supervisor"
+      ],
+      "bytes": 76844,
+      "durationSeconds": 6.338639,
+      "sha256": "1b15b6c33d69e37f8a8acf8cb320ba21604cfee17c1b6ec22f02f66e01edd91a",
+      "decodedRms": 0.06659364824295405,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-reservation",
+      "publicUrl": "/demo/audio/vocabulary-reservation.mp3",
+      "fixtureIds": [
+        "reservation"
+      ],
+      "bytes": 75903,
+      "durationSeconds": 6.253787,
+      "sha256": "69854fac08f5a8103d5b64dd53387511315b27132b14a3f31b7ee00fcb593bde",
+      "decodedRms": 0.07621974916936888,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-departure",
+      "publicUrl": "/demo/audio/vocabulary-departure.mp3",
+      "fixtureIds": [
+        "departure"
+      ],
+      "bytes": 69947,
+      "durationSeconds": 5.768889,
+      "sha256": "26f63179f16198de2af1cd6b7df05b7e6d82e247e9110f9f5a77ddcce3a3ab90",
+      "decodedRms": 0.06449841292006843,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-luggage",
+      "publicUrl": "/demo/audio/vocabulary-luggage.mp3",
+      "fixtureIds": [
+        "luggage"
+      ],
+      "bytes": 66186,
+      "durationSeconds": 5.448889,
+      "sha256": "02ce767b5168c5a76d67d02103994114d52bbe5968a21890c60e8c3cf2c747e3",
+      "decodedRms": 0.05931536234045394,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-destination",
+      "publicUrl": "/demo/audio/vocabulary-destination.mp3",
+      "fixtureIds": [
+        "destination"
+      ],
+      "bytes": 74963,
+      "durationSeconds": 6.188889,
+      "sha256": "ecef76ef284fbf6d6d619c65934e9bcdb33bb0b38bda8f91d009498113dacf92",
+      "decodedRms": 0.07367358690202551,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-itinerary",
+      "publicUrl": "/demo/audio/vocabulary-itinerary.mp3",
+      "fixtureIds": [
+        "itinerary"
+      ],
+      "bytes": 78097,
+      "durationSeconds": 6.438594,
+      "sha256": "b12b4bc057cdc52478e3f0caafe4697b99257033becaff2c5edc94ab9b9abc96",
+      "decodedRms": 0.08312220513885335,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-commute",
+      "publicUrl": "/demo/audio/vocabulary-commute.mp3",
+      "fixtureIds": [
+        "commute"
+      ],
+      "bytes": 69947,
+      "durationSeconds": 5.768934,
+      "sha256": "d1a58701bbf496fbc98081802875dd90fa60bfe12872431b05db44039d0006ba",
+      "decodedRms": 0.07046355153703053,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-accommodation",
+      "publicUrl": "/demo/audio/vocabulary-accommodation.mp3",
+      "fixtureIds": [
+        "accommodation"
+      ],
+      "bytes": 75590,
+      "durationSeconds": 6.233832,
+      "sha256": "e737954a1042b049644f9f61658df6a1346ba60bd3031a0edbc270abb0503060",
+      "decodedRms": 0.07360308370265094,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-boarding",
+      "publicUrl": "/demo/audio/vocabulary-boarding.mp3",
+      "fixtureIds": [
+        "boarding"
+      ],
+      "bytes": 66813,
+      "durationSeconds": 5.493832,
+      "sha256": "a632c3e3fb6efc464f58b8889fc2a2f757793f80436c2c72129d5c9675e58563",
+      "decodedRms": 0.06906363224010711,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-receipt",
+      "publicUrl": "/demo/audio/vocabulary-receipt.mp3",
+      "fixtureIds": [
+        "receipt"
+      ],
+      "bytes": 67126,
+      "durationSeconds": 5.523855,
+      "sha256": "7b8e72fa7cba535567b1a905a465de8b8cf55351078a1ec357e0504526df4eca",
+      "decodedRms": 0.06272409247707122,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-discount",
+      "publicUrl": "/demo/audio/vocabulary-discount.mp3",
+      "fixtureIds": [
+        "discount"
+      ],
+      "bytes": 75903,
+      "durationSeconds": 6.248798,
+      "sha256": "200697c3dadc6e8a96b758b15d65bfbae6a63c3a25c9a416be8c5766b99dd9c9",
+      "decodedRms": 0.06778694145845315,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-refund",
+      "publicUrl": "/demo/audio/vocabulary-refund.mp3",
+      "fixtureIds": [
+        "refund"
+      ],
+      "bytes": 77784,
+      "durationSeconds": 6.403764,
+      "sha256": "2f014a1889351024ea5165ca5161426617f72c9b269e10e0d9b7ff8705edaf02",
+      "decodedRms": 0.07099945136057544,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-warranty",
+      "publicUrl": "/demo/audio/vocabulary-warranty.mp3",
+      "fixtureIds": [
+        "warranty"
+      ],
+      "bytes": 73709,
+      "durationSeconds": 6.068934,
+      "sha256": "489a2e942e54574fd2c1ee74ddce211f14f66079da1bd2f222048df30223eb9f",
+      "decodedRms": 0.07924042577898469,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-purchase",
+      "publicUrl": "/demo/audio/vocabulary-purchase.mp3",
+      "fixtureIds": [
+        "purchase"
+      ],
+      "bytes": 75276,
+      "durationSeconds": 6.193741,
+      "sha256": "686edfca6ab67e6aab2df8795224cb9651eadab4c4f2ded2962191ba5704b83c",
+      "decodedRms": 0.06402441280553824,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-delivery",
+      "publicUrl": "/demo/audio/vocabulary-delivery.mp3",
+      "fixtureIds": [
+        "delivery"
+      ],
+      "bytes": 71515,
+      "durationSeconds": 5.888844,
+      "sha256": "152e13d21a74d733f303c0b9e178fe7986988ae5e367307003fdfd8f1fc0a803",
+      "decodedRms": 0.06428349863506067,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-available",
+      "publicUrl": "/demo/audio/vocabulary-available.mp3",
+      "fixtureIds": [
+        "available"
+      ],
+      "bytes": 75276,
+      "durationSeconds": 6.193741,
+      "sha256": "d905f996a53aa3f029e9ac886b3cdb58a02e23b249729824decd5d971a621feb",
+      "decodedRms": 0.0700131579186494,
+      "codec": "mp3"
+    },
+    {
+      "id": "vocabulary-customer",
+      "publicUrl": "/demo/audio/vocabulary-customer.mp3",
+      "fixtureIds": [
+        "customer"
+      ],
+      "bytes": 77157,
+      "durationSeconds": 6.353605,
+      "sha256": "04f94e8dcb57f606396ab7df173b9b9e0d90caee91f5fbec35b617bbea2e5a78",
+      "decodedRms": 0.0729028401377923,
+      "codec": "mp3"
+    },
+    {
+      "id": "listening-part-1",
+      "publicUrl": "/demo/audio/listening-part-1.mp3",
+      "fixtureIds": [
+        "full-test-01-p1-g1",
+        "full-test-01-p1-g2",
+        "full-test-01-p1-g3",
+        "full-test-01-p1-g4",
+        "full-test-01-p1-g5",
+        "full-test-01-p1-g6",
+        "full-test-02-p1-g1",
+        "full-test-02-p1-g2",
+        "full-test-02-p1-g3",
+        "full-test-02-p1-g4",
+        "full-test-02-p1-g5",
+        "full-test-02-p1-g6"
+      ],
+      "bytes": 185617,
+      "durationSeconds": 15.387211,
+      "sha256": "40386be7da6ab1dacd59819613dddde91f63d2cb2e70c293aea568a5098a5205",
+      "decodedRms": 0.08593832119931957,
+      "codec": "mp3"
+    },
+    {
+      "id": "listening-part-2",
+      "publicUrl": "/demo/audio/listening-part-2.mp3",
+      "fixtureIds": [
+        "full-test-01-p2-g1",
+        "full-test-01-p2-g2",
+        "full-test-01-p2-g3",
+        "full-test-01-p2-g4",
+        "full-test-01-p2-g5",
+        "full-test-01-p2-g6",
+        "full-test-01-p2-g7",
+        "full-test-01-p2-g8",
+        "full-test-01-p2-g9",
+        "full-test-01-p2-g10",
+        "full-test-01-p2-g11",
+        "full-test-01-p2-g12",
+        "full-test-01-p2-g13",
+        "full-test-01-p2-g14",
+        "full-test-01-p2-g15",
+        "full-test-01-p2-g16",
+        "full-test-01-p2-g17",
+        "full-test-01-p2-g18",
+        "full-test-01-p2-g19",
+        "full-test-01-p2-g20",
+        "full-test-01-p2-g21",
+        "full-test-01-p2-g22",
+        "full-test-01-p2-g23",
+        "full-test-01-p2-g24",
+        "full-test-01-p2-g25",
+        "full-test-02-p2-g1",
+        "full-test-02-p2-g2",
+        "full-test-02-p2-g3",
+        "full-test-02-p2-g4",
+        "full-test-02-p2-g5",
+        "full-test-02-p2-g6",
+        "full-test-02-p2-g7",
+        "full-test-02-p2-g8",
+        "full-test-02-p2-g9",
+        "full-test-02-p2-g10",
+        "full-test-02-p2-g11",
+        "full-test-02-p2-g12",
+        "full-test-02-p2-g13",
+        "full-test-02-p2-g14",
+        "full-test-02-p2-g15",
+        "full-test-02-p2-g16",
+        "full-test-02-p2-g17",
+        "full-test-02-p2-g18",
+        "full-test-02-p2-g19",
+        "full-test-02-p2-g20",
+        "full-test-02-p2-g21",
+        "full-test-02-p2-g22",
+        "full-test-02-p2-g23",
+        "full-test-02-p2-g24",
+        "full-test-02-p2-g25",
+        "mini-test-01-p2-g1",
+        "mini-test-01-p2-g2",
+        "mini-test-01-p2-g3",
+        "mini-test-01-p2-g4",
+        "mini-test-01-p2-g5",
+        "mini-test-01-p2-g6",
+        "mini-test-01-p2-g7",
+        "mini-test-01-p2-g8",
+        "mini-test-01-p2-g9",
+        "mini-test-01-p2-g10"
+      ],
+      "bytes": 156465,
+      "durationSeconds": 12.962902,
+      "sha256": "7b6775628243e8163ce4899aef23529898466d74116fdfade1ea2a1436f3ece3",
+      "decodedRms": 0.07579330787133286,
+      "codec": "mp3"
+    },
+    {
+      "id": "listening-part-3",
+      "publicUrl": "/demo/audio/listening-part-3.mp3",
+      "fixtureIds": [
+        "full-test-01-p3-g1",
+        "full-test-01-p3-g2",
+        "full-test-01-p3-g3",
+        "full-test-01-p3-g4",
+        "full-test-01-p3-g5",
+        "full-test-01-p3-g6",
+        "full-test-01-p3-g7",
+        "full-test-01-p3-g8",
+        "full-test-01-p3-g9",
+        "full-test-01-p3-g10",
+        "full-test-01-p3-g11",
+        "full-test-01-p3-g12",
+        "full-test-01-p3-g13",
+        "full-test-02-p3-g1",
+        "full-test-02-p3-g2",
+        "full-test-02-p3-g3",
+        "full-test-02-p3-g4",
+        "full-test-02-p3-g5",
+        "full-test-02-p3-g6",
+        "full-test-02-p3-g7",
+        "full-test-02-p3-g8",
+        "full-test-02-p3-g9",
+        "full-test-02-p3-g10",
+        "full-test-02-p3-g11",
+        "full-test-02-p3-g12",
+        "full-test-02-p3-g13",
+        "mini-test-01-p3-g1",
+        "mini-test-01-p3-g2",
+        "mini-test-01-p3-g3"
+      ],
+      "bytes": 298780,
+      "durationSeconds": 24.818141,
+      "sha256": "3054dc019ceb46056f0112979f4d981f97c0998908b1722375852b98114abaaf",
+      "decodedRms": 0.09290812601115561,
+      "codec": "mp3"
+    },
+    {
+      "id": "listening-part-4",
+      "publicUrl": "/demo/audio/listening-part-4.mp3",
+      "fixtureIds": [
+        "full-test-01-p4-g1",
+        "full-test-01-p4-g2",
+        "full-test-01-p4-g3",
+        "full-test-01-p4-g4",
+        "full-test-01-p4-g5",
+        "full-test-01-p4-g6",
+        "full-test-01-p4-g7",
+        "full-test-01-p4-g8",
+        "full-test-01-p4-g9",
+        "full-test-01-p4-g10",
+        "full-test-02-p4-g1",
+        "full-test-02-p4-g2",
+        "full-test-02-p4-g3",
+        "full-test-02-p4-g4",
+        "full-test-02-p4-g5",
+        "full-test-02-p4-g6",
+        "full-test-02-p4-g7",
+        "full-test-02-p4-g8",
+        "full-test-02-p4-g9",
+        "full-test-02-p4-g10"
+      ],
+      "bytes": 329186,
+      "durationSeconds": 27.354875,
+      "sha256": "aea6fd6184db11fc18dbc53aff395f72afdfffe6f452eb4bc55c36a3a317050e",
+      "decodedRms": 0.09563074695136423,
+      "codec": "mp3"
+    }
+  ]
+}

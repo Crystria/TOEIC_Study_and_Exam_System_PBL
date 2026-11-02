@@ -1,0 +1,166 @@
+[
+  {
+    "path": "packages/common/src/auth/constants.ts",
+    "sha256": "BD92FB4BB1AD9CD588025668D089D0728F6E96A6153DEE44D0F06A0D40370CCE"
+  },
+  {
+    "path": "packages/common/src/auth/current-user.decorator.ts",
+    "sha256": "E204F871478B76878E5CC5047672145E28E6D830235CE72939A0FA50E9F8BC5C"
+  },
+  {
+    "path": "packages/common/src/auth/jwt-auth.guard.ts",
+    "sha256": "92F08512771B5121175ACAA6D6F9E6DCE8E7C20820064D1E6526BE902477BD5C"
+  },
+  {
+    "path": "packages/common/src/auth/public.decorator.ts",
+    "sha256": "8F99EB062FE99FFE9674E82BA33628EBE8F8E98A07A22AAF23E58E778EBD1CD1"
+  },
+  {
+    "path": "packages/common/src/auth/roles.decorator.ts",
+    "sha256": "9CD37EEFAEE5B6AC4F0D504B963E54AA71437290B0466FF65119D4BCF567EB80"
+  },
+  {
+    "path": "packages/common/src/auth/roles.guard.ts",
+    "sha256": "F2D149E7EC369F798A923E6EA21FA0371F01B67C12702BF372D8A241C3261B3C"
+  },
+  {
+    "path": "packages/contracts/events/LessonCompletedEvent.avsc",
+    "sha256": "0732798B8A9B191808BF2C26A93B0BAA09607670A7A6C0F86BDB3A09DAA9DB39"
+  },
+  {
+    "path": "packages/contracts/events/QuestionCreatedEvent.avsc",
+    "sha256": "FDE9F12F515EE49BA4FB55C6A81F009CB5A4D7A3F9C418997CF92AC508F0ACFE"
+  },
+  {
+    "path": "packages/contracts/events/QuestionUpdatedEvent.avsc",
+    "sha256": "19A264356FA795AC23D05E4CC8F0FA0EB132EF9E5DD1ED94914034DC3348F9D0"
+  },
+  {
+    "path": "packages/contracts/events/TestSubmittedEvent.avsc",
+    "sha256": "DD0EF9DF88B8174CC74501D7B0E6568D0DA20D17A953F01D73FDDC6A7AEC798B"
+  },
+  {
+    "path": "packages/contracts/events/UserSyncCompletedEvent.avsc",
+    "sha256": "DD5275D8F97F3F1144CD389B20C18CF82018CD4660382EBA1E4D9B3C56A6F879"
+  },
+  {
+    "path": "packages/contracts/events/VocabularyLearnedEvent.avsc",
+    "sha256": "D459670E0582D93BCF29477B30DD769215AA57E6B94E19A5C3AD2A927A81BD6A"
+  },
+  {
+    "path": "packages/contracts/openapi/openapi.yaml",
+    "sha256": "B17833061739593906A3F8C2ABFB68A8938009B97F8AFE09EB4926CFB74DDB67"
+  },
+  {
+    "path": "packages/contracts/README.md",
+    "sha256": "389FEC91B2E924490FD400FB32F40E6F4146BDE7961F3C2387015B2008968224"
+  },
+  {
+    "path": "services/api-gateway/src/app.module.ts",
+    "sha256": "118DFDC039A3DB0936B439ABBED27052E2066B7F6E2C361E32F4237F7355C9EA"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/correlation-id.middleware.ts",
+    "sha256": "C6A0FC31DF38BD401BECBB33DD63D35EB048FF547D43F8C787F6D2F9F1711A2D"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/jwt.middleware.ts",
+    "sha256": "32BBDC3F5F99206CE0668713D5104E79253A40A0875569AC7D8EF307F39EC00B"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/proxy.ts",
+    "sha256": "AE33569605B9F14362B96720730F9A29C0F82ED0E392E975FC3D556676BA2F27"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/rate-limit.middleware.ts",
+    "sha256": "EC0B1DF40A1C57B51D839A54505CF97B087A8F25744A68033B0FA16F9DBC4A66"
+  },
+  {
+    "path": "services/api-gateway/src/health/health.controller.ts",
+    "sha256": "13426CE794253FEE251099C3563C9322C432E80ECF95F69B8E151F984F6378EA"
+  },
+  {
+    "path": "services/api-gateway/src/main.ts",
+    "sha256": "C2C85D95B820F0C2C416259C02A54D6905A0E53AF139B41F65C1EEF889EC860E"
+  },
+  {
+    "path": "services/auth-service/prisma/schema.prisma",
+    "sha256": "844F04D8049FF63753B7DA2D895E4DD394A8918438651B535849487239AB2E60"
+  },
+  {
+    "path": "services/auth-service/src/app.module.ts",
+    "sha256": "C82FB0C34903A2BC52647868464E43D79E2B80593E1CEF91DB2BCF60C23F12B4"
+  },
+  {
+    "path": "services/auth-service/src/main.ts",
+    "sha256": "4FFD0C54D43069305ECFC5FA08D33A5B421878D31FEDAC6E9CA82413C5457CE9"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/auth.controller.ts",
+    "sha256": "6C344C7F40D99F24814670FCBD0C6167EE12E870A47C0526815C6AD31387F8F0"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/auth.module.ts",
+    "sha256": "34FF8D00CE193AF05E9C2AD0981D363749FC0C543B9F73D7A3FE5107E6FDE414"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/auth.service.ts",
+    "sha256": "6F3396F80FF84D005E3753EA307BEF43E3FA1145EAA273685D3F1776101F5B79"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/login.dto.ts",
+    "sha256": "E8611590E6BA808E4A1CE9673F52C644F857BD0C603699C73ED9E618D2CD2E5D"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/refresh.dto.ts",
+    "sha256": "D2632CD57EB70E56D7E86AF59F6867F189F2888DAADA9B54B12601727DC36413"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/register.dto.ts",
+    "sha256": "63E594C95744E907A0C0C288ADF0AFAB321D2D66A3659B991A5A0E3E728D8154"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/sync.dto.ts",
+    "sha256": "D124399B232F50D3084F17D12ECF235E76A6ADDB78B03FC5732AB3EC940AE67E"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/sync.controller.ts",
+    "sha256": "1C5855F1CEC4B7599695941FCC211BD602AADE3D225BB495FEF15C058EC29250"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/admin-users.controller.ts",
+    "sha256": "B5A997F757C2ADAC029636FE64326897DAAB15A0226056C938FCAC3523FC2421"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/list-users-query.dto.ts",
+    "sha256": "CF65394A8DB5BBCA1F9EDE5A8C25A4B8CCABD498D5D89BAF279F05E4F71F2378"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/update-profile.dto.ts",
+    "sha256": "07D5898C4C2B13A6259CC49FE5DACFD591D25F6AD0E1DC6A0BDBD69CBE513410"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/update-roles.dto.ts",
+    "sha256": "E87A1D1CECC974AED95CD9A29C891EBB1C5DCDE92DFACBC67B7A8A4DBD2068B4"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/update-status.dto.ts",
+    "sha256": "BBB625C46C2C9A04E80DA931BA319D876FF14F10B1727E75731D70DDCD92DA1A"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/users.controller.ts",
+    "sha256": "07D65D38A5B9669EE71E482421AC41621F987431D81A00D9C88137F5804B9982"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/users.module.ts",
+    "sha256": "B6BE00E702EDFB041344CA33E553D69AC42DFEBBBF81034619923B585AB7902D"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/users.service.ts",
+    "sha256": "09298CD97A77F84C5811A64D57A3535B39BA10999ABBFF80315CAC8BDDEAB1C1"
+  },
+  {
+    "sha256": "2DE942E5513743D348D2012504AED16AD6AECB0C2AFB6C89E356F7DC5B39070E",
+    "path": "private/task.txt"
+  }
+]

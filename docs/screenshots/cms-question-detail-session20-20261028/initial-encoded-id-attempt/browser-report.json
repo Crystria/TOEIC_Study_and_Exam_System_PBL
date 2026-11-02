@@ -1,0 +1,158 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Read-only original Part5, explicit B, four labeled options, demo/grading distinction, no unimplemented actions",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All three catalog IDs direct/reload, exact authored answers B/C/A",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "List page2 size1 keyword/Part -> keyboard detail -> Back/Forward/reload -> return restores query, main focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All actual filters, custom size and list preview survive; only three supported rows link",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "loading-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "detail-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "stem-options-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "answer-explanation-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "demo-q-018-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "demo-q-019-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "restored-page-filter-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "unsupported-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "not-found-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "storageWrites": [],
+  "browser": "156.0.8078.48",
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'demo-unknown-VeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionId%3Cscript%3E'\n- 'demo-unknown-VeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionIdVeryLongQuestionId<script>'\n\n    at D:\\TOEIC_Study_and_Exam_System_PBL\\scripts\\qa\\cms-question-detail.cjs:233:12"
+}

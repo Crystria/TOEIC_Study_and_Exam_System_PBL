@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-29",
+  "modeOfLivePreview": "DEMO",
+  "unitTests": {
+    "web": 90,
+    "cms": 531,
+    "integrationStubs": 27,
+    "total": 648
+  },
+  "browser": {
+    "api": {
+      "kind": "UI contract stubs ONLY",
+      "checks": 93,
+      "completed": true,
+      "errors": 0
+    },
+    "cmsDemo": {
+      "checks": 48,
+      "completed": true,
+      "errors": 0
+    },
+    "studentDemoSmoke": {
+      "checks": 44,
+      "completed": true,
+      "errors": 0
+    }
+  },
+  "viewports": [
+    1440,
+    768,
+    390,
+    320
+  ],
+  "images": 8,
+  "realGatewayE2E": "BLOCKED",
+  "productionWrites": false,
+  "backendModified": false,
+  "humanPronunciationAccepted": false,
+  "firefoxSafariAvailable": false
+}

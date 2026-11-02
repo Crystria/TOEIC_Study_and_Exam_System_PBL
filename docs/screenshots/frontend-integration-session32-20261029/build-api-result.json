@@ -1,0 +1,18 @@
+{
+  "files": 50403,
+  "build": "D:\\TOEIC_Study_and_Exam_System_PBL\\tmp\\frontend-integration-session32\\build",
+  "results": [
+    {
+      "app": "web",
+      "mode": "api",
+      "status": 0,
+      "log": "D:\\TOEIC_Study_and_Exam_System_PBL\\tmp\\frontend-integration-session32\\web-api-build.log"
+    },
+    {
+      "app": "admin-cms",
+      "mode": "api",
+      "status": 0,
+      "log": "D:\\TOEIC_Study_and_Exam_System_PBL\\tmp\\frontend-integration-session32\\admin-cms-api-build.log"
+    }
+  ]
+}

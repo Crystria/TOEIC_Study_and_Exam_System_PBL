@@ -1,0 +1,5 @@
+{
+  "url": "http://localhost:3007/questions/demo-q-017?demoRole=CONTENT_ADMIN",
+  "panel": "PHẠM VI VAI TRÒ DEMO\nKhông gian quản trị\n\nMục này thuộc menu khác. Vai trò xem thử hiện tại là quản trị nội dung.\n\nĐây chỉ là minh họa UI; trang chưa tải dữ liệu hoặc kiểm tra quyền truy cập thật.\n\nVề không gian quản trị nội dung",
+  "detailMounted": 0
+}

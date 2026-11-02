@@ -1,0 +1,11 @@
+{
+  "retryFocus": true,
+  "preservesMovedFocus": true,
+  "longContentErrorAndExhaustedWidths": [
+    320,
+    390,
+    768,
+    1440
+  ],
+  "errors": []
+}

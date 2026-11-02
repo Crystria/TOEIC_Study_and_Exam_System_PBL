@@ -1,0 +1,276 @@
+{
+  "kind": "real read-only frontend HTTP/browser; no response stubs; no authenticated backend acceptance",
+  "http": [
+    {
+      "app": "web",
+      "asset": "/_next/static/css/866c99d60c1c5bf7.css",
+      "status": 200,
+      "contentType": "text/css; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/webpack-f02d6b7df18add95.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/1dd3208c-3a3c9ec11170af35.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/1528-a2a9cfdb793abc17.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/main-app-c1caf6f801b7a2fa.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/6340-ae311334125e2f92.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/5666-016341082724ac17.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/app/login/page-d30bb48e8873837b.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/1984-05aaed000cf28524.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/app/layout-010a054471266e23.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "asset": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "web",
+      "endpoint": "auth/session",
+      "status": 401,
+      "code": "GATEWAY_ERROR"
+    },
+    {
+      "app": "web",
+      "endpoint": "users/me",
+      "status": 401,
+      "code": "GATEWAY_ERROR"
+    },
+    {
+      "app": "web",
+      "endpoint": "ai/conversations",
+      "status": 501,
+      "code": "CONTRACT_BLOCKED"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/css/cd96fd071905af08.css",
+      "status": 200,
+      "contentType": "text/css; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/webpack-9379e007fbab5446.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/1dd3208c-ff0a6e4f51888afe.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/528-10ccaaae662d9f4f.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/main-app-e39c9502e6a1082e.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/146-c11fe128c68be7bd.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/app/(auth)/login/page-3ebe83f0a842a64e.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/47-067480d20e9aa7ae.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/app/layout-fd59b037d69fdcb1.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "asset": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8"
+    },
+    {
+      "app": "cms",
+      "endpoint": "auth/session",
+      "status": 401,
+      "code": "GATEWAY_ERROR"
+    },
+    {
+      "app": "cms",
+      "endpoint": "users/me",
+      "status": 401,
+      "code": "GATEWAY_ERROR"
+    },
+    {
+      "app": "cms",
+      "endpoint": "ai/conversations",
+      "status": 501,
+      "code": "CONTRACT_BLOCKED"
+    }
+  ],
+  "checks": [
+    {
+      "name": "real HTTP/CSS/chunks, anonymous session denial and blocked contracts"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "route": "/login"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "route": "/register"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "route": "/dashboard"
+    },
+    {
+      "width": 1440,
+      "app": "cms",
+      "route": "/login"
+    },
+    {
+      "width": 1440,
+      "app": "cms",
+      "route": "/users"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "route": "/login"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "route": "/register"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "route": "/dashboard"
+    },
+    {
+      "width": 768,
+      "app": "cms",
+      "route": "/login"
+    },
+    {
+      "width": 768,
+      "app": "cms",
+      "route": "/users"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "route": "/login"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "route": "/register"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "route": "/dashboard"
+    },
+    {
+      "width": 390,
+      "app": "cms",
+      "route": "/login"
+    },
+    {
+      "width": 390,
+      "app": "cms",
+      "route": "/users"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "route": "/login"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "route": "/register"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "route": "/dashboard"
+    },
+    {
+      "width": 320,
+      "app": "cms",
+      "route": "/login"
+    },
+    {
+      "width": 320,
+      "app": "cms",
+      "route": "/users"
+    }
+  ],
+  "errors": [],
+  "mutationRequests": [],
+  "authenticatedBackend": "NOT_VERIFIED",
+  "completed": true
+}

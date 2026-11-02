@@ -1,0 +1,179 @@
+[
+  {
+    "file": "SRS.docx",
+    "sha256": "E1E3D2DFAAC745E9B75E79769DA6B945AA79D388CDAC2F0E0BCD25A59F0D83FE",
+    "excerpts": [
+      {
+        "text": "•Quản trị viên hệ thống (System Administrator / SYSTEM_ADMIN):",
+        "paragraphIndex": 113
+      },
+      {
+        "text": "–Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung.",
+        "paragraphIndex": 115
+      },
+      {
+        "text": "•Quản trị viên nội dung (Content Administrator / CONTENT_ADMIN):",
+        "paragraphIndex": 116
+      },
+      {
+        "text": "Quản lý người dùng & phân quyền hệ thống (System & User Management): System Admin phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), quản lý trạng thái tài khoản.",
+        "paragraphIndex": 123
+      },
+      {
+        "text": "Dịch vụ chịu trách nhiệm quản lý thông tin tài khoản, xác thực quyền hạn theo mô hình RBAC (SYSTEM_ADMIN, CONTENT_ADMIN, USER) và đồng bộ hóa phiên làm việc của người dùng trên nhiều nền tảng.",
+        "paragraphIndex": 151
+      },
+      {
+        "text": "Tác nhân thực hiện: Tất cả người dùng (USER, SYSTEM_ADMIN, CONTENT_ADMIN).",
+        "paragraphIndex": 168
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên hệ thống (SYSTEM_ADMIN) đối với phân quyền/trạng thái; Học viên (USER) đối với hồ sơ cá nhân.",
+        "paragraphIndex": 180
+      },
+      {
+        "text": "Đối với System Admin: user_id (UUIDv4), status (Enum: ACTIVE, SUSPENDED, INACTIVE), roles (Mảng Enum: SYSTEM_ADMIN, CONTENT_ADMIN, USER).",
+        "paragraphIndex": 184
+      },
+      {
+        "text": "HTTP 403 (Forbidden): Trả về lỗi nếu tài khoản không có quyền SYSTEM_ADMIN mà cố tình gọi API phân quyền.",
+        "paragraphIndex": 187
+      },
+      {
+        "text": "Chỉ tài khoản có vai trò SYSTEM_ADMIN mới có quyền gán/thay đổi thuộc tính roles và status của tài khoản khác.",
+        "paragraphIndex": 189
+      },
+      {
+        "text": "Ghi vết nhật ký quản trị (Audit Log) cho mọi thao tác nâng/hạ quyền hạn tài khoản.",
+        "paragraphIndex": 190
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 203
+      },
+      {
+        "text": "Tác nhân thực hiện: Học viên (USER), Content Admin (CONTENT_ADMIN).",
+        "paragraphIndex": 211
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 222
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 248
+      },
+      {
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN).",
+        "paragraphIndex": 255
+      },
+      {
+        "text": "Quản trị viên đã đăng nhập thành công vào hệ thống Admin CMS và được cấp Token JWT có quyền CONTENT_ADMIN.",
+        "paragraphIndex": 495
+      }
+    ],
+    "paragraphs": 726
+  },
+  {
+    "file": "tai_lieu_thiet_ke_CSDL.docx",
+    "sha256": "A6D70A829EF84EFBC67C42D1386C756ECD55875389AB61D3D4590276122DBA13",
+    "excerpts": [
+      {
+        "text": "Định nghĩa danh mục vai trò RBAC được hệ thống hỗ trợ.",
+        "paragraphIndex": 84
+      },
+      {
+        "text": "Danh mục vai trò: role_code, name (SYSTEM_ADMIN, CONTENT_ADMIN, USER)",
+        "paragraphIndex": 225
+      },
+      {
+        "text": "Miền giá trị đóng; quản lý RBAC",
+        "paragraphIndex": 227
+      },
+      {
+        "text": "Mỗi user đăng ký mới phải có USER; chỉ SYSTEM_ADMIN được thay đổi",
+        "paragraphIndex": 231
+      },
+      {
+        "text": "AdminAuditLog",
+        "paragraphIndex": 240
+      },
+      {
+        "text": "User AdminAuditLog actor",
+        "paragraphIndex": 420
+      },
+      {
+        "text": "User AdminAuditLog target",
+        "paragraphIndex": 427
+      },
+      {
+        "text": "AdminAuditLog UserSyncState AuthOutboxEvent",
+        "paragraphIndex": 584
+      },
+      {
+        "text": "AdminAuditLog, UserSyncState và AuthOutboxEvent được tách thành các bảng riêng để lưu trữ bền vững cho ba mục đích khác nhau: ghi audit, lưu trạng thái đồng bộ LWW, và đảm bảo giao hàng/xử lý sự kiện. ",
+        "paragraphIndex": 586
+      },
+      {
+        "text": "Định nghĩa danh mục vai trò RBAC được hệ thống hỗ trợ.",
+        "paragraphIndex": 695
+      },
+      {
+        "text": "RESTRICT bảo vệ lịch sử thi, tiến độ, audit log và dữ liệu đang được tham chiếu.",
+        "paragraphIndex": 2544
+      },
+      {
+        "text": "Chính sách retention & hard delete User: giữ dữ liệu học tập/thi tối thiểu 24 tháng; hard delete chỉ theo yêu cầu người dùng, xử lý ở tầng ứng dụng qua Saga; audit log giữ vĩnh viễn.",
+        "paragraphIndex": 2546
+      }
+    ],
+    "paragraphs": 2627
+  },
+  {
+    "file": "Thiết kế Event.docx",
+    "sha256": "C1BC6BB143BDAAA871BF0C07716BAF0BA19ED2E25A16E535B2E4D8C86A3C734D",
+    "excerpts": [],
+    "paragraphs": 147
+  },
+  {
+    "file": "Thiết kế hệ thống.docx",
+    "sha256": "C766590CA504F42D54205F5C09182AAE8003AA47916DB8E6BB9988C354F14ECB",
+    "excerpts": [
+      {
+        "text": "Mục đích: quản lý danh tính, xác thực, phân quyền và trạng thái tài khoản. SRS xác định các vai trò SYSTEM_ADMIN, CONTENT_ADMIN và USER; đồng thời yêu cầu hỗ trợ JWT và cơ chế đồng bộ tiến độ đa nền tảng.",
+        "paragraphIndex": 2
+      },
+      {
+        "text": "Nhật ký truy cập/quản trị.",
+        "paragraphIndex": 21
+      },
+      {
+        "text": "RBAC kiểm tra role trước khi thực hiện API quản trị.",
+        "paragraphIndex": 68
+      },
+      {
+        "text": "Audit log.",
+        "paragraphIndex": 437
+      },
+      {
+        "text": "Audit log",
+        "paragraphIndex": 494
+      },
+      {
+        "text": "Ghi lại nhật ký thao tác quan trọng ở web admin: tạo/sửa/xóa/cập nhật câu hỏi, bộ đề, bài giảng; thay đổi quyền người dùng; xuất dữ liệu kèm thông tin ai thực hiện, thời gian, IP. Audit log nên bất biến hoặc lưu riêng để phục vụ điều tra khi có sự cố bảo mật.",
+        "paragraphIndex": 495
+      },
+      {
+        "text": "Phân quyền theo vai trò (RBAC): Quản trị hệ thống, quản trị nội dung, học viên với mỗi API endpoint kiểm tra quyền trước khi xử lý.",
+        "paragraphIndex": 499
+      }
+    ],
+    "paragraphs": 520
+  },
+  {
+    "file": "Thiet_ke_kien_truc_Storage.docx",
+    "sha256": "D6E3D72A58B6262E2724C636C5ACCA7071B975C9A64B9C94E55395D392D89BC3",
+    "excerpts": [],
+    "paragraphs": 67
+  }
+]

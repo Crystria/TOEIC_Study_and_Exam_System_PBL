@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start -p 3006",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc --project tsconfig.tests.json && node --test .test-build/tests/ui-contracts.test.js .test-build/tests/learning.test.js .test-build/tests/exams.test.js .test-build/tests/exam-session.test.js .test-build/tests/exam-results.test.js .test-build/tests/analytics.test.js .test-build/tests/settings.test.js .test-build/tests/ai-chat.test.js .test-build/tests/profile.test.js",
     "clean": "rimraf .next"
   },
   "dependencies": {
