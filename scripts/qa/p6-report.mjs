@@ -1,12 +1,12 @@
-import { readFileSync, existsSync, writeFileSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync, statSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { root, require } from './config.mjs';
-export function consolidate() {
-  const dir = join(root, 'artifacts/p6'),
-    read = (name) =>
+export function consolidate({ dir = join(root, 'artifacts/p6') } = {}) {
+  mkdirSync(dir, { recursive: true });
+  const read = (name) =>
       existsSync(join(dir, name)) ? JSON.parse(readFileSync(join(dir, name))) : null,
-    run = read('latest.json');
-  if (!run) throw Error('No P6 run evidence');
+    evidence = read('latest.json'),
+    run = evidence || { checks: [] };
   const fresh = (name) =>
     existsSync(join(dir, name)) && statSync(join(dir, name)).mtimeMs >= Date.parse(run.startedAt);
   const load = fresh('load.json') ? read('load.json') : run.load || null,
@@ -29,6 +29,7 @@ export function consolidate() {
   };
   writeFileSync(join(dir, 'coverage-summary.json'), JSON.stringify(coverage, null, 2));
   const gates = {
+    runnerCompleted: !!run.finishedAt && !run.error,
     functional: [
       'all six real services',
       'canonical E2E',
@@ -57,6 +58,16 @@ export function consolidate() {
     gates,
     passed: Object.values(gates).every(Boolean),
     rawRunnerCompleted: !!run.finishedAt,
+    runner: {
+      evidenceAvailable: !!evidence,
+      startedAt: run.startedAt || null,
+      finishedAt: run.finishedAt || null,
+      error:
+        run.error ||
+        (!evidence
+          ? 'No P6 run evidence: the runner did not produce artifacts/p6/latest.json. Check the earlier CI steps and runner output.'
+          : null),
+    },
     load,
     broker: {
       activeProfile: baseline,

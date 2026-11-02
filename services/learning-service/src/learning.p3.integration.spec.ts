@@ -176,6 +176,21 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
       region: 'us-east-1',
     });
     if (!(await minio.bucketExists('toeic-media'))) await minio.makeBucket('toeic-media');
+    // Fresh CI storage needs the same public-read policy as scripts/init-media.mjs.
+    await minio.setBucketPolicy(
+      'toeic-media',
+      JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Principal: { AWS: ['*'] },
+            Action: ['s3:GetObject'],
+            Resource: ['arn:aws:s3:::toeic-media/*'],
+          },
+        ],
+      }),
+    );
     ({ topic, cards } = await createTopic());
   });
   afterAll(async () => {
