@@ -29,7 +29,7 @@ export function consolidate({ dir = join(root, 'artifacts/p6') } = {}) {
   };
   writeFileSync(join(dir, 'coverage-summary.json'), JSON.stringify(coverage, null, 2));
   const gates = {
-    runnerCompleted: !!run.finishedAt && !run.error,
+    runnerCompleted: !!run.finishedAt && !run.error && !run.shutdownError,
     functional: [
       'all six real services',
       'canonical E2E',
@@ -39,7 +39,7 @@ export function consolidate({ dir = join(root, 'artifacts/p6') } = {}) {
       'Mail sandbox outage:',
       'Backup/restore',
     ].every((prefix) => run.checks.some((c) => c.name.startsWith(prefix) && c.passed)),
-    readLoad: !!load?.passed,
+    readLoad: !!(load?.readLoadPassed ?? load?.passed),
     recovery:
       !!load?.recovery?.passed &&
       !load?.recovery?.skipped &&
@@ -64,6 +64,7 @@ export function consolidate({ dir = join(root, 'artifacts/p6') } = {}) {
       finishedAt: run.finishedAt || null,
       error:
         run.error ||
+        run.shutdownError ||
         (!evidence
           ? 'No P6 run evidence: the runner did not produce artifacts/p6/latest.json. Check the earlier CI steps and runner output.'
           : null),

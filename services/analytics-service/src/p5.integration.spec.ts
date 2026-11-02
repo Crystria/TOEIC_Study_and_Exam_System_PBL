@@ -480,6 +480,31 @@ integration('P5 Analytics via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO',
       (await adb.testScoreFact.findUniqueOrThrow({ where: { attemptId: fullId } })).totalScore,
     ).toBe(990);
   });
+  it('drains 200 broker replays of an already committed learning event without duplicate facts', async () => {
+    const e = reviewed(ids.OTHER, new Date());
+    await deliver(e);
+    const c = await amqp.connect(process.env.RABBITMQ_URL!);
+    try {
+      const ch = await c.createConfirmChannel(),
+        q = process.env.ANALYTICS_QUEUE_PREFIX + '.analytics-service.v2';
+      for (let i = 0; i < 200; i++)
+        ch.publish(
+          process.env.RABBITMQ_EXCHANGE!,
+          'vocabulary.learned.v2',
+          Buffer.from(JSON.stringify(e)),
+          { persistent: true },
+        );
+      await ch.waitForConfirms();
+      await until(async () => (await ch.checkQueue(q)).messageCount === 0);
+      expect(await adb.learningActivityFact.count({ where: { eventId: e.eventId } })).toBe(1);
+      expect(await adb.processedEvent.count({ where: { eventId: e.eventId } })).toBe(1);
+      expect(await adb.analyticsQuarantine.count({ where: { eventId: e.eventId } })).toBe(0);
+      expect((await ch.checkQueue(q + '.dlq')).messageCount).toBe(0);
+      await ch.close();
+    } finally {
+      await c.close();
+    }
+  });
   it('counts real Learning review/first learned/lesson and REST-sync replay exactly once', async () => {
     const id = cards[0].vocabularyId;
     let first: string | null = null;

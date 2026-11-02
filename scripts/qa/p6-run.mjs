@@ -5,6 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync, createWriteStream, existsSync }
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
 import { root, require, names, services, databaseUrl, scrub } from './config.mjs';
+import { guardShutdown, stopChild } from './p6-process.mjs';
 const dir = join(root, 'private/p6'),
   out = join(root, 'artifacts/p6');
 mkdirSync(dir, { recursive: true });
@@ -105,20 +106,7 @@ function launch(name, env) {
   return p;
 }
 async function stopOwnedServices() {
-  await Promise.all(
-    children.splice(0).map(
-      (p) =>
-        new Promise((resolve, reject) => {
-          if (p.exitCode !== null || p.signalCode) return resolve();
-          const timer = setTimeout(() => reject(Error('QA child did not stop: ' + p.pid)), 5000);
-          p.once('exit', () => {
-            clearTimeout(timer);
-            resolve();
-          });
-          p.kill();
-        }),
-    ),
-  );
+  await Promise.all(children.splice(0).map((child) => stopChild(child)));
 }
 process.once('SIGINT', () => {
   for (const c of children) c.kill();
@@ -154,9 +142,10 @@ try {
   report.infrastructure = {
     postgres: limits(process.env.P6_POSTGRES_CONTAINER || 'toeic-postgres'),
     rabbitmq: limits(
-      process.env.P6_RABBITMQ_PORT === '6772' ? 'toeic-p6-rabbitmq' : 'toeic-rabbitmq',
+      process.env.P6_RABBITMQ_CONTAINER ||
+        (process.env.P6_RABBITMQ_PORT === '6772' ? 'toeic-p6-rabbitmq' : 'toeic-rabbitmq'),
     ),
-    redis: limits('toeic-redis'),
+    redis: limits(process.env.P6_REDIS_CONTAINER || 'toeic-redis'),
     nodeEnv: 'development',
     databasePoolPerService: 8,
   };
@@ -365,9 +354,25 @@ try {
   process.exitCode = 1;
   console.error(report.error);
 } finally {
-  for (const p of children) p.kill();
-  for (const p of Object.values(proxies)) p.close();
-  report.finishedAt = new Date().toISOString();
-  writeFileSync(join(out, 'latest.json'), JSON.stringify(report, null, 2));
-  console.log('P6 report artifacts/p6/latest.json');
+  guardShutdown({
+    graceMs: 15000,
+    onTimeout: (message) => {
+      report.shutdownError = message;
+      report.passed = false;
+      writeFileSync(join(out, 'latest.json'), JSON.stringify(report, null, 2));
+    },
+  });
+  try {
+    for (const p of Object.values(proxies)) p.close();
+    await stopOwnedServices();
+  } catch (error) {
+    report.shutdownError = scrub(error.stack || error.message);
+    report.passed = false;
+    process.exitCode = 1;
+    console.error(report.shutdownError);
+  } finally {
+    report.finishedAt = new Date().toISOString();
+    writeFileSync(join(out, 'latest.json'), JSON.stringify(report, null, 2));
+    console.log('P6 report artifacts/p6/latest.json');
+  }
 }

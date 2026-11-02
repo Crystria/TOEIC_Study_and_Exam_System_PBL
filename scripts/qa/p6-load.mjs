@@ -337,8 +337,10 @@ export async function benchmark({ base, env, out }) {
         rps: total / elapsed,
         perRoute: Object.fromEntries(routes.map((p) => [p, stats(perRoute[p])])),
         errors,
-        passed: duration >= 900 && failed / total < 0.01 && latency.p95Ms < 500,
+        readLoadPassed:
+          duration >= 900 && total > 0 && failed / total < 0.01 && latency.p95Ms < 500,
       };
+    report.passed = report.readLoadPassed;
     writeFileSync(join(out, 'load.json'), JSON.stringify(report, null, 2));
     const { recovery } = await import('./p6-recovery.mjs');
     report.recovery =
@@ -353,9 +355,11 @@ export async function benchmark({ base, env, out }) {
       'P6 LOAD done ' +
         JSON.stringify({
           passed: report.passed,
+          readLoadPassed: report.readLoadPassed,
           p95Ms: latency.p95Ms,
           errorRate: report.errorRate,
           rps: report.rps,
+          recovery: report.recovery,
         }),
     );
     return report;

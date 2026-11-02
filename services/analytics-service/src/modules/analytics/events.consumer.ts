@@ -87,6 +87,10 @@ export class EventsConsumer implements OnModuleInit {
       p = canonicalPayload(e.eventType, e.payload),
       payloadHash = stableHash(e),
       isAttempt = !!p.attemptId;
+    // An identical committed inbox entry is enough to acknowledge a transport replay.
+    // Keep new events and hash collisions on the locked, transactional path below.
+    const processed = await this.db.processedEvent.findUnique({ where: { eventId: e.eventId } });
+    if (processed?.payloadHash === payloadHash) return;
     await this.db.$transaction(
       async (tx) => {
         await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`analytics-event:${e.eventId}`},0))::text`;

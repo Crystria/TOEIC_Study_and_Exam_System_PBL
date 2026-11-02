@@ -71,7 +71,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Check acceptance report handling
-        run: node --test scripts/qa/p6-report.test.mjs
+        run: node --test scripts/qa/p6-report.test.mjs scripts/qa/p6-process.test.mjs
       - run: npm run build -w @toeic/common
       - run: npm run prisma:generate -w @toeic/auth-service
       - run: npm run prisma:generate -w @toeic/learning-service
@@ -101,9 +101,12 @@ jobs:
           npm run test:p5 -w @toeic/analytics-service
       - name: Isolated six-service E2E, failures, restore and 15-minute load
         id: p6
+        timeout-minutes: 30
         env:
           P6_NFR_PREFLIGHT: 'true'
           P6_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          P6_RABBITMQ_CONTAINER: ${{ job.services.rabbitmq.id }}
+          P6_REDIS_CONTAINER: ${{ job.services.redis.id }}
         run: npm run qa:p6
       - name: Consolidate scoped P6 evidence
         if: ${{ !cancelled() && steps.p6.outcome != 'skipped' }}

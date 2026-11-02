@@ -5,20 +5,36 @@ import { randomUUID } from 'node:crypto';
 import { createWriteStream } from 'node:fs';
 import { join } from 'node:path';
 import os from 'node:os';
-import { clients, require, root, databaseUrl } from './config.mjs';
+import { clients, require, root, databaseUrl, scrub } from './config.mjs';
+import { stopChild } from './p6-process.mjs';
 import { wait } from './p6-acceptance.mjs';
 export async function recovery({ base, env }) {
   const dbs = clients(),
     [auth, , , analytics, learning] = dbs,
     checks = [];
   let child,
-    revision = 0;
+    revision = 0,
+    stage = 'initialize';
+  const enter = (name) => {
+    stage = name;
+    console.log('P6 RECOVERY ' + stage);
+  };
+  // Consume every response and bound transport waits, including failed assertions.
+  const request = async (target, options = {}) => {
+    const response = await fetch(target, {
+      ...options,
+      signal: options.signal || AbortSignal.timeout(10000),
+    });
+    const body = await response.text();
+    return { status: response.status, json: async () => JSON.parse(body) };
+  };
   const server = createServer();
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   const port = server.address().port;
   await new Promise((r) => server.close(r));
   const url = 'http://127.0.0.1:' + port;
   async function launch(authUrl) {
+    assert(!child, 'Previous recovery replica must exit before launching another');
     const log = createWriteStream(join(root, 'private/p6/analytics-replica.log'), { flags: 'a' });
     child = spawn(process.execPath, ['dist/main.js'], {
       cwd: join(root, 'services/analytics-service'),
@@ -35,23 +51,14 @@ export async function recovery({ base, env }) {
     });
     child.stdout.pipe(log);
     child.stderr.pipe(log);
-    await wait(async () => assert.equal((await fetch(url + '/api/v1/ready')).status, 200));
+    await wait(async () => {
+      assert.equal(child.exitCode, null, 'Recovery replica exited before readiness');
+      assert.equal((await request(url + '/api/v1/ready')).status, 200);
+    });
   }
-  async function stop() {
-    if (child && child.exitCode === null && !child.signalCode && !child.killed) {
-      const c = child;
-      let timer;
-      await Promise.race([
-        new Promise((resolve) => {
-          c.once('exit', resolve);
-          c.kill();
-        }),
-        new Promise((resolve) => {
-          timer = setTimeout(resolve, 5000);
-        }),
-      ]);
-      clearTimeout(timer);
-    }
+  async function stop(options) {
+    await stopChild(child, options);
+    child = undefined;
   }
   try {
     const user = await auth.user.findFirstOrThrow({ where: { email: { startsWith: 'p6-vu-' } } }),
@@ -70,15 +77,17 @@ export async function recovery({ base, env }) {
         { algorithm: 'RS256', issuer: 'toeic-auth', audience: 'toeic-api', expiresIn: 900 },
       );
     const headers = { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' };
+    enter('fresh authorizer with Auth unavailable');
     await launch('http://127.0.0.1:1');
-    assert.equal((await fetch(url + '/api/v1/analytics/progress', { headers })).status, 503);
+    assert.equal((await request(url + '/api/v1/analytics/progress', { headers })).status, 503);
     checks.push({
       name: 'fresh authorizer fails closed when Auth transport is unavailable',
       passed: true,
     });
     await stop();
+    enter('two Analytics replicas and replay');
     await launch(env.AUTH_INTERNAL_URL);
-    assert.equal((await fetch(url + '/api/v1/analytics/progress', { headers })).status, 200);
+    assert.equal((await request(url + '/api/v1/analytics/progress', { headers })).status, 200);
     const mq = await require('amqplib').connect(env.RABBITMQ_URL);
     try {
       const ch = await mq.createConfirmChannel();
@@ -90,7 +99,7 @@ export async function recovery({ base, env }) {
       });
       revision = Number(old?.revision || 0n);
       for (let i = 0; i < 10; i++) {
-        const r = await fetch(base + '/api/v1/learning/flashcards/' + card.id + '/review', {
+        const r = await request(base + '/api/v1/learning/flashcards/' + card.id + '/review', {
           method: 'POST',
           headers,
           body: JSON.stringify({
@@ -100,7 +109,6 @@ export async function recovery({ base, env }) {
           }),
         });
         assert.equal(r.status, 200);
-        await r.body.cancel();
       }
       await wait(async () =>
         assert.equal(
@@ -123,7 +131,8 @@ export async function recovery({ base, env }) {
           { persistent: true },
         );
       await ch.waitForConfirms();
-      await stop();
+      // This scenario tests crash/redelivery, rather than graceful Nest/Prisma teardown.
+      await stop({ signal: 'SIGKILL' });
       await wait(async () =>
         assert.equal((await ch.checkQueue('qa.p6.domain.analytics-service.v2')).messageCount, 0),
       );
@@ -139,7 +148,8 @@ export async function recovery({ base, env }) {
     } finally {
       await mq.close();
     }
-    const state = await (await fetch(base + '/api/v1/sync/users/me', { headers })).json();
+    enter('sync operation to other-device visibility');
+    const state = await (await request(base + '/api/v1/sync/users/me', { headers })).json();
     await wait(async () => {
       const p = await auth.syncProjection.findUnique({
         where: {
@@ -156,7 +166,7 @@ export async function recovery({ base, env }) {
     const card2 = await learning.vocabulary.findFirstOrThrow({ where: { deletedAt: null } }),
       id = randomUUID(),
       start = Date.now();
-    const response = await fetch(base + '/api/v1/sync/users', {
+    const response = await request(base + '/api/v1/sync/users', {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -174,9 +184,9 @@ export async function recovery({ base, env }) {
     });
     assert.equal(response.status, 200);
     await wait(async () => {
-      const r = await (await fetch(base + '/api/v1/sync/operations/' + id, { headers })).json();
+      const r = await (await request(base + '/api/v1/sync/operations/' + id, { headers })).json();
       assert.equal(r.status, 'APPLIED');
-      const s = await (await fetch(base + '/api/v1/sync/users/me', { headers })).json();
+      const s = await (await request(base + '/api/v1/sync/users/me', { headers })).json();
       assert(
         s.progress.some((p) => p.entityId === card2.id && p.revision === String(revision + 11)),
       );
@@ -188,6 +198,7 @@ export async function recovery({ base, env }) {
       targetMs: 3000,
       passed: ms < 3000,
     });
+    enter('fresh six-service E2E after load');
     const { run } = await import('./e2e.mjs');
     const full = await run({ base, cleanup: false });
     assert(full.passed);
@@ -209,7 +220,9 @@ export async function recovery({ base, env }) {
       passed: checks.every((c) => c.passed),
     };
   } catch (e) {
-    return { checks, passed: false, error: e.message };
+    const error = scrub(e.stack || e.message);
+    console.error('P6 RECOVERY failed at ' + stage + ': ' + error);
+    return { checks, passed: false, stage, error };
   } finally {
     await stop();
     await Promise.all(dbs.map((d) => d.$disconnect()));

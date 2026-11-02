@@ -113,3 +113,27 @@ test('failed functional checks still fail a completed run', (t) => {
   assert.equal(report.gates.functional, false);
   assert.equal(report.passed, false);
 });
+
+test('shutdown failures are retained and prevent acceptance passing', (t) => {
+  const dir = fixture(t);
+  completeEvidence(dir, { shutdownError: 'QA child did not exit after SIGKILL' });
+  const report = consolidate({ dir });
+  assert.equal(report.gates.runnerCompleted, false);
+  assert.equal(report.passed, false);
+  assert.match(report.runner.error, /SIGKILL/);
+});
+
+test('read performance and recovery have independent gates', (t) => {
+  const dir = fixture(t);
+  completeEvidence(dir, {
+    load: {
+      readLoadPassed: true,
+      passed: false,
+      recovery: { passed: false, error: 'Replica recovery failed' },
+    },
+  });
+  const report = consolidate({ dir });
+  assert.equal(report.gates.readLoad, true);
+  assert.equal(report.gates.recovery, false);
+  assert.equal(report.passed, false);
+});
