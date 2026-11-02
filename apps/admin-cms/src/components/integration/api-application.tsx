@@ -583,20 +583,9 @@ function Tests({ writes, verified }: { writes: boolean; verified: boolean }) {
       <h1>Đề thi</h1>
       {id && <Link href={href()}>← Danh sách</Link>}
       {!verified && (
-        <Blocked>
-          Transport metadata lượt 24–27 tiếp tục bị khóa: chưa kiểm chứng Gateway, auth, headers và
-          response thật. Không gửi request metadata hoặc dùng fixture thay thế.
-        </Blocked>
+        <Blocked>Kết nối metadata đề thi chưa được xác minh cho môi trường này.</Blocked>
       )}
-      {!id && (
-        <Filters
-          fields={[
-            { name: 'keyword', label: 'Từ khóa' },
-            { name: 'type', label: 'Loại', options: ['FULL', 'MINI'] },
-            { name: 'status', label: 'Trạng thái', options: ['DRAFT', 'PUBLISHED', 'ARCHIVED'] },
-          ]}
-        />
-      )}
+      {!id && <Filters fields={[{ name: 'keyword', label: 'Từ khóa' }]} />}
       <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
       {writes && verified && !id && <Link href={href('new')}>Tạo metadata đề nháp</Link>}
       {state.data?.page && (
@@ -653,9 +642,8 @@ function Tests({ writes, verified }: { writes: boolean; verified: boolean }) {
         />
       )}
       <Blocked>
-        Chỉnh cấu trúc/nhóm và công bố đề chưa được bật: backend chưa kiểm tra tham chiếu Question
-        Bank; thiếu contract nhóm. DELETE đề chưa có endpoint. Không thay thế cấu trúc bằng danh
-        sách rỗng khi sửa metadata.
+        Chỉnh cấu trúc và công bố đề chưa được kết nối trong giao diện này. Chỉ lưu đề khi có đủ cấu
+        trúc hợp lệ; không thay thế danh sách câu hỏi bằng danh sách rỗng khi sửa metadata.
       </Blocked>
     </>
   );

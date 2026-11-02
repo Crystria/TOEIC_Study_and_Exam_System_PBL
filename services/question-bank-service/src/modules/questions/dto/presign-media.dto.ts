@@ -1,9 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Matches } from 'class-validator';
+import { IsIn, IsString, Matches, MaxLength } from 'class-validator';
 
 export class PresignMediaDto {
-  @ApiProperty({ example: 'audio/part1-q10.mp3' })
-  @IsString()
-  @Matches(/\.(mp3|wav|png|jpg|jpeg)$/i, { message: 'Unsupported media extension' })
-  fileName!: string;
+  @IsIn(['AUDIO', 'IMAGE']) mediaType!: 'AUDIO' | 'IMAGE';
+  @IsIn(['audio/mpeg', 'image/png', 'image/jpeg', 'image/webp']) contentType!: string;
+  @IsString() @MaxLength(200) @Matches(/^[^/\\]+\.(mp3|png|jpe?g|webp)$/i) fileName!: string;
 }

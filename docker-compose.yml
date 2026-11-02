@@ -1,6 +1,13 @@
 name: toeic-system
 
 services:
+  mailpit:
+    image: axllent/mailpit:v1.33.0
+    container_name: toeic-mailpit
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:8025:8025'
+
   postgres:
     image: postgres:16-alpine
     container_name: toeic-postgres
@@ -54,7 +61,7 @@ services:
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     healthcheck:
-      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'check_port_connectivity']
       interval: 10s
       timeout: 5s
       retries: 10

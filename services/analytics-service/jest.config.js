@@ -1,16 +1,1 @@
-/** @type {import('jest').Config} */
-module.exports = {
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: 'src',
-  testRegex: '.*\\.spec\\.ts$',
-  transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
-  },
-  collectCoverageFrom: ['**/*.(t|j)s'],
-  coverageDirectory: '../coverage',
-  testEnvironment: 'node',
-  passWithNoTests: true,
-  moduleNameMapper: {
-    '^@toeic/common$': '<rootDir>/../../../packages/common/src',
-  },
-};
+module.exports={moduleFileExtensions:['js','json','ts'],rootDir:'src',testRegex:'.*\\.spec\\.ts$',transform:{'^.+\\.ts$':'ts-jest'},collectCoverageFrom:['**/*.(t|j)s'],coverageDirectory:'../coverage',testEnvironment:'node',passWithNoTests:false,cacheDirectory:'../../node_modules/.cache/jest-analytics',moduleNameMapper:{'^@toeic/common$':'<rootDir>/../../../packages/common/src'}};

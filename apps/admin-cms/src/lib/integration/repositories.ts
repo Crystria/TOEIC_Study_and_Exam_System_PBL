@@ -116,4 +116,8 @@ export function cmsMetadataApi(verified: boolean) {
     }),
   );
 }
-export const metadataQuery = (params: URLSearchParams) => readTestParams(params).query;
+export const metadataQuery = (params: URLSearchParams) => ({
+  ...readTestParams(params).query,
+  type: '' as const,
+  status: '' as const,
+});

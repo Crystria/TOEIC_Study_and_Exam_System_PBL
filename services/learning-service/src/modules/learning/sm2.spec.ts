@@ -1,38 +1,25 @@
-import { calculateSm2 } from './sm2';
-
-describe('calculateSm2', () => {
-  it('increments repetition and sets interval to 1 on first successful review', () => {
-    const result = calculateSm2({ easinessFactor: 2.5, repetition: 0, interval: 1 }, 4);
-    expect(result.repetition).toBe(1);
-    expect(result.interval).toBe(1);
-    expect(result.easinessFactor).toBeCloseTo(2.5, 5);
+import { calculateSm2, vietnamDate } from './sm2';
+import fixture from '../../../../../packages/contracts/p0/fixtures/algorithms.json';
+describe('P3 SM-2 golden contracts', () => {
+  for (const row of fixture.sm2)
+    it(row.name, () =>
+      expect(calculateSm2(row.state, row.quality, new Date(row.activityAt))).toEqual(row.expected),
+    );
+  it.each([-1, 6, 2.5, NaN])('rejects invalid quality %s', (q) =>
+    expect(() =>
+      calculateSm2({ easinessFactor: 2.5, repetitionNumber: 0, intervalDays: 0 }, q, new Date()),
+    ).toThrow('INVALID_QUALITY'),
+  );
+  it('switches activity date precisely at Vietnam midnight', () => {
+    expect(vietnamDate(new Date('2026-10-31T16:59:59.999Z'))).toBe('2026-10-31');
+    expect(vietnamDate(new Date('2026-10-31T17:00:00.000Z'))).toBe('2026-11-01');
   });
-
-  it('sets interval to 6 on second successful review', () => {
-    const result = calculateSm2({ easinessFactor: 2.5, repetition: 1, interval: 1 }, 5);
-    expect(result.repetition).toBe(2);
-    expect(result.interval).toBe(6);
-  });
-
-  it('resets repetition and interval when quality is below 3', () => {
-    const result = calculateSm2({ easinessFactor: 2.5, repetition: 4, interval: 30 }, 2);
-    expect(result.repetition).toBe(0);
-    expect(result.interval).toBe(1);
-  });
-
-  it('never lets the easiness factor drop below 1.3', () => {
-    const result = calculateSm2({ easinessFactor: 1.3, repetition: 3, interval: 10 }, 0);
-    expect(result.easinessFactor).toBe(1.3);
-  });
-
-  it('multiplies interval by EF for later repetitions', () => {
-    const result = calculateSm2({ easinessFactor: 2.5, repetition: 2, interval: 6 }, 4);
-    expect(result.repetition).toBe(3);
-    expect(result.interval).toBe(Math.round(6 * result.easinessFactor));
-  });
-
-  it('returns a future nextReviewAt', () => {
-    const result = calculateSm2({ easinessFactor: 2.5, repetition: 0, interval: 1 }, 5);
-    expect(result.nextReviewAt.getTime()).toBeGreaterThan(Date.now());
-  });
+  it('bounds finite SQL/date domains', () =>
+    expect(() =>
+      calculateSm2(
+        { easinessFactor: 99.99, repetitionNumber: 3, intervalDays: 2147483647 },
+        5,
+        new Date(),
+      ),
+    ).toThrow('SM2_DOMAIN_EXHAUSTED'));
 });

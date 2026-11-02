@@ -1,42 +1,26 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '@toeic/common';
 import { AnalyticsService } from './analytics.service';
-import { ProgressQueryDto } from './dto/progress-query.dto';
-
-@ApiTags('analytics')
-@ApiBearerAuth()
+import { PageQueryDto, ProgressQueryDto } from './dto/progress-query.dto';
 @Controller('analytics')
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) {}
-
-  @Get('progress')
-  @ApiOperation({ summary: 'Tiến độ/thống kê học tập theo khoảng thời gian' })
-  getProgress(@CurrentUser('sub') userId: string, @Query() query: ProgressQueryDto) {
-    return this.analyticsService.getProgress(userId, query);
+  constructor(private readonly analytics: AnalyticsService) {}
+  @Get('progress') progress(@CurrentUser('sub') userId: string, @Query() query: ProgressQueryDto) {
+    return this.analytics.getProgress(userId, query);
   }
-
-  @Get('scores')
-  @ApiOperation({ summary: 'Lịch sử điểm và thống kê tổng hợp' })
-  getScores(@CurrentUser('sub') userId: string) {
-    return this.analyticsService.getScores(userId);
+  @Get('scores') scores(@CurrentUser('sub') userId: string, @Query() query: PageQueryDto) {
+    return this.analytics.getScores(userId, query);
   }
-
-  @Get('streak')
-  @ApiOperation({ summary: 'Chuỗi ngày học liên tục (streak)' })
-  getStreak(@CurrentUser('sub') userId: string) {
-    return this.analyticsService.getStreak(userId);
+  @Get('practices') practices(@CurrentUser('sub') userId: string, @Query() query: PageQueryDto) {
+    return this.analytics.getPractices(userId, query);
   }
-
-  @Get('weak-areas')
-  @ApiOperation({ summary: 'Các kỹ năng/part còn yếu' })
-  getWeakAreas(@CurrentUser('sub') userId: string) {
-    return this.analyticsService.getWeakAreas(userId);
+  @Get('streak') streak(@CurrentUser('sub') userId: string) {
+    return this.analytics.getStreak(userId);
   }
-
-  @Get('prediction')
-  @ApiOperation({ summary: 'Dự đoán điểm (kích hoạt khi >= 3 lần nộp trong 30 ngày)' })
-  getPrediction(@CurrentUser('sub') userId: string) {
-    return this.analyticsService.getPrediction(userId);
+  @Get('prediction') prediction(@CurrentUser('sub') userId: string) {
+    return this.analytics.getPrediction(userId);
+  }
+  @Get('weak-areas') weak(@CurrentUser('sub') userId: string) {
+    return this.analytics.getWeakAreas(userId);
   }
 }

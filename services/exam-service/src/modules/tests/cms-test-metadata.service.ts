@@ -2,14 +2,12 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { Prisma } from '../../generated/prisma';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CmsTestMetadataDto, CmsTestMetadataPageDto } from './dto/cms-test-metadata-response.dto';
-import { ListTestsQueryDto } from './dto/list-tests-query.dto';
+import { ListCmsTestMetadataQueryDto } from './dto/list-cms-test-metadata-query.dto';
 
 const metadataSelect = {
   id: true,
   title: true,
-  type: true,
   durationSeconds: true,
-  status: true,
   _count: { select: { questions: true } },
 } satisfies Prisma.TestSelect;
 
@@ -26,11 +24,11 @@ function projectMetadata(row: MetadataRow): CmsTestMetadataDto {
   return {
     id: row.id,
     title: nullableText(row.title),
-    type: row.type === 'FULL' || row.type === 'MINI' ? row.type : null,
+    type: null,
     durationSeconds:
       Number.isInteger(row.durationSeconds) && row.durationSeconds > 0 ? row.durationSeconds : null,
     questionCount: Number.isInteger(count) && count >= 0 ? count : null,
-    status: nullableText(row.status),
+    status: null,
   };
 }
 
@@ -38,10 +36,9 @@ function projectMetadata(row: MetadataRow): CmsTestMetadataDto {
 export class CmsTestMetadataService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async list(query: ListTestsQueryDto): Promise<CmsTestMetadataPageDto> {
+  async list(query: ListCmsTestMetadataQueryDto): Promise<CmsTestMetadataPageDto> {
     const where: Prisma.TestWhereInput = {
-      ...(query.type ? { type: query.type } : {}),
-      ...(query.status ? { status: query.status } : {}),
+      deletedAt: null,
       ...(query.keyword
         ? { title: { contains: query.keyword, mode: Prisma.QueryMode.insensitive } }
         : {}),
@@ -50,7 +47,7 @@ export class CmsTestMetadataService {
       this.prisma.test.findMany({
         where,
         select: metadataSelect,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
         skip: (query.page - 1) * query.size,
         take: query.size,
       }),
@@ -60,7 +57,10 @@ export class CmsTestMetadataService {
   }
 
   async findById(id: string): Promise<CmsTestMetadataDto> {
-    const test = await this.prisma.test.findUnique({ where: { id }, select: metadataSelect });
+    const test = await this.prisma.test.findFirst({
+      where: { id, deletedAt: null },
+      select: metadataSelect,
+    });
     if (!test) throw new NotFoundException('Test not found');
     return projectMetadata(test);
   }

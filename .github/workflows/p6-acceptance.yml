@@ -1,0 +1,120 @@
+name: P6 Backend Acceptance
+on:
+  pull_request:
+    paths:
+      [
+        'packages/**',
+        'services/**',
+        'scripts/**',
+        'package*.json',
+        'docker-compose*.yml',
+        '.github/workflows/p6-acceptance.yml',
+      ]
+  push:
+    branches: [BE, main, develop]
+    paths:
+      [
+        'packages/**',
+        'services/**',
+        'scripts/**',
+        'package*.json',
+        'docker-compose*.yml',
+        '.github/workflows/p6-acceptance.yml',
+      ]
+jobs:
+  analytics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: toeic
+          POSTGRES_PASSWORD: toeic
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U toeic" --health-interval 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['7379:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-retries 10
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: toeic
+          RABBITMQ_DEFAULT_PASS: toeic
+        ports: ['5772:5672']
+        options: --health-cmd "rabbitmq-diagnostics -q ping" --health-interval 5s --health-retries 20
+      minio:
+        image: bitnamilegacy/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_API_PORT_NUMBER: '9000'
+        ports: ['19000:9000']
+        options: --health-cmd "mc ready local" --health-interval 5s --health-retries 20
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: 'false'
+          ES_JAVA_OPTS: '-Xms512m -Xmx512m'
+        ports: ['19200:9200']
+        options: --health-cmd "curl -f http://localhost:9200/_cluster/health" --health-interval 5s --health-retries 30
+      mailpit:
+        image: axllent/mailpit:latest
+        ports: ['8025:8025']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check acceptance report handling
+        run: node --test scripts/qa/p6-report.test.mjs scripts/qa/p6-process.test.mjs
+      - run: npm run build -w @toeic/common
+      - run: npm run prisma:generate -w @toeic/auth-service
+      - run: npm run prisma:generate -w @toeic/learning-service
+      - run: npm run build -w @toeic/auth-service
+      - run: npm run build -w @toeic/learning-service
+      - run: npm run prisma:generate -w @toeic/exam-service
+      - run: npm run prisma:generate -w @toeic/analytics-service
+      - run: npm run prisma:generate -w @toeic/question-bank-service
+      - run: npm run build -w @toeic/question-bank-service
+      - run: npm run build -w @toeic/api-gateway
+      - run: npm run build -w @toeic/exam-service
+      - run: npm run build -w @toeic/analytics-service
+      - run: npm test -w @toeic/exam-service -- --runInBand
+      - run: npm test -w @toeic/analytics-service -- --runInBand
+      - run: npm run validate:p0 -w @toeic/contracts
+      - name: P2-P5 business coverage and regression
+        env:
+          P6_COVERAGE: 'true'
+          P2_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          P3_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          P4_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          P5_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          npm run test:p2 -w @toeic/auth-service
+          npm run test:p3 -w @toeic/learning-service
+          npm run test:p4 -w @toeic/learning-service
+          npm run test:p5 -w @toeic/analytics-service
+      - name: Isolated six-service E2E, failures, restore and 15-minute load
+        id: p6
+        timeout-minutes: 30
+        env:
+          P6_NFR_PREFLIGHT: 'true'
+          P6_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          P6_RABBITMQ_CONTAINER: ${{ job.services.rabbitmq.id }}
+          P6_REDIS_CONTAINER: ${{ job.services.redis.id }}
+        run: npm run qa:p6
+      - name: Consolidate scoped P6 evidence
+        if: ${{ !cancelled() && steps.p6.outcome != 'skipped' }}
+        run: npm run qa:p6:report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p6-evidence
+          path: |
+            artifacts/p6/
+            artifacts/qa/latest.json

@@ -1,0 +1,2846 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://contracts.toeic.local/p0/domain.schema.json",
+  "title": "P0 Auth Learning Analytics target domain",
+  "definitions": {
+    "Uuid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Revision": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,18})$",
+      "description": "Decimal string; semantic bound <= 9223372036854775807."
+    },
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$",
+      "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+    },
+    "Date": {
+      "type": "string",
+      "format": "date"
+    },
+    "Role": {
+      "type": "string",
+      "enum": ["USER", "CONTENT_ADMIN", "SYSTEM_ADMIN"]
+    },
+    "UserStatus": {
+      "type": "string",
+      "enum": ["ACTIVE", "SUSPENDED", "INACTIVE"]
+    },
+    "Quality": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "Part": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7
+    },
+    "Accuracy": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "SectionScore": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 495,
+      "multipleOf": 5
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "statusCode": {
+          "type": "integer",
+          "minimum": 400,
+          "maximum": 599
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "correlationId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "timestamp": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "required": ["field", "message"],
+            "additionalProperties": false
+          },
+          "maxItems": 100
+        },
+        "currentProgress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 0,
+          "maxItems": 5
+        }
+      },
+      "required": ["statusCode", "code", "message", "correlationId", "timestamp", "path"],
+      "additionalProperties": true
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 320
+        },
+        "fullName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "avatarKey": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "avatarUrl": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/UserStatus"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Role"
+          },
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "createdAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "updatedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": [
+        "userId",
+        "email",
+        "fullName",
+        "phoneNumber",
+        "avatarKey",
+        "avatarUrl",
+        "status",
+        "roles",
+        "createdAt",
+        "updatedAt"
+      ],
+      "additionalProperties": true
+    },
+    "RegisterRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 320
+        },
+        "password": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72,
+          "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\s\\S]+$"
+        },
+        "confirmPassword": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72
+        },
+        "fullName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 255
+        }
+      },
+      "required": ["email", "password", "confirmPassword", "fullName"],
+      "additionalProperties": false
+    },
+    "RegisterResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/User"
+        },
+        "activationRequired": {
+          "const": true
+        }
+      },
+      "required": ["user", "activationRequired"],
+      "additionalProperties": true
+    },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 320
+        },
+        "password": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 72
+        },
+        "deviceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      },
+      "required": ["email", "password", "deviceId"],
+      "additionalProperties": false
+    },
+    "TokenResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/User"
+        },
+        "accessToken": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "tokenType": {
+          "const": "Bearer"
+        },
+        "expiresIn": {
+          "const": 900
+        },
+        "refreshToken": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "refreshExpiresIn": {
+          "const": 604800
+        }
+      },
+      "required": [
+        "user",
+        "accessToken",
+        "tokenType",
+        "expiresIn",
+        "refreshToken",
+        "refreshExpiresIn"
+      ],
+      "additionalProperties": true
+    },
+    "RefreshRequest": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        }
+      },
+      "required": ["refreshToken"],
+      "additionalProperties": false
+    },
+    "VerifyEmailRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43,128}$"
+        }
+      },
+      "required": ["token"],
+      "additionalProperties": false
+    },
+    "ResendRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 320
+        }
+      },
+      "required": ["email"],
+      "additionalProperties": false
+    },
+    "MessageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": ["message"],
+      "additionalProperties": true
+    },
+    "Success": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "const": true
+        }
+      },
+      "required": ["success"],
+      "additionalProperties": true
+    },
+    "ProfilePatch": {
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "RolesPatch": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Role"
+          },
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true
+        }
+      },
+      "required": ["roles"],
+      "additionalProperties": false
+    },
+    "StatusPatch": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/UserStatus"
+        }
+      },
+      "required": ["status"],
+      "additionalProperties": false
+    },
+    "AuditEntry": {
+      "type": "object",
+      "properties": {
+        "auditId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "actorUserId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "targetUserId": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "beforeData": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "afterData": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "occurredAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "correlationId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "auditId",
+        "actorUserId",
+        "targetUserId",
+        "action",
+        "beforeData",
+        "afterData",
+        "occurredAt",
+        "correlationId"
+      ],
+      "additionalProperties": true
+    },
+    "PresignRequest": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string",
+          "enum": ["image/jpeg", "image/png", "image/webp", "audio/mpeg"]
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5242880
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["AVATAR", "AUDIO", "IMAGE"]
+        }
+      },
+      "required": ["contentType", "sizeBytes", "kind"],
+      "additionalProperties": false
+    },
+    "AvatarPresignRequest": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string",
+          "enum": ["image/jpeg", "image/png", "image/webp"]
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2097152
+        },
+        "kind": {
+          "const": "AVATAR"
+        }
+      },
+      "required": ["contentType", "sizeBytes", "kind"],
+      "additionalProperties": false
+    },
+    "VocabularyMediaPresignRequest": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string",
+          "enum": ["image/jpeg", "image/png", "image/webp", "audio/mpeg"]
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5242880
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["AUDIO", "IMAGE"]
+        }
+      },
+      "required": ["contentType", "sizeBytes", "kind"],
+      "additionalProperties": false
+    },
+    "UploadTicket": {
+      "type": "object",
+      "properties": {
+        "uploadId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "objectKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "putUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "expiresAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "requiredHeaders": {
+          "type": "object",
+          "properties": {
+            "Content-Type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          },
+          "required": ["Content-Type"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["uploadId", "objectKey", "putUrl", "expiresAt", "requiredHeaders"],
+      "additionalProperties": true
+    },
+    "ConfirmUploadRequest": {
+      "type": "object",
+      "properties": {
+        "uploadId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        }
+      },
+      "required": ["uploadId"],
+      "additionalProperties": false
+    },
+    "MediaResponse": {
+      "type": "object",
+      "properties": {
+        "objectKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": ["objectKey", "url"],
+      "additionalProperties": true
+    },
+    "TopicCreate": {
+      "type": "object",
+      "properties": {
+        "topicName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      },
+      "required": ["topicName"],
+      "additionalProperties": false
+    },
+    "Topic": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "topicName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "vocabularyCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "createdAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "updatedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": ["topicId", "topicName", "vocabularyCount", "createdAt", "updatedAt"],
+      "additionalProperties": true
+    },
+    "VocabularyCreate": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "word": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phonetic": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "definition": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "example": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": ["topicId", "word", "definition"],
+      "additionalProperties": false
+    },
+    "VocabularyPatch": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "word": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phonetic": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "definition": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "example": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "Vocabulary": {
+      "type": "object",
+      "properties": {
+        "vocabularyId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "word": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phonetic": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "definition": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "example": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audioKey": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "imageKey": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audioUrl": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "imageUrl": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "createdAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "updatedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": [
+        "vocabularyId",
+        "topicId",
+        "word",
+        "phonetic",
+        "definition",
+        "example",
+        "audioKey",
+        "imageKey",
+        "audioUrl",
+        "imageUrl",
+        "createdAt",
+        "updatedAt"
+      ],
+      "additionalProperties": true
+    },
+    "LessonCreate": {
+      "type": "object",
+      "properties": {
+        "lessonTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "contentMarkdown": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "PUBLISHED"]
+        }
+      },
+      "required": ["lessonTitle", "category", "contentMarkdown", "status"],
+      "additionalProperties": false
+    },
+    "LessonPatch": {
+      "type": "object",
+      "properties": {
+        "lessonTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "contentMarkdown": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "PUBLISHED"]
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "Lesson": {
+      "type": "object",
+      "properties": {
+        "lessonId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "lessonTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "contentMarkdown": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "PUBLISHED", "ARCHIVED"]
+        },
+        "createdAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "updatedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": [
+        "lessonId",
+        "lessonTitle",
+        "category",
+        "contentMarkdown",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ],
+      "additionalProperties": true
+    },
+    "VocabularyState": {
+      "type": "object",
+      "properties": {
+        "quality": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Quality"
+        },
+        "intervalDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "easinessFactor": {
+          "type": "number",
+          "minimum": 1.3,
+          "maximum": 99.99
+        },
+        "repetitionNumber": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "nextReviewDate": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Date"
+        },
+        "firstLearnedAt": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "updatedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": [
+        "quality",
+        "intervalDays",
+        "easinessFactor",
+        "repetitionNumber",
+        "nextReviewDate",
+        "firstLearnedAt",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "LessonState": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "const": "COMPLETED"
+        },
+        "completedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "updatedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": ["status", "completedAt", "updatedAt"],
+      "additionalProperties": false
+    },
+    "ProgressSnapshot": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "entityType": {
+              "const": "VOCABULARY"
+            },
+            "entityId": {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+            },
+            "revision": {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+            },
+            "state": {
+              "anyOf": [
+                {
+                  "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/VocabularyState"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": ["entityType", "entityId", "revision", "state"],
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "revision": {
+                    "const": "0"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "state": {
+                    "type": "null"
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "state": {
+                    "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/VocabularyState"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "entityType": {
+              "const": "LESSON"
+            },
+            "entityId": {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+            },
+            "revision": {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+            },
+            "state": {
+              "anyOf": [
+                {
+                  "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/LessonState"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": ["entityType", "entityId", "revision", "state"],
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "revision": {
+                    "const": "0"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "state": {
+                    "type": "null"
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "state": {
+                    "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/LessonState"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "ReviewOperation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "REVIEW_FLASHCARD"
+        },
+        "vocabularyId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "baseEntityRevision": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "quality": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Quality"
+        }
+      },
+      "required": ["kind", "vocabularyId", "baseEntityRevision", "quality"],
+      "additionalProperties": false
+    },
+    "LessonOperation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "COMPLETE_LESSON"
+        },
+        "lessonId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "baseEntityRevision": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        }
+      },
+      "required": ["kind", "lessonId", "baseEntityRevision"],
+      "additionalProperties": false
+    },
+    "SessionReview": {
+      "type": "object",
+      "properties": {
+        "vocabularyId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "quality": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Quality"
+        }
+      },
+      "required": ["vocabularyId", "quality"],
+      "additionalProperties": false
+    },
+    "QuizAnswer": {
+      "type": "object",
+      "properties": {
+        "questionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "selectedOption": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D"]
+        }
+      },
+      "required": ["questionId", "selectedOption"],
+      "additionalProperties": false
+    },
+    "SessionOperation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "SUBMIT_VOCABULARY_SESSION"
+        },
+        "sessionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionReview"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/QuizAnswer"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": ["kind", "sessionId", "reviews", "answers"],
+      "additionalProperties": false
+    },
+    "LearningOperation": {
+      "oneOf": [
+        {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ReviewOperation"
+        },
+        {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/LessonOperation"
+        },
+        {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionOperation"
+        }
+      ]
+    },
+    "ReviewRequest": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "baseEntityRevision": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "quality": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Quality"
+        }
+      },
+      "required": ["operationId", "baseEntityRevision", "quality"],
+      "additionalProperties": false
+    },
+    "CompleteLessonRequest": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "baseEntityRevision": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        }
+      },
+      "required": ["operationId", "baseEntityRevision"],
+      "additionalProperties": false
+    },
+    "ProgressResult": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 1,
+          "maxItems": 5
+        }
+      },
+      "required": ["operationId", "progress"],
+      "additionalProperties": true
+    },
+    "SyncRequest": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "baseVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "clientOccurredAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "operation": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/LearningOperation"
+        }
+      },
+      "required": ["deviceId", "operationId", "baseVersion", "clientOccurredAt", "operation"],
+      "additionalProperties": false
+    },
+    "SyncOperationStatus": {
+      "type": "string",
+      "enum": ["PENDING", "APPLIED", "REJECTED", "CONFLICT", "BUSY"]
+    },
+    "SyncResponse": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "accepted": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SyncOperationStatus"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "syncVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "resolvedVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "appliedVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "projectedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        }
+      },
+      "required": [
+        "operationId",
+        "accepted",
+        "status",
+        "reason",
+        "syncVersion",
+        "resolvedVersion",
+        "appliedVersion",
+        "projectedAt",
+        "progress"
+      ],
+      "additionalProperties": true
+    },
+    "SyncState": {
+      "type": "object",
+      "properties": {
+        "syncVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "resolvedVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "appliedVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "pendingOperationId": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "projectedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "nextCursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "syncVersion",
+        "resolvedVersion",
+        "appliedVersion",
+        "pendingOperationId",
+        "projectedAt",
+        "progress",
+        "nextCursor"
+      ],
+      "additionalProperties": true
+    },
+    "SessionCreate": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["NEW", "REVIEW"]
+        }
+      },
+      "required": ["topicId", "mode"],
+      "additionalProperties": false
+    },
+    "QuizOption": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D"]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        }
+      },
+      "required": ["code", "text"],
+      "additionalProperties": false
+    },
+    "QuizQuestion": {
+      "type": "object",
+      "properties": {
+        "questionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "vocabularyId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["WORD_TO_MEANING", "MEANING_TO_WORD"]
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/QuizOption"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": ["questionId", "vocabularyId", "prompt", "direction", "options"],
+      "additionalProperties": false
+    },
+    "Session": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["NEW", "REVIEW"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["IN_PROGRESS", "COMPLETED", "CANCELED", "EXPIRED"]
+        },
+        "startedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "expiresAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "vocabularies": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Vocabulary"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "quiz": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/QuizQuestion"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sessionId",
+        "topicId",
+        "mode",
+        "status",
+        "startedAt",
+        "expiresAt",
+        "vocabularies",
+        "quiz"
+      ],
+      "additionalProperties": true
+    },
+    "SessionDraft": {
+      "type": "object",
+      "properties": {
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionReview"
+          },
+          "minItems": 1,
+          "maxItems": 5
+        }
+      },
+      "required": ["reviews"],
+      "additionalProperties": false
+    },
+    "SessionSubmit": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionReview"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/QuizAnswer"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": ["operationId", "reviews", "answers"],
+      "additionalProperties": false
+    },
+    "SessionResult": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "status": {
+          "const": "COMPLETED"
+        },
+        "quizScore": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "quizTotal": {
+          "const": 5
+        },
+        "completedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "questionId": {
+                "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+              },
+              "selectedOption": {
+                "type": "string",
+                "enum": ["A", "B", "C", "D"]
+              },
+              "correctOption": {
+                "type": "string",
+                "enum": ["A", "B", "C", "D"]
+              },
+              "isCorrect": {
+                "type": "boolean"
+              }
+            },
+            "required": ["questionId", "selectedOption", "correctOption", "isCorrect"],
+            "additionalProperties": false
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "sessionId",
+        "operationId",
+        "status",
+        "quizScore",
+        "quizTotal",
+        "completedAt",
+        "answers",
+        "progress"
+      ],
+      "additionalProperties": true
+    },
+    "LearningProgress": {
+      "type": "object",
+      "properties": {
+        "reviewedVocabularies": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "vocabulariesLearned": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "dueVocabularies": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "grammarLessonsCompleted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "sessionsCompleted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "updatedAt": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "reviewedVocabularies",
+        "vocabulariesLearned",
+        "dueVocabularies",
+        "grammarLessonsCompleted",
+        "sessionsCompleted",
+        "updatedAt"
+      ],
+      "additionalProperties": true
+    },
+    "PartStats": {
+      "type": "object",
+      "properties": {
+        "part": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Part"
+        },
+        "correct": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": ["part", "correct", "total"],
+      "additionalProperties": false
+    },
+    "Scoring": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "const": "LOOKUP"
+        },
+        "tableVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "official": {
+          "const": false
+        }
+      },
+      "required": ["method", "tableVersion", "official"],
+      "additionalProperties": false
+    },
+    "FullTestPayload": {
+      "type": "object",
+      "properties": {
+        "attemptId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "testId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "mode": {
+          "const": "FULL"
+        },
+        "scoreListening": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SectionScore"
+        },
+        "scoreReading": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SectionScore"
+        },
+        "totalScore": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 990,
+          "multipleOf": 5
+        },
+        "correctListeningCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "correctReadingCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "correctCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "totalQuestions": {
+          "const": 200
+        },
+        "partStats": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/PartStats"
+          },
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "completedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "scoring": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Scoring"
+        }
+      },
+      "required": [
+        "attemptId",
+        "userId",
+        "testId",
+        "mode",
+        "scoreListening",
+        "scoreReading",
+        "totalScore",
+        "correctListeningCount",
+        "correctReadingCount",
+        "correctCount",
+        "totalQuestions",
+        "partStats",
+        "completedAt",
+        "scoring"
+      ],
+      "additionalProperties": true
+    },
+    "PartPracticePayload": {
+      "type": "object",
+      "properties": {
+        "attemptId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "testId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "mode": {
+          "const": "PART"
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Part"
+          },
+          "minItems": 1,
+          "maxItems": 7,
+          "uniqueItems": true
+        },
+        "correctCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "totalQuestions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "accuracy": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Accuracy"
+        },
+        "partStats": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/PartStats"
+          },
+          "minItems": 1,
+          "maxItems": 7
+        },
+        "completedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": [
+        "attemptId",
+        "userId",
+        "testId",
+        "mode",
+        "parts",
+        "correctCount",
+        "totalQuestions",
+        "accuracy",
+        "partStats",
+        "completedAt"
+      ],
+      "additionalProperties": true,
+      "not": {
+        "anyOf": [
+          {
+            "required": ["score"]
+          },
+          {
+            "required": ["totalScore"]
+          },
+          {
+            "required": ["scoreListening"]
+          },
+          {
+            "required": ["scoreReading"]
+          },
+          {
+            "required": ["scoring"]
+          }
+        ]
+      }
+    },
+    "VocabularyLearnedPayload": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "vocabularyId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quality": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Quality"
+        },
+        "revision": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "firstLearned": {
+          "type": "boolean"
+        },
+        "firstLearnedAt": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activityAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": [
+        "userId",
+        "vocabularyId",
+        "operationId",
+        "sessionId",
+        "quality",
+        "revision",
+        "firstLearned",
+        "firstLearnedAt",
+        "activityAt"
+      ],
+      "additionalProperties": true
+    },
+    "LessonCompletedPayload": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "lessonId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "revision": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "completedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": ["userId", "lessonId", "operationId", "revision", "completedAt"],
+      "additionalProperties": true
+    },
+    "SyncAcceptedPayload": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "deviceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "baseVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "syncVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "activityAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "operation": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/LearningOperation"
+        }
+      },
+      "required": [
+        "userId",
+        "deviceId",
+        "operationId",
+        "baseVersion",
+        "syncVersion",
+        "activityAt",
+        "operation"
+      ],
+      "additionalProperties": true
+    },
+    "SyncResolvedPayload": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "syncVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["APPLIED", "REJECTED"]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actionHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 0,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "userId",
+        "operationId",
+        "syncVersion",
+        "status",
+        "reason",
+        "actionHash",
+        "progress"
+      ],
+      "additionalProperties": true
+    },
+    "OperationLedgerResult": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["APPLIED", "REJECTED"]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actionHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 0,
+          "maxItems": 5
+        }
+      },
+      "required": ["userId", "operationId", "status", "reason", "actionHash", "progress"],
+      "additionalProperties": true
+    },
+    "ProgressChangedPayload": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "actionHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 1,
+          "maxItems": 5
+        }
+      },
+      "required": ["userId", "operationId", "actionHash", "progress"],
+      "additionalProperties": true
+    },
+    "PartWeakArea": {
+      "type": "object",
+      "properties": {
+        "part": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Part"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["AVAILABLE", "INSUFFICIENT_DATA"]
+        },
+        "correct": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "weaknessScore": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Accuracy"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "isWeak": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "calculatedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": ["part", "status", "correct", "total", "weaknessScore", "isWeak", "calculatedAt"],
+      "additionalProperties": true
+    },
+    "Streak": {
+      "type": "object",
+      "properties": {
+        "learningStreakDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "longestStreak": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "lastActivityDate": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timezone": {
+          "const": "Asia/Ho_Chi_Minh"
+        },
+        "asOf": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": ["learningStreakDays", "longestStreak", "lastActivityDate", "timezone", "asOf"],
+      "additionalProperties": true
+    },
+    "Prediction": {
+      "type": "object",
+      "properties": {
+        "predictedToeicScore": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 990,
+              "multipleOf": 5
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "eligibleFullCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "usedAttemptIds": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+          },
+          "minItems": 0,
+          "maxItems": 3
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": ["INSUFFICIENT_FULL_ATTEMPTS"]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "method": {
+          "const": "WEIGHTED_LATEST_3_FULL"
+        },
+        "windowDays": {
+          "const": 30
+        },
+        "asOf": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": [
+        "predictedToeicScore",
+        "eligibleFullCount",
+        "usedAttemptIds",
+        "reason",
+        "method",
+        "windowDays",
+        "asOf"
+      ],
+      "additionalProperties": true
+    },
+    "ScoreTrendPoint": {
+      "type": "object",
+      "properties": {
+        "attemptId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "completedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "scoreListening": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SectionScore"
+        },
+        "scoreReading": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SectionScore"
+        },
+        "totalScore": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 990,
+          "multipleOf": 5
+        }
+      },
+      "required": ["attemptId", "completedAt", "scoreListening", "scoreReading", "totalScore"],
+      "additionalProperties": true
+    },
+    "Counters": {
+      "type": "object",
+      "properties": {
+        "vocabulariesLearned": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "reviewCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "grammarLessonsCompleted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "mockTestCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "practiceCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "studyDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "vocabulariesLearned",
+        "reviewCount",
+        "grammarLessonsCompleted",
+        "mockTestCount",
+        "practiceCount",
+        "studyDays"
+      ],
+      "additionalProperties": true
+    },
+    "AnalyticsProgress": {
+      "type": "object",
+      "properties": {
+        "timeRange": {
+          "type": "string",
+          "enum": ["LAST_7_DAYS", "LAST_30_DAYS", "ALL_TIME"]
+        },
+        "timezone": {
+          "const": "Asia/Ho_Chi_Minh"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "asOf": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "lifetime": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Counters"
+        },
+        "inRange": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Counters"
+        },
+        "learningStreakDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "longestStreak": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "vocabulariesLearned": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "grammarLessonsCompleted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "mockTestCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "practiceCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "scoreTrend": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ScoreTrendPoint"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "scoreTrendNextCursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "predictedToeicScore": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 990,
+              "multipleOf": 5
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "weakAreas": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/PartWeakArea"
+          },
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "updatedAt": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "timeRange",
+        "timezone",
+        "from",
+        "asOf",
+        "lifetime",
+        "inRange",
+        "learningStreakDays",
+        "longestStreak",
+        "vocabulariesLearned",
+        "grammarLessonsCompleted",
+        "mockTestCount",
+        "practiceCount",
+        "scoreTrend",
+        "scoreTrendNextCursor",
+        "predictedToeicScore",
+        "weakAreas",
+        "updatedAt"
+      ],
+      "additionalProperties": true
+    },
+    "WeakAreas": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/PartWeakArea"
+          },
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "windowDays": {
+          "const": 30
+        },
+        "minimumQuestions": {
+          "const": 20
+        },
+        "threshold": {
+          "const": 0.3
+        },
+        "timezone": {
+          "const": "Asia/Ho_Chi_Minh"
+        },
+        "asOf": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        }
+      },
+      "required": ["items", "windowDays", "minimumQuestions", "threshold", "timezone", "asOf"],
+      "additionalProperties": true
+    },
+    "AuthorizationState": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "sessionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "userVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "sessionVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "status": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/UserStatus"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Role"
+          },
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "sessionRevoked": {
+          "type": "boolean"
+        },
+        "checkedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "maxAgeSeconds": {
+          "const": 30
+        }
+      },
+      "required": [
+        "userId",
+        "sessionId",
+        "userVersion",
+        "sessionVersion",
+        "status",
+        "roles",
+        "sessionRevoked",
+        "checkedAt",
+        "maxAgeSeconds"
+      ],
+      "additionalProperties": true
+    },
+    "AuthorizationChangedPayload": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "userVersion": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sessionVersion": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Revision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["LOGOUT", "USER_STATUS_CHANGED", "USER_ROLES_CHANGED"]
+        }
+      },
+      "required": ["userId", "userVersion", "sessionId", "sessionVersion", "reason"],
+      "additionalProperties": true
+    },
+    "UsersPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/User"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    },
+    "AuditPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/AuditEntry"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    },
+    "TopicsPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Topic"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    },
+    "VocabulariesPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Vocabulary"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    },
+    "LessonsPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Lesson"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    },
+    "ReviewPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    },
+    "ScoresPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/FullTestPayload"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    },
+    "PracticesPage": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/PartPracticePayload"
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "totalPages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": ["items", "total", "page", "size", "totalPages"],
+      "additionalProperties": true
+    }
+  }
+}

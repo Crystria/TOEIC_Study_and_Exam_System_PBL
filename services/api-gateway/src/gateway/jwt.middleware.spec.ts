@@ -4,7 +4,12 @@ import { createJwtMiddleware } from './jwt.middleware';
 
 describe('Gateway JWT for new CMS metadata and legacy Test GETs (no real JWT)', () => {
   const jwt = { verifyAsync: jest.fn() };
-  const middleware = createJwtMiddleware(jwt as unknown as JwtService);
+  const middleware = createJwtMiddleware(jwt as unknown as JwtService, {
+    secret: 'stub-public-key',
+    algorithm: 'RS256',
+    issuer: 'toeic-auth',
+    audience: 'toeic-api',
+  });
   const paths = [
     '/api/v1/tests/cms-metadata',
     '/api/v1/tests/cms-metadata/demo-test-001',
@@ -14,7 +19,7 @@ describe('Gateway JWT for new CMS metadata and legacy Test GETs (no real JWT)', 
 
   async function invoke(path: string, authorization?: string, method = 'GET') {
     const req = { path, method, headers: { authorization } } as Request;
-    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn(), getHeader: jest.fn() };
     const next = jest.fn();
     await middleware(req, res as unknown as Response, next as NextFunction);
     return { req, res, next };
@@ -28,7 +33,13 @@ describe('Gateway JWT for new CMS metadata and legacy Test GETs (no real JWT)', 
     it('is outside the public allowlist and stops before next/proxy without JWT', async () => {
       const { res, next } = await invoke(path);
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ statusCode: 401, message: 'Missing access token' });
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          statusCode: 401,
+          code: 'UNAUTHORIZED',
+          message: 'Missing access token',
+        }),
+      );
       expect(jwt.verifyAsync).not.toHaveBeenCalled();
       expect(next).not.toHaveBeenCalled();
     });
@@ -41,7 +52,17 @@ describe('Gateway JWT for new CMS metadata and legacy Test GETs (no real JWT)', 
     });
 
     it('passes Authorization through after verification, leaving roles to Exam', async () => {
-      jwt.verifyAsync.mockResolvedValue({ roles: ['USER'] });
+      jwt.verifyAsync.mockResolvedValue({
+        sub: 'user',
+        sid: 'session',
+        jti: 'jti',
+        type: 'access',
+        userVersion: '0',
+        sessionVersion: '0',
+        iat: 1,
+        exp: 9999999999,
+        roles: ['USER'],
+      });
       const { req, res, next } = await invoke(path, 'Bearer isolated-placeholder');
       expect(jwt.verifyAsync).toHaveBeenCalledTimes(1);
       expect(next).toHaveBeenCalledTimes(1);

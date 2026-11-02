@@ -7,7 +7,12 @@ export class CmsTestMetadataDto {
   @ApiProperty({ type: String, nullable: true })
   title!: string | null;
 
-  @ApiProperty({ type: String, enum: ['FULL', 'MINI', null], nullable: true })
+  @ApiProperty({
+    type: String,
+    enum: ['FULL', 'MINI', null],
+    nullable: true,
+    description: 'Null: the current Test model does not store a type.',
+  })
   type!: 'FULL' | 'MINI' | null;
 
   @ApiProperty({ type: 'integer', minimum: 1, nullable: true, description: 'Stored seconds.' })
@@ -21,7 +26,11 @@ export class CmsTestMetadataDto {
   })
   questionCount!: number | null;
 
-  @ApiProperty({ type: String, nullable: true, description: 'Stored status code, not an enum.' })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Null: no publication status in the current Test model.',
+  })
   status!: string | null;
 }
 

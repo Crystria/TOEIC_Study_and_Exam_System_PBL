@@ -17,7 +17,7 @@ import { RoleCode, Roles } from '@toeic/common';
 import { CmsTestMetadataRolesGuard } from './cms-test-metadata-roles.guard';
 import { CmsTestMetadataService } from './cms-test-metadata.service';
 import { CmsTestMetadataDto, CmsTestMetadataPageDto } from './dto/cms-test-metadata-response.dto';
-import { ListTestsQueryDto } from './dto/list-tests-query.dto';
+import { ListCmsTestMetadataQueryDto } from './dto/list-cms-test-metadata-query.dto';
 
 @ApiTags('tests')
 @ApiBearerAuth()
@@ -34,8 +34,6 @@ export class CmsTestMetadataController {
   @Get()
   @ApiOperation({ summary: 'Danh sách metadata đề thi CMS (CONTENT_ADMIN)' })
   @ApiQuery({ name: 'keyword', required: false, type: String })
-  @ApiQuery({ name: 'type', required: false, enum: ['FULL', 'MINI'] })
-  @ApiQuery({ name: 'status', required: false, enum: ['DRAFT', 'PUBLISHED', 'ARCHIVED'] })
   @ApiQuery({ name: 'page', required: false, schema: { type: 'integer', minimum: 1, default: 1 } })
   @ApiQuery({
     name: 'size',
@@ -44,7 +42,7 @@ export class CmsTestMetadataController {
   })
   @ApiBadRequestResponse({ description: 'Invalid or unknown list query parameters.' })
   @ApiOkResponse({ type: CmsTestMetadataPageDto })
-  list(@Query() query: ListTestsQueryDto): Promise<CmsTestMetadataPageDto> {
+  list(@Query() query: ListCmsTestMetadataQueryDto): Promise<CmsTestMetadataPageDto> {
     return this.metadataService.list(query);
   }
 

@@ -1,24 +1,42 @@
-import { ValidationPipe } from '@nestjs/common';
+import { configureAuth } from './http';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
+import { readFileSync } from 'node:fs';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api/v1');
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }),
-  );
+  configureAuth(app);
 
-  const config = new DocumentBuilder()
-    .setTitle('Auth Service API')
-    .setVersion('0.1.0')
-    .addBearerAuth()
-    .build();
-  SwaggerModule.setup('api/docs', app, SwaggerModule.createDocument(app, config));
+  // Runtime validation and Swagger share the canonical contracts, without duplicate DTO schemas.
+  const document = JSON.parse(
+    readFileSync(
+      require.resolve('@toeic/contracts/openapi/auth-learning-analytics.v1.json'),
+      'utf8',
+    ),
+    (key, value) =>
+      key === 'x-contract-status'
+        ? 'P4_RUNTIME'
+        : key === 'description' &&
+            typeof value === 'string' &&
+            value.startsWith('Success. Target P0')
+          ? 'Success'
+          : value,
+  ) as ReturnType<typeof SwaggerModule.createDocument>;
+  document.paths = Object.fromEntries(
+    Object.entries(document.paths).filter(([path]) =>
+      /^\/(auth|users|admin|sync)(\/|$)/.test(path),
+    ),
+  );
+  document.info = {
+    title: 'Auth Service API',
+    version: '0.4.0',
+    description: 'Auth P2 and asynchronous Learning sync P4 endpoints.',
+  };
+  SwaggerModule.setup('api/docs', app, document);
 
   const port = Number(process.env.PORT ?? 3001);
   await app.listen(port);
 }
 
-void bootstrap();
+if (require.main === module) void bootstrap();

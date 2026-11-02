@@ -10,62 +10,157 @@ datasource db {
 
 enum UserStatus {
   ACTIVE
-  LOCKED
-  DISABLED
-  PENDING
+  SUSPENDED
+  INACTIVE
 }
 
 model User {
-  id                  String     @id @default(uuid())
-  email               String     @unique
-  passwordHash        String     @map("password_hash")
-  fullName            String     @map("full_name")
-  avatarUrl           String?    @map("avatar_url")
-  phoneNumber         String?    @map("phone_number")
-  status              UserStatus @default(ACTIVE)
-  failedLoginAttempts Int        @default(0) @map("failed_login_attempts")
-  lockedUntil         DateTime?  @map("locked_until")
-  createdAt           DateTime   @default(now()) @map("created_at")
-  updatedAt           DateTime   @updatedAt @map("updated_at")
+  id                   String     @id @default(uuid())
+  email                String     @unique
+  passwordHash         String?    @map("password_hash")
+  fullName             String     @map("full_name")
+  legacyAvatarUrl      String?    @map("avatar_url")
+  avatarKey            String?    @map("avatar_key")
+  phoneNumber          String?    @map("phone_number")
+  status               UserStatus @default(INACTIVE)
+  failedLoginCount     Int        @default(0) @map("failed_login_count")
+  authorizationVersion BigInt     @default(0) @map("authorization_version")
+  lockedUntil          DateTime?  @map("locked_until")
+  createdAt            DateTime   @default(now()) @map("created_at")
+  updatedAt            DateTime   @updatedAt @map("updated_at")
 
   roles         UserRole[]
   refreshTokens RefreshToken[]
   auditLogs     AuditLog[]
   syncStates    UserSyncState[]
+  sessions      AuthSession[]
+  activations   EmailActivation[]
+  mailJobs      EmailDelivery[]
+  uploads       AvatarUpload[]
 
   @@map("users")
 }
 
 model Role {
-  id    String     @id @default(uuid())
-  code  String     @unique
-  name  String
-  users UserRole[]
+  id          String     @id @default(uuid())
+  roleCode    String     @unique @map("role_code")
+  name        String
+  users       UserRole[]
+  legacyUsers UserRole[] @relation("LegacyRole")
 
   @@map("roles")
 }
 
 model UserRole {
-  userId String @map("user_id")
-  roleId String @map("role_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  userId       String  @map("user_id")
+  roleCode     String  @map("role_code")
+  legacyRoleId String? @map("role_id")
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role         Role    @relation(fields: [roleCode], references: [roleCode], onDelete: Cascade)
+  legacyRole   Role?   @relation("LegacyRole", fields: [legacyRoleId], references: [id], onDelete: Cascade)
 
-  @@id([userId, roleId])
+  @@id([userId, roleCode])
   @@map("user_roles")
 }
 
 model RefreshToken {
-  id        String    @id @default(uuid())
-  userId    String    @map("user_id")
-  tokenHash String    @map("token_hash")
-  expiresAt DateTime  @map("expires_at")
-  revokedAt DateTime? @map("revoked_at")
-  createdAt DateTime  @default(now()) @map("created_at")
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String       @id @default(uuid())
+  userId     String       @map("user_id")
+  tokenHash  String       @unique @map("token_hash")
+  sessionId  String?      @map("session_id")
+  consumedAt DateTime?    @map("consumed_at")
+  session    AuthSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime     @map("expires_at")
+  revokedAt  DateTime?    @map("revoked_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([expiresAt])
   @@map("refresh_tokens")
+}
+
+model AuthSession {
+  id        String         @id @default(uuid())
+  userId    String         @map("user_id")
+  deviceId  String         @map("device_id")
+  version   BigInt         @default(0)
+  expiresAt DateTime       @map("expires_at")
+  revokedAt DateTime?      @map("revoked_at")
+  createdAt DateTime       @default(now()) @map("created_at")
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokens    RefreshToken[]
+
+  @@index([userId])
+  @@map("auth_sessions")
+}
+
+model EmailActivation {
+  isResend   Boolean   @default(false) @map("is_resend")
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  tokenHash  String    @unique @map("token_hash")
+  expiresAt  DateTime  @map("expires_at")
+  consumedAt DateTime? @map("consumed_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("email_activations")
+}
+
+model EmailDelivery {
+  id             String    @id @default(uuid())
+  userId         String    @map("user_id")
+  encryptedToken String?   @map("encrypted_token")
+  expiresAt      DateTime  @map("expires_at")
+  deliveredAt    DateTime? @map("delivered_at")
+  retryCount     Int       @default(0) @map("retry_count")
+  nextAttemptAt  DateTime  @default(now()) @map("next_attempt_at")
+  leaseOwner     String?   @map("lease_owner")
+  leaseUntil     DateTime? @map("lease_until") @db.Timestamptz
+  createdAt      DateTime  @default(now()) @map("created_at")
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([deliveredAt, nextAttemptAt])
+  @@map("email_deliveries")
+}
+
+model AdminAuditLog {
+  id            String   @id @default(uuid())
+  actorUserId   String   @map("actor_user_id")
+  targetUserId  String?  @map("target_user_id")
+  action        String
+  beforeData    Json?    @map("before_data")
+  afterData     Json?    @map("after_data")
+  correlationId String   @map("correlation_id")
+  ip            String?
+  occurredAt    DateTime @default(now()) @map("occurred_at")
+
+  @@index([occurredAt])
+  @@index([actorUserId, targetUserId])
+  @@map("admin_audit_logs")
+}
+
+model AvatarUpload {
+  id          String    @id
+  userId      String    @map("user_id")
+  objectKey   String    @unique @map("object_key")
+  contentType String    @map("content_type")
+  sizeBytes   Int       @map("size_bytes")
+  expiresAt   DateTime  @map("expires_at")
+  confirmedAt DateTime? @map("confirmed_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@map("avatar_uploads")
+}
+
+model StorageGarbage {
+  objectKey   String   @id @map("object_key")
+  deleteAfter DateTime @map("delete_after")
+
+  @@map("storage_garbage")
 }
 
 model AuditLog {
@@ -102,6 +197,93 @@ model OutboxEvent {
   createdAt   DateTime  @default(now()) @map("created_at")
   publishedAt DateTime? @map("published_at")
 
+  retryCount    Int       @default(0) @map("retry_count")
+  nextAttemptAt DateTime  @default(dbgenerated("timezone('UTC'::text, now())")) @map("next_attempt_at")
+  lastError     String?   @map("last_error")
+  leaseOwner    String?   @map("lease_owner")
+  leaseUntil    DateTime? @map("lease_until") @db.Timestamptz
+
   @@index([publishedAt])
   @@map("outbox_events")
+}
+
+model SyncHead {
+  userId             String   @id @map("user_id")
+  syncVersion        BigInt   @default(0) @map("sync_version")
+  resolvedVersion    BigInt   @default(0) @map("resolved_version")
+  appliedVersion     BigInt   @default(0) @map("applied_version")
+  pendingOperationId String?  @map("pending_operation_id")
+  projectedAt        DateTime @default(now()) @map("projected_at")
+  repairAttemptAt DateTime @default(now()) @map("repair_attempt_at")
+  bootstrapDone      Boolean  @default(false) @map("bootstrap_done")
+  bootstrapCursor    String?  @map("bootstrap_cursor")
+  bootstrapWatermark BigInt?  @map("bootstrap_watermark")
+
+  @@map("sync_heads")
+}
+
+model SyncOperation {
+ reconciliationEnvelope Json? @map("reconciliation_envelope")
+  userId           String    @map("user_id")
+  operationId      String    @map("operation_id")
+  syncVersion      BigInt    @map("sync_version")
+  deviceId         String    @map("device_id")
+  actionHash       String    @map("action_hash")
+  operation        Json
+  command          Json
+  commandEventId   String    @unique @map("command_event_id")
+  status           String    @default("PENDING")
+  reason           String?
+  progress         Json
+  acceptedAt       DateTime  @map("accepted_at")
+  activityAt       DateTime  @map("activity_at")
+  resolvedAt       DateTime? @map("resolved_at")
+  resultHash       String?   @map("result_hash")
+  lastReconciledAt DateTime? @map("last_reconciled_at")
+
+  @@id([userId, operationId])
+  @@unique([userId, syncVersion])
+  @@index([status, acceptedAt])
+  @@map("sync_operations")
+}
+
+model SyncDeviceCursor {
+  userId          String   @map("user_id")
+  deviceId        String   @map("device_id")
+  acceptedVersion BigInt   @map("accepted_version")
+  updatedAt       DateTime @default(now()) @map("updated_at")
+
+  @@id([userId, deviceId])
+  @@map("sync_device_cursors")
+}
+
+model SyncProjection {
+  userId      String   @map("user_id")
+  entityType  String   @map("entity_type")
+  entityId    String   @map("entity_id")
+  revision    BigInt
+  state       Json
+  projectedAt DateTime @default(now()) @map("projected_at")
+
+  @@id([userId, entityType, entityId])
+  @@map("sync_projections")
+}
+
+model SyncInbox {
+  eventId     String   @id @map("event_id")
+  eventType   String   @map("event_type")
+  payloadHash String   @map("payload_hash")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@map("sync_inbox")
+}
+
+model SyncQuarantine {
+  eventId   String   @id @map("event_id")
+  userId    String   @map("user_id")
+  reason    String
+  payload   Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("sync_quarantine")
 }

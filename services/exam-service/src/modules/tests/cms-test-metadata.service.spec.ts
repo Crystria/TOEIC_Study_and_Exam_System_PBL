@@ -1,7 +1,7 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CmsTestMetadataService } from './cms-test-metadata.service';
-import { ListTestsQueryDto } from './dto/list-tests-query.dto';
+import { ListCmsTestMetadataQueryDto } from './dto/list-cms-test-metadata-query.dto';
 
 // Synthetic rows only; these IDs and counts are not records read from a real API/DB.
 const row = {
@@ -16,7 +16,7 @@ const keys = ['id', 'title', 'type', 'durationSeconds', 'questionCount', 'status
 
 describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
   const prisma = {
-    test: { findMany: jest.fn(), count: jest.fn(), findUnique: jest.fn() },
+    test: { findMany: jest.fn(), count: jest.fn(), findFirst: jest.fn() },
     $transaction: jest.fn(),
   };
   const service = new CmsTestMetadataService(prisma as unknown as PrismaService);
@@ -25,7 +25,7 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
     jest.resetAllMocks();
     prisma.test.findMany.mockResolvedValue([row]);
     prisma.test.count.mockResolvedValue(1);
-    prisma.test.findUnique.mockResolvedValue(row);
+    prisma.test.findFirst.mockResolvedValue(row);
     prisma.$transaction.mockImplementation((queries: Promise<unknown>[]) => Promise.all(queries));
   });
 
@@ -38,24 +38,24 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
       _count: { questions: 2, attempts: 99 },
     };
     prisma.test.findMany.mockResolvedValue([extra]);
-    prisma.test.findUnique.mockResolvedValue(extra);
-    const list = await service.list(new ListTestsQueryDto());
+    prisma.test.findFirst.mockResolvedValue(extra);
+    const list = await service.list(new ListCmsTestMetadataQueryDto());
     const detail = await service.findById(row.id);
     expect(Object.keys(detail).sort()).toEqual(keys);
     expect(detail).toEqual({
       id: row.id,
       title: row.title,
-      type: 'FULL',
+      type: null,
       durationSeconds: 61,
       questionCount: 2,
-      status: 'REVIEW_PENDING',
+      status: null,
     });
     expect(list).toEqual({ items: [detail], total: 1, page: 1, size: 20 });
     const listQuery = prisma.test.findMany.mock.calls[0][0];
-    const detailQuery = prisma.test.findUnique.mock.calls[0][0];
+    const detailQuery = prisma.test.findFirst.mock.calls[0][0];
     expect(listQuery.select).toEqual(detailQuery.select);
     expect(Object.keys(listQuery.select).sort()).toEqual(
-      ['id', 'title', 'type', 'durationSeconds', 'status', '_count'].sort(),
+      ['id', 'title', 'durationSeconds', '_count'].sort(),
     );
     expect(listQuery.select._count).toEqual({ select: { questions: true } });
     expect(listQuery).not.toHaveProperty('include');
@@ -64,24 +64,21 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
   });
 
   it('applies AND filters and pagination to items and total without demo fields', async () => {
-    const query = Object.assign(new ListTestsQueryDto(), {
+    const query = Object.assign(new ListCmsTestMetadataQueryDto(), {
       keyword: 'Bộ đề',
-      type: 'MINI',
-      status: 'ARCHIVED',
       page: 4,
       size: 7,
     });
     prisma.test.count.mockResolvedValue(30);
     const result = await service.list(query);
     const where = {
+      deletedAt: null,
       title: { contains: 'Bộ đề', mode: 'insensitive' },
-      type: 'MINI',
-      status: 'ARCHIVED',
     };
     expect(prisma.test.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
         skip: 21,
         take: 7,
       }),
@@ -94,7 +91,9 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
   it.each([0, 1])('keeps an empty past-end page and filtered total=%i', async (total) => {
     prisma.test.findMany.mockResolvedValue([]);
     prisma.test.count.mockResolvedValue(total);
-    expect(await service.list(Object.assign(new ListTestsQueryDto(), { page: 9 }))).toEqual({
+    expect(
+      await service.list(Object.assign(new ListCmsTestMetadataQueryDto(), { page: 9 })),
+    ).toEqual({
       items: [],
       total,
       page: 9,
@@ -105,7 +104,7 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
   it.each(['FULL', 'MINI'])(
     'preserves zero linked rows and explicit duration for %s',
     async (type) => {
-      prisma.test.findUnique.mockResolvedValue({
+      prisma.test.findFirst.mockResolvedValue({
         ...row,
         type,
         durationSeconds: 123,
@@ -113,7 +112,8 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
       });
       expect(await service.findById(row.id)).toEqual(
         expect.objectContaining({
-          type,
+          type: null,
+          status: null,
           durationSeconds: 123,
           questionCount: 0,
         }),
@@ -132,7 +132,7 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
     { title: '  ', type: 'FULL_TEST', durationSeconds: 0, status: '', _count: { questions: -1 } },
     { title: null, type: null, durationSeconds: 1.5, status: null, _count: { questions: 1.5 } },
   ])('normalizes unsupported or missing metadata without inventing values: %#', async (fields) => {
-    prisma.test.findUnique.mockResolvedValue({ ...row, ...fields });
+    prisma.test.findFirst.mockResolvedValue({ ...row, ...fields });
     expect(await service.findById(row.id)).toEqual({
       id: row.id,
       title: null,
@@ -146,25 +146,25 @@ describe('CmsTestMetadataService (Prisma stub, no DB)', () => {
   it.each(['', '  ', undefined])(
     'rejects an invalid stored ID instead of inventing one: %s',
     async (id) => {
-      prisma.test.findUnique.mockResolvedValue({ ...row, id });
+      prisma.test.findFirst.mockResolvedValue({ ...row, id });
       await expect(service.findById(row.id)).rejects.toBeInstanceOf(InternalServerErrorException);
     },
   );
 
   it('returns 404 for an absent Test, not a nullable metadata item', async () => {
-    prisma.test.findUnique.mockResolvedValue(null);
+    prisma.test.findFirst.mockResolvedValue(null);
     await expect(service.findById('absent')).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('propagates list query failures without a demo or null fallback', async () => {
     const failure = new Error('isolated query failure');
     prisma.test.findMany.mockRejectedValue(failure);
-    await expect(service.list(new ListTestsQueryDto())).rejects.toBe(failure);
+    await expect(service.list(new ListCmsTestMetadataQueryDto())).rejects.toBe(failure);
   });
 
   it('propagates detail query failures without returning 404 or metadata', async () => {
     const failure = new Error('isolated query failure');
-    prisma.test.findUnique.mockRejectedValue(failure);
+    prisma.test.findFirst.mockRejectedValue(failure);
     await expect(service.findById(row.id)).rejects.toBe(failure);
   });
 });

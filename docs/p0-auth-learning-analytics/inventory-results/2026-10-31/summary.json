@@ -1,0 +1,333 @@
+{
+  "date": "2026-10-31",
+  "scope": "MAIN_DATABASES_ONLY",
+  "container": "toeic-postgres",
+  "readOnly": true,
+  "databases": [
+    {
+      "database": "auth_db",
+      "capturedAt": "2026-10-31T22:17:33.996981+07:00",
+      "businessTables": 7,
+      "businessRows": 0,
+      "rowCounts": {
+        "roles": 0,
+        "users": 0,
+        "audit_logs": 0,
+        "user_roles": 0,
+        "outbox_events": 0,
+        "refresh_tokens": 0,
+        "user_sync_states": 0
+      },
+      "transactionReadOnly": "on",
+      "isolation": "repeatable read",
+      "schemaDrift": {
+        "missingColumns": [],
+        "extraColumns": [],
+        "nullabilityDifferences": [],
+        "extraTables": [],
+        "sourceEnumsAbsent": [],
+        "databaseEnumsAbsent": []
+      },
+      "migrations": [
+        {
+          "name": "20261012083959_init",
+          "filename": "services/auth-service/prisma/migrations/20261012083959_init/migration.sql",
+          "checksumMatch": "raw",
+          "finished": true,
+          "rolledBack": false
+        }
+      ]
+    },
+    {
+      "database": "learning_db",
+      "capturedAt": "2026-10-31T22:17:33.763089+07:00",
+      "businessTables": 7,
+      "businessRows": 0,
+      "rowCounts": {
+        "vocabularies": 0,
+        "outbox_events": 0,
+        "user_progress": 0,
+        "grammar_lessons": 0,
+        "lesson_progress": 0,
+        "learning_sessions": 0,
+        "vocabulary_topics": 0
+      },
+      "transactionReadOnly": "on",
+      "isolation": "repeatable read",
+      "schemaDrift": {
+        "missingColumns": [],
+        "extraColumns": [],
+        "nullabilityDifferences": [],
+        "extraTables": [],
+        "sourceEnumsAbsent": [],
+        "databaseEnumsAbsent": []
+      },
+      "migrations": [
+        {
+          "name": "20261012084046_init",
+          "filename": "services/learning-service/prisma/migrations/20261012084046_init/migration.sql",
+          "checksumMatch": "raw",
+          "finished": true,
+          "rolledBack": false
+        }
+      ]
+    },
+    {
+      "database": "analytics_db",
+      "capturedAt": "2026-10-31T22:17:34.985024+07:00",
+      "businessTables": 6,
+      "businessRows": 0,
+      "rowCounts": {
+        "weak_areas": 0,
+        "daily_streaks": 0,
+        "score_history": 0,
+        "processed_events": 0,
+        "learning_activity": 0,
+        "user_learning_stats": 0
+      },
+      "transactionReadOnly": "on",
+      "isolation": "repeatable read",
+      "schemaDrift": {
+        "missingColumns": [],
+        "extraColumns": [
+          {
+            "table": "score_history",
+            "column": "mode"
+          },
+          {
+            "table": "score_history",
+            "column": "accuracy"
+          },
+          {
+            "table": "score_history",
+            "column": "parts"
+          }
+        ],
+        "nullabilityDifferences": [
+          {
+            "table": "score_history",
+            "column": "test_type",
+            "sourceNullable": false,
+            "databaseNullable": true
+          },
+          {
+            "table": "score_history",
+            "column": "score",
+            "sourceNullable": false,
+            "databaseNullable": true
+          }
+        ],
+        "extraTables": [],
+        "sourceEnumsAbsent": [],
+        "databaseEnumsAbsent": []
+      },
+      "migrations": [
+        {
+          "name": "20261012084053_init",
+          "filename": "services/analytics-service/prisma/migrations/20261012084053_init/migration.sql",
+          "checksumMatch": "raw",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20261027090200_p0_score_mode",
+          "filename": "services/analytics-service/prisma/migrations/20261027090200_p0_score_mode/migration.sql",
+          "checksumMatch": "FILE_MISSING_FROM_CHECKOUT",
+          "finished": true,
+          "rolledBack": false
+        }
+      ]
+    },
+    {
+      "database": "exam_db",
+      "capturedAt": "2026-10-31T22:17:38.262857+07:00",
+      "businessTables": 9,
+      "businessRows": 0,
+      "rowCounts": {
+        "tests": 0,
+        "attempts": 0,
+        "attempt_parts": 0,
+        "outbox_events": 0,
+        "test_questions": 0,
+        "attempt_answers": 0,
+        "attempt_start_requests": 0,
+        "attempt_group_snapshots": 0,
+        "attempt_question_snapshots": 0
+      },
+      "transactionReadOnly": "on",
+      "isolation": "repeatable read",
+      "schemaDrift": {
+        "missingColumns": [
+          {
+            "table": "tests",
+            "column": "id"
+          },
+          {
+            "table": "tests",
+            "column": "title"
+          },
+          {
+            "table": "tests",
+            "column": "type"
+          },
+          {
+            "table": "tests",
+            "column": "status"
+          },
+          {
+            "table": "test_questions",
+            "column": "order_no"
+          },
+          {
+            "table": "attempts",
+            "column": "id"
+          },
+          {
+            "table": "attempts",
+            "column": "total_correct"
+          }
+        ],
+        "extraColumns": [
+          {
+            "table": "tests",
+            "column": "test_id"
+          },
+          {
+            "table": "tests",
+            "column": "test_title"
+          },
+          {
+            "table": "tests",
+            "column": "deleted_at"
+          },
+          {
+            "table": "test_questions",
+            "column": "position"
+          },
+          {
+            "table": "attempts",
+            "column": "attempt_id"
+          },
+          {
+            "table": "attempts",
+            "column": "correct_count"
+          },
+          {
+            "table": "attempts",
+            "column": "mode"
+          },
+          {
+            "table": "attempts",
+            "column": "duration_seconds"
+          },
+          {
+            "table": "attempts",
+            "column": "deadline_at"
+          },
+          {
+            "table": "attempts",
+            "column": "completed_at"
+          },
+          {
+            "table": "attempts",
+            "column": "score_listening"
+          },
+          {
+            "table": "attempts",
+            "column": "score_reading"
+          },
+          {
+            "table": "attempts",
+            "column": "total_questions"
+          },
+          {
+            "table": "attempts",
+            "column": "accuracy"
+          },
+          {
+            "table": "attempts",
+            "column": "snapshot_version"
+          },
+          {
+            "table": "attempt_answers",
+            "column": "attempt_question_snapshot_id"
+          },
+          {
+            "table": "outbox_events",
+            "column": "aggregate_type"
+          },
+          {
+            "table": "outbox_events",
+            "column": "occurred_at"
+          },
+          {
+            "table": "outbox_events",
+            "column": "retry_count"
+          },
+          {
+            "table": "outbox_events",
+            "column": "last_error"
+          },
+          {
+            "table": "outbox_events",
+            "column": "next_attempt_at"
+          },
+          {
+            "table": "outbox_events",
+            "column": "dead_lettered_at"
+          }
+        ],
+        "nullabilityDifferences": [],
+        "extraTables": [
+          "attempt_group_snapshots",
+          "attempt_parts",
+          "attempt_question_snapshots",
+          "attempt_start_requests"
+        ],
+        "sourceEnumsAbsent": ["TestType"],
+        "databaseEnumsAbsent": ["AttemptMode"]
+      },
+      "migrations": [
+        {
+          "name": "20261012084039_init",
+          "filename": "services/exam-service/prisma/migrations/20261012084039_init/migration.sql",
+          "checksumMatch": "raw",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20261027090100_p0_attempt_mode_snapshot",
+          "filename": "services/exam-service/prisma/migrations/20261027090100_p0_attempt_mode_snapshot/migration.sql",
+          "checksumMatch": "FILE_MISSING_FROM_CHECKOUT",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20261027090300_p0_drop_legacy_attempt_indexes",
+          "filename": "services/exam-service/prisma/migrations/20261027090300_p0_drop_legacy_attempt_indexes/migration.sql",
+          "checksumMatch": "FILE_MISSING_FROM_CHECKOUT",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20261027110000_p3_attempt_workflow",
+          "filename": "services/exam-service/prisma/migrations/20261027110000_p3_attempt_workflow/migration.sql",
+          "checksumMatch": "FILE_MISSING_FROM_CHECKOUT",
+          "finished": true,
+          "rolledBack": false
+        },
+        {
+          "name": "20261027111000_p3_snapshot_position",
+          "filename": "services/exam-service/prisma/migrations/20261027111000_p3_snapshot_position/migration.sql",
+          "checksumMatch": "FILE_MISSING_FROM_CHECKOUT",
+          "finished": true,
+          "rolledBack": false
+        }
+      ]
+    }
+  ],
+  "businessTableCount": 29,
+  "businessRowCount": 0,
+  "missingMigrationFileCount": 5,
+  "unfinishedOrRolledBackMigrationCount": 0
+}

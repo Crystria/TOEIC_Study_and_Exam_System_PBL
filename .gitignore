@@ -40,6 +40,7 @@ coverage/
 junit.xml
 test-results/
 playwright-report/
+artifacts/qa/
 
 # ---------- Flutter / Dart ----------
 .dart_tool/
@@ -164,3 +165,5 @@ uv.lock.bak
 !.gitkeep
 # ---------- private-folder ----------
 private/
+
+artifacts/p6/

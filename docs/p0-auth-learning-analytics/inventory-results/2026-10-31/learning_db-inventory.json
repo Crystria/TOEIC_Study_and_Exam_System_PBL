@@ -1,0 +1,47 @@
+{
+  "checks": {
+    "invalidSm2Ranges": 0,
+    "emptyWordOrMeaning": 0,
+    "orphanVocabularies": 0,
+    "nullNextReviewDates": 0,
+    "wordCollisionGroups": 0,
+    "orphanLessonProgress": 0,
+    "negativeSessionDuration": 0,
+    "orphanVocabularyProgress": 0,
+    "audioReferencesToClassify": 0,
+    "imageReferencesToClassify": 0,
+    "topicsWithFewerThanFiveWords": 0,
+    "lessonsNeedingCategoryMapping": 0,
+    "completedLessonsWithoutTimestamp": 0,
+    "topicsWithFewerThanFourDistinctMeanings": 0,
+    "progressWithoutQualityOrFirstLearnedEvidence": 0
+  },
+  "outbox": {
+    "unpublished": 0,
+    "oldestUnpublishedAt": null
+  },
+  "database": "learning_db",
+  "isolation": "repeatable read",
+  "rowCounts": {
+    "vocabularies": 0,
+    "outbox_events": 0,
+    "user_progress": 0,
+    "grammar_lessons": 0,
+    "lesson_progress": 0,
+    "learning_sessions": 0,
+    "vocabulary_topics": 0
+  },
+  "capturedAt": "2026-10-31T22:17:33.763089+07:00",
+  "migrations": [
+    {
+      "name": "20261012084046_init",
+      "checksum": "d6e105bd543cf755fff33f06331fbc6e6c419f196c12662f08f9c41b18ed4c32",
+      "finishedAt": "2026-10-12T15:40:46.4689+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    }
+  ],
+  "lessonStatusGroups": [],
+  "transactionReadOnly": "on",
+  "lessonProgressStatusGroups": []
+}
