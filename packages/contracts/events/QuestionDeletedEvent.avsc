@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "QuestionDeletedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi archive câu hỏi; search indexer xóa document tương ứng.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "questionId", "type": "string" },
+    { "name": "groupId", "type": ["null", "string"], "default": null },
+    { "name": "deletedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

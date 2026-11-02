@@ -26,11 +26,13 @@ import { QUESTION_BANK_CLIENT, QuestionBankClient } from './question-bank.client
           options: {
             package: 'toeic.questionbank.v1',
             protoPath:
-              config.get<string>('QUESTION_BANK_PROTO_PATH') ??
+              config.get<string>('QUESTION_BANK_PROTO_PATH')?.trim() ||
               join(__dirname, '../../../../packages/contracts/proto/question_bank.proto'),
             url: config.get<string>('QUESTION_BANK_GRPC_URL') ?? 'localhost:50052',
             loader: {
               keepCase: true,
+              defaults: true,
+              arrays: true,
             },
           },
         }),

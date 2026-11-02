@@ -14,7 +14,28 @@ x-node: &node-base
   working_dir: /app
   restart: unless-stopped
 
+x-node-health: &node-health
+  test: ['CMD', 'node', 'scripts/healthcheck.mjs']
+  interval: 10s
+  timeout: 4s
+  start_period: 90s
+  retries: 12
+
 services:
+  media-init:
+    <<: *node-base
+    restart: 'no'
+    depends_on:
+      minio:
+        condition: service_healthy
+    command: node scripts/init-media.mjs
+    environment:
+      NODE_ENV: development
+      MINIO_ENDPOINT: minio:9000
+      MINIO_BUCKET: ${MINIO_BUCKET:-toeic-media}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_PUBLIC_READ: 'true'
   # One-shot: chạy migrate TRƯỚC khi các service khởi động.
   migrate:
     <<: *node-base
@@ -33,12 +54,15 @@ services:
 
   auth-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${AUTH_SERVICE_CPUS:-1.0}
     mem_limit: ${AUTH_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/auth-service && npm run start:dev -w @toeic/auth-service"
     ports:
       - '3001:3001'
     depends_on:
+      mailpit:
+        condition: service_started
       postgres:
         condition: service_healthy
       redis:
@@ -47,16 +71,54 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/auth-mail-encryption.key
+        target: /run/toeic-keys/auth-mail-encryption.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-private.pem
+        target: /run/toeic-keys/access-private.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
+      AUTH_MAIL_ENCRYPTION_KEY_FILE: /run/toeic-keys/auth-mail-encryption.key
+      MAILPIT_URL: http://mailpit:8025
+      AUTH_ACTIVATION_URL: ${AUTH_ACTIVATION_URL:-http://localhost:3006/verify-email}
+      MINIO_ENDPOINT: minio:9000
+      MINIO_PUBLIC_ENDPOINT: http://localhost:19000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
       NODE_ENV: development
       PORT: '3001'
+      SYNC_ENABLED: 'true'
+      LEARNING_INTERNAL_URL: http://learning-service:3004
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/auth_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
+      JWT_ACCESS_PRIVATE_KEY_FILE: /run/toeic-keys/access-private.pem
       JWT_ACCESS_TTL: 15m
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me}
-      JWT_REFRESH_TTL: 7d
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
     develop:
       watch:
         - action: sync
@@ -73,6 +135,7 @@ services:
 
   question-bank-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${QUESTION_BANK_SERVICE_CPUS:-1.5}
     mem_limit: ${QUESTION_BANK_SERVICE_MEMORY_LIMIT:-1g}
     command: sh -c "npm run prisma:generate -w @toeic/question-bank-service && npm run start:dev -w @toeic/question-bank-service"
@@ -90,18 +153,41 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      media-init:
+        condition: service_completed_successfully
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3002'
       GRPC_PORT: '50052'
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/question_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
       ELASTICSEARCH_NODE: http://elasticsearch:9200
       MINIO_ENDPOINT: minio:9000
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:19000/toeic-media}
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:19000}
+      MINIO_REGION: ${MINIO_REGION:-us-east-1}
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
       MINIO_BUCKET: ${MINIO_BUCKET:-toeic-media}
@@ -121,12 +207,15 @@ services:
 
   exam-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${EXAM_SERVICE_CPUS:-1.0}
     mem_limit: ${EXAM_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/exam-service && npm run start:dev -w @toeic/exam-service"
     ports:
       - '3003:3003'
     depends_on:
+      question-bank-service:
+        condition: service_healthy
       postgres:
         condition: service_healthy
       redis:
@@ -135,14 +224,33 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3003'
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/exam_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
       QUESTION_BANK_GRPC_URL: question-bank-service:50052
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:19000/toeic-media}
     develop:
       watch:
         - action: sync
@@ -159,6 +267,7 @@ services:
 
   learning-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${LEARNING_SERVICE_CPUS:-1.0}
     mem_limit: ${LEARNING_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/learning-service && npm run start:dev -w @toeic/learning-service"
@@ -173,13 +282,35 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3004'
+      HEALTHCHECK_PATH: /api/v1/ready
+      SYNC_ENABLED: 'true'
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:19000}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:19000/toeic-media}
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/learning_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
     develop:
       watch:
         - action: sync
@@ -196,6 +327,7 @@ services:
 
   analytics-service:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${ANALYTICS_SERVICE_CPUS:-1.0}
     mem_limit: ${ANALYTICS_SERVICE_MEMORY_LIMIT:-768m}
     command: sh -c "npm run prisma:generate -w @toeic/analytics-service && npm run start:dev -w @toeic/analytics-service"
@@ -210,13 +342,29 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+    volumes:
+      - type: bind
+        source: ./secrets/auth-service-secret.key
+        target: /run/toeic-keys/auth-service-secret.key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
+      AUTH_SERVICE_SECRET_FILE: /run/toeic-keys/auth-service-secret.key
+      AUTH_INTERNAL_URL: http://auth-service:3001
       NODE_ENV: development
       PORT: '3005'
+      HEALTHCHECK_PATH: /api/v1/ready
       DATABASE_URL: postgresql://toeic:toeic@postgres:5432/analytics_db?schema=public
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://toeic:toeic@rabbitmq:5672
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
     develop:
       watch:
         - action: sync
@@ -233,6 +381,7 @@ services:
 
   api-gateway:
     <<: *node-base
+    healthcheck: *node-health
     cpus: ${API_GATEWAY_CPUS:-1.0}
     mem_limit: ${API_GATEWAY_MEMORY_LIMIT:-768m}
     command: npm run start:dev -w @toeic/api-gateway
@@ -242,13 +391,32 @@ services:
       redis:
         condition: service_healthy
       auth-service:
-        condition: service_started
+        condition: service_healthy
+      question-bank-service:
+        condition: service_healthy
+      exam-service:
+        condition: service_healthy
+      analytics-service:
+        condition: service_healthy
+      learning-service:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ./secrets/jwt-access-public.pem
+        target: /run/toeic-keys/access-public.pem
+        read_only: true
+        bind:
+          create_host_path: false
     environment:
       NODE_ENV: development
       PORT: '3000'
+      HEALTHCHECK_PATH: /ready
       REDIS_URL: redis://redis:6379
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_ACCESS_PUBLIC_KEY_FILE: /run/toeic-keys/access-public.pem
+      JWT_ISSUER: ${JWT_ISSUER:-toeic-auth}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-toeic-api}
       CORS_ORIGINS: http://localhost:3006,http://localhost:3007
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-0}
       AUTH_SERVICE_URL: http://auth-service:3001
       QUESTION_BANK_SERVICE_URL: http://question-bank-service:3002
       EXAM_SERVICE_URL: http://exam-service:3003
@@ -257,6 +425,8 @@ services:
       AI_CHATBOX_SERVICE_URL: http://ai-chatbox-service:8000
       RATE_LIMIT_CAPACITY: '60'
       RATE_LIMIT_REFILL_PER_SEC: '1'
+      RATE_LIMIT_USER_CAPACITY: '300'
+      RATE_LIMIT_USER_REFILL_PER_SEC: '5'
     develop:
       watch:
         - action: sync

@@ -1,0 +1,347 @@
+{
+  "enums": [],
+  "columns": [
+    {
+      "type": "character varying",
+      "table": "_prisma_migrations",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "varchar"
+    },
+    {
+      "type": "character varying",
+      "table": "_prisma_migrations",
+      "column": "checksum",
+      "nullable": "NO",
+      "underlyingType": "varchar"
+    },
+    {
+      "type": "timestamp with time zone",
+      "table": "_prisma_migrations",
+      "column": "finished_at",
+      "nullable": "YES",
+      "underlyingType": "timestamptz"
+    },
+    {
+      "type": "character varying",
+      "table": "_prisma_migrations",
+      "column": "migration_name",
+      "nullable": "NO",
+      "underlyingType": "varchar"
+    },
+    {
+      "type": "text",
+      "table": "_prisma_migrations",
+      "column": "logs",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp with time zone",
+      "table": "_prisma_migrations",
+      "column": "rolled_back_at",
+      "nullable": "YES",
+      "underlyingType": "timestamptz"
+    },
+    {
+      "type": "timestamp with time zone",
+      "table": "_prisma_migrations",
+      "column": "started_at",
+      "nullable": "NO",
+      "underlyingType": "timestamptz"
+    },
+    {
+      "type": "integer",
+      "table": "_prisma_migrations",
+      "column": "applied_steps_count",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "text",
+      "table": "daily_streaks",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "integer",
+      "table": "daily_streaks",
+      "column": "current_streak",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "integer",
+      "table": "daily_streaks",
+      "column": "longest_streak",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "daily_streaks",
+      "column": "last_activity_date",
+      "nullable": "YES",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "learning_activity",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "learning_activity",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "learning_activity",
+      "column": "activity_type",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "learning_activity",
+      "column": "ref_id",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "learning_activity",
+      "column": "occurred_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "jsonb",
+      "table": "learning_activity",
+      "column": "metadata",
+      "nullable": "YES",
+      "underlyingType": "jsonb"
+    },
+    {
+      "type": "text",
+      "table": "processed_events",
+      "column": "event_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "processed_events",
+      "column": "event_type",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "processed_events",
+      "column": "processed_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "score_history",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "score_history",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "score_history",
+      "column": "attempt_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "score_history",
+      "column": "test_type",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "integer",
+      "table": "score_history",
+      "column": "score",
+      "nullable": "YES",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "score_history",
+      "column": "taken_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "score_history",
+      "column": "mode",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "double precision",
+      "table": "score_history",
+      "column": "accuracy",
+      "nullable": "YES",
+      "underlyingType": "float8"
+    },
+    {
+      "type": "jsonb",
+      "table": "score_history",
+      "column": "parts",
+      "nullable": "YES",
+      "underlyingType": "jsonb"
+    },
+    {
+      "type": "text",
+      "table": "user_learning_stats",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "integer",
+      "table": "user_learning_stats",
+      "column": "total_study_days",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "integer",
+      "table": "user_learning_stats",
+      "column": "total_lessons",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "integer",
+      "table": "user_learning_stats",
+      "column": "total_vocab_learned",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "user_learning_stats",
+      "column": "updated_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "weak_areas",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "weak_areas",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "weak_areas",
+      "column": "skill_area",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "integer",
+      "table": "weak_areas",
+      "column": "part",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "double precision",
+      "table": "weak_areas",
+      "column": "error_rate",
+      "nullable": "NO",
+      "underlyingType": "float8"
+    },
+    {
+      "type": "integer",
+      "table": "weak_areas",
+      "column": "sample_count",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "weak_areas",
+      "column": "updated_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    }
+  ],
+  "database": "analytics_db",
+  "capturedAt": "2026-10-31T22:14:44.024427+07:00",
+  "constraints": [
+    {
+      "kind": "p",
+      "name": "_prisma_migrations_pkey",
+      "table": "_prisma_migrations",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "p",
+      "name": "daily_streaks_pkey",
+      "table": "daily_streaks",
+      "definition": "PRIMARY KEY (user_id)"
+    },
+    {
+      "kind": "p",
+      "name": "learning_activity_pkey",
+      "table": "learning_activity",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "p",
+      "name": "processed_events_pkey",
+      "table": "processed_events",
+      "definition": "PRIMARY KEY (event_id)"
+    },
+    {
+      "kind": "p",
+      "name": "score_history_pkey",
+      "table": "score_history",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "p",
+      "name": "user_learning_stats_pkey",
+      "table": "user_learning_stats",
+      "definition": "PRIMARY KEY (user_id)"
+    },
+    {
+      "kind": "p",
+      "name": "weak_areas_pkey",
+      "table": "weak_areas",
+      "definition": "PRIMARY KEY (id)"
+    }
+  ],
+  "serverVersion": "16.15",
+  "transactionReadOnly": "on"
+}

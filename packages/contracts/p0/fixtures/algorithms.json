@@ -1,0 +1,804 @@
+{
+  "sm2": [
+    {
+      "name": "quality-0",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 2,
+        "intervalDays": 6
+      },
+      "quality": 0,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 1.7,
+        "repetitionNumber": 0,
+        "intervalDays": 1,
+        "nextReviewDate": "2026-11-01"
+      }
+    },
+    {
+      "name": "quality-1",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 2,
+        "intervalDays": 6
+      },
+      "quality": 1,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 1.96,
+        "repetitionNumber": 0,
+        "intervalDays": 1,
+        "nextReviewDate": "2026-11-01"
+      }
+    },
+    {
+      "name": "quality-2",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 2,
+        "intervalDays": 6
+      },
+      "quality": 2,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 2.18,
+        "repetitionNumber": 0,
+        "intervalDays": 1,
+        "nextReviewDate": "2026-11-01"
+      }
+    },
+    {
+      "name": "quality-3",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 2,
+        "intervalDays": 6
+      },
+      "quality": 3,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 2.36,
+        "repetitionNumber": 3,
+        "intervalDays": 14,
+        "nextReviewDate": "2026-11-14"
+      }
+    },
+    {
+      "name": "quality-4",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 2,
+        "intervalDays": 6
+      },
+      "quality": 4,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 3,
+        "intervalDays": 15,
+        "nextReviewDate": "2026-11-15"
+      }
+    },
+    {
+      "name": "quality-5",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 2,
+        "intervalDays": 6
+      },
+      "quality": 5,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 2.6,
+        "repetitionNumber": 3,
+        "intervalDays": 16,
+        "nextReviewDate": "2026-11-16"
+      }
+    },
+    {
+      "name": "floor",
+      "state": {
+        "easinessFactor": 1.3,
+        "repetitionNumber": 8,
+        "intervalDays": 60
+      },
+      "quality": 0,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 1.3,
+        "repetitionNumber": 0,
+        "intervalDays": 1,
+        "nextReviewDate": "2026-11-01"
+      }
+    },
+    {
+      "name": "first-success",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 0,
+        "intervalDays": 0
+      },
+      "quality": 5,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 2.6,
+        "repetitionNumber": 1,
+        "intervalDays": 1,
+        "nextReviewDate": "2026-11-01"
+      }
+    },
+    {
+      "name": "second-success",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 1,
+        "intervalDays": 1
+      },
+      "quality": 3,
+      "activityAt": "2026-10-31T05:00:00.000Z",
+      "expected": {
+        "easinessFactor": 2.36,
+        "repetitionNumber": 2,
+        "intervalDays": 6,
+        "nextReviewDate": "2026-11-06"
+      }
+    },
+    {
+      "name": "vietnam-midnight",
+      "state": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 0,
+        "intervalDays": 0
+      },
+      "quality": 4,
+      "activityAt": "2026-10-30T17:00:00.000Z",
+      "expected": {
+        "easinessFactor": 2.5,
+        "repetitionNumber": 1,
+        "intervalDays": 1,
+        "nextReviewDate": "2026-11-01"
+      }
+    }
+  ],
+  "prediction": [
+    {
+      "name": "empty",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [],
+      "expected": null
+    },
+    {
+      "name": "two-full",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "three-full",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-29T05:00:00.000Z"
+        }
+      ],
+      "expected": 730
+    },
+    {
+      "name": "fourth-ignored",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-29T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f7-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 990,
+          "validScore": true,
+          "completedAt": "2026-10-28T05:00:00.000Z"
+        }
+      ],
+      "expected": 730
+    },
+    {
+      "name": "round-half-up",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 805,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-29T05:00:00.000Z"
+        }
+      ],
+      "expected": 735
+    },
+    {
+      "name": "part-excluded",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "PART",
+          "totalScore": 990,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-29T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f7-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-28T05:00:00.000Z"
+        }
+      ],
+      "expected": 730
+    },
+    {
+      "name": "mini-excluded",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "MINI",
+          "totalScore": 990,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-29T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f7-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-28T05:00:00.000Z"
+        }
+      ],
+      "expected": 730
+    },
+    {
+      "name": "placeholder-excluded",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 148,
+          "validScore": false,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-29T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f7-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-28T05:00:00.000Z"
+        }
+      ],
+      "expected": 730
+    },
+    {
+      "name": "window-exactly-30-days",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-01T05:00:00.000Z"
+        }
+      ],
+      "expected": 730
+    },
+    {
+      "name": "window-too-old",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-01T04:59:59.999Z"
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "future-excluded",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-11-01T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-30T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-29T05:00:00.000Z"
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "tie-break-attempt-id",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "attempts": [
+        {
+          "attemptId": "000001f7-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 990,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f6-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 600,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f5-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 700,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        },
+        {
+          "attemptId": "000001f4-0000-4000-8000-000000000000",
+          "mode": "FULL",
+          "totalScore": 800,
+          "validScore": true,
+          "completedAt": "2026-10-31T05:00:00.000Z"
+        }
+      ],
+      "expected": 730
+    }
+  ],
+  "weakAreas": [
+    {
+      "name": "nineteen-insufficient",
+      "samples": [
+        {
+          "correct": 0,
+          "total": 19
+        }
+      ],
+      "expected": {
+        "status": "INSUFFICIENT_DATA",
+        "correct": 0,
+        "total": 19,
+        "weaknessScore": null,
+        "isWeak": null
+      }
+    },
+    {
+      "name": "six-of-twenty-weak",
+      "samples": [
+        {
+          "correct": 14,
+          "total": 20
+        }
+      ],
+      "expected": {
+        "status": "AVAILABLE",
+        "correct": 14,
+        "total": 20,
+        "weaknessScore": 0.3,
+        "isWeak": true
+      }
+    },
+    {
+      "name": "five-of-twenty-not-weak",
+      "samples": [
+        {
+          "correct": 15,
+          "total": 20
+        }
+      ],
+      "expected": {
+        "status": "AVAILABLE",
+        "correct": 15,
+        "total": 20,
+        "weaknessScore": 0.25,
+        "isWeak": false
+      }
+    },
+    {
+      "name": "weighted-question-count",
+      "samples": [
+        {
+          "correct": 9,
+          "total": 10
+        },
+        {
+          "correct": 1,
+          "total": 30
+        }
+      ],
+      "expected": {
+        "status": "AVAILABLE",
+        "correct": 10,
+        "total": 40,
+        "weaknessScore": 0.75,
+        "isWeak": true
+      }
+    },
+    {
+      "name": "empty",
+      "samples": [],
+      "expected": {
+        "status": "INSUFFICIENT_DATA",
+        "correct": 0,
+        "total": 0,
+        "weaknessScore": null,
+        "isWeak": null
+      }
+    }
+  ],
+  "streak": [
+    {
+      "name": "empty",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "activityAt": [],
+      "expected": {
+        "current": 0,
+        "longest": 0,
+        "lastDate": null
+      }
+    },
+    {
+      "name": "duplicate-day",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "activityAt": ["2026-10-31T05:00:00.000Z", "2026-10-31T05:00:00.000Z"],
+      "expected": {
+        "current": 1,
+        "longest": 1,
+        "lastDate": "2026-10-31"
+      }
+    },
+    {
+      "name": "late-event-connects-chain",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "activityAt": [
+        "2026-10-31T05:00:00.000Z",
+        "2026-10-29T05:00:00.000Z",
+        "2026-10-30T05:00:00.000Z"
+      ],
+      "expected": {
+        "current": 3,
+        "longest": 3,
+        "lastDate": "2026-10-31"
+      }
+    },
+    {
+      "name": "yesterday-counts",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "activityAt": ["2026-10-30T05:00:00.000Z"],
+      "expected": {
+        "current": 1,
+        "longest": 1,
+        "lastDate": "2026-10-30"
+      }
+    },
+    {
+      "name": "expired-without-new-event",
+      "asOf": "2026-10-31T05:00:00.000Z",
+      "activityAt": ["2026-10-28T05:00:00.000Z", "2026-10-29T05:00:00.000Z"],
+      "expected": {
+        "current": 0,
+        "longest": 2,
+        "lastDate": "2026-10-29"
+      }
+    },
+    {
+      "name": "vietnam-boundary",
+      "asOf": "2026-10-30T17:00:01.000Z",
+      "activityAt": ["2026-10-30T16:59:59.000Z", "2026-10-30T17:00:00.000Z"],
+      "expected": {
+        "current": 2,
+        "longest": 2,
+        "lastDate": "2026-10-31"
+      }
+    }
+  ],
+  "syncAdmission": [
+    {
+      "name": "new-head",
+      "head": "0",
+      "resolved": "0",
+      "base": "0",
+      "pending": false,
+      "replay": "NONE",
+      "expected": {
+        "http": 200,
+        "status": "PENDING",
+        "version": "1"
+      }
+    },
+    {
+      "name": "stale",
+      "head": "2",
+      "resolved": "2",
+      "base": "1",
+      "pending": false,
+      "replay": "NONE",
+      "expected": {
+        "http": 200,
+        "status": "CONFLICT",
+        "version": "2"
+      }
+    },
+    {
+      "name": "future",
+      "head": "2",
+      "resolved": "2",
+      "base": "3",
+      "pending": false,
+      "replay": "NONE",
+      "expected": {
+        "http": 400,
+        "status": "FUTURE_VERSION",
+        "version": "2"
+      }
+    },
+    {
+      "name": "pending-serializes-user",
+      "head": "2",
+      "resolved": "1",
+      "base": "2",
+      "pending": true,
+      "replay": "NONE",
+      "expected": {
+        "http": 200,
+        "status": "BUSY",
+        "version": "2"
+      }
+    },
+    {
+      "name": "replay-before-stale-check",
+      "head": "3",
+      "resolved": "3",
+      "base": "0",
+      "pending": false,
+      "replay": "SAME_APPLIED",
+      "expected": {
+        "http": 200,
+        "status": "APPLIED",
+        "version": "1"
+      }
+    },
+    {
+      "name": "same-id-different-payload",
+      "head": "3",
+      "resolved": "3",
+      "base": "0",
+      "pending": false,
+      "replay": "DIFFERENT_HASH",
+      "expected": {
+        "http": 409,
+        "status": "IDEMPOTENCY_CONFLICT",
+        "version": "3"
+      }
+    },
+    {
+      "name": "bigint-no-number-loss",
+      "head": "9007199254740992",
+      "resolved": "9007199254740992",
+      "base": "9007199254740992",
+      "pending": false,
+      "replay": "NONE",
+      "expected": {
+        "http": 200,
+        "status": "PENDING",
+        "version": "9007199254740993"
+      }
+    }
+  ],
+  "projection": [
+    {
+      "name": "late-lower-revision",
+      "updates": [
+        {
+          "revision": "3",
+          "stateHash": "a"
+        },
+        {
+          "revision": "2",
+          "stateHash": "b"
+        }
+      ],
+      "expected": {
+        "revision": "3",
+        "stateHash": "a",
+        "quarantined": 0
+      }
+    },
+    {
+      "name": "same-revision-same-hash",
+      "updates": [
+        {
+          "revision": "3",
+          "stateHash": "a"
+        },
+        {
+          "revision": "3",
+          "stateHash": "a"
+        }
+      ],
+      "expected": {
+        "revision": "3",
+        "stateHash": "a",
+        "quarantined": 0
+      }
+    },
+    {
+      "name": "same-revision-conflict",
+      "updates": [
+        {
+          "revision": "3",
+          "stateHash": "a"
+        },
+        {
+          "revision": "3",
+          "stateHash": "b"
+        }
+      ],
+      "expected": {
+        "revision": "3",
+        "stateHash": "a",
+        "quarantined": 1
+      }
+    }
+  ]
+}

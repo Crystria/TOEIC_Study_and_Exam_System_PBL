@@ -1,0 +1,482 @@
+{
+  "enums": [
+    {
+      "type": "GrammarLessonStatus",
+      "label": "DRAFT"
+    },
+    {
+      "type": "GrammarLessonStatus",
+      "label": "PUBLISHED"
+    },
+    {
+      "type": "GrammarLessonStatus",
+      "label": "ARCHIVED"
+    }
+  ],
+  "columns": [
+    {
+      "type": "character varying",
+      "table": "_prisma_migrations",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "varchar"
+    },
+    {
+      "type": "character varying",
+      "table": "_prisma_migrations",
+      "column": "checksum",
+      "nullable": "NO",
+      "underlyingType": "varchar"
+    },
+    {
+      "type": "timestamp with time zone",
+      "table": "_prisma_migrations",
+      "column": "finished_at",
+      "nullable": "YES",
+      "underlyingType": "timestamptz"
+    },
+    {
+      "type": "character varying",
+      "table": "_prisma_migrations",
+      "column": "migration_name",
+      "nullable": "NO",
+      "underlyingType": "varchar"
+    },
+    {
+      "type": "text",
+      "table": "_prisma_migrations",
+      "column": "logs",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp with time zone",
+      "table": "_prisma_migrations",
+      "column": "rolled_back_at",
+      "nullable": "YES",
+      "underlyingType": "timestamptz"
+    },
+    {
+      "type": "timestamp with time zone",
+      "table": "_prisma_migrations",
+      "column": "started_at",
+      "nullable": "NO",
+      "underlyingType": "timestamptz"
+    },
+    {
+      "type": "integer",
+      "table": "_prisma_migrations",
+      "column": "applied_steps_count",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "text",
+      "table": "grammar_lessons",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "grammar_lessons",
+      "column": "title",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "grammar_lessons",
+      "column": "slug",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "grammar_lessons",
+      "column": "content",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "grammar_lessons",
+      "column": "level",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "USER-DEFINED",
+      "table": "grammar_lessons",
+      "column": "status",
+      "nullable": "NO",
+      "underlyingType": "GrammarLessonStatus"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "grammar_lessons",
+      "column": "created_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "grammar_lessons",
+      "column": "updated_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "learning_sessions",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "learning_sessions",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "learning_sessions",
+      "column": "started_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "learning_sessions",
+      "column": "ended_at",
+      "nullable": "YES",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "integer",
+      "table": "learning_sessions",
+      "column": "duration_seconds",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "text",
+      "table": "lesson_progress",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "lesson_progress",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "lesson_progress",
+      "column": "lesson_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "lesson_progress",
+      "column": "status",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "lesson_progress",
+      "column": "completed_at",
+      "nullable": "YES",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "lesson_progress",
+      "column": "updated_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "outbox_events",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "outbox_events",
+      "column": "aggregate_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "outbox_events",
+      "column": "event_type",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "jsonb",
+      "table": "outbox_events",
+      "column": "payload",
+      "nullable": "NO",
+      "underlyingType": "jsonb"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "outbox_events",
+      "column": "created_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "outbox_events",
+      "column": "published_at",
+      "nullable": "YES",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "user_progress",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "user_progress",
+      "column": "user_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "user_progress",
+      "column": "vocabulary_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "double precision",
+      "table": "user_progress",
+      "column": "easiness_factor",
+      "nullable": "NO",
+      "underlyingType": "float8"
+    },
+    {
+      "type": "integer",
+      "table": "user_progress",
+      "column": "repetition",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "integer",
+      "table": "user_progress",
+      "column": "interval",
+      "nullable": "NO",
+      "underlyingType": "int4"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "user_progress",
+      "column": "next_review_at",
+      "nullable": "YES",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "user_progress",
+      "column": "last_review_at",
+      "nullable": "YES",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "topic_id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "word",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "pronunciation",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "meaning",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "example",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "audio_url",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabularies",
+      "column": "image_url",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "vocabularies",
+      "column": "created_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "vocabularies",
+      "column": "updated_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "text",
+      "table": "vocabulary_topics",
+      "column": "id",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabulary_topics",
+      "column": "name",
+      "nullable": "NO",
+      "underlyingType": "text"
+    },
+    {
+      "type": "text",
+      "table": "vocabulary_topics",
+      "column": "description",
+      "nullable": "YES",
+      "underlyingType": "text"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "vocabulary_topics",
+      "column": "created_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    },
+    {
+      "type": "timestamp without time zone",
+      "table": "vocabulary_topics",
+      "column": "updated_at",
+      "nullable": "NO",
+      "underlyingType": "timestamp"
+    }
+  ],
+  "database": "learning_db",
+  "capturedAt": "2026-10-31T22:14:44.229848+07:00",
+  "constraints": [
+    {
+      "kind": "p",
+      "name": "_prisma_migrations_pkey",
+      "table": "_prisma_migrations",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "p",
+      "name": "grammar_lessons_pkey",
+      "table": "grammar_lessons",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "p",
+      "name": "learning_sessions_pkey",
+      "table": "learning_sessions",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "f",
+      "name": "lesson_progress_lesson_id_fkey",
+      "table": "lesson_progress",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES grammar_lessons(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "kind": "p",
+      "name": "lesson_progress_pkey",
+      "table": "lesson_progress",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "p",
+      "name": "outbox_events_pkey",
+      "table": "outbox_events",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "p",
+      "name": "user_progress_pkey",
+      "table": "user_progress",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "f",
+      "name": "user_progress_vocabulary_id_fkey",
+      "table": "user_progress",
+      "definition": "FOREIGN KEY (vocabulary_id) REFERENCES vocabularies(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "kind": "p",
+      "name": "vocabularies_pkey",
+      "table": "vocabularies",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "kind": "f",
+      "name": "vocabularies_topic_id_fkey",
+      "table": "vocabularies",
+      "definition": "FOREIGN KEY (topic_id) REFERENCES vocabulary_topics(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "kind": "p",
+      "name": "vocabulary_topics_pkey",
+      "table": "vocabulary_topics",
+      "definition": "PRIMARY KEY (id)"
+    }
+  ],
+  "serverVersion": "16.15",
+  "transactionReadOnly": "on"
+}

@@ -1,0 +1,890 @@
+[
+  {
+    "name": "missing-producer",
+    "data": {
+      "eventId": "00000064-0000-4000-8000-000000000000",
+      "eventType": "TestSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000032-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "FULL",
+        "scoreListening": 400,
+        "scoreReading": 350,
+        "totalScore": 750,
+        "correctListeningCount": 78,
+        "correctReadingCount": 70,
+        "correctCount": 148,
+        "totalQuestions": 200,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          },
+          {
+            "part": 3,
+            "total": 39,
+            "correct": 30
+          },
+          {
+            "part": 4,
+            "total": 30,
+            "correct": 25
+          },
+          {
+            "part": 5,
+            "total": 30,
+            "correct": 20
+          },
+          {
+            "part": 6,
+            "total": 16,
+            "correct": 10
+          },
+          {
+            "part": 7,
+            "total": 54,
+            "correct": 40
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z",
+        "scoring": {
+          "method": "LOOKUP",
+          "tableVersion": "reference-fixture-not-official",
+          "official": false
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "wrong-version",
+    "data": {
+      "eventId": "00000064-0000-4000-8000-000000000000",
+      "eventType": "TestSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 1,
+      "payload": {
+        "attemptId": "00000032-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "FULL",
+        "scoreListening": 400,
+        "scoreReading": 350,
+        "totalScore": 750,
+        "correctListeningCount": 78,
+        "correctReadingCount": 70,
+        "correctCount": 148,
+        "totalQuestions": 200,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          },
+          {
+            "part": 3,
+            "total": 39,
+            "correct": 30
+          },
+          {
+            "part": 4,
+            "total": 30,
+            "correct": 25
+          },
+          {
+            "part": 5,
+            "total": 30,
+            "correct": 20
+          },
+          {
+            "part": 6,
+            "total": 16,
+            "correct": 10
+          },
+          {
+            "part": 7,
+            "total": 54,
+            "correct": 40
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z",
+        "scoring": {
+          "method": "LOOKUP",
+          "tableVersion": "reference-fixture-not-official",
+          "official": false
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "raw-score-is-not-scaled",
+    "data": {
+      "eventId": "00000064-0000-4000-8000-000000000000",
+      "eventType": "TestSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000032-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "FULL",
+        "scoreListening": 400,
+        "scoreReading": 350,
+        "totalScore": 148,
+        "correctListeningCount": 78,
+        "correctReadingCount": 70,
+        "correctCount": 148,
+        "totalQuestions": 200,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          },
+          {
+            "part": 3,
+            "total": 39,
+            "correct": 30
+          },
+          {
+            "part": 4,
+            "total": 30,
+            "correct": 25
+          },
+          {
+            "part": 5,
+            "total": 30,
+            "correct": 20
+          },
+          {
+            "part": 6,
+            "total": 16,
+            "correct": 10
+          },
+          {
+            "part": 7,
+            "total": 54,
+            "correct": 40
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z",
+        "scoring": {
+          "method": "LOOKUP",
+          "tableVersion": "reference-fixture-not-official",
+          "official": false
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "section-total-mismatch",
+    "data": {
+      "eventId": "00000064-0000-4000-8000-000000000000",
+      "eventType": "TestSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000032-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "FULL",
+        "scoreListening": 400,
+        "scoreReading": 350,
+        "totalScore": 755,
+        "correctListeningCount": 78,
+        "correctReadingCount": 70,
+        "correctCount": 148,
+        "totalQuestions": 200,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          },
+          {
+            "part": 3,
+            "total": 39,
+            "correct": 30
+          },
+          {
+            "part": 4,
+            "total": 30,
+            "correct": 25
+          },
+          {
+            "part": 5,
+            "total": 30,
+            "correct": 20
+          },
+          {
+            "part": 6,
+            "total": 16,
+            "correct": 10
+          },
+          {
+            "part": 7,
+            "total": 54,
+            "correct": 40
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z",
+        "scoring": {
+          "method": "LOOKUP",
+          "tableVersion": "reference-fixture-not-official",
+          "official": false
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "wrong-part-total",
+    "data": {
+      "eventId": "00000064-0000-4000-8000-000000000000",
+      "eventType": "TestSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000032-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "FULL",
+        "scoreListening": 400,
+        "scoreReading": 350,
+        "totalScore": 750,
+        "correctListeningCount": 78,
+        "correctReadingCount": 70,
+        "correctCount": 148,
+        "totalQuestions": 200,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 7,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          },
+          {
+            "part": 3,
+            "total": 39,
+            "correct": 30
+          },
+          {
+            "part": 4,
+            "total": 30,
+            "correct": 25
+          },
+          {
+            "part": 5,
+            "total": 30,
+            "correct": 20
+          },
+          {
+            "part": 6,
+            "total": 16,
+            "correct": 10
+          },
+          {
+            "part": 7,
+            "total": 54,
+            "correct": 40
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z",
+        "scoring": {
+          "method": "LOOKUP",
+          "tableVersion": "reference-fixture-not-official",
+          "official": false
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "duplicate-part",
+    "data": {
+      "eventId": "00000064-0000-4000-8000-000000000000",
+      "eventType": "TestSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000032-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "FULL",
+        "scoreListening": 400,
+        "scoreReading": 350,
+        "totalScore": 750,
+        "correctListeningCount": 78,
+        "correctReadingCount": 70,
+        "correctCount": 148,
+        "totalQuestions": 200,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 1,
+            "total": 25,
+            "correct": 20
+          },
+          {
+            "part": 3,
+            "total": 39,
+            "correct": 30
+          },
+          {
+            "part": 4,
+            "total": 30,
+            "correct": 25
+          },
+          {
+            "part": 5,
+            "total": 30,
+            "correct": 20
+          },
+          {
+            "part": 6,
+            "total": 16,
+            "correct": 10
+          },
+          {
+            "part": 7,
+            "total": 54,
+            "correct": 40
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z",
+        "scoring": {
+          "method": "LOOKUP",
+          "tableVersion": "reference-fixture-not-official",
+          "official": false
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "part-correct-greater-than-total",
+    "data": {
+      "eventId": "00000065-0000-4000-8000-000000000000",
+      "eventType": "PartPracticeSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000033-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "PART",
+        "parts": [1, 2],
+        "correctCount": 23,
+        "totalQuestions": 31,
+        "accuracy": 0.741935,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 7
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "part-score-even-null-is-forbidden",
+    "data": {
+      "eventId": "00000065-0000-4000-8000-000000000000",
+      "eventType": "PartPracticeSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000033-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "PART",
+        "parts": [1, 2],
+        "correctCount": 23,
+        "totalQuestions": 31,
+        "accuracy": 0.741935,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z",
+        "totalScore": null
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "part-accuracy-percent-not-ratio",
+    "data": {
+      "eventId": "00000065-0000-4000-8000-000000000000",
+      "eventType": "PartPracticeSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000033-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "PART",
+        "parts": [1, 2],
+        "correctCount": 23,
+        "totalQuestions": 31,
+        "accuracy": 74.1935,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "part-accuracy-mismatch",
+    "data": {
+      "eventId": "00000065-0000-4000-8000-000000000000",
+      "eventType": "PartPracticeSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000033-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "PART",
+        "parts": [1, 2],
+        "correctCount": 23,
+        "totalQuestions": 31,
+        "accuracy": 0.5,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "full-mode-in-practice-event",
+    "data": {
+      "eventId": "00000065-0000-4000-8000-000000000000",
+      "eventType": "PartPracticeSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000033-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "mode": "FULL",
+        "parts": [1, 2],
+        "correctCount": 23,
+        "totalQuestions": 31,
+        "accuracy": 0.741935,
+        "partStats": [
+          {
+            "part": 1,
+            "total": 6,
+            "correct": 3
+          },
+          {
+            "part": 2,
+            "total": 25,
+            "correct": 20
+          }
+        ],
+        "completedAt": "2026-10-31T04:59:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "invalid-first-learned-quality",
+    "data": {
+      "eventId": "00000067-0000-4000-8000-000000000000",
+      "eventType": "VocabularyLearnedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "sessionId": null,
+        "quality": 1,
+        "revision": "1",
+        "firstLearned": true,
+        "firstLearnedAt": "2026-10-31T05:00:00.000Z",
+        "activityAt": "2026-10-31T05:00:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "missing-first-learned-timestamp",
+    "data": {
+      "eventId": "00000067-0000-4000-8000-000000000000",
+      "eventType": "VocabularyLearnedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "sessionId": null,
+        "quality": 3,
+        "revision": "1",
+        "firstLearned": true,
+        "firstLearnedAt": null,
+        "activityAt": "2026-10-31T05:00:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "unsafe-number-version",
+    "data": {
+      "eventId": "0000006a-0000-4000-8000-000000000000",
+      "eventType": "UserSyncAcceptedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "auth-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "deviceId": "web-fixture",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "baseVersion": "0",
+        "syncVersion": 1,
+        "activityAt": "2026-10-31T05:00:00.000Z",
+        "operation": {
+          "kind": "REVIEW_FLASHCARD",
+          "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+          "baseEntityRevision": "0",
+          "quality": 3
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "bigint-overflow",
+    "data": {
+      "eventId": "0000006a-0000-4000-8000-000000000000",
+      "eventType": "UserSyncAcceptedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "auth-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "deviceId": "web-fixture",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "baseVersion": "0",
+        "syncVersion": "9223372036854775808",
+        "activityAt": "2026-10-31T05:00:00.000Z",
+        "operation": {
+          "kind": "REVIEW_FLASHCARD",
+          "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+          "baseEntityRevision": "0",
+          "quality": 3
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "non-incrementing-sync-version",
+    "data": {
+      "eventId": "0000006a-0000-4000-8000-000000000000",
+      "eventType": "UserSyncAcceptedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "auth-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "deviceId": "web-fixture",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "baseVersion": "0",
+        "syncVersion": "0",
+        "activityAt": "2026-10-31T05:00:00.000Z",
+        "operation": {
+          "kind": "REVIEW_FLASHCARD",
+          "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+          "baseEntityRevision": "0",
+          "quality": 3
+        }
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "applied-with-rejection-reason",
+    "data": {
+      "eventId": "0000006b-0000-4000-8000-000000000000",
+      "eventType": "LearningSyncResolvedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "syncVersion": "1",
+        "status": "APPLIED",
+        "reason": "CONFLICT",
+        "actionHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "progress": [
+          {
+            "entityType": "VOCABULARY",
+            "entityId": "0000000a-0000-4000-8000-000000000000",
+            "revision": "1",
+            "state": {
+              "quality": 3,
+              "intervalDays": 1,
+              "easinessFactor": 2.36,
+              "repetitionNumber": 1,
+              "nextReviewDate": "2026-11-01",
+              "firstLearnedAt": "2026-10-31T05:00:00.000Z",
+              "updatedAt": "2026-10-31T05:00:00.000Z"
+            }
+          }
+        ]
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "rejected-without-reason",
+    "data": {
+      "eventId": "0000006c-0000-4000-8000-000000000000",
+      "eventType": "LearningSyncResolvedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "syncVersion": "2",
+        "status": "REJECTED",
+        "reason": null,
+        "actionHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "progress": [
+          {
+            "entityType": "VOCABULARY",
+            "entityId": "0000000a-0000-4000-8000-000000000000",
+            "revision": "3",
+            "state": {
+              "quality": 3,
+              "intervalDays": 1,
+              "easinessFactor": 2.36,
+              "repetitionNumber": 1,
+              "nextReviewDate": "2026-11-01",
+              "firstLearnedAt": "2026-10-31T05:00:00.000Z",
+              "updatedAt": "2026-10-31T05:00:00.000Z"
+            }
+          }
+        ]
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "duplicate-projection-entity",
+    "data": {
+      "eventId": "0000006d-0000-4000-8000-000000000000",
+      "eventType": "LearningProgressChangedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "actionHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "progress": [
+          {
+            "entityType": "VOCABULARY",
+            "entityId": "0000000a-0000-4000-8000-000000000000",
+            "revision": "1",
+            "state": {
+              "quality": 3,
+              "intervalDays": 1,
+              "easinessFactor": 2.36,
+              "repetitionNumber": 1,
+              "nextReviewDate": "2026-11-01",
+              "firstLearnedAt": "2026-10-31T05:00:00.000Z",
+              "updatedAt": "2026-10-31T05:00:00.000Z"
+            }
+          },
+          {
+            "entityType": "VOCABULARY",
+            "entityId": "0000000a-0000-4000-8000-000000000000",
+            "revision": "1",
+            "state": {
+              "quality": 3,
+              "intervalDays": 1,
+              "easinessFactor": 2.36,
+              "repetitionNumber": 1,
+              "nextReviewDate": "2026-11-01",
+              "firstLearnedAt": "2026-10-31T05:00:00.000Z",
+              "updatedAt": "2026-10-31T05:00:00.000Z"
+            }
+          }
+        ]
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "activity-after-event",
+    "data": {
+      "eventId": "00000067-0000-4000-8000-000000000000",
+      "eventType": "VocabularyLearnedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "sessionId": null,
+        "quality": 3,
+        "revision": "1",
+        "firstLearned": true,
+        "firstLearnedAt": "2026-10-31T05:00:00.000Z",
+        "activityAt": "2026-11-01T05:00:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  },
+  {
+    "name": "legacy-payload-is-not-v2",
+    "data": {
+      "eventId": "00000064-0000-4000-8000-000000000000",
+      "eventType": "TestSubmittedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "exam-service",
+      "version": 2,
+      "payload": {
+        "attemptId": "00000032-0000-4000-8000-000000000000",
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "testId": "0000003c-0000-4000-8000-000000000000",
+        "testType": "FULL",
+        "score": 148,
+        "totalCorrect": 148
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "schema"
+  },
+  {
+    "name": "authorization-session-requires-version",
+    "data": {
+      "eventId": "0000006f-0000-4000-8000-000000000000",
+      "eventType": "AuthorizationChangedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "auth-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "userVersion": "1",
+        "sessionId": "00000191-0000-4000-8000-000000000000",
+        "sessionVersion": null,
+        "reason": "LOGOUT"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    },
+    "expectedStage": "semantic"
+  }
+]
