@@ -1,16 +1,7 @@
-// MaterialApp, theme, routes
 import 'package:flutter/material.dart';
 
 import 'theme/app_colors.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/vocabulary_screen.dart';
-import 'screens/mock_test_taking_screen.dart';
-import 'screens/mock_test_result_screen.dart';
-import 'screens/ai_chat_screen.dart';
-import 'screens/mock_test_select_screen.dart';
-import 'screens/explanation_screen.dart';
+import 'features/auth/screens/login_screen.dart';
 
 class ToeicMobileApp extends StatelessWidget {
   const ToeicMobileApp({super.key});
