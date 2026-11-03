@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 
 import 'theme/app_colors.dart';
-import 'screens/login_screen.dart';
+/*
+import 'features/auth/screens/login_screen.dart';
 import 'screens/register_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/vocabulary_screen.dart';
+import 'features/home/screens/home_screen.dart';
+import 'features/vocabulary/screens/vocabulary_screen.dart';
 import 'screens/mock_test_taking_screen.dart';
-import 'screens/mock_test_result_screen.dart';
-import 'screens/ai_chat_screen.dart';
+import 'features/mock_test/screens/mock_test_result_screen.dart';
+import 'features/ai_chat/screens/ai_chat_screen.dart';
 import 'screens/mock_test_select_screen.dart';
-import 'screens/explanation_screen.dart';
+import 'features/mock_test/screens/explanation_screen.dart';
 
 @Preview(name: 'TOEIC Master - Home')
 Widget homeScreenPreview() {
@@ -56,7 +57,7 @@ Widget explanationScreenPreview() {
 Widget aiChatScreenPreview() {
   return const MaterialApp(home: AiChatScreen());
 }
-
+*/
 @Preview(name: 'TOEIC Master - Brand Color')
 Widget brandColorPreview() {
   return const MaterialApp(
