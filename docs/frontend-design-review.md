@@ -2570,3 +2570,136 @@ Bước mở trình duyệt để đăng nhập bị cổng quyền từ chối 
 README gốc/web/CMS và env examples đã được cập nhật. Build API rồi chạy helper preview trong terminal riêng; đích dự kiến là 3106/3107, không mặc định tồn tại sau phiên. Preview QA đã dừng trước build cuối và không được mở browser lại sau từ chối quyền. Lệnh chi tiết, khởi động backend không migration/seed và các giới hạn nằm trong báo cáo lượt 33. Chỉ bật writes sau khi Gateway/auth và dataset được kiểm, metadata sau Gateway/auth/headers/RBAC/response thật; trước hết cần quyền browser cho local frontend và xử lý Exam gRPC. Chất lượng phát âm bằng người nghe vẫn **CHƯA NGHIỆM THU**.
 
 Đối chiếu hash cuối lượt 33: **1.093 mục: 801 file giữ SHA-256, 22 file thay đổi có chủ đích, 270 đường dẫn đã xóa tiếp tục vắng mặt; không có thay đổi ngoài whitelist.** Prefix 625.065 byte của review trước lượt 33 giữ nguyên; backend/Gateway/contracts/mobile/lockfile không đổi hash. Báo cáo status vẫn không tồn tại.
+
+
+## Kết quả lượt 34 — Tích hợp theo source mới (03/11/2026)
+
+**Đã triển khai trực tiếp phần frontend có contract mới trong apps/web và apps/admin-cms; chưa nghiệm thu API thật end-to-end qua Gateway.** [Ma trận contract, file sửa, lệnh chạy và công việc tiếp theo](frontend-integration-session34.md) là hiện trạng lượt này. Các giới hạn cũ của lượt 32/33 (activation chưa có, Exam thiếu snapshot/deadline, quiz/CMS Learning chưa có) đã được đối chiếu lại và không còn áp dụng cho source vừa pull.
+
+### Đã nối trong source
+
+- Auth: userId/roles string[], login có deviceId, đăng ký có confirmPassword và activationRequired; không tự đăng nhập sau đăng ký; thêm verify-email/resend, giữ cookie HttpOnly/refresh/RBAC/CSRF và không replay mutation.
+- Học: topics/words/lessons theo shape và pagination mới; due snapshots join theo ID; Flashcard 5 từ → quiz → backend result/SM-2; đọc revision/projection trước hoàn thành bài học; có hủy phiên.
+- Thi: Full hoặc Part với Idempotency-Key; snapshot câu/nhóm/media; chọn/xóa đáp án, điều hướng/đánh dấu, đồng hồ dùng thời gian server; lưu draft rõ ràng và resume sau reload; submit, history, result/review. Điểm/đáp án/giải thích/transcript từ backend; Part không có điểm TOEIC; grading bị ẩn khi IN_PROGRESS.
+- Analytics/profile/media: timeRange 7/30/all, lifetime/inRange, điểm Full/dự đoán server, cursor scoreTrend và dailyActivity; profile update, avatar presign/PUT/confirm; audio thật không gắn nhãn demo.
+- CMS: câu hỏi Parts 1–7 (Part 2 A–C), tags và picker nhóm; nhóm tạo atomic/nội dung/tài liệu/thứ tự/archive; Full test canonical đủ 200 câu/7200s, picker cả nhóm và giữ cấu trúc khi sửa; CRUD bài học/chủ đề/từ theo Learning admin, picker quan hệ/media; users/audit theo contract hiện tại. Backend tiếp tục kiểm quyền và nghiệp vụ.
+
+### Kiểm chứng và giới hạn
+
+| Hạng mục | Kết quả lượt này |
+| --- | --- |
+| Lint / TypeScript | Web và CMS đạt; log final trong evidence riêng. |
+| Domain tests | 90 web + 592 CMS đạt, gồm test người dùng đã có trước phiên. |
+| Contract/security | 45/45 test hiện tại đạt; không skip/cancel; cập nhật cases legacy theo wire contract mới. |
+| Browser | Chrome trên máy; 14 nhóm UI dùng contract stubs, gồm Flashcard/quiz/reload và grammar revision. Trang kết quả kiểm 1440/390px, ảnh được xem trực tiếp. Không coi đây là E2E backend. |
+| Production | API và DEMO của hai frontend được build trong một bản sao; kết quả cuối xem verification.json và build-*-result.json. |
+| HTTP thật | Auth/Question Bank/Exam/Analytics readiness 200; hai trang login 200; request login thật qua bridge 502, Gateway chưa có listener. |
+| Backend/môi trường | Common/Auth/Question Bank/Exam/Analytics build được sau generate Prisma bằng engine local. Gateway thiếu helmet; Learning thiếu markdown-it/types; npm install bị EACCES, Docker API bị từ chối. Không vô hiệu hóa dependency/bảo mật để chạy. |
+| Database | DB hiện hữu chỉ đọc trạng thái migration. Năm DB frontend test mới migrate thành công; không seed account/content, không đổi quyền tài khoản hiện hữu, không reset/xóa DB. |
+| Bảo toàn | Giữ hai file untracked đầu phiên; không reset/stash/commit/pull; không sửa apps/mobile/backend source/contracts; không tạo frontend-current-status.md. Giữ nguyên prefix byte của review cũ và báo cáo lượt 32/33. |
+
+Evidence mới: tmp/frontend-integration-session34-20261103/{baseline.json,git-status-before.txt,verification.json,integration-final.tap,web-tests.tap,cms-tests.tap,browser-verified/browser-report.json,real-http-readiness.json,isolated-databases.json}. Các lần debug/thất bại được giữ riêng; chỉ bộ final được tính. Xem report để phân biệt UI stubs, health thật và kiểm chứng nghiệp vụ thật chưa đạt.
+
+Settings chưa có API; AI còn vấn đề user_id/ownership; global media catalog/xóa object và admin GET user-by-ID chưa có contract. Những thao tác phụ đã nối nhưng chưa có UI stub đầy đủ (storage/asset reorder/relation picker/cursor/cancel) cần nghiệm thu thêm. Các tiến trình do phiên tạo được dừng sau kiểm tra; URL chỉ hoạt động sau khi người dùng chạy lại.
+
+Ưu tiên tiếp: cài đủ dependency và chạy Gateway/Learning trên DB test; chuẩn bị account test qua quy trình dự án; nghiệm thu thật Auth → học/thi → kết quả/Analytics và CMS CRUD/media, bao gồm 401/403/revision/deadline/lỗi mạng. Lệnh và URL đầy đủ ở bàn giao lượt 34. Không suy % hoàn tất E2E từ số test stub.
+
+
+## Kết quả lượt 35 — Môi trường, dữ liệu cô lập và Auth/RBAC (03/11/2026)
+
+**Chưa đạt nghiệm thu Auth/RBAC thật qua Gateway.** Đã thực hiện các phần độc lập, giữ phạm vi web/CMS, không sửa mobile hoặc backend nghiệp vụ/guard. Xem [báo cáo lượt 35, ma trận và lệnh chạy](frontend-integration-session35.md).
+
+- Xác minh lại dependency/lockfile; helmet 8.3.0, markdown-it 14.3.3 và types vẫn thiếu. npm install mới trả EACCES tới registry; Docker API permission denied. Mailpit 8025 không chạy; MailHog 9025 không thay thế được adapter Mailpit. Không bỏ dependency bảo mật để chạy.
+- Generate lại 5 Prisma clients. Năm database frontend_s34 còn đúng và toàn bộ 21 migration checksum khớp. Không migrate/reset/delete DB hiện hữu. Common/Auth/Question Bank/Exam/Analytics build đạt; 4 service readiness 200, RabbitMQ connected, RSA 3072 bit khớp, MinIO test bucket riêng. Gateway/Learning vẫn bị chặn.
+- Tạo account test ACTIVE: USER, USER+CONTENT_ADMIN, USER+SYSTEM_ADMIN (không có CONTENT_ADMIN), qua bootstrap/API chính thức trên DB test; có các probe INACTIVE. Credentials chỉ trong private/credentials/frontend-session35-20261103.json đã gitignore. Không nâng quyền account thật, không dùng persona/JWT giả. Seed ACTIVE dùng admin status API, không được tính là nghiệm thu email activation.
+- Seed chính thức qua native API: Full 200 câu/7 Part, 45 nhóm, 60 object media; đọc lại đề/Parts và media mẫu 200, tất cả Parts available. Media QA tổng hợp; nghe/MP3 playback chưa nghiệm thu. Chưa tạo được topic 5 từ/4 định nghĩa và grammar PUBLISHED do Learning bị chặn. Không mở rộng sang chạy luồng học/thi/CRUD CMS.
+- HTTP trực tiếp service: 10/10 nhóm đạt, gồm register/INACTIVE, lỗi login, resend trung tính, 3 vai trò, me, 401/403, refresh, logout/thu hồi. Chưa phải Gateway E2E. Web/CMS API mode HTML 200, anonymous session 401, login/registration qua bridge 502; khác origin 403. Browser tool từ chối origin http://127.0.0.1:3006 được yêu cầu, không dùng đường vòng; reload/navigation/storage trong browser chưa kiểm tra.
+- 45/45 contract/security tests dùng stub, 1/1 token unit test, 7/7 launcher safety checks; web/CMS lint và TypeScript đạt. Không chạy production frontend build mới. Launcher sửa preflight cổng Windows dual-stack, namespace hạ tầng, giữ cấu hình keys/issuer, partial selection và cache/PID tracking. Không sửa logic Auth/RBAC frontend.
+- Evidence mới: tmp/frontend-integration-session35-20261103; dùng direct-auth-final.tap, direct-auth-results.json, gateway-auth-probes.json, content-read-verification.json, database-verification.json và launcher-tests-verified2.tap. Các log chẩn đoán/failed attempts được giữ, không dùng làm kết quả đạt.
+- Đã dừng các process do phiên tạo; shutdown-verification.json xác nhận cổng app/gRPC đều đóng. Hạ tầng có trước phiên giữ nguyên. Hai tsconfig bị Next dev tự sửa đã khôi phục đúng hash đầu phiên; lịch sử review giữ nguyên prefix, không tạo frontend-current-status.md.
+
+Ưu tiên tiếp: khắc phục quyền npm/Docker và chạy Gateway/Learning/Mailpit; tạo nội dung Learning còn thiếu; nghiệm thu lại Auth/RBAC qua Gateway và browser được cấp quyền. Không suy thành công E2E từ các test trực tiếp service hoặc stub.
+
+
+## Bổ sung sửa khởi chạy sau lượt 35 (03/11/2026)
+
+Sau khi người dùng chạy npm ci, build BE và bật hạ tầng thành công, full launcher đã lỗi Learning đầu tiên với **Learning bucket mismatch** tại tmp/frontend-local-20261103-134916-193/learning.log. Launcher đã áp toeic-frontend-s35-20261103 cho mọi service, trong khi Common StorageAdapter chỉ cho phép Learning dùng toeic-media hoặc toeic-media-p6. Các service khác bị launcher dừng theo khi Learning thoát; không kết luận chúng đều có lỗi độc lập.
+
+Đã sửa scripts/qa/frontend-local-stack.cjs và thêm frontend-local-config.cjs: riêng Learning dùng bucket QA toeic-media-p6; Question Bank giữ toeic-frontend-s35-20261103 cùng các object đã seed. Không sửa Common/guard, .env, key, DB hoặc migration. Bucket Learning QA được kiểm tra bằng MinIO và chỉ khởi tạo bằng script chính thức nếu chưa tồn tại; policy có sẵn không bị thay đổi. Lệnh khởi chạy đã bàn giao vẫn dùng được, không cần cài dependency/build lại cho sửa launcher này.
+
+Bốn regression tests trong scripts/qa/frontend-local-config.test.cjs đạt: Learning khớp policy Common thực tế, URL Question Bank được giữ, không override thì giữ cấu hình, bucket Learning không hợp lệ và avatar public vẫn bị từ chối. Node syntax/Prettier đạt. Full stack mới chạy thành công; Gateway /ready 200, Auth/Question Bank/Exam/Learning/Analytics readiness 200, Mailpit 200. Hai smoke HTTP thật web/CMS qua bridge và Gateway đều login/session/đọc Learning/logout 200; cookie HttpOnly, token không xuất hiện trong body dành cho JavaScript. Đây chưa phải browser hoặc nghiệm thu đầy đủ các luồng Auth/RBAC/email.
+
+Evidence mới: tmp/frontend-startup-fix-1793688604569/{baseline.json,media-config-tests.tap,readiness.json,smoke.json,learning-media.json,stop.log,verification.json}. Stack kiểm tra đã dừng để người dùng tự khởi chạy lại; dữ liệu/hạ tầng được giữ. Hai tsconfig được khôi phục đúng hash đầu phiên sửa lỗi, bao gồm các include đã có do lần chạy của người dùng.
+
+
+## Kết quả lượt 36 — Auth và luồng học viên qua Gateway thật (03/11/2026)
+
+Đã chạy stack đầy đủ trên năm database test và xác minh lại 21 migration checksum; Gateway readiness 200. Tạo Learning qua CONTENT_ADMIN thật: chủ đề 10 từ/10 định nghĩa, audio presign/PUT/confirm, hai bài PUBLISHED và một DRAFT; USER đọc được. Giữ nguyên đề Full 200 câu/media và dữ liệu cũ. Credentials chỉ tại private/credentials/frontend-session35-20261103.json và frontend-session36-20261103.json, đã gitignore.
+
+Auth qua Gateway/bridge đạt đăng ký INACTIVE không tự login, Mailpit/activation/resend, ba vai trò và 401/403, cookie HttpOnly không token trong JS response, refresh/logout/thu hồi. JWT thật 900 giây được chờ hết hạn tự nhiên: sau 916 giây access 401, refresh và identity 200. SYSTEM_ADMIN không kế thừa CONTENT_ADMIN Learning.
+
+HTTP Learning đạt catalog/filter/paging/media, session/reviews/resume, backend quiz4/5, submit lặp/idempotency/conflict, owner isolation, SM-2 và projection/revision ngữ pháp. Browser thật đạt login/Dashboard, phân trang ngữ pháp, complete/ack/reload, Flashcard/reviews/reload, quiz0/5/result/reload, empty/error/retry, logout/protected reload; mẫu viewport1440/768/390 không tràn ngang. Cuối cùng Learning10 reviewed/9 learned/2 lessons/2 sessions; Analytics khớp9 từ/2 bài; due0 vì nextReviewDate04/11/2026.
+
+Sửa tối thiểu student-application.tsx (search/paging và trạng thái complete sau reload), vocabulary-session.tsx (COMPLETED sau ack và thông báo quiz draft), shared.tsx (không spread reserved React key); thêm hai regression test. 47/47 contract/stub tests, web/CMS lint/TypeScript và API production builds đều đạt. Bằng chứng HTTP/browser tách riêng khỏi stub; các lần harness lỗi quota/query/assertion đầu được giữ, phần lỗi được xác minh lại trên phiên cũ.
+
+Chưa nghiệm thu toàn bộ mục4: runtime browser storage chưa được công cụ expose; browser offline/lỗi mạng chưa kiểm tra; positive REVIEW chờ đủ từ due. Không sửa backend/guard/schema/mobile, không reset/migrate DB, không seed lại Full, không mở rộng thi thử/CMS đầy đủ/Settings/AI. Stack do phiên tạo đã dừng bằng Ctrl+C và kiểm tra cổng; hạ tầng giữ nguyên. Hai tsconfig trả đúng bytes đầu phiên; lịch sử review giữ nguyên prefix.
+
+Xem [báo cáo lượt36, ma trận expected/actual, lệnh và bàn giao](frontend-integration-session36.md). Evidence mới: tmp/frontend-integration-session36-20261103/, gồm database-verification.json, learning-preparation.json, acceptance-matrix.json, natural-expiry.json, final-readback.json, browser/browser-report.json, integration-tests.tap, build-evidence/ và shutdown-verification.json. Không tạo frontend-current-status.md.
+
+
+## Kết quả lượt 37 — Thi, CMS/media, lỗi mạng và nghiệm thu Gateway (03/11/2026)
+
+Đã tiếp tục trực tiếp sau lượt36 trên stack người dùng đang chạy, không sửa backend/mobile, không reset/seed lại DB/Full200. Xem [báo cáo lượt37: đủ8 task, expected/actual, evidence, giới hạn và prompt tiếp tục](frontend-integration-session37.md). Các giới hạn môi trường thiếu dependency của lượt34/35 đã được khắc phục trước phiên; không tiếp tục coi chúng là trạng thái hiện tại.
+
+| Task | Trạng thái sau lượt37 |
+| --- | --- |
+| 1 Môi trường | Hoàn thành: Gateway/năm service200, năm DB test/21 migration khớp; giữ bucket riêng và stack có sẵn. |
+| 2 Accounts/dataset | Hoàn thành: dùng tài khoản private có sẵn; namespace mới cho dữ liệu thử, không thay đề/media/tiến độ cũ. |
+| 3 Auth/RBAC | Hoàn thành phạm vi đã kiểm: runtime storage web/CMS không token, cookie HttpOnly/Strict, login/validation/focus và quyền thật; natural JWT expiry có evidence lượt36, không chạy lại900s. |
+| 4 Learning | Một phần: lỗi đọc/offline/reviews/submit mất phản hồi, reconcile và hủy phiên đạt; REVIEW positive/SM-2 tiếp theo BLOCKED do backend03/11 due0, nextReviewDate04/11. |
+| 5 Exam/Analytics | Hoàn thành mẫu nghiệm thu: Full/1/multiPart, draft/resume, trùng/owner403, submit/review, timeout request25s, deadline300s thật, cursor2 trang ×3 ranges. Điểm theo sample lookup backend, official=false, disclaimer tham khảo. |
+| 6 CMS/media | Một phần: CRUD Parts1–7/nhóm/Full metadata/Learning, tags/picker toàn nhóm/order/assets, users/audit/quyền, media API/browser/web đạt; thiếu catalog/delete và admin user detail, chưa nghiệm thu chất lượng nội dung bằng người nghe. |
+| 7 Settings/AI | Bị chặn: chưa Settings API; AI còn user_id client/ownership JWT. Source đã có quota20/ngày, timeout10000ms và refund fallback; cần contract bảo vệ danh tính/response trước bật FE. |
+| 8 Hồi quy/bàn giao | Hoàn thành: 90 web +592 CMS +48 contract/stub, lint/types, API production builds hai app;21 nhóm browser thật riêng ở1440/768/390; báo cáo/README/evidence và stack handoff. |
+
+Sửa frontend: xóa đáp án bỏ thông báo lưu cũ; exam/quiz retry đọc trạng thái server trước và không submit lại nếu đã final; reviews giữ bộ đã gửi khi mất ack, reconcile trước retry; CMS giữ/render media từ vựng và player AUDIO asset; nhãn textarea/select rõ; layout audio/nút44px và thông báo upload khi đổi file. File chính: web `exam-flow.tsx`, `vocabulary-session.tsx`, `media-upload.tsx`, `integration.css`; CMS `content-api.ts`, `content-management.tsx`, `test-management.tsx`; regression test và hai live QA harness. Không thêm dependency.
+
+Phát hiện index theo namespace launcher trống dù DB có200 câu. Đã dùng SYSTEM_ADMIN gọi API reindex chính thức201 (211 document kể cả tombstone); sau đó catalog/paging có đúng200 active/không trùng và đủ refs gốc. Không sửa nội dung cũ hay source backend. Phiên sau restart cần kiểm projection/reindex, không seed lại.
+
+Final Learning15 reviewed/14 learned/2 lessons/3 completed sessions/due0; Analytics khớp14 từ/2 bài,2 Full và6 Part, không frontend tự cộng/chấm. Một topic5 từ đã học được giữ cho lịch thật; câu/nhóm/test/lesson và topic-word disposable của phiên đã archive có ack; group thử AUDIO asset cũng được archive qua browser. Đề Full gốc200 refs/title giữ nguyên.
+
+Evidence: `tmp/frontend-integration-session37-20261103/` — `acceptance-matrix.json`, `verification.json`, `final-readback.json`, `backend-coordination.json`, `search-index-readback.json`, `checks-final/`, `build-verified/`, các browser reports/screenshot riêng. 21 nhóm browser là kết quả kịch bản thực qua Gateway với fault transport được ghi rõ, không phải test stubs. Các lần harness sai status/locator/thứ tự/CLI được giữ riêng và đối chiếu lại, không sửa backend để làm assertion đạt. Không suy phần trăm E2E từ730 test tự động.
+
+Snapshot/hash và prefix byte của review cũ được bảo toàn. Không reset/stash/commit/pull, không tạo frontend-current-status.md. Không khởi chạy/dừng service người dùng; stack có sẵn tiếp tục chạy khi bàn giao, chi tiết `stack-handoff.json`. Những mục chưa kiểm trên thiết bị vật lý/trình duyệt khác/screen reader hoặc chưa đủ contract tiếp tục ghi rõ, không coi là hoàn tất.
+
+
+## Kết quả lượt 38 — Kiểm tra lại điều kiện REVIEW và API còn thiếu (03/11/2026)
+
+Đã đọc báo cáo/evidence37, giữ mọi thay đổi và xác minh lại qua Gateway thật. **Positive REVIEW vẫn BLOCKED**: HTTP Date cuối `03/11/2026 11:28:23 GMT` tương ứng18:28:23 UTC+7; due0, nextReviewDate04/11/2026. Không tạo session REVIEW/reviews/submit, không sửa clock/tiến độ.17 snapshot (15 từ/2 bài) vẫn khớp revisions/SM-2 cuối37; counters trước/sau giữ15 reviewed/14 learned/2 lessons/3 completed sessions/due0.
+
+Source backend/contracts319 file so với baseline37 không đổi; đọc lại112 route annotations. Settings chưa có API; AI vẫn user_id client/chưa đủ JWT ownership (quota20/ngày, timeout10000ms đã có); media chưa global catalog/delete; admin user-by-ID vẫn404 dưới SYSTEM_ADMIN thật. Không có API mới đủ điều kiện để nối frontend, không sửa nghiệp vụ backend/mobile. Đề Full gốc GET200, title/200 refs giữ nguyên, không seed lại.
+
+Thêm `scripts/qa/frontend-review-preflight.cjs`: chỉ đọc due/projection/progress qua Gateway, phân trang và nhóm due theo topic khi có dữ liệu; yêu cầu5 due cùng topic/4 định nghĩa chuẩn hóa để báo candidate; không có mutation Learning. Token chỉ ở RAM, log không có credential, output mới không ghi đè. Node syntax/Prettier và HTTP thật đạt. Không chạy lại730 domain/contract tests/21 nhóm browser/build37 vì source frontend/contract không đổi; không cộng các kết quả cũ thành test mới.
+
+Stack app thực tế đã tắt trước lượt38, DB/migration21 checksum vẫn đúng. Đã dùng launcher hiện có khởi chạy6 backend riêng của lượt38 trên5 DB test, readiness200 và runtime connection đúng manifest, giữ hai bucket riêng. Sau probe đã dừng đúng process của lượt38 bằng PID/name/StartTime được kiểm chứng; bàn giao không còn listener3000–3007/50052. Hạ tầng và process người dùng không bị dừng. Không lấy trạng thái stack đang chạy ở báo cáo37 thay cho kiểm tra mới.
+
+[Báo cáo lượt38, expected/actual,8 task và lệnh/prompt tiếp tục](frontend-integration-session38.md). Evidence mới: `tmp/frontend-integration-session38-20261103/`, gồm `database-verification.json`, `review-probe-final/review-preflight.json`, `source-review.json`, `route-inventory.json`, `live-confirmation.json`, `shutdown-verification.json`, `stop-identity-proof.json` và `verification.json`. Snapshot/hash và prefix review được giữ; không reset/stash/commit/pull, không ghi `.env`/keys/credentials, không tạo frontend-current-status.md. Chỉ tiếp tục REVIEW khi backend thực sự trả đủ điều kiện; các API bị chặn chờ source/contract mới.
+
+
+## Kết quả lượt 39 — UI role/status, revoke phiên và audit thật (03/11/2026)
+
+Đã hoàn tất phần users/audit còn chưa kiểm sau38 trên một target mới đăng ký/kích hoạt qua Mailpit thật, không đổi role/status account có sẵn. Target cuối USER+ACTIVE; old accounts roles/status/authorizationVersion khớp trước/sau. Full gốc title/200 refs giữ nguyên. Backend/contracts319 file và112 route annotations không đổi; không sửa backend/mobile/env/key/schema hoặc seed/reset.
+
+Sửa2 lỗi UI có evidence tái hiện: notice thành công còn hiện sau khi sửa draft, và mất ack sau commit nhưng field vẫn editable/chưa có reconcile. `api-application.tsx` nay xóa notice khi đổi input, giữ pending change/freeze field khi outcome chưa rõ, GET đối chiếu và retry cùng payload đọc server trước; nếu đã khớp không PATCH lại. `repositories.ts` xác minh ack đúng ID và role/status yêu cầu, thêm filtered-list reconciliation theo email+ID. Không coi helper này là API admin detail theoID đã được bổ sung. Label/help trạng thái dùng ngôn ngữ người dùng. Thêm3 contract regressions và harness `frontend-admin-rbac-browser.cjs` (default readback, chỉ mutation target có provenance).
+
+8 nhóm browser thật PASS: validation/confirm cancel; grant role với response mất sau commit và revoke401; suspension với abort trước commit/read mismatch/retry GET→PATCH; restore ACTIVE response mất nhưng retry không PATCH trùng; remove role doubleclick1 PATCH/reload/quyền403; actor self-readonly; audit actor/target/action/before/after/filter/paging/empty không trùng; keyboard/loading/readback0 PATCH. Screenshots/đo1440/768/390 không tràn, đã xem trực tiếp mẫu mobile/tablet. Role/status tạo4 chuyển trạng thái sau sửa khớp4 audit, cộng2 lần tái hiện lỗi thành6 audit target; không có audit thừa từ reconcile.
+
+Harness lần đầu đạt phần grant/revoke rồi lỗi biến JavaScript `login` che hàm trước bước status. Đã đọc state server và resume từ USER+CONTENT_ADMIN ACTIVE trên cùng target, không tạo target hoặc grant lại. Các report lỗi được giữ nguyên; final matrix ghép PASS theo scenario và ghi rõ lịch sử.
+
+Checks mới:592 CMS domain +51 contract/stub PASS; lint/types và production API build cả hai frontend0; không chạy lại90 web domain không đổi và không cộng thành E2E. HTTP cuối xác nhận Gateway200/5 DB đúng, old accounts unchanged, target USER ACTIVE/audit6, SYSTEM_ADMIN Learning403, admin GET-by-ID404 và Full200 nguyên vẹn.
+
+REVIEW vẫn BLOCKED: backend cuối03/11/2026 13:29:48GMT (20:29:48 UTC+7), due0, nextReviewDate04/11. Learning15 reviewed/14 learned/2 lessons/3 completed sessions,17 snapshot không đổi; không có mutation Learning. Các task1/2/3/5/8 giữ nghiệm thu trong phạm vi; task4 chờ REVIEW thật; task6 đã khép UI role/status/audit nhưng còn media global/delete/admin detail; task7 Settings/AI ownership chưa có hỗ trợ source mới. Chất lượng media bằng người nghe và trình duyệt/thiết bị khác vẫn chưa kiểm.
+
+[Báo cáo lượt39: đủ8 task, expected/actual, file sửa, evidence, lệnh và prompt tiếp tục](frontend-integration-session39.md). Evidence mới `tmp/frontend-integration-session39-20261103/`: `target-preparation.json`, các browser reports, `acceptance-matrix.json`, `final-readback.json`, `review-preflight-final/`, `integration-tests.tap`, `cms-tests.tap`, `build-evidence/`, `source-review.json`, `verification.json`, `shutdown-verification.json`. Credentials mới chỉ ở private/gitignored, không xuất token/password/link kích hoạt.
+
+Stack đầu phiên không chạy; đã khởi chạy riêng stack39 bằng launcher/manifest cũ, giữ Learning/Question Bank bucket riêng. Sau nghiệm thu chỉ dừng launcher/process trees39 được xác minh PID/name/StartTime; không còn listener3000–3007/50052, hạ tầng/user process giữ nguyên. Hai tsconfig do Next tự thêm include được trả đúng bytes snapshot đầu phiên. Lịch sử review giữ prefix, không reset/stash/commit/pull hoặc tạo frontend-current-status.md.

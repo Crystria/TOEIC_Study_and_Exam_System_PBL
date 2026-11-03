@@ -26,23 +26,51 @@ const writeMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 function permitted(app: BridgeConfig['app'], path: string, method: string): boolean {
   if (method === 'GET') {
+    if (app === 'web' && path === 'sync/users/me') return true;
     if (/^users\/me$/.test(path)) return true;
     if (
-      /^learning\/(vocabulary-topics|vocabularies|lessons(?:\/[^/]+)?|review-today|progress)$/.test(
+      /^learning\/(vocabulary-topics(?:\/[^/]+)?|vocabularies(?:\/[^/]+)?|vocabulary-sessions\/[^/]+|lessons(?:\/[^/]+)?|review-today|progress)$/.test(
         path,
       )
     )
       return true;
-    if (/^tests(?:\/[^/]+)?$/.test(path)) return true;
+    if (/^tests(?:\/[^/]+(?:\/parts)?)?$/.test(path)) return true;
+    if (
+      app === 'cms' &&
+      /^(learning\/admin\/(vocabulary-topics|vocabularies|lessons)(?:\/[^/]+)?|question-groups(?:\/[^/]+)?)$/.test(
+        path,
+      )
+    )
+      return true;
     if (app === 'cms' && /^tests\/cms-metadata(?:\/[^/]+)?$/.test(path)) return true;
     if (app === 'cms' && /^(questions(?:\/[^/]+)?|admin\/(users|audit-logs))$/.test(path))
       return true;
     return (
       app === 'web' &&
-      /^(analytics\/(progress|scores|streak|weak-areas|prediction)|attempts\/[^/]+)$/.test(path)
+      /^(analytics\/(progress|scores|practices|streak|weak-areas|prediction)|attempts(?:\/[^/]+)?)$/.test(
+        path,
+      )
     );
   }
   if (method === 'PATCH' && path === 'users/me') return true;
+  if (method === 'PATCH' && path === 'users/me/avatar/presign') return true;
+  if (method === 'POST' && path === 'users/me/avatar/confirm') return true;
+  if (
+    app === 'cms' &&
+    method === 'POST' &&
+    (/^(questions|question-groups)\/[^/]+\/media\/presign$/.test(path) ||
+      /^learning\/vocabularies\/[^/]+\/media\/(presign|confirm)$/.test(path))
+  )
+    return true;
+  if (
+    app === 'web' &&
+    ((method === 'POST' &&
+      /^(tests\/[^/]+\/(attempts|part-attempts)|attempts\/[^/]+\/submit|learning\/vocabulary-sessions(?:\/[^/]+\/(reviews|submit|cancel))?)$/.test(
+        path,
+      )) ||
+      (method === 'PUT' && /^attempts\/[^/]+\/(draft|answers\/[^/]+)$/.test(path)))
+  )
+    return true;
   if (
     app === 'web' &&
     method === 'POST' &&
@@ -50,17 +78,27 @@ function permitted(app: BridgeConfig['app'], path: string, method: string): bool
   )
     return true;
   if (app !== 'cms') return false;
+  if (
+    ['POST', 'PATCH', 'DELETE'].includes(method) &&
+    /^(learning\/admin\/(vocabulary-topics|vocabularies|lessons)|question-groups)(?:\/[^/]+)?$/.test(
+      path,
+    )
+  )
+    return true;
   return (
     (method === 'POST' && /^(questions|tests)$/.test(path)) ||
     (method === 'PATCH' &&
       /^(questions\/[^/]+|tests\/[^/]+|admin\/users\/[^/]+\/(roles|status))$/.test(path)) ||
-    (method === 'DELETE' && /^questions\/[^/]+$/.test(path))
+    (method === 'DELETE' && /^(questions|tests)\/[^/]+$/.test(path))
   );
 }
 export function requiredRoles(path: string, method: string): readonly string[] {
   if (path.startsWith('admin/')) return ['SYSTEM_ADMIN'];
+  if (path.startsWith('learning/admin/') || /^learning\/vocabularies\/[^/]+\/media\//.test(path))
+    return ['CONTENT_ADMIN'];
+  if (path.startsWith('question-groups')) return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   if (path.startsWith('tests/cms-metadata')) return ['CONTENT_ADMIN'];
-  if (path.startsWith('questions') || (path.startsWith('tests') && method !== 'GET'))
+  if (path.startsWith('questions') || (/^tests(?:\/[^/]+)?$/.test(path) && method !== 'GET'))
     return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   return [];
 }
@@ -156,9 +194,12 @@ export async function handleBridge(
       method: verb,
       redirect: 'error',
       cache: 'no-store',
-      signal: AbortSignal.timeout(12_000),
+      signal: AbortSignal.timeout(20_000),
       headers: {
         Accept: 'application/json',
+        ...(request.headers.has('idempotency-key') && target === `${path}${url.search}`
+          ? { 'Idempotency-Key': request.headers.get('idempotency-key')! }
+          : {}),
         ...(access ? { Authorization: `Bearer ${access}` } : {}),
         ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
       },
@@ -223,6 +264,11 @@ export async function handleBridge(
       if (path === 'auth/register' && !config.writesEnabled)
         return respond({ code: 'ISOLATED_TEST_WRITES_NOT_ENABLED' }, 503);
       const result = await call(path, method, body, '');
+      if (path === 'auth/register') {
+        const r = result as { activationRequired?: unknown };
+        if (r?.activationRequired !== true) throw new ContractError('activationRequired');
+        return respond({ activationRequired: true }, 201);
+      }
       tokens = parseTokens(result);
       const user = parseUser(await call('users/me', 'GET'));
       if (user.status !== 'ACTIVE') {
@@ -231,6 +277,15 @@ export async function handleBridge(
       }
       persist();
       return respond({ user }); // Raw tokens never reach browser JavaScript.
+    }
+    if (
+      ['auth/verify-email', 'auth/resend-verification'].includes(path) &&
+      method === 'POST' &&
+      config.app === 'web'
+    ) {
+      if (!config.writesEnabled) return respond({ code: 'ISOLATED_TEST_WRITES_NOT_ENABLED' }, 503);
+      await call(path, method, body, '');
+      return respond({ success: true });
     }
     if (path === 'auth/logout' && method === 'POST') {
       // Always clear the local session, but do not claim server revocation on failure.

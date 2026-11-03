@@ -46,6 +46,7 @@ function copy(source, target) {
         name = path.basename(file);
       if (
         rel.split(path.sep).some((part) => excluded.has(part)) ||
+        rel.split(path.sep).some((part) => part.startsWith('.next-')) ||
         name.startsWith('.env') ||
         name.endsWith('.tsbuildinfo')
       )

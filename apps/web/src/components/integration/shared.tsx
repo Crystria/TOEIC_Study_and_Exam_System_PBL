@@ -36,7 +36,9 @@ export function useResource<T>(key: string, loader: (signal: AbortSignal) => Pro
     setRevision((n) => n + 1);
   }, [key]);
   return {
-    ...(state.key === key ? state : { loading: true, data: undefined, error: undefined }),
+    loading: state.key === key ? state.loading : true,
+    data: state.key === key ? state.data : undefined,
+    error: state.key === key ? state.error : undefined,
     reload,
   };
 }
@@ -157,6 +159,7 @@ export function ApiAuth({
   writes?: boolean;
 }) {
   const [ready, setReady] = useState(false);
+  const [registered, setRegistered] = useState(false);
   useEffect(() => setReady(true), []);
   const router = useRouter(),
     busyRef = useRef(false),
@@ -210,12 +213,20 @@ export function ApiAuth({
                 body: {
                   email: values.email.trim(),
                   password: values.password,
-                  ...(register ? { fullName: values.fullName.trim() } : {}),
+                  ...(register
+                    ? { fullName: values.fullName.trim(), confirmPassword: values.confirm }
+                    : { deviceId: cms ? 'toeic-cms-web' : 'toeic-student-web' }),
                 },
               }),
             );
-            const user = parseSessionUser(result.user);
             setValues((v) => ({ ...v, password: '', confirm: '' }));
+            if (register) {
+              if (result.activationRequired !== true)
+                throw new Error('Phản hồi đăng ký không hợp lệ.');
+              setRegistered(true);
+              return;
+            }
+            const user = parseSessionUser(result.user);
             router.push(
               cms
                 ? user.roles.includes('CONTENT_ADMIN')
@@ -244,7 +255,7 @@ export function ApiAuth({
           }
         }}
       >
-        <fieldset disabled={!ready || busy || (register && !writes)}>
+        <fieldset disabled={!ready || busy || registered || (register && !writes)}>
           {(['fullName', 'email', 'password', 'confirm'] as const)
             .filter((key) => register || !['fullName', 'confirm'].includes(key))
             .map((key) => (
@@ -295,10 +306,23 @@ export function ApiAuth({
             {error}
           </p>
         )}
-        <button className="api-primary" disabled={!ready || busy || (register && !writes)}>
+        <button
+          className="api-primary"
+          disabled={!ready || busy || registered || (register && !writes)}
+        >
           {busy ? 'Đang gửi…' : register ? 'Tạo tài khoản' : 'Đăng nhập'}
         </button>
       </form>
+      {registered && (
+        <p role="status">
+          Tài khoản đã được tạo và cần kích hoạt email. Kiểm tra hộp thư trước khi đăng nhập.
+        </p>
+      )}
+      {!cms && (
+        <p>
+          <Link href="/verify-email">Kích hoạt email / gửi lại email</Link>
+        </p>
+      )}
       {!cms && (
         <p>
           <Link href={register ? '/login' : '/register'}>
@@ -309,8 +333,8 @@ export function ApiAuth({
       {register && (
         <Blocked>
           {!writes && 'Đăng ký đang tắt cho đến khi xác nhận dữ liệu kiểm thử cô lập. '}
-          Backend hiện chưa có luồng email kích hoạt. Phản hồi đăng ký không xác nhận đã gửi email;
-          trạng thái tài khoản theo server.
+          Tài khoản mới ở trạng thái INACTIVE. Email kích hoạt được backend xử lý; chỉ đăng nhập sau
+          khi xác minh thành công.
         </Blocked>
       )}
     </main>

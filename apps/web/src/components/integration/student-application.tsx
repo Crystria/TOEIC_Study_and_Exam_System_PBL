@@ -3,18 +3,16 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useRef, useState, type ReactNode } from 'react';
-import {
-  learningApi,
-  examApi,
-  analyticsApi,
-  profileApi,
-  EXAM_BLOCKERS,
-} from '../../lib/integration/repositories';
+import { learningApi, examApi, analyticsApi, profileApi } from '../../lib/integration/repositories';
 import { failureMessage, validationFields } from '../../lib/integration/client';
 import { matchingId, type User, type Page, type parseWord } from '../../lib/integration/contracts';
 import { StudentShell } from '../layout/student-shell';
 import { LessonMarkdown } from '../learning/lesson-markdown';
 import { AudioPlayer } from '../ui/audio-player';
+import { ServerExamDetail, ServerHistory, ServerAttemptScreen } from './exam-flow';
+import { VocabularySession, VocabularySessionStart } from './vocabulary-session';
+import { MediaUpload } from './media-upload';
+import { EmailActivation } from './email-activation';
 import { ApiAuth, Blocked, ResourceState, SessionGate, useResource } from './shared';
 
 export function ApiStudentApplication({
@@ -26,6 +24,7 @@ export function ApiStudentApplication({
 }) {
   const path = usePathname();
   if (path === '/') return <>{children}</>;
+  if (path === '/verify-email') return <EmailActivation writes={writes} />;
   if (path === '/login' || path === '/register')
     return <ApiAuth register={path === '/register'} writes={writes} />;
   return (
@@ -78,17 +77,11 @@ function StudentDomain({
     return parts[2] ? <GrammarLesson id={parts[2]} writes={writes} /> : <GrammarLibrary />;
   if (path === '/exam' || path === '/practice') return <ExamLibrary />;
   if (parts[0] === 'exam' && parts[1]) {
-    if (parts[2] === 'result' || parts[2] === 'review') return <AttemptResult />;
-    if (parts[2] === 'take')
-      return (
-        <>
-          <h1>Làm bài</h1>
-          <AttemptBlocked />
-        </>
-      );
-    return <ExamDetail id={parts[1]} />;
+    if (['result', 'review', 'take'].includes(parts[2]))
+      return <ServerAttemptScreen writes={writes} review={parts[2] === 'review'} />;
+    return <ServerExamDetail id={parts[1]} writes={writes} />;
   }
-  if (path === '/history') return <History />;
+  if (path === '/history') return <ServerHistory />;
   if (path.startsWith('/history/example'))
     return (
       <>
@@ -173,17 +166,13 @@ function ProgressCards() {
         <div className="api-grid">
           <article className="api-card">
             <h2>Từ vựng</h2>
-            <p>
-              {state.data.vocabulary.reviewed} / {state.data.vocabulary.total} từ đã ôn
-            </p>
+            <p>{state.data.vocabulary.reviewed} từ đã ôn</p>
             <p>{state.data.vocabulary.dueToday} từ đến lịch ôn</p>
             <Link href="/study/vocabulary?review=today">Ôn hôm nay</Link>
           </article>
           <article className="api-card">
             <h2>Ngữ pháp</h2>
-            <p>
-              {state.data.lessons.completed} / {state.data.lessons.total} bài đã hoàn thành
-            </p>
+            <p>{state.data.lessons.completed} bài đã hoàn thành</p>
             <Link href="/study/grammar">Đọc bài học</Link>
           </article>
         </div>
@@ -208,8 +197,8 @@ function ApiDashboard() {
         </article>
       )}
       <Blocked>
-        Điểm TOEIC, mục tiêu học và thời gian học chưa có dữ liệu đã được xác nhận đủ điều kiện.
-        Không thay bằng số liệu minh họa.
+        Mục tiêu và thời gian học chưa có API. Điểm Full Test và thống kê được đọc từ backend tại
+        trang Thống kê.
       </Blocked>
     </>
   );
@@ -217,60 +206,59 @@ function ApiDashboard() {
 function Vocabulary({ topicId, writes }: { topicId?: string; writes: boolean }) {
   const { params, update } = usePageQuery(),
     review = params.get('review') === 'today';
-  const topics = useResource('vocabulary-topics', (signal) => learningApi.topics(signal));
-  const due = useResource(`due:${review}`, async (signal) =>
-    review ? learningApi.due(signal) : null,
-  );
-  const words = useResource(`words:${topicId}:${params}`, async (signal) =>
+  const topics = useResource('topics:' + params, (signal) => learningApi.topics(signal, params));
+  const words = useResource('words:' + topicId + params, (signal) =>
     topicId
       ? learningApi.words(new URLSearchParams({ ...Object.fromEntries(params), topicId }), signal)
-      : null,
+      : Promise.resolve(null),
   );
-  const [revision, setRevision] = useState(0);
+  const due = useResource('due:' + params, (signal) =>
+    review ? learningApi.due(signal, params) : Promise.resolve(null),
+  );
+  if (params.has('session')) return <VocabularySession writes={writes} />;
   return (
     <>
-      <h1>{review ? 'Lịch ôn hôm nay' : 'Từ vựng & Flashcard'}</h1>
+      <h1>Từ vựng & Flashcard</h1>
       <p>
         <Link href="/study/vocabulary">Chủ đề</Link> ·{' '}
         <Link href="/study/vocabulary?review=today">Ôn hôm nay</Link>
       </p>
-      <div key={revision}>
-        <ProgressCards />
-      </div>
-      <ResourceState {...topics} retry={topics.reload} empty={topics.data?.length === 0} />
       {!topicId && !review && (
-        <div className="api-grid">
-          {topics.data?.map((topic) => (
-            <article className="api-card" key={topic.id}>
-              <h2>
-                <Link href={`/study/vocabulary/${encodeURIComponent(topic.id)}`}>
-                  {topic.name || 'Chưa có tên'}
-                </Link>
-              </h2>
-              <p>{topic.description}</p>
-              <p>{topic.wordCount} từ</p>
-            </article>
-          ))}
-        </div>
+        <>
+          <SearchForm
+            value={params.get('keyword') ?? ''}
+            onSearch={(keyword) => update({ keyword, page: '1' })}
+          />
+          <ResourceState
+            {...topics}
+            retry={topics.reload}
+            empty={topics.data?.items.length === 0}
+          />
+          <div className="api-grid">
+            {topics.data?.items.map((t) => (
+              <article className="api-card" key={t.id}>
+                <h2>
+                  <Link href={'/study/vocabulary/' + encodeURIComponent(t.id)}>{t.name}</Link>
+                </h2>
+                <p>{t.wordCount} từ</p>
+              </article>
+            ))}
+          </div>
+          {topics.data && (
+            <Pagination result={topics.data} onPage={(page) => update({ page: String(page) })} />
+          )}
+        </>
       )}
       {topicId && (
         <>
-          <p>Chủ đề: {topics.data?.find((t) => t.id === topicId)?.name ?? topicId}</p>
+          <VocabularySessionStart topicId={topicId} writes={writes} />
           <SearchForm
             value={params.get('keyword') ?? ''}
             onSearch={(keyword) => update({ keyword, page: '1' })}
           />
           <ResourceState {...words} retry={words.reload} empty={words.data?.items.length === 0} />
           {words.data?.items.map((word) => (
-            <Word
-              key={word.id}
-              value={word}
-              writes={writes}
-              onReviewed={() => {
-                setRevision((n) => n + 1);
-                due.reload();
-              }}
-            />
+            <Word key={word.id} value={word} />
           ))}
           {words.data && (
             <Pagination result={words.data} onPage={(page) => update({ page: String(page) })} />
@@ -279,110 +267,45 @@ function Vocabulary({ topicId, writes }: { topicId?: string; writes: boolean }) 
       )}
       {review && (
         <>
-          <ResourceState {...due} retry={due.reload} empty={due.data?.length === 0} />
-          {due.data?.map((item) => (
-            <Word
-              key={item.vocabularyId}
-              value={item.word}
-              writes={writes}
-              onReviewed={() => {
-                setRevision((n) => n + 1);
-                due.reload();
-              }}
-            />
+          <ResourceState {...due} retry={due.reload} empty={due.data?.items.length === 0} />
+          {due.data?.items.map((item) => (
+            <article key={item.vocabularyId}>
+              <Word value={item.word} />
+              <p>Lịch ôn: {item.nextReviewAt}</p>
+              <Link href={'/study/vocabulary/' + encodeURIComponent(item.word.topicId)}>
+                Mở chủ đề để bắt đầu phiên ôn
+              </Link>
+            </article>
           ))}
+          {due.data && (
+            <Pagination result={due.data} onPage={(page) => update({ page: String(page) })} />
+          )}
         </>
       )}
-      <Blocked>
-        Quiz và kết quả quiz chưa có API. Đánh giá nhớ gửi quality 0–5 đến server; trình duyệt không
-        tự tính SM-2 hoặc tăng tiến độ.
-      </Blocked>
     </>
   );
 }
-function Word({
-  value: word,
-  onReviewed,
-  writes,
-}: {
-  value: ReturnType<typeof parseWord>;
-  onReviewed: () => void;
-  writes: boolean;
-}) {
-  const [flipped, setFlipped] = useState(false),
-    [quality, setQuality] = useState(''),
-    [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState(''),
-    [error, setError] = useState(''),
-    lock = useRef(false);
+function Word({ value: word }: { value: ReturnType<typeof parseWord> }) {
+  const [flipped, setFlipped] = useState(false);
   return (
     <article className="api-card">
       <h2>{word.word}</h2>
       <p>{word.pronunciation ?? 'Chưa có phiên âm'}</p>
-      <button onClick={() => setFlipped((v) => !v)} aria-expanded={flipped}>
+      <button aria-expanded={flipped} onClick={() => setFlipped((v) => !v)}>
         Lật thẻ
       </button>
       {flipped && (
-        <div>
-          <p>{word.meaning}</p>
-          <p>{word.example ?? 'Chưa có ví dụ'}</p>
-        </div>
-      )}
-      {word.imageUrl && <ServerImage source={word.imageUrl} label={`Minh họa ${word.word}`} />}
-      <AudioPlayer
-        source={word.audioUrl}
-        label={`Phát âm ${word.word}`}
-        missingTitle="Chưa có audio"
-        missingMessage="Server chưa cấp URL audio hợp lệ."
-      />
-      <label className="api-field">
-        Chất lượng nhớ (SM-2)
-        <select
-          value={quality}
-          disabled={busy || !writes}
-          onChange={(e) => setQuality(e.target.value)}
-        >
-          <option value="">Chọn đánh giá</option>
-          {[0, 1, 2, 3, 4, 5].map((q) => (
-            <option key={q} value={q}>
-              {q} / 5
-            </option>
-          ))}
-        </select>
-      </label>
-      <button
-        disabled={busy || !writes || quality === ''}
-        onClick={async () => {
-          if (lock.current || !writes) return;
-          lock.current = true;
-          setBusy(true);
-          setError('');
-          setMessage('');
-          try {
-            const result = await learningApi.review(word.id, Number(quality));
-            setMessage(
-              `Đã đồng bộ. Lịch ôn tiếp: ${result.nextReviewAt ? new Date(result.nextReviewAt).toLocaleString('vi-VN') : 'chưa có'}.`,
-            );
-            setQuality('');
-            onReviewed();
-          } catch (e) {
-            setError(
-              `${failureMessage(e)} Chưa xác nhận đồng bộ; hãy kiểm tra lịch ôn trước khi gửi lại để tránh tính hai lần.`,
-            );
-          } finally {
-            lock.current = false;
-            setBusy(false);
-          }
-        }}
-      >
-        {busy ? 'Đang đồng bộ…' : 'Gửi đánh giá'}
-      </button>
-      {message && <p role="status">{message}</p>}
-      {error && (
-        <p role="alert" className="api-error">
-          {error}
+        <p>
+          {word.meaning} · {word.example}
         </p>
       )}
+      {word.imageUrl && <ServerImage source={word.imageUrl} label={word.word} />}
+      <AudioPlayer
+        mode="server"
+        missingMessage="Server chưa cấp audio hợp lệ."
+        source={word.audioUrl}
+        label={'Phát âm ' + word.word}
+      />
     </article>
   );
 }
@@ -407,43 +330,52 @@ function ServerImage({ source, label }: { source: string; label: string }) {
 }
 function GrammarLibrary() {
   const { params, update } = usePageQuery();
-  const state = useResource(`lessons:${params}`, (signal) =>
-    learningApi.lessons(
-      new URLSearchParams({ ...Object.fromEntries(params), status: 'PUBLISHED' }),
-      signal,
-    ),
-  );
+  const state = useResource(`lessons:${params}`, (signal) => learningApi.lessons(params, signal));
   return (
     <>
       <h1>Thư viện ngữ pháp</h1>
+      <SearchForm
+        value={params.get('keyword') ?? ''}
+        onSearch={(keyword) => update({ keyword, page: '1' })}
+      />
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          update({ level: String(new FormData(e.currentTarget).get('level') ?? '').trim() });
+          update({
+            category: String(new FormData(e.currentTarget).get('category') ?? '').trim(),
+            page: '1',
+          });
         }}
       >
         <label className="api-field">
-          Trình độ (level theo server)
-          <input name="level" defaultValue={params.get('level') ?? ''} />
+          Danh mục
+          <input name="category" defaultValue={params.get('category') ?? ''} />
         </label>
         <button>Lọc bài học</button>
       </form>
-      <ResourceState {...state} retry={state.reload} empty={state.data?.length === 0} />
+      <ResourceState {...state} retry={state.reload} empty={state.data?.items.length === 0} />
       <div className="api-grid">
-        {state.data?.map((lesson) => (
+        {state.data?.items.map((lesson) => (
           <article className="api-card" key={lesson.id}>
             <h2>
               <Link href={`/study/grammar/${encodeURIComponent(lesson.id)}`}>{lesson.title}</Link>
             </h2>
-            <p>Trình độ: {lesson.level}</p>
+            <p>Danh mục: {lesson.level}</p>
           </article>
         ))}
       </div>
+      {state.data && (
+        <Pagination result={state.data} onPage={(page) => update({ page: String(page) })} />
+      )}
     </>
   );
 }
 function GrammarLesson({ id, writes }: { id: string; writes: boolean }) {
   const state = useResource(`lesson:${id}`, (signal) => learningApi.lesson(id, signal));
+  const progress = useResource(`lesson-progress:${id}`, (signal) =>
+    learningApi.entityProgress(id, signal),
+  );
+  const operation = useRef<string>();
   const [busy, setBusy] = useState(false),
     [completed, setCompleted] = useState(''),
     [error, setError] = useState(''),
@@ -458,22 +390,36 @@ function GrammarLesson({ id, writes }: { id: string; writes: boolean }) {
         ) : (
           <article className="api-card">
             <h1>{state.data.title}</h1>
-            <p>Trình độ: {state.data.level}</p>
+            <p>Danh mục: {state.data.level}</p>
             {state.data.content ? (
               <LessonMarkdown content={state.data.content} />
             ) : (
               <p>Server chưa có nội dung bài học.</p>
             )}
             <button
-              disabled={busy || !writes || !!completed || !state.data.content}
+              disabled={
+                busy ||
+                !writes ||
+                !!completed ||
+                !!progress.data?.completedAt ||
+                !progress.data ||
+                !state.data.content
+              }
               onClick={async () => {
                 if (lock.current || !writes) return;
                 lock.current = true;
                 setBusy(true);
                 setError('');
                 try {
-                  const result = await learningApi.complete(id);
-                  setCompleted(new Date(result.completedAt).toLocaleString('vi-VN'));
+                  if (!progress.data)
+                    throw new Error('Chưa đọc được revision tiến độ. Hãy thử lại.');
+                  operation.current ??= crypto.randomUUID();
+                  const result = await learningApi.complete(
+                    id,
+                    progress.data.revision,
+                    operation.current,
+                  );
+                  setCompleted(new Date(result.completedAt!).toLocaleString('vi-VN'));
                 } catch (e) {
                   setError(failureMessage(e));
                 } finally {
@@ -482,7 +428,11 @@ function GrammarLesson({ id, writes }: { id: string; writes: boolean }) {
                 }
               }}
             >
-              {busy ? 'Đang gửi…' : completed ? 'Đã hoàn thành' : 'Đánh dấu hoàn thành'}
+              {busy
+                ? 'Đang gửi…'
+                : completed || progress.data?.completedAt
+                  ? 'Đã hoàn thành'
+                  : 'Đánh dấu hoàn thành'}
             </button>
             {completed && (
               <>
@@ -490,17 +440,17 @@ function GrammarLesson({ id, writes }: { id: string; writes: boolean }) {
                 <ProgressCards />
               </>
             )}
+            {!completed && progress.data?.completedAt && (
+              <p role="status">
+                Đã hoàn thành lúc {new Date(progress.data.completedAt).toLocaleString('vi-VN')}.
+              </p>
+            )}
             {error && (
               <p role="alert" className="api-error">
                 {error}
               </p>
             )}
-            {!completed && (
-              <p>
-                Chưa có API đọc trạng thái hoàn thành từng bài; không suy ra trạng thái từ tổng số
-                bài.
-              </p>
-            )}
+            <ResourceState {...progress} retry={progress.reload} />
           </article>
         ))}
     </>
@@ -545,17 +495,6 @@ function ExamLibrary() {
         value={params.get('keyword') ?? ''}
         onSearch={(keyword) => update({ keyword, page: '1' })}
       />
-      <label className="api-field">
-        Loại đề
-        <select
-          value={params.get('type') ?? ''}
-          onChange={(e) => update({ type: e.target.value, page: '1' })}
-        >
-          <option value="">Tất cả</option>
-          <option value="FULL">Full Test</option>
-          <option value="MINI">Mini Test</option>
-        </select>
-      </label>
       <ResourceState {...state} retry={state.reload} empty={state.data?.items.length === 0} />
       <div className="api-grid">
         {state.data?.items.map((test) => (
@@ -572,218 +511,137 @@ function ExamLibrary() {
       {state.data && (
         <Pagination result={state.data} onPage={(page) => update({ page: String(page) })} />
       )}
-      <AttemptBlocked />
-    </>
-  );
-}
-function AttemptBlocked() {
-  return (
-    <Blocked>
-      <ul>
-        {EXAM_BLOCKERS.map((reason) => (
-          <li key={reason}>{reason}</li>
-        ))}
-      </ul>
-      Chưa thể bắt đầu hoặc nộp lượt làm bài thật. Các luồng luyện Part vẫn có thể kiểm thử riêng
-      trong chế độ DEMO.
-    </Blocked>
-  );
-}
-function ExamDetail({ id }: { id: string }) {
-  const state = useResource(`test:${id}`, (signal) => examApi.detail(id, signal));
-  const [mode, setMode] = useState('TEST'),
-    [parts, setParts] = useState<number[]>([]);
-  return (
-    <>
-      <Link href="/exam">← Danh sách đề</Link>
-      <ResourceState {...state} retry={state.reload} />
-      {state.data && (
-        <article className="api-card">
-          <h1>{state.data.title}</h1>
-          <p>
-            {state.data.type} · {state.data.questionCount} câu · {state.data.durationSeconds / 60}{' '}
-            phút
-          </p>
-          <p>Trạng thái: {state.data.status}</p>
-          <label className="api-field">
-            Chế độ muốn làm
-            <select value={mode} onChange={(e) => setMode(e.target.value)}>
-              <option value="TEST">Thi thử</option>
-              <option value="PRACTICE">Luyện tập</option>
-            </select>
-          </label>
-          <fieldset>
-            <legend>Part trong cấu trúc server (lựa chọn chưa được gửi)</legend>
-            {[...new Set(state.data.questions?.map((q) => q.part) ?? [])].sort().map((part) => (
-              <label className="api-actions" key={part}>
-                <input
-                  style={{ width: 'auto' }}
-                  type="checkbox"
-                  checked={parts.includes(part)}
-                  onChange={(e) =>
-                    setParts((p) => (e.target.checked ? [...p, part] : p.filter((x) => x !== part)))
-                  }
-                />
-                Part {part}
-              </label>
-            ))}
-          </fieldset>
-          <p>
-            Đã chọn {parts.length} Part · {mode}. Backend chưa nhận được lựa chọn này.
-          </p>
-          <button disabled>Bắt đầu · chưa khả dụng</button>
-        </article>
-      )}
-      <AttemptBlocked />
-    </>
-  );
-}
-function History() {
-  const state = useResource('score-history', (signal) => analyticsApi.scores(signal));
-  return (
-    <>
-      <h1>Lịch sử từ server</h1>
-      <ResourceState {...state} retry={state.reload} empty={state.data?.length === 0} />
-      {state.data?.map((item) => (
-        <article className="api-card" key={item.attemptId}>
-          <p>
-            {item.testType} · {new Date(item.takenAt).toLocaleString('vi-VN')}
-          </p>
-          <Link href={`/exam/server/result?attempt=${encodeURIComponent(item.attemptId)}`}>
-            Mở kết quả lượt {item.attemptId}
-          </Link>
-        </article>
-      ))}
-      <Blocked>
-        API này chỉ có lịch sử đã phát sinh score, chưa phải danh sách đầy đủ lượt làm bài. Điểm
-        server hiện là placeholder số câu đúng; không hiển thị thành điểm TOEIC.
-      </Blocked>
-    </>
-  );
-}
-function AttemptResult() {
-  const search = useSearchParams(),
-    attempt = search.get('attempt');
-  const state = useResource(`result:${attempt}`, async (signal) =>
-    attempt ? examApi.result(attempt, signal) : null,
-  );
-  return (
-    <>
-      <h1>Kết quả & lựa chọn đã đồng bộ</h1>
-      <Link href="/history">← Lịch sử</Link>
-      {!attempt ? (
-        <Blocked>
-          Cần ID lượt làm bài thật từ server. ID local/demo không được gửi sang API.
-        </Blocked>
-      ) : (
-        <ResourceState {...state} retry={state.reload} />
-      )}
-      {state.data && (
-        <article className="api-card">
-          <h2>{state.data.title ?? state.data.testId}</h2>
-          <p>Trạng thái: {state.data.status}</p>
-          {state.data.status !== 'IN_PROGRESS' && state.data.totalCorrect !== null && (
-            <p>Số câu đúng server trả về: {state.data.totalCorrect}. Chưa phải điểm TOEIC.</p>
-          )}
-          {state.data.answers.length === 0 && <p>Server chưa trả lựa chọn.</p>}
-          <ul>
-            {state.data.answers.map((answer) => (
-              <li key={answer.questionId}>
-                {answer.questionId}: {answer.selectedOption ?? 'Bỏ trống'}
-                {answer.isCorrect === null ? '' : answer.isCorrect ? ' · Đúng' : ' · Sai'}
-              </li>
-            ))}
-          </ul>
-        </article>
-      )}
-      <Blocked>
-        Chưa có contract review chứa nội dung câu hỏi, đáp án đúng, lời giải hoặc transcript theo
-        thời điểm được phép. Không gọi ngân hàng câu hỏi để suy ra đáp án.
-      </Blocked>
     </>
   );
 }
 function Analytics() {
   const { params, update } = usePageQuery(),
-    range = params.get('time_range') ?? 'LAST_30_DAYS';
-  const state = useResource(`analytics:${range}`, async (signal) => {
-    const [progress, streak, weak, prediction] = await Promise.all([
-      analyticsApi.progress(range, signal),
-      analyticsApi.streak(signal),
-      analyticsApi.weakAreas(signal),
-      analyticsApi.prediction(signal),
-    ]);
-    if (progress.timeRange !== range)
-      throw new Error('Khoảng thời gian server trả về không khớp bộ lọc.');
-    return { progress, streak, weak, prediction };
-  });
+    range = params.get('timeRange') ?? 'LAST_30_DAYS';
+  const state = useResource('analytics:' + range, (signal) => analyticsApi.progress(range, signal));
+  const [more, setMore] = useState<Awaited<ReturnType<typeof analyticsApi.progress>>['scoreTrend']>(
+      [],
+    ),
+    [next, setNext] = useState<string>(),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState(''),
+    lock = useRef(false);
   return (
     <>
-      <h1>Thống kê tiến độ</h1>
+      <h1>Thống kê học tập</h1>
       <label className="api-field">
-        Khoảng thời gian hoạt động
-        <select value={range} onChange={(e) => update({ time_range: e.target.value })}>
-          {[
-            ['LAST_7_DAYS', '7 ngày'],
-            ['LAST_30_DAYS', '30 ngày'],
-            ['LAST_90_DAYS', '90 ngày'],
-            ['ALL_TIME', 'Toàn thời gian'],
-          ].map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
+        Khoảng thời gian
+        <select value={range} onChange={(e) => update({ timeRange: e.target.value })}>
+          <option value="LAST_7_DAYS">7 ngày</option>
+          <option value="LAST_30_DAYS">30 ngày</option>
+          <option value="ALL_TIME">Toàn bộ</option>
         </select>
       </label>
       <ResourceState {...state} retry={state.reload} />
       {state.data && (
         <>
           <article className="api-card">
-            <h2>Tổng tích lũy (mọi thời gian)</h2>
+            <h2>Trong khoảng đã chọn</h2>
             <p>
-              {state.data.progress.lifetime.totalStudyDays} ngày ·{' '}
-              {state.data.progress.lifetime.totalVocabLearned} từ ·{' '}
-              {state.data.progress.lifetime.totalLessons} bài học
+              {state.data.activities.vocabulariesLearned} từ mới ·{' '}
+              {state.data.activities.grammarLessonsCompleted} bài ngữ pháp ·{' '}
+              {state.data.activities.mockTestCount} bài Full · {state.data.activities.practiceCount}{' '}
+              lượt luyện Part
             </p>
-            <p>Chuỗi hiện tại: {state.data.streak.current} ngày.</p>
-          </article>
-          <article className="api-card">
-            <h2>Hoạt động trong khoảng đã chọn</h2>
-            {Object.keys(state.data.progress.activities).length === 0 ? (
-              <p>Chưa có hoạt động.</p>
-            ) : (
-              <ul>
-                {Object.entries(state.data.progress.activities).map(([key, value]) => (
-                  <li key={key}>
-                    {key}: {value}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </article>
-          <article className="api-card">
-            <h2>Khu vực cần cải thiện (tổng tích lũy)</h2>
-            {state.data.weak.length === 0 ? (
-              <p>Chưa có dữ liệu đã chấm.</p>
-            ) : (
-              <ul>
-                {state.data.weak.map((item, i) => (
-                  <li key={i}>
-                    {item.skillArea} · Part {item.part} · Tỷ lệ lỗi{' '}
-                    {(item.errorRate * 100).toFixed(1)}% · {item.sampleCount} mẫu
-                  </li>
-                ))}
-              </ul>
-            )}
             <p>
-              Backend chưa có đúng/tổng theo Part và chuỗi dữ liệu theo ngày; không dựng biểu đồ
-              bằng số mẫu.
+              Toàn bộ: {state.data.lifetime.totalStudyDays} ngày học ·{' '}
+              {state.data.lifetime.totalVocabLearned} từ · {state.data.lifetime.totalLessons} bài
+            </p>
+            <p>
+              Dự đoán server:{' '}
+              {state.data.predictedToeicScore === null
+                ? 'Cần ít nhất 3 bài Full hợp lệ trong 30 ngày'
+                : state.data.predictedToeicScore}
             </p>
           </article>
-          <Blocked>
-            Dự đoán: {state.data.prediction.reason} ({state.data.prediction.recentAttempts} lượt
-            trong cửa sổ backend). Không hiển thị giá trị PLACEHOLDER_MEAN thành dự đoán TOEIC.
-          </Blocked>
+          <article className="api-card">
+            <h2>Điểm Full Test trong khoảng đã chọn</h2>
+            {!state.data.scoreTrend.length && <p>Chưa có bài Full được chấm.</p>}
+            <ul>
+              {[...state.data.scoreTrend, ...more].map((v) => (
+                <li key={v.attemptId}>
+                  {new Date(v.completedAt).toLocaleDateString('vi-VN')}: {v.totalScore}
+                </li>
+              ))}
+            </ul>
+            {(next === undefined ? state.data.nextCursor : next) && (
+              <button
+                disabled={busy}
+                onClick={async () => {
+                  if (lock.current) return;
+                  lock.current = true;
+                  setBusy(true);
+                  setError('');
+                  try {
+                    const cursor = next ?? state.data!.nextCursor!;
+                    const page = await analyticsApi.progress(range, undefined, cursor);
+                    if (page.nextCursor === cursor)
+                      throw new Error('Cursor server không tiến triển.');
+                    setMore((v) => [
+                      ...v,
+                      ...page.scoreTrend.filter(
+                        (q) =>
+                          !state.data!.scoreTrend.some((x) => x.attemptId === q.attemptId) &&
+                          !v.some((x) => x.attemptId === q.attemptId),
+                      ),
+                    ]);
+                    setNext(page.nextCursor ?? '');
+                  } catch (e) {
+                    setError(failureMessage(e));
+                  } finally {
+                    lock.current = false;
+                    setBusy(false);
+                  }
+                }}
+              >
+                Tải tiếp xu hướng điểm
+              </button>
+            )}
+            {error && <p role="alert">{error}</p>}
+          </article>
+          <details className="api-card">
+            <summary>Hoạt động theo ngày</summary>
+            {state.data.dailyActivityTruncated && (
+              <p>Backend giới hạn cửa sổ hoạt động gần nhất.</p>
+            )}
+            <div className="api-scroll">
+              <table className="api-table">
+                <thead>
+                  <tr>
+                    <th>Ngày</th>
+                    <th>Hoạt động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {state.data.dailyActivity.map((d) => (
+                    <tr key={d.date}>
+                      <td>{d.date}</td>
+                      <td>{d.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <article className="api-card">
+            <h2>Theo Part — cửa sổ 30 ngày của backend</h2>
+            <ul>
+              {state.data.weakAreas.map((p) => (
+                <li key={p.part}>
+                  Part {p.part}: {p.correct} / {p.total} ·{' '}
+                  {p.total < 20
+                    ? 'Chưa đủ dữ liệu'
+                    : p.isWeak
+                      ? 'Cần cải thiện'
+                      : 'Chưa thuộc vùng yếu'}
+                </li>
+              ))}
+            </ul>
+          </article>
         </>
       )}
     </>
@@ -810,6 +668,7 @@ function Profile({
     <>
       <h1>Hồ sơ của bạn</h1>
       <article className="api-card">
+        {user.avatarUrl && <ServerImage source={user.avatarUrl} label="Ảnh đại diện của bạn" />}
         <p>Email: {user.email}</p>
         <p>Vai trò: {user.roles.join(', ')}</p>
         <p>Trạng thái: {user.status}</p>
@@ -894,10 +753,18 @@ function Profile({
         )}
         {saved && <p role="status">Server đã xác nhận cập nhật hồ sơ.</p>}
       </article>
-      <Blocked>
-        Avatar cần API presign, hoàn tất và URL đọc riêng tư. Chưa thể thay avatar hoặc xác
-        minh/thay email bằng API hiện tại.
-      </Blocked>
+      <MediaUpload
+        scope="avatar"
+        resourceId={user.id}
+        kind="IMAGE"
+        writes={writes}
+        saved={() => {
+          void profileApi
+            .read()
+            .then((value) => onSaved(matchingId(value, user.id)))
+            .catch((e) => setError(failureMessage(e)));
+        }}
+      />
     </>
   );
 }

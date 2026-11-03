@@ -29,6 +29,8 @@ dist/
 build/
 out/
 .next/
+.next-integration34/
+.next-tmp-frontend-*/
 .nuxt/
 .turbo/
 .cache/

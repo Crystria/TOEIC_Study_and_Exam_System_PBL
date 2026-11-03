@@ -2,12 +2,16 @@ import { ContractError } from './contracts';
 
 const keys: Record<string, readonly string[]> = {
   words: ['keyword', 'topicId', 'page', 'size'],
-  lessons: ['level', 'status'],
-  tests: ['keyword', 'type', 'status', 'page', 'size'],
+  topics: ['keyword', 'page', 'size'],
+  lessons: ['keyword', 'category', 'page', 'size'],
+  adminLessons: ['keyword', 'category', 'status', 'page', 'size'],
+  tests: ['keyword', 'page', 'size'],
+  attempts: ['testId', 'mode', 'page', 'size'],
+  groups: ['keyword', 'part', 'page', 'size'],
   questions: ['keyword', 'part', 'difficulty', 'tag', 'page', 'size'],
-  users: ['keyword', 'status', 'page', 'size'],
-  audit: ['page', 'size'],
-  analytics: ['time_range'],
+  users: ['keyword', 'status', 'role', 'page', 'size'],
+  audit: ['actorUserId', 'targetUserId', 'action', 'from', 'to', 'page', 'size'],
+  analytics: ['timeRange', 'cursor', 'limit'],
 };
 export function query(domain: string, input: URLSearchParams): string {
   const output = new URLSearchParams();
@@ -20,17 +24,10 @@ export function query(domain: string, input: URLSearchParams): string {
       if (!Number.isSafeInteger(n) || n < 1 || n > max) throw new ContractError(key);
       output.set(key, String(n));
     } else {
-      if (
-        key === 'status' &&
-        ['tests', 'lessons'].includes(domain) &&
-        !['DRAFT', 'PUBLISHED', 'ARCHIVED'].includes(value)
-      )
+      if (key === 'status' && domain === 'adminLessons' && !['DRAFT', 'PUBLISHED'].includes(value))
         throw new ContractError('status');
-      if (key === 'type' && !['FULL', 'MINI'].includes(value)) throw new ContractError('type');
-      if (
-        key === 'time_range' &&
-        !['LAST_7_DAYS', 'LAST_30_DAYS', 'LAST_90_DAYS', 'ALL_TIME'].includes(value)
-      )
+      if (key === 'mode' && !['FULL', 'PART'].includes(value)) throw new ContractError('mode');
+      if (key === 'timeRange' && !['LAST_7_DAYS', 'LAST_30_DAYS', 'ALL_TIME'].includes(value))
         throw new ContractError('time_range');
       output.set(key, value);
     }

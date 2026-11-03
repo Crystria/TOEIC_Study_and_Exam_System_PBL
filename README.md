@@ -151,26 +151,15 @@ uv run uvicorn app.main:app --reload
 
 ## Frontend demo và API local/test
 
-Web: <http://localhost:3006>; CMS: <http://localhost:3007>. Mặc định là DEMO. Nhánh API frontend dùng `NEXT_PUBLIC_DATA_MODE=api`, cấu hình Gateway local/test rõ ràng và phiên cookie HttpOnly qua route frontend `/api/frontend/*`. Không dùng helper JWT localStorage cũ hoặc fallback từ lỗi API sang fixture. Bật thao tác ghi chỉ với dữ liệu kiểm thử cô lập; chưa dùng cho production.
+Web: <http://localhost:3006>; CMS: <http://localhost:3007>. Mặc định DEMO; API dùng opt-in rõ ràng theo README của từng app, cookie HttpOnly và Gateway. Không chuyển sang fixture khi API lỗi, không tự chấm/đổi điểm. Thao tác ghi chỉ bật trên dataset local/test cô lập.
 
-Xem [README web](apps/web/README.md), [README CMS](apps/admin-cms/README.md) và [bàn giao lượt 33](docs/frontend-integration-session33.md) để biết cấu hình, kiểm chứng và dependency hiện tại. [Ma trận contract lượt 32](docs/frontend-integration-session32.md) được giữ nguyên. Mã endpoint tồn tại và test stub đạt không đồng nghĩa tích hợp end-to-end đã nghiệm thu.
+**Cập nhật lượt 37, 03/11/2026:** Gateway và năm service đã chạy trên database test; Auth/Learning, Full/Part, CMS/media và Analytics đã có bằng chứng HTTP/browser thật. Đã kiểm tra storage, offline/mất phản hồi, request timeout, deadline 300 giây thật và sửa lỗi frontend. REVIEW còn chờ lịch backend; Settings, AI ownership, media catalog/delete và admin user detail còn giới hạn. Xem [ma trận đủ 8 task, bằng chứng và bàn giao lượt 37](docs/frontend-integration-session37.md), [lượt 36](docs/frontend-integration-session36.md), [README web](apps/web/README.md), [README CMS](apps/admin-cms/README.md). Các báo cáo trước giữ giá trị lịch sử.
 
-Build kiểm tra hai frontend trong cùng một bản sao cô lập, giữ cache dev gốc:
-
-```powershell
-node scripts/qa/frontend-integration-build.cjs --api --evidence-dir tmp/frontend-integration-session33 --build-dir tmp/frontend-integration-session32/build
-```
-
-Chạy preview sau khi build kết thúc thành công, mặc định cổng 3106/3107 để tránh đụng tiến trình dev:
+Build frontend trong bản sao cô lập, giữ cache dev gốc:
 
 ```powershell
-node scripts/qa/frontend-integration-preview.cjs --build-dir tmp/frontend-integration-session32/build --gateway http://127.0.0.1:3000/api/v1
+$buildRun = 'tmp/frontend-build-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff')
+node scripts/qa/frontend-integration-build.cjs --api --evidence-dir "$buildRun/evidence" --build-dir "$buildRun/build"
 ```
 
-Nhập `stop` trong terminal preview trước khi rebuild. Helper giữ PID của chính nó và từ chối rebuild khi preview đó còn chạy; không dừng server khác. Cả hai app dùng một bản sao nguồn; output `.next-session33` trong bản sao tránh output cũ đang bị giữ. Cache `.next` của repo gốc không dùng cho production QA. Lệnh này không khởi động Gateway hoặc tạo dữ liệu test.
-
-Kiểm tra Gateway local chỉ đọc, không credentials và không ghi DB; dùng tên output mới mỗi lần:
-
-```powershell
-node scripts/qa/frontend-local-readiness.cjs --out tmp/frontend-integration-session33/my-runtime-probe.json
-```
+Lệnh khởi chạy BE/FE trên manifest database test có sẵn, URL và index/reindex nằm trong [lượt 37](docs/frontend-integration-session37.md#chạy-lại-dự-án). [Lượt 39](docs/frontend-integration-session39.md) hoàn tất nghiệm thu UI đổi role/status, revoke phiên và audit trên tài khoản test mới; sửa stale success notice và bổ sung reconcile khi mất acknowledgment. REVIEW vẫn due0 ngày03/11, nextReviewDate04/11; bốn API/ownership còn thiếu chưa có source mới. Có script chỉ đọc `frontend-review-preflight.cjs` để kiểm tra điều kiện REVIEW. Stack do lượt39 tạo đã dừng sau nghiệm thu; luôn kiểm tra listener trước khi chạy lại, không seed/reset hoặc chạy migration cutover để làm kiểm thử đạt. [Lượt 38](docs/frontend-integration-session38.md) giữ bằng chứng preflight trước đó.

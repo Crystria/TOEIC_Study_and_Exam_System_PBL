@@ -16,7 +16,7 @@ export function Sidebar({
   const destinations = CMS_DESTINATIONS.filter((item) =>
     roles
       ? roles.includes(item.role) ||
-        (roles.includes('SYSTEM_ADMIN') && ['/questions', '/media'].includes(item.href))
+        (roles.includes('SYSTEM_ADMIN') && ['/questions', '/tests', '/media'].includes(item.href))
       : item.role === role,
   );
   const link = (path: Parameters<typeof demoHref>[0]) => (roles ? path : demoHref(path, role));
@@ -48,7 +48,7 @@ export function Sidebar({
               </Link>
             </li>
           ))}
-          {roles?.includes('CONTENT_ADMIN') && (
+          {roles?.some((r) => ['CONTENT_ADMIN', 'SYSTEM_ADMIN'].includes(r)) && (
             <>
               <li>
                 <Link
@@ -59,15 +59,17 @@ export function Sidebar({
                   Nhóm câu hỏi
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/topics"
-                  onClick={onNavigate}
-                  aria-current={pathname === '/topics' ? 'page' : undefined}
-                >
-                  Chủ đề từ vựng
-                </Link>
-              </li>
+              {roles.includes('CONTENT_ADMIN') && (
+                <li>
+                  <Link
+                    href="/topics"
+                    onClick={onNavigate}
+                    aria-current={pathname === '/topics' ? 'page' : undefined}
+                  >
+                    Chủ đề từ vựng
+                  </Link>
+                </li>
+              )}
             </>
           )}
         </ul>

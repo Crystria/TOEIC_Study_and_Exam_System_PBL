@@ -70,13 +70,13 @@ export interface User {
 export function parseUser(value: unknown): User {
   const r = record(value);
   return {
-    id: id(r.id),
+    id: id(r.userId),
     email: text(r.email),
     fullName: text(r.fullName),
     phoneNumber: optionalText(r.phoneNumber),
     avatarUrl: mediaUrl(r.avatarUrl),
     status: text(r.status),
-    roles: list(r.roles, (role) => text(record(role).code)),
+    roles: list(r.roles, (role) => text(role)),
   };
 }
 export function parseTokens(value: unknown) {
@@ -85,7 +85,7 @@ export function parseTokens(value: unknown) {
 }
 export function parseSessionUser(value: unknown): User {
   const r = record(value);
-  return parseUser({ ...r, roles: list(r.roles, (value) => ({ code: text(value) })) });
+  return parseUser({ ...r, userId: r.id });
 }
 export interface Page<T> {
   items: T[];
@@ -108,20 +108,20 @@ export function page<T>(value: unknown, parse: (item: unknown) => T): Page<T> {
 export function parseTopic(value: unknown) {
   const r = record(value);
   return {
-    id: id(r.id),
-    name: text(r.name),
-    description: optionalText(r.description),
-    wordCount: count(record(r._count).vocabularies),
+    id: id(r.topicId),
+    name: text(r.topicName),
+    description: null,
+    wordCount: count(r.vocabularyCount),
   };
 }
 export function parseWord(value: unknown) {
   const r = record(value);
   return {
-    id: id(r.id),
+    id: id(r.vocabularyId),
     topicId: id(r.topicId),
     word: text(r.word),
-    meaning: text(r.meaning),
-    pronunciation: optionalText(r.pronunciation),
+    meaning: text(r.definition),
+    pronunciation: optionalText(r.phonetic),
     example: optionalText(r.example),
     audioUrl: mediaUrl(r.audioUrl),
     imageUrl: mediaUrl(r.imageUrl),
@@ -130,40 +130,28 @@ export function parseWord(value: unknown) {
 export function parseLesson(value: unknown) {
   const r = record(value);
   return {
-    id: id(r.id),
-    title: text(r.title),
-    content: text(r.content),
-    level: text(r.level),
+    id: id(r.lessonId),
+    title: text(r.lessonTitle),
+    content: text(r.contentMarkdown),
+    level: text(r.category),
     status: text(r.status),
   };
 }
 export function parseLearningProgress(value: unknown) {
-  const r = record(value),
-    v = record(r.vocabulary),
-    l = record(r.lessons);
-  return {
-    vocabulary: { total: count(v.total), reviewed: count(v.reviewed), dueToday: count(v.dueToday) },
-    lessons: { total: count(l.total), completed: count(l.completed) },
-  };
-}
-export function parseReview(value: unknown) {
   const r = record(value);
   return {
-    vocabularyId: id(r.vocabularyId),
-    repetition: count(r.repetition),
-    interval: count(r.interval),
-    nextReviewAt: r.nextReviewAt == null ? null : date(r.nextReviewAt),
+    vocabulary: {
+      reviewed: count(r.reviewedVocabularies),
+      dueToday: count(r.dueVocabularies),
+      learned: count(r.vocabulariesLearned),
+    },
+    lessons: { completed: count(r.grammarLessonsCompleted) },
   };
-}
-export function parseCompletion(value: unknown) {
-  const r = record(value);
-  if (r.status !== 'COMPLETED') throw new ContractError('completion.status');
-  return { lessonId: id(r.lessonId), completedAt: date(r.completedAt) };
 }
 export function parseTest(value: unknown) {
   const r = record(value);
   const durationSeconds = count(r.durationSeconds);
-  if (!durationSeconds || !['FULL', 'MINI'].includes(text(r.type))) throw new ContractError('test');
+  if (!durationSeconds) throw new ContractError('test');
   const questions =
     r.questions === undefined
       ? null
@@ -175,12 +163,12 @@ export function parseTest(value: unknown) {
           return { questionId: id(q.questionId), part, orderNo };
         });
   return {
-    id: id(r.id),
+    id: id(r.testId),
     title: text(r.title),
-    type: text(r.type),
-    status: text(r.status),
+    type: 'FULL',
+    status: r.deletedAt == null ? 'ACTIVE' : 'ARCHIVED',
     durationSeconds,
-    questionCount: questions ? questions.length : count(record(r._count).questions),
+    questionCount: questions ? questions.length : count(r.totalQuestions),
     questions,
   };
 }
@@ -189,96 +177,91 @@ export function parseQuestionSummary(value: unknown) {
     part = count(r.part);
   if (part < 1 || part > 7) throw new ContractError('question.part');
   return {
-    id: id(r.id),
+    id: id(r.questionId),
     part,
     type: text(r.type),
-    stem: text(r.stem),
+    stem: optionalText(r.questionText) ?? '',
     difficulty: text(r.difficulty),
-    status: text(r.status),
+    status: r.isComplete === true ? 'COMPLETE' : 'INCOMPLETE',
     tags: list(r.tags, (v) => text(v)),
+    groupId: optionalText(r.groupId),
   };
 }
 export function parseQuestion(value: unknown) {
   const r = record(value);
-  const summary = parseQuestionSummary({
-    ...r,
-    tags: list(r.tags, (v) => text(record(record(v).tag).name)),
-  });
+  const summary = parseQuestionSummary(r);
   const options = list(r.options, (value) => {
     const o = record(value);
     return {
-      optionKey: text(o.optionKey),
-      content: text(o.content),
-      isCorrect: boolean(o.isCorrect),
-      mediaUrl: mediaUrl(o.mediaUrl),
+      optionKey: text(o.optionCode),
+      content: text(o.optionText),
+      isCorrect: text(o.optionCode) === text(r.correctOption),
+      mediaUrl: null,
     };
   });
   return {
     ...summary,
     options,
     explanation: optionalText(r.explanation),
-    mediaUrl: mediaUrl(r.mediaUrl),
+    mediaUrl: mediaUrl(r.audioUrl) ?? mediaUrl(r.imageUrl),
   };
 }
 export function parseAudit(value: unknown) {
   const r = record(value);
   return {
-    id: id(r.id),
-    actorId: optionalText(r.userId),
+    id: id(r.auditId),
+    actorId: optionalText(r.actorUserId),
     action: text(r.action),
-    resourceType: optionalText(r.targetType),
-    resourceId: optionalText(r.targetId),
-    createdAt: date(r.createdAt),
-    metadata: r.metadata ?? null,
+    resourceType: 'USER',
+    resourceId: optionalText(r.targetUserId),
+    createdAt: date(r.occurredAt),
+    metadata: { before: r.beforeData ?? null, after: r.afterData ?? null },
   };
 }
 export function parseAnalyticsProgress(value: unknown) {
   const r = record(value),
     l = record(r.lifetime),
-    activities = record(r.activitiesInRange);
+    activities = record(r.inRange);
   return {
     timeRange: text(r.timeRange),
     lifetime: {
-      totalStudyDays: count(l.totalStudyDays),
-      totalLessons: count(l.totalLessons),
-      totalVocabLearned: count(l.totalVocabLearned),
+      totalStudyDays: count(l.studyDays),
+      totalLessons: count(l.grammarLessonsCompleted),
+      totalVocabLearned: count(l.vocabulariesLearned),
     },
     activities: Object.fromEntries(
       Object.entries(activities).map(([key, value]) => [key, count(value)]),
     ),
+    predictedToeicScore: r.predictedToeicScore == null ? null : count(r.predictedToeicScore),
+    dailyActivity: list(r.dailyActivity, (value) => {
+      const d = record(value);
+      return { date: date(d.date), count: count(d.count) };
+    }),
+    scoreTrend: list(r.scoreTrend, (value) => {
+      const s = record(value);
+      return {
+        attemptId: id(s.attemptId),
+        completedAt: date(s.completedAt),
+        totalScore: count(s.totalScore),
+      };
+    }),
+    trendTruncated: r.scoreTrendNextCursor != null,
+    nextCursor: optionalText(r.scoreTrendNextCursor),
+    dailyActivityTruncated: r.dailyActivityTruncated === true,
+    weakAreas: list(r.weakAreas, (value) => {
+      const p = record(value);
+      return {
+        part: count(p.part),
+        correct: count(p.correct),
+        total: count(p.total),
+        isWeak: p.isWeak === true,
+      };
+    }),
   };
 }
 export function parseStreak(value: unknown) {
   const r = record(value);
-  return { current: count(r.currentStreak), longest: count(r.longestStreak) };
-}
-export function parseScores(value: unknown) {
-  return list(record(value).items, (value) => {
-    const r = record(value);
-    // score intentionally excluded: source currently emits raw correct-count as score.
-    return { attemptId: id(r.attemptId), testType: text(r.testType), takenAt: date(r.takenAt) };
-  });
-}
-export function parseResult(value: unknown) {
-  const r = record(value);
-  if (!['IN_PROGRESS', 'SUBMITTED', 'EXPIRED'].includes(text(r.status)))
-    throw new ContractError('attempt.status');
-  return {
-    attemptId: id(r.attemptId),
-    testId: id(r.testId),
-    title: optionalText(r.testTitle),
-    status: text(r.status),
-    totalCorrect:
-      r.status === 'IN_PROGRESS' || r.totalCorrect == null ? null : count(r.totalCorrect),
-    answers: list(r.answers, (value) => {
-      const a = record(value);
-      return {
-        questionId: id(a.questionId),
-        selectedOption: optionalText(a.selectedOption),
-        isCorrect: r.status === 'IN_PROGRESS' || a.isCorrect == null ? null : boolean(a.isCorrect),
-      };
-    }),
-  };
+  return { current: count(r.learningStreakDays), longest: count(r.longestStreak) };
 }
 export const segment = (value: string) => {
   if (!value.trim() || /^(demo-|local-)/i.test(value))

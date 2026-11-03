@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Button } from './button';
 
 interface AudioPlayerProps {
+  mode?: 'demo' | 'server';
   source: string | null;
   label: string;
   missingMessage: string;
@@ -21,6 +22,7 @@ export function AudioPlayer(props: AudioPlayerProps) {
 }
 
 function AudioSource({
+  mode = 'demo',
   source,
   label,
   missingMessage,
@@ -179,9 +181,11 @@ function AudioSource({
             : status[state]}
       </p>
       <p id={helpId} className="player-audio-help">
-        Giọng tổng hợp, nội dung minh họa, không phải audio ETS chính thức. Dùng Tab để tới trình
-        phát, Space để phát/tạm dừng; phím mũi tên trên thanh thời gian để tua. Chuyển câu, nhóm
-        hoặc rời trang sẽ tạm dừng; trở lại không tự phát.
+        {mode === 'server'
+          ? 'Audio do backend cung cấp. '
+          : 'Giọng tổng hợp, nội dung minh họa, không phải audio ETS chính thức. '}
+        Dùng Tab để tới trình phát, Space để phát/tạm dừng; phím mũi tên trên thanh thời gian để
+        tua. Chuyển câu, nhóm hoặc rời trang sẽ tạm dừng; trở lại không tự phát.
       </p>
     </div>
   );

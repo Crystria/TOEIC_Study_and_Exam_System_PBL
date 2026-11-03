@@ -19,7 +19,7 @@ export function mutationOutcomeUnknown(error: unknown): boolean {
 }
 export async function gateway(
   path: string,
-  options: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+  options: { method?: string; body?: unknown; signal?: AbortSignal; idempotencyKey?: string } = {},
 ): Promise<unknown> {
   const controller = new AbortController();
   const cancel = () => controller.abort();
@@ -34,6 +34,7 @@ export async function gateway(
       signal: controller.signal,
       headers: {
         Accept: 'application/json',
+        ...(options.idempotencyKey ? { 'Idempotency-Key': options.idempotencyKey } : {}),
         ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
       },
       ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
