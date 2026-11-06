@@ -120,6 +120,14 @@ cổng với dev; dừng backend đang chạy trước khi chuyển chế độ.
 | `npm run infra:up` / `infra:down` / `infra:logs` | Hạ tầng local (chỉ Docker hạ tầng)                                      |
 | `npm run apps:up` / `apps:down` / `apps:logs`    | Full-stack Docker (backend + frontend)                                  |
 
+Chạy toàn bộ unit test `**/*.test.ts` từ thư mục gốc bằng `npm run test:unit`.
+Jest tự quét Web, CMS, services, packages và scripts; xuất `test-results.json`
+và coverage HTML tại `coverage/unit/index.html`. Bỏ qua bản sao trong thư mục build/tmp.
+Một cấu hình gốc dùng Next/SWC cho Web/CMS, ts-jest cho Node/NestJS và lớp tương thích
+`node:test` cho test frontend hiện có. Timer thật là mặc định; test cần kiểm soát thời gian
+dùng `jest.useFakeTimers()` và `jest.setSystemTime()`, sau mỗi test được khôi phục tự động.
+Các suite `.spec.ts`, E2E và `.test.cjs`/`.test.mjs` tiếp tục dùng lệnh workspace/QA hiện có.
+
 AI service (Python):
 
 ```bash

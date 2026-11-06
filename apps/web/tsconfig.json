@@ -16,7 +16,9 @@
     ".next-tmp-frontend-local-20261103-134916-193/types/**/*.ts",
     ".next-tmp-frontend-local-20261103-140032-222/types/**/*.ts",
     ".next-tmp-frontend-run-20261103-144834-602/types/**/*.ts",
-    ".next-tmp-frontend-run-20261103-182027-775/types/**/*.ts"
+    ".next-tmp-frontend-run-20261103-182027-775/types/**/*.ts",
+    ".next-tmp-frontend-run-20261105-125759-981/types/**/*.ts",
+    ".next-tmp-frontend-run-20261105-125912-573/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

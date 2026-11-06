@@ -1,0 +1,97 @@
+TỔNG HỢP TÍNH NĂNG TOEIC STUDY AND EXAM SYSTEM
+Cập nhật: 03/11/2026, theo mã nguồn và bằng chứng tích hợp đến lượt 39.
+Phạm vi: web học viên (apps/web) và quản trị CMS (apps/admin-cms).
+
+- Các mục đã hoàn thiện bên dưới đã hoạt động với backend thật trong phạm vi local/test và các kịch bản được nghiệm thu.
+- Kho nội dung học và đề thi thực tế vẫn cần bổ sung; dữ liệu đang dùng để nghiệm thu chủ yếu là dữ liệu mẫu kiểm thử.
+- Báo cáo không kết luận hệ thống đã sẵn sàng triển khai production và không bao gồm apps/mobile.
+
+1. TÍNH NĂNG HỌC VIÊN ĐÃ HOÀN THIỆN TRONG PHẠM VI KIỂM THỬ
+
+- Đăng ký tài khoản: tạo tài khoản chưa kích hoạt, kiểm tra dữ liệu đầu vào; không tự đăng nhập sau đăng ký.
+- Kích hoạt tài khoản: nhận email kiểm thử qua Mailpit, mở liên kết kích hoạt và đăng nhập sau khi kích hoạt thành công.
+- Gửi lại email kích hoạt: hỗ trợ gửi lại với phản hồi trung tính theo quy định backend.
+- Đăng nhập: xác thực bằng backend, nhận đúng danh tính và vai trò; xử lý thông tin sai hoặc tài khoản chưa được phép đăng nhập.
+- Duy trì phiên: khôi phục danh tính sau reload, refresh phiên và xử lý access token hết hạn tự nhiên.
+- Đăng xuất: xóa cookie phiên ở frontend và kiểm tra thu hồi phiên phía backend.
+- Phân quyền: xử lý trường hợp không có phiên, không đủ quyền và phiên bị thu hồi sau khi quản trị đổi quyền/trạng thái.
+- Dashboard: đọc số liệu tiến độ từ vựng, ngữ pháp, phiên học và streak từ backend.
+- Danh sách chủ đề/từ vựng: đọc dữ liệu, tìm kiếm/phân trang và hiển thị audio/ảnh khi bản ghi có media.
+- Flashcard học từ mới: lật thẻ, đánh giá mức ghi nhớ, lưu đánh giá và phục hồi đánh giá đã lưu sau reload.
+- Quiz từ vựng: tạo phiên từ dữ liệu đủ điều kiện, chọn đáp án, nộp bài và nhận kết quả do backend chấm.
+- Tiến độ từ vựng: lưu kết quả học và lịch ôn tiếp theo; đọc lại tiến độ sau reload và đối chiếu với Analytics.
+- Danh sách ngữ pháp: lọc/phân trang bài học đã xuất bản; bài DRAFT được giới hạn theo quyền backend.
+- Nội dung ngữ pháp: hiển thị Markdown an toàn và đánh dấu hoàn thành; trạng thái hoàn thành được giữ sau reload.
+- Danh sách/chi tiết đề thi: lấy đề Full từ backend, xem cấu trúc và các Part có thể làm.
+- Luyện theo Part: bắt đầu một hoặc nhiều Part, hiển thị câu hỏi tương ứng và lưu kết quả luyện tập.
+- Thi Full: bắt đầu lượt thi theo cấu trúc Full 200 câu và thời lượng do backend quy định.
+- Màn hình làm bài: hiển thị câu hỏi, lựa chọn, nhóm câu, đoạn văn, ảnh và audio khi dữ liệu có đầy đủ.
+- Thao tác làm bài: chọn/đổi/xóa đáp án, chuyển câu và đánh dấu xem lại; dấu xem lại chỉ giữ trên trang hiện tại.
+- Lưu nháp/tiếp tục thi: chủ động lưu lựa chọn lên backend; reload phục hồi bản nháp đã lưu và giữ nguyên deadline. Chưa có tự động lưu mọi thay đổi đáp án.
+- Đồng hồ và hết giờ: đếm ngược theo deadline backend; xử lý lượt thi hết hạn và kết quả theo quy định server.
+- Nộp bài: backend chấm/finalize; xử lý nộp trùng và đối chiếu server trước khi thử lại sau mất phản hồi.
+- Kết quả thi: hiển thị số đúng/sai/bỏ trống và kết quả theo Part; luyện Part không hiển thị điểm TOEIC quy đổi.
+- Xem lại bài thi: sau khi hoàn thành, xem lựa chọn, đáp án, giải thích và transcript nếu backend có dữ liệu; màn hình chỉ đọc.
+- Lịch sử: xem các lượt làm bài thuộc tài khoản hiện tại, hỗ trợ phân trang.
+- Analytics: đọc thống kê học/thi, điểm Full, dự đoán và điểm yếu theo dữ liệu backend; lọc theo khoảng thời gian được API hỗ trợ.
+- Xử lý lỗi mạng: hiển thị lỗi đọc, hỗ trợ thử lại; các luồng ghi đã kiểm tra không báo thành công khi chưa xác nhận được trạng thái backend.
+
+2. TÍNH NĂNG CMS ĐÃ HOÀN THIỆN TRONG PHẠM VI KIỂM THỬ
+
+- Đăng nhập CMS: dùng tài khoản backend và điều hướng theo quyền thật; CMS không có đăng ký tài khoản riêng.
+- Danh sách câu hỏi: đọc/tìm kiếm/lọc/phân trang và mở chi tiết từ ngân hàng câu hỏi.
+- Quản lý câu hỏi Parts 1-7: tạo/sửa nội dung, lựa chọn, đáp án, giải thích, transcript và ngừng sử dụng bản ghi.
+- Quản lý nhóm câu hỏi: tạo/sửa nhóm, passage/transcript, câu thành viên và thứ tự; hỗ trợ ngừng sử dụng nhóm.
+- Media câu hỏi/nhóm: upload và gắn ảnh/audio theo bản ghi; hiển thị/phát lại media đã lưu.
+- Quản lý đề thi: xem/tạo/sửa/ngừng sử dụng đề; chọn câu hoặc cả nhóm, sắp xếp và loại tham chiếu khỏi đề.
+- Kiểm tra cấu trúc đề: backend kiểm tra độ đầy đủ/cấu trúc Full; dữ liệu không hợp lệ bị từ chối.
+- Quản lý bài ngữ pháp: tạo/sửa/xem trước Markdown, chuyển DRAFT/PUBLISHED và ngừng sử dụng bài.
+- Quản lý chủ đề từ vựng: tạo/sửa/ngừng sử dụng chủ đề, đọc danh sách và xử lý chủ đề thiếu dữ liệu.
+- Quản lý từ vựng: tạo/sửa/ngừng sử dụng từ, gắn chủ đề, nhập nghĩa/ví dụ/phiên âm và upload media theo bản ghi.
+- Liên thông nội dung: học viên đọc được dữ liệu đã công bố; các bản ghi bị giới hạn hoặc ngừng sử dụng được xử lý theo backend.
+- Danh sách người dùng: SYSTEM_ADMIN xem/lọc/phân trang danh tính, vai trò và trạng thái tài khoản.
+- Đổi vai trò: SYSTEM_ADMIN xác nhận và đổi vai trò tài khoản khác; phiên cũ bị thu hồi theo backend.
+- Đình chỉ/khôi phục tài khoản: cập nhật trạng thái, chặn đăng nhập khi SUSPENDED và cho đăng nhập lại sau ACTIVE.
+- Xử lý mất phản hồi khi đổi quyền/trạng thái: giữ thay đổi đang chờ xác nhận, đọc lại server và tránh gửi PATCH trùng khi thay đổi đã được lưu.
+- Audit logs: xem người thực hiện, đối tượng, hành động, dữ liệu trước/sau, thời điểm; hỗ trợ lọc/phân trang.
+- Giới hạn quyền quản trị: giao diện chặn tự chỉnh vai trò/trạng thái của tài khoản đang đăng nhập; backend tiếp tục kiểm tra quyền thực tế.
+- Phân quyền nội dung Learning: yêu cầu CONTENT_ADMIN; tài khoản chỉ có SYSTEM_ADMIN không tự động được quyền quản trị từ vựng/ngữ pháp.
+
+3. TÍNH NĂNG CHƯA HOÀN THIỆN HOẶC CHƯA NGHIỆM THU ĐỦ
+
+- Settings - mục tiêu học: API mode chưa đọc/lưu được mục tiêu từ vựng, thời gian học, điểm mục tiêu và ngày thi. Cần API GET/PATCH theo tài khoản đăng nhập, lưu riêng từng người, quy định giá trị mặc định/giới hạn và tích hợp FE.
+- Settings - cấu hình nhắc học: chưa lưu được bật/tắt, giờ nhắc và múi giờ bằng API thật. Cần contract, lưu dữ liệu và validation; nếu yêu cầu gửi thông báo thực tế, cần xác định và triển khai cơ chế gửi nhắc tương ứng.
+- AI Chat: chưa bật trong API mode vì danh tính/chủ sở hữu hội thoại chưa được ràng buộc đầy đủ bằng JWT. Cần xác thực trên mọi thao tác và kiểm tra hai tài khoản không truy cập hội thoại của nhau, sau đó tích hợp FE và nghiệm thu.
+- Quota/timeout AI: source đã có quota mặc định 20 lượt/ngày, timeout LLM 10 giây và xử lý fallback một phần. Cần kiểm định phản hồi quota, timeout, fallback và đường Gateway sau khi hoàn thiện bảo vệ danh tính.
+- Ôn từ đến hạn (REVIEW): đã có code/API nhưng chưa nghiệm thu được REVIEW -> đánh giá -> quiz -> kết quả -> cập nhật lịch SM-2 lần tiếp theo. Lần kiểm tra cuối ngày 03/11/2026 có due=0, lịch tiếp theo là 04/11/2026; cần ít nhất 5 từ đến hạn cùng chủ đề và 4 định nghĩa khác nhau. Chưa đủ dữ liệu kiểm thử không đồng nghĩa đã xác định chức năng bị lỗi.
+- Kho media toàn cục: CMS chưa có danh sách toàn bộ file, tìm kiếm/lọc/phân trang độc lập. Cần API catalog, metadata và phân quyền rồi bổ sung giao diện.
+- Xóa object media: chưa có API xóa file an toàn theo tham chiếu. Cần kiểm tra file đang được sử dụng, chính sách xóa và xác nhận backend; ngừng sử dụng bản ghi không đồng nghĩa đã xóa file trong storage.
+- Chi tiết người dùng độc lập theo ID: chưa có GET admin/users/:id. Cần endpoint cho SYSTEM_ADMIN, dữ liệu chuẩn và xử lý 401/403/404; FE phải mở trực tiếp/reload mà không phụ thuộc trang hoặc bộ lọc danh sách.
+- Hồ sơ cá nhân: đã có tích hợp đọc/sửa họ tên, số điện thoại và upload avatar. Chưa thấy bằng chứng nghiệm thu browser riêng đầy đủ trong các lượt 36-39; cần kiểm tra lưu/reload, avatar, validation và lỗi mạng trước khi chốt hoàn tất.
+- Điểm TOEIC quy đổi: đã hoạt động theo bảng mẫu backend 2026.10-sample, official=false. Cần thống nhất/kiểm định bảng quy đổi nếu muốn đưa ra mức điểm có giá trị sử dụng vượt ngoài kết quả tham khảo hiện tại.
+- Kiểm thử trình duyệt/thiết bị: đã có các mẫu Chrome ở viewport desktop/tablet/mobile và thao tác bàn phím; cần kiểm tra thêm Firefox, Safari, thiết bị vật lý và screen reader đầy đủ.
+- Chất lượng media/nội dung: đã kiểm tra kỹ thuật tải, decode, hiển thị và phát; cần người có chuyên môn kiểm duyệt phát âm, nội dung, đáp án và tính phù hợp học tập.
+- Gửi email ngoài môi trường kiểm thử: luồng kích hoạt đã nghiệm thu bằng Mailpit; cần cấu hình dịch vụ gửi email thực tế và kiểm tra nhận thư trên môi trường triển khai.
+
+4. DỮ LIỆU HỌC VÀ KHO ĐỀ CÒN CẦN CHUẨN BỊ
+
+- Nguồn dữ liệu hiện tại: API mode lấy dữ liệu từ database backend qua Gateway; ảnh/audio lấy từ storage theo URL backend trả về. Dữ liệu mẫu được nhập qua API và lưu thật trong các database test riêng.
+- Đề QA hiện có: frontend-s35-20261103 QA Full 200 được tạo bằng scripts/qa/fixture.mjs. Có đủ số lượng/cấu trúc để kiểm tra phần mềm, nhưng câu hỏi/lựa chọn/đáp án là mẫu QA; chưa phải bộ đề luyện thi có nội dung hoàn chỉnh.
+- Media của đề QA: ảnh/audio tổng hợp để thử vận chuyển và xử lý file; cần thay bằng media khớp từng câu/nhóm để học hoặc luyện nghe thực tế.
+- Từ vựng mẫu: lượt 36 tạo chủ đề Office vocabulary với 10 từ/10 định nghĩa; lượt 37 bổ sung dữ liệu QA. Đây chưa phải kho từ vựng học tập đầy đủ.
+- Kho từ vựng thực tế: cần biên soạn chủ đề, từ, nghĩa, phiên âm, ví dụ và audio; kiểm duyệt rồi nhập qua CMS hoặc công cụ nhập dữ liệu phù hợp.
+- Ngân hàng câu hỏi thực tế: cần nội dung Parts 1-7, lựa chọn, đáp án, giải thích, passage/transcript và media có quyền sử dụng; kiểm tra quan hệ nhóm và thứ tự.
+- Kho đề thực tế: cần ghép nhiều đề từ ngân hàng câu hỏi đã kiểm duyệt; kiểm tra cấu trúc, thời lượng, đáp án, độ khó và khả năng hiển thị/phát media.
+- Nội dung ngữ pháp thực tế: hiện có các bài mẫu phục vụ nghiệm thu; cần xây dựng chương trình bài học đầy đủ và kiểm duyệt trước khi công bố.
+- Nghiệm thu bằng nội dung thực tế: sau khi nhập dữ liệu, cần chạy lại học từ vựng, ôn tập, ngữ pháp, thi Full/Part, kết quả và Analytics trên chính bộ nội dung đó.
+
+5. ĐIỀU KIỆN SỬ DỤNG VÀ CĂN CỨ
+
+- Để dùng backend thật: khởi động hạ tầng, Gateway, các service và frontend; chọn API mode. Chạy frontend theo cấu hình mặc định vẫn có thể vào DEMO.
+- Các thao tác ghi local/test yêu cầu bật cờ ghi và dùng đúng dataset test; tài khoản phải có quyền phù hợp.
+- Khi khởi động lại với index tìm kiếm mới: kiểm tra dữ liệu tìm kiếm và thực hiện reindex qua API chính thức nếu projection trống; không cần seed lại toàn bộ câu hỏi.
+- Chế độ DEMO phục vụ minh họa; các thao tác demo không được coi là đã lưu lên backend.
+- Căn cứ tính năng học/thi/CMS: docs/frontend-integration-session36.md và docs/frontend-integration-session37.md.
+- Căn cứ giới hạn API và lịch ôn: docs/frontend-integration-session38.md.
+- Căn cứ mới nhất về quyền/trạng thái người dùng và audit: docs/frontend-integration-session39.md.
+- Căn cứ nguồn đề QA: scripts/qa/fixture.mjs và docs/frontend-integration-session35.md.

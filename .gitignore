@@ -38,6 +38,7 @@ out/
 
 # Test & coverage
 coverage/
+test-results.json
 .nyc_output/
 junit.xml
 test-results/
