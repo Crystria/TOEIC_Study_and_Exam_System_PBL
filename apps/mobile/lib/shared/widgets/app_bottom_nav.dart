@@ -40,6 +40,11 @@ class AppBottomNav extends StatelessWidget {
           selectedIcon: Icon(Icons.smart_toy, color: AppColors.brand),
           label: 'Trợ lý AI',
         ),
+        NavigationDestination(
+          icon: Icon(Icons.person_outline),
+          selectedIcon: Icon(Icons.person, color: AppColors.brand),
+          label: 'Cá nhân',
+        ),
       ],
     );
   }

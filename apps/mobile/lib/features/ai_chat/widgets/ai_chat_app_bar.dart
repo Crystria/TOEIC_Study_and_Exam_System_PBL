@@ -9,6 +9,9 @@ class AiChatAppBar extends StatelessWidget {
     required this.title,
     required this.remaining,
     required this.limit,
+    this.isUsageLoading = false,
+    this.usageIsPreview = true,
+    this.isQuotaBlocked = false,
     this.onHistory,
     this.onNewConversation,
   });
@@ -16,6 +19,9 @@ class AiChatAppBar extends StatelessWidget {
   final String title;
   final int remaining;
   final int limit;
+  final bool isUsageLoading;
+  final bool usageIsPreview;
+  final bool isQuotaBlocked;
   final VoidCallback? onHistory;
   final VoidCallback? onNewConversation;
 
@@ -33,7 +39,13 @@ class AiChatAppBar extends StatelessWidget {
             ),
           ),
         ),
-        RateLimitBadge(remaining: remaining, limit: limit),
+        RateLimitBadge(
+          remaining: remaining,
+          limit: limit,
+          isLoading: isUsageLoading,
+          isPreview: usageIsPreview,
+          isQuotaBlocked: isQuotaBlocked,
+        ),
         if (onHistory != null)
           IconButton(
             onPressed: onHistory,

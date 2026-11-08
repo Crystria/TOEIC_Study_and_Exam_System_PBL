@@ -5,10 +5,12 @@ class OAuthButtonsRow extends StatelessWidget {
     super.key,
     required this.onGoogle,
     required this.onFacebook,
+    this.enabled = true,
   });
 
   final VoidCallback onGoogle;
   final VoidCallback onFacebook;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +18,14 @@ class OAuthButtonsRow extends StatelessWidget {
       children: [
         Expanded(
           child: OutlinedButton(
-            onPressed: onGoogle,
+            onPressed: enabled ? onGoogle : null,
             child: const Text('Google'),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: OutlinedButton(
-            onPressed: onFacebook,
+            onPressed: enabled ? onFacebook : null,
             child: const Text('Facebook'),
           ),
         ),
