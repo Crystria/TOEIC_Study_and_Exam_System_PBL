@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:toeic_mobile/features/auth/providers/login_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:toeic_mobile/features/auth/screens/forgot_password_screen.dart';
-import 'package:toeic_mobile/features/auth/screens/register_screen.dart';
-import 'package:toeic_mobile/features/home/screens/home_screen.dart';
 
+import '../../../theme/app_colors.dart';
+import '../../home/screens/home_screen.dart';
+import '../providers/auth_session_provider.dart';
+import '../providers/login_provider.dart';
+import 'forgot_password_screen.dart';
+import 'register_screen.dart';
 import '../widgets/auth_footer_link.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/field_label.dart';
 import '../widgets/oauth_buttons_row.dart';
 import '../widgets/password_field.dart';
-import '../../../theme/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,68 +21,81 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _identifierController = TextEditingController();
   final _passwordController = TextEditingController();
-  late final LoginProvider _loginProvider;
 
-  @override
-  void initState() {
-    super.initState();
-    _loginProvider = context.read<LoginProvider>()
-      ..addListener(_onLoginStateChanged);
-  }
+  Future<void> _onLogin() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
-  @override
-  void dispose() {
-    _loginProvider.removeListener(_onLoginStateChanged);
-    _identifierController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+    final loginProvider = context.read<LoginProvider>();
+    if (loginProvider.isLoading) return;
 
-  void _onLoginStateChanged() {
-    final status = _loginProvider.status;
-    if (status == LoginStatus.loading) return;
+    final user = await loginProvider.login(
+      _identifierController.text.trim(),
+      _passwordController.text,
+    );
+
     if (!mounted) return;
 
-    if (status == LoginStatus.success) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-        (route) => false,
+    if (user == null) {
+      _showMessage(
+        loginProvider.errorMessage ?? 'Không thể đăng nhập. Vui lòng thử lại.',
       );
-    } else if (status == LoginStatus.error &&
-        _loginProvider.errorMessage != null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(_loginProvider.errorMessage!)));
+      return;
     }
+
+    // Session được cập nhật tại Screen; Provider không tự điều hướng.
+    context.read<AuthSessionProvider>().setCurrentUser(user);
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            HomeScreen(loginRouteBuilder: (_) => const LoginScreen()),
+      ),
+      (route) => false,
+    );
   }
 
-  void _onLogin() {
-    final identifier = _identifierController.text.trim();
-    final password = _passwordController.text;
-    _loginProvider.login(identifier, password);
+  Future<void> _onOAuth(String providerName) async {
+    final loginProvider = context.read<LoginProvider>();
+    await loginProvider.loginWithOAuth(providerName);
+    if (!mounted) return;
+    _showMessage(
+      loginProvider.errorMessage ?? 'Phương thức đăng nhập chưa khả dụng.',
+    );
   }
 
-  void _onOAuth(String provider) {
-    _loginProvider.loginWithOAuth(provider);
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _onForgotPassword() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+      MaterialPageRoute<void>(builder: (_) => const ForgotPasswordScreen()),
     );
   }
 
   void _onRegister() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+      MaterialPageRoute<void>(builder: (_) => const RegisterScreen()),
     );
   }
 
   @override
+  void dispose() {
+    _identifierController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isLoading = context.watch<LoginProvider>().isLoading;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -89,72 +103,106 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const AuthHeader(
-                    title: 'TOEIC Master',
-                    subtitle: 'Ôn thi TOEIC Listening & Reading mỗi ngày, trên Web và Mobile.',
-                  ),
-                  const SizedBox(height: 28),
-                  const FieldLabel('Email hoặc tên đăng nhập'),
-                  const SizedBox(height: 6),
-                  TextField(
-                    controller: _identifierController,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    autofillHints: const [AutofillHints.username],
-                    decoration: const InputDecoration(
-                      hintText: 'ban@email.com',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const FieldLabel('Mật khẩu'),
-                  const SizedBox(height: 6),
-                  PasswordField(
-                    controller: _passwordController,
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (_) => _onLogin(),
-                    autofillHints: const [AutofillHints.password],
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: _onForgotPassword,
-                      child: const Text(
-                        'Quên mật khẩu?',
-                        style: TextStyle(
-                          color: AppColors.brand,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+              child: Form(
+                key: _formKey,
+                child: AutofillGroup(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const AuthHeader(
+                        title: 'TOEIC Master',
+                        subtitle: 'Ôn thi TOEIC Listening & Reading mỗi ngày, trên Web và Mobile.',
+                      ),
+                      const SizedBox(height: 28),
+                      const FieldLabel('Email hoặc tên đăng nhập'),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _identifierController,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.username],
+                        enabled: !isLoading,
+                        decoration: const InputDecoration(
+                          hintText: 'ban@email.com',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Vui lòng nhập email hoặc tên đăng nhập';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      const FieldLabel('Mật khẩu'),
+                      const SizedBox(height: 6),
+                      PasswordField(
+                        controller: _passwordController,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => _onLogin(),
+                        autofillHints: const [AutofillHints.password],
+                        enabled: !isLoading,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng nhập mật khẩu';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 4),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: isLoading ? null : _onForgotPassword,
+                          child: const Text(
+                            'Quên mật khẩu?',
+                            style: TextStyle(
+                              color: AppColors.brand,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 4),
+                      ElevatedButton(
+                        onPressed: isLoading ? null : _onLogin,
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text('Đăng nhập'),
+                      ),
+                      const SizedBox(height: 20),
+                      const Center(
+                        child: Text(
+                          'hoặc đăng nhập bằng',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.slate400,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      OAuthButtonsRow(
+                        enabled: !isLoading,
+                        onGoogle: () => _onOAuth('google'),
+                        onFacebook: () => _onOAuth('facebook'),
+                      ),
+                      const SizedBox(height: 24),
+                      AuthFooterLink(
+                        text: 'Chưa có tài khoản? ',
+                        actionText: 'Đăng ký',
+                        onTap: _onRegister,
+                        enabled: !isLoading,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  ElevatedButton(
-                    onPressed: _onLogin,
-                    child: const Text('Đăng nhập'),
-                  ),
-                  const SizedBox(height: 20),
-                  const Center(
-                    child: Text(
-                      'hoặc đăng nhập bằng',
-                      style: TextStyle(fontSize: 13, color: AppColors.slate400),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  OAuthButtonsRow(
-                    onGoogle: () => _onOAuth('google'),
-                    onFacebook: () => _onOAuth('facebook'),
-                  ),
-                  const SizedBox(height: 24),
-                  AuthFooterLink(
-                    text: 'Chưa có tài khoản? ',
-                    actionText: 'Đăng ký',
-                    onTap: _onRegister,
-                  ),
-                ],
+                ),
               ),
             ),
           ),

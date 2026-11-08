@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../../../shared/widgets/chip_button.dart';
+import '../models/chat_message.dart';
 import '../../../theme/app_colors.dart';
 
-
 class UserChatBubble extends StatelessWidget {
-  const UserChatBubble({super.key, required this.text});
+  const UserChatBubble({
+    super.key,
+    required this.text,
+    this.status = ChatMessageStatus.sent,
+    this.onRetry,
+    this.onEdit,
+  });
+
   final String text;
+  final ChatMessageStatus status;
+  final VoidCallback? onRetry;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +33,66 @@ class UserChatBubble extends StatelessWidget {
             bottomLeft: Radius.circular(16),
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            height: 1.4,
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
+            if (status == ChatMessageStatus.sending) ...[
+              const SizedBox(height: 6),
+              const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 11,
+                    height: 11,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.5,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    'Đang gửi',
+                    style: TextStyle(color: Colors.white70, fontSize: 11),
+                  ),
+                ],
+              ),
+            ],
+            if (status == ChatMessageStatus.failed) ...[
+              const SizedBox(height: 5),
+              const Text(
+                'Không gửi được tin nhắn',
+                style: TextStyle(color: Colors.white70, fontSize: 11),
+              ),
+              if (onRetry != null || onEdit != null) ...[
+                const SizedBox(height: 2),
+                TextButton.icon(
+                  onPressed: onRetry ?? onEdit,
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 28),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  icon: Icon(
+                    onRetry != null ? Icons.refresh : Icons.edit_outlined,
+                    size: 14,
+                  ),
+                  label: Text(
+                    onRetry != null ? 'Gửi lại' : 'Chỉnh sửa',
+                    style: const TextStyle(fontSize: 11),
+                  ),
+                ),
+              ],
+            ],
+          ],
         ),
       ),
     );

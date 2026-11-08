@@ -8,11 +8,13 @@ class AuthFooterLink extends StatelessWidget {
     required this.text,
     required this.actionText,
     required this.onTap,
+    this.enabled = true,
   });
 
   final String text;
   final String actionText;
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +26,13 @@ class AuthFooterLink extends StatelessWidget {
           style: const TextStyle(fontSize: 14, color: AppColors.slate500),
         ),
         GestureDetector(
-          onTap: onTap,
+          onTap: enabled ? onTap : null,
           child: Text(
             actionText,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: AppColors.brand,
+              color: enabled ? AppColors.brand : AppColors.slate400,
             ),
           ),
         ),
