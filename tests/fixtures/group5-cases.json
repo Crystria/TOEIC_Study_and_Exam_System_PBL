@@ -1,0 +1,384 @@
+{
+  "UT-018": [
+    {
+      "name": "PART service submit omitted preserves draft",
+      "mode": "PART",
+      "entry": "service",
+      "body": "omitted",
+      "category": "N",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "PART service submit undefined preserves draft",
+      "mode": "PART",
+      "entry": "service",
+      "body": "undefined",
+      "category": "B",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "PART controller submit empty-object preserves draft",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "empty-object",
+      "category": "N",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "PART controller submit empty-array preserves draft",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "empty-array",
+      "category": "B",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "PART controller submit merge preserves draft",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "merge",
+      "category": "N",
+      "expectedCorrect": 2,
+      "expectedCounts": [2],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "PART empty draft finalizes real blank answers",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "empty-object",
+      "category": "B",
+      "emptyDraft": true,
+      "expectedCorrect": 0,
+      "expectedCounts": [0],
+      "why": "Biên draft rỗng: lưu đủ câu bỏ trống, không tự tạo đáp án đúng."
+    },
+    {
+      "name": "PART draft read failure never grades empty replacement",
+      "mode": "PART",
+      "entry": "service",
+      "body": "omitted",
+      "category": "A",
+      "readFailure": true,
+      "why": "Lỗi đọc draft 503 phải truyền ra trước chấm/ghi; không được coi lỗi là draft rỗng."
+    },
+    {
+      "name": "FULL service submit omitted preserves draft",
+      "mode": "FULL",
+      "entry": "service",
+      "body": "omitted",
+      "category": "N",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "FULL service submit undefined preserves draft",
+      "mode": "FULL",
+      "entry": "service",
+      "body": "undefined",
+      "category": "B",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "FULL controller submit empty-object preserves draft",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "empty-object",
+      "category": "N",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "FULL controller submit empty-array preserves draft",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "empty-array",
+      "category": "B",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "FULL controller submit merge preserves draft",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "merge",
+      "category": "N",
+      "expectedCorrect": 3,
+      "expectedCounts": [2, 0, 0, 0, 1, 0, 0],
+      "why": "Body thiếu/rỗng giữ draft; merge đổi Q2 thành đúng, xóa Q1 bằng null, thêm Q4, giữ Q3 null và câu khác."
+    },
+    {
+      "name": "FULL empty draft finalizes real blank answers",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "empty-object",
+      "category": "B",
+      "emptyDraft": true,
+      "expectedCorrect": 0,
+      "expectedCounts": [0, 0, 0, 0, 0, 0, 0],
+      "why": "Biên draft rỗng: lưu đủ câu bỏ trống, không tự tạo đáp án đúng."
+    },
+    {
+      "name": "FULL draft read failure never grades empty replacement",
+      "mode": "FULL",
+      "entry": "service",
+      "body": "omitted",
+      "category": "A",
+      "readFailure": true,
+      "why": "Lỗi đọc draft 503 phải truyền ra trước chấm/ghi; không được coi lỗi là draft rỗng."
+    }
+  ],
+  "UT-019": [
+    {
+      "name": "PART deadline -1ms",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": -1,
+      "readCrossesDeadline": false,
+      "expectedCorrect": 3,
+      "expectedCounts": [3],
+      "expired": false,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    },
+    {
+      "name": "PART deadline +0ms",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": 0,
+      "readCrossesDeadline": false,
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "expired": true,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    },
+    {
+      "name": "PART deadline +1ms",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": 1,
+      "readCrossesDeadline": false,
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "expired": true,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    },
+    {
+      "name": "PART deadline -1ms crossed during draft read",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": -1,
+      "readCrossesDeadline": true,
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "expired": true,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    },
+    {
+      "name": "FULL deadline -1ms",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": -1,
+      "readCrossesDeadline": false,
+      "expectedCorrect": 4,
+      "expectedCounts": [3, 0, 0, 0, 1, 0, 0],
+      "expired": false,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    },
+    {
+      "name": "FULL deadline +0ms",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": 0,
+      "readCrossesDeadline": false,
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "expired": true,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    },
+    {
+      "name": "FULL deadline +1ms",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": 1,
+      "readCrossesDeadline": false,
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "expired": true,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    },
+    {
+      "name": "FULL deadline -1ms crossed during draft read",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "late",
+      "category": "B",
+      "clockOffset": -1,
+      "readCrossesDeadline": true,
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "expired": true,
+      "why": "D-1 nhận body; D/D+1 và vượt D trong await chỉ dùng draft, completedAt=deadline."
+    }
+  ],
+  "UT-020": [
+    {
+      "name": "PART SUBMITTED repeated submit omitted has no grading or event",
+      "mode": "PART",
+      "entry": "service",
+      "body": "omitted",
+      "category": "N",
+      "status": "SUBMITTED",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "PART SUBMITTED repeated submit empty-array has no grading or event",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "empty-array",
+      "category": "N",
+      "status": "SUBMITTED",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "PART SUBMITTED repeated submit changed has no grading or event",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "changed",
+      "category": "N",
+      "status": "SUBMITTED",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "PART EXPIRED repeated submit omitted has no grading or event",
+      "mode": "PART",
+      "entry": "service",
+      "body": "omitted",
+      "category": "N",
+      "status": "EXPIRED",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "PART EXPIRED repeated submit empty-array has no grading or event",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "empty-array",
+      "category": "N",
+      "status": "EXPIRED",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "PART EXPIRED repeated submit changed has no grading or event",
+      "mode": "PART",
+      "entry": "controller",
+      "body": "changed",
+      "category": "N",
+      "status": "EXPIRED",
+      "expectedCorrect": 1,
+      "expectedCounts": [1],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "FULL SUBMITTED repeated submit omitted has no grading or event",
+      "mode": "FULL",
+      "entry": "service",
+      "body": "omitted",
+      "category": "N",
+      "status": "SUBMITTED",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "FULL SUBMITTED repeated submit empty-array has no grading or event",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "empty-array",
+      "category": "N",
+      "status": "SUBMITTED",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "FULL SUBMITTED repeated submit changed has no grading or event",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "changed",
+      "category": "N",
+      "status": "SUBMITTED",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "FULL EXPIRED repeated submit omitted has no grading or event",
+      "mode": "FULL",
+      "entry": "service",
+      "body": "omitted",
+      "category": "N",
+      "status": "EXPIRED",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "FULL EXPIRED repeated submit empty-array has no grading or event",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "empty-array",
+      "category": "N",
+      "status": "EXPIRED",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    },
+    {
+      "name": "FULL EXPIRED repeated submit changed has no grading or event",
+      "mode": "FULL",
+      "entry": "controller",
+      "body": "changed",
+      "category": "N",
+      "status": "EXPIRED",
+      "expectedCorrect": 2,
+      "expectedCounts": [1, 0, 0, 0, 1, 0, 0],
+      "why": "Lần đầu hoàn tất thật; lần sau chỉ lookup/lock, giữ kết quả/event và không đọc draft/chấm/ghi lại."
+    }
+  ]
+}

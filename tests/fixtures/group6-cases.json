@@ -1,0 +1,336 @@
+{
+  "UT-021": [
+    {
+      "name": "FULL ongoing privacy with populated drafts",
+      "category": "N",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "privacy",
+      "drafts": "populated"
+    },
+    {
+      "name": "FULL ongoing privacy with empty drafts",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "privacy",
+      "drafts": "empty"
+    },
+    {
+      "name": "FULL ongoing privacy with default drafts",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "privacy",
+      "drafts": "default"
+    },
+    {
+      "name": "PART ongoing privacy with populated drafts",
+      "category": "N",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "privacy",
+      "drafts": "populated"
+    },
+    {
+      "name": "PART ongoing privacy with empty drafts",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "privacy",
+      "drafts": "empty"
+    },
+    {
+      "name": "PART ongoing privacy with default drafts",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "privacy",
+      "drafts": "default"
+    }
+  ],
+  "UT-022": [
+    {
+      "name": "FULL SUBMITTED result with base no trailing slash",
+      "category": "N",
+      "mode": "FULL",
+      "status": "SUBMITTED",
+      "kind": "result",
+      "trailingSlash": false
+    },
+    {
+      "name": "FULL SUBMITTED result with base trailing slash",
+      "category": "N",
+      "mode": "FULL",
+      "status": "SUBMITTED",
+      "kind": "result",
+      "trailingSlash": true
+    },
+    {
+      "name": "FULL EXPIRED result with base no trailing slash",
+      "category": "N",
+      "mode": "FULL",
+      "status": "EXPIRED",
+      "kind": "result",
+      "trailingSlash": false
+    },
+    {
+      "name": "FULL EXPIRED result with base trailing slash",
+      "category": "N",
+      "mode": "FULL",
+      "status": "EXPIRED",
+      "kind": "result",
+      "trailingSlash": true
+    },
+    {
+      "name": "PART SUBMITTED result with base no trailing slash",
+      "category": "N",
+      "mode": "PART",
+      "status": "SUBMITTED",
+      "kind": "result",
+      "trailingSlash": false
+    },
+    {
+      "name": "PART SUBMITTED result with base trailing slash",
+      "category": "N",
+      "mode": "PART",
+      "status": "SUBMITTED",
+      "kind": "result",
+      "trailingSlash": true
+    },
+    {
+      "name": "PART EXPIRED result with base no trailing slash",
+      "category": "N",
+      "mode": "PART",
+      "status": "EXPIRED",
+      "kind": "result",
+      "trailingSlash": false
+    },
+    {
+      "name": "PART EXPIRED result with base trailing slash",
+      "category": "N",
+      "mode": "PART",
+      "status": "EXPIRED",
+      "kind": "result",
+      "trailingSlash": true
+    }
+  ],
+  "UT-024": [
+    {
+      "name": "FULL ongoing at D-1001ms gives 2",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -1001,
+      "expectedRemaining": 2
+    },
+    {
+      "name": "FULL ongoing at D-1000ms gives 1",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -1000,
+      "expectedRemaining": 1
+    },
+    {
+      "name": "FULL ongoing at D-999ms gives 1",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -999,
+      "expectedRemaining": 1
+    },
+    {
+      "name": "FULL ongoing at D-1ms gives 1",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -1,
+      "expectedRemaining": 1
+    },
+    {
+      "name": "FULL ongoing at D+0ms gives 0",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": 0,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "FULL ongoing at D+1ms gives 0",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": 1,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "FULL ongoing at D+1001ms gives 0",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": 1001,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "FULL repeated reads advance clock without resetting deadline",
+      "category": "B",
+      "mode": "FULL",
+      "status": "IN_PROGRESS",
+      "kind": "sequence",
+      "offsets": [
+        -60000,
+        -1001,
+        -1000,
+        -999,
+        -1,
+        0,
+        1,
+        1001
+      ],
+      "expectedSequence": [
+        60,
+        2,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "FULL SUBMITTED remaining is zero at D-60000ms",
+      "category": "N",
+      "mode": "FULL",
+      "status": "SUBMITTED",
+      "kind": "final-clock",
+      "offset": -60000,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "FULL EXPIRED remaining is zero at D+1ms",
+      "category": "N",
+      "mode": "FULL",
+      "status": "EXPIRED",
+      "kind": "final-clock",
+      "offset": 1,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "PART ongoing at D-1001ms gives 2",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -1001,
+      "expectedRemaining": 2
+    },
+    {
+      "name": "PART ongoing at D-1000ms gives 1",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -1000,
+      "expectedRemaining": 1
+    },
+    {
+      "name": "PART ongoing at D-999ms gives 1",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -999,
+      "expectedRemaining": 1
+    },
+    {
+      "name": "PART ongoing at D-1ms gives 1",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": -1,
+      "expectedRemaining": 1
+    },
+    {
+      "name": "PART ongoing at D+0ms gives 0",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": 0,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "PART ongoing at D+1ms gives 0",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": 1,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "PART ongoing at D+1001ms gives 0",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "boundary",
+      "offset": 1001,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "PART repeated reads advance clock without resetting deadline",
+      "category": "B",
+      "mode": "PART",
+      "status": "IN_PROGRESS",
+      "kind": "sequence",
+      "offsets": [
+        -60000,
+        -1001,
+        -1000,
+        -999,
+        -1,
+        0,
+        1,
+        1001
+      ],
+      "expectedSequence": [
+        60,
+        2,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "PART SUBMITTED remaining is zero at D-60000ms",
+      "category": "N",
+      "mode": "PART",
+      "status": "SUBMITTED",
+      "kind": "final-clock",
+      "offset": -60000,
+      "expectedRemaining": 0
+    },
+    {
+      "name": "PART EXPIRED remaining is zero at D+1ms",
+      "category": "N",
+      "mode": "PART",
+      "status": "EXPIRED",
+      "kind": "final-clock",
+      "offset": 1,
+      "expectedRemaining": 0
+    }
+  ]
+}

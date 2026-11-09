@@ -1,0 +1,359 @@
+{
+  "UT-006": [
+    { "name": "missing token row", "category": "A", "lookup": "missing" },
+    { "name": "missing session binding", "category": "A", "binding": "missing" },
+    { "name": "inactive identity", "category": "A", "userStatus": "INACTIVE" },
+    { "name": "suspended identity", "category": "A", "userStatus": "SUSPENDED" },
+    { "name": "session missing after lock", "category": "A", "session": "missing" },
+    { "name": "session belongs to another user", "category": "A", "session": "foreign" },
+    { "name": "session already revoked", "category": "A", "session": "revoked" },
+    { "name": "session expired one millisecond ago", "category": "B", "sessionOffset": -1 },
+    { "name": "session expires exactly now", "category": "B", "sessionOffset": 0 },
+    { "name": "refresh already revoked", "category": "A", "token": "revoked" },
+    { "name": "refresh already consumed", "category": "A", "token": "consumed" },
+    { "name": "refresh expired one millisecond ago", "category": "B", "tokenOffset": -1 },
+    { "name": "refresh expires exactly now", "category": "B", "tokenOffset": 0 },
+    { "name": "atomic consume lost to another request", "category": "B", "consumeRows": 0 },
+    {
+      "name": "identity disappears before locked read",
+      "category": "A",
+      "user": "missing",
+      "http": 404
+    },
+    { "name": "lookup dependency fails", "category": "A", "dependency": "lookup" },
+    { "name": "locked token read fails", "category": "A", "dependency": "token-read" }
+  ],
+  "UT-007": [
+    { "name": "revokes only the matching session and its unrevoked tokens", "category": "N" },
+    { "name": "unknown refresh cannot log out", "category": "A", "lookup": "missing", "http": 401 },
+    {
+      "name": "refresh belongs to a different user",
+      "category": "A",
+      "lookup": "foreign-user",
+      "http": 401
+    },
+    {
+      "name": "refresh belongs to another session of the same user",
+      "category": "A",
+      "lookup": "foreign-session",
+      "http": 401
+    },
+    { "name": "refresh has no session binding", "category": "A", "lookup": "unbound", "http": 401 },
+    {
+      "name": "locked session belongs to another user",
+      "category": "A",
+      "session": "foreign",
+      "http": 401
+    },
+    {
+      "name": "missing locked session is an idempotent success",
+      "category": "N",
+      "session": "missing"
+    },
+    {
+      "name": "already revoked session is an idempotent success",
+      "category": "N",
+      "session": "revoked"
+    },
+    {
+      "name": "missing locked identity is rejected",
+      "category": "A",
+      "user": "missing",
+      "http": 404
+    },
+    { "name": "lookup failure is propagated", "category": "A", "dependency": "lookup" },
+    {
+      "name": "session revocation failure is propagated",
+      "category": "A",
+      "dependency": "session-write"
+    },
+    {
+      "name": "token revocation failure is propagated",
+      "category": "A",
+      "dependency": "token-write"
+    },
+    { "name": "outbox failure is propagated", "category": "A", "dependency": "outbox" }
+  ],
+  "UT-008": [
+    {
+      "name": "saves B from the A B C snapshot through controller",
+      "category": "N",
+      "entry": "single",
+      "option": "B"
+    },
+    {
+      "name": "accepts the first snapshot option A",
+      "category": "B",
+      "entry": "single",
+      "option": "A"
+    },
+    {
+      "name": "accepts the last snapshot option C",
+      "category": "B",
+      "entry": "single",
+      "option": "C"
+    },
+    {
+      "name": "null explicitly clears a saved choice",
+      "category": "N",
+      "entry": "single",
+      "option": null
+    },
+    {
+      "name": "saves B one millisecond before deadline",
+      "category": "B",
+      "entry": "single",
+      "option": "B",
+      "deadlineOffset": 1
+    },
+    {
+      "name": "batch draft preserves both question ids and choices",
+      "category": "N",
+      "entry": "draft",
+      "answers": "two"
+    },
+    {
+      "name": "empty batch returns saved zero",
+      "category": "B",
+      "entry": "draft",
+      "answers": "empty"
+    },
+    {
+      "name": "replacing B with C preserves the deadline",
+      "category": "N",
+      "entry": "replace",
+      "option": "C"
+    },
+    {
+      "name": "draft storage failure cannot report save success",
+      "category": "A",
+      "entry": "single",
+      "option": "B",
+      "dependency": "draft-write",
+      "http": 503
+    },
+    {
+      "name": "deadline race rejected by draft storage",
+      "category": "B",
+      "entry": "single",
+      "option": "B",
+      "dependency": "deadline-race",
+      "http": 409
+    },
+    {
+      "name": "save exactly at deadline finalizes expired without writing draft",
+      "category": "B",
+      "entry": "single",
+      "option": "B",
+      "deadlineOffset": 0,
+      "http": 409
+    },
+    {
+      "name": "save one millisecond after deadline finalizes expired",
+      "category": "B",
+      "entry": "single",
+      "option": "B",
+      "deadlineOffset": -1,
+      "http": 409
+    },
+    {
+      "name": "expired attempt defers finalization when draft storage is unavailable",
+      "category": "A",
+      "entry": "single",
+      "option": "B",
+      "deadlineOffset": 0,
+      "dependency": "draft-read",
+      "http": 503
+    }
+  ],
+  "UT-009": [
+    {
+      "name": "rejects D absent from snapshot through single save",
+      "category": "A",
+      "entry": "single",
+      "option": "D"
+    },
+    {
+      "name": "rejects D absent from snapshot through batch save",
+      "category": "A",
+      "entry": "draft",
+      "option": "D"
+    },
+    {
+      "name": "rejects value outside enum through service",
+      "category": "A",
+      "entry": "single",
+      "option": "E"
+    },
+    {
+      "name": "rejects lowercase choice through service",
+      "category": "A",
+      "entry": "single",
+      "option": "b"
+    },
+    {
+      "name": "rejects empty choice through service",
+      "category": "B",
+      "entry": "single",
+      "option": ""
+    },
+    {
+      "name": "rejects missing choice through real DTO pipe",
+      "category": "A",
+      "entry": "dto-single",
+      "missing": true
+    },
+    {
+      "name": "rejects outside enum through real single DTO pipe",
+      "category": "A",
+      "entry": "dto-single",
+      "option": "E"
+    },
+    {
+      "name": "rejects numeric choice through real DTO pipe",
+      "category": "A",
+      "entry": "dto-single",
+      "option": 1
+    },
+    {
+      "name": "rejects outside enum through nested draft DTO",
+      "category": "A",
+      "entry": "dto-draft",
+      "option": "E"
+    },
+    {
+      "name": "rejects outside enum through nested submit DTO",
+      "category": "A",
+      "entry": "dto-submit",
+      "option": "E"
+    },
+    {
+      "name": "valid enum D passes DTO but fails snapshot membership",
+      "category": "A",
+      "entry": "dto-then-save",
+      "option": "D"
+    },
+    {
+      "name": "batch with a valid first choice and invalid second is not partially saved",
+      "category": "A",
+      "entry": "draft",
+      "option": "D",
+      "mixed": true
+    },
+    {
+      "name": "duplicate question ids are rejected before draft write",
+      "category": "A",
+      "entry": "draft",
+      "option": "B",
+      "duplicate": true
+    }
+  ],
+  "UT-010": [
+    {
+      "name": "missing attempt rejected through result lookup",
+      "category": "A",
+      "entry": "result",
+      "record": "missing",
+      "http": 404
+    },
+    {
+      "name": "repeated submit preserves a completed attempt",
+      "category": "N",
+      "entry": "submit",
+      "status": "SUBMITTED",
+      "outcome": "unchanged"
+    },
+    {
+      "name": "omitted submit body contains no foreign questions and finalizes blanks",
+      "category": "B",
+      "entry": "submit-default",
+      "outcome": "finalized"
+    },
+    {
+      "name": "foreign question rejected by single save",
+      "category": "A",
+      "entry": "single",
+      "question": "foreign"
+    },
+    {
+      "name": "foreign question rejected by batch draft",
+      "category": "A",
+      "entry": "draft",
+      "question": "foreign"
+    },
+    {
+      "name": "foreign question rejected by submit without final writes",
+      "category": "A",
+      "entry": "submit",
+      "question": "foreign"
+    },
+    {
+      "name": "mixed local and foreign questions are not partially saved",
+      "category": "A",
+      "entry": "draft",
+      "question": "foreign",
+      "mixed": true
+    },
+    {
+      "name": "mixed local and foreign submit is rejected before final writes",
+      "category": "A",
+      "entry": "submit",
+      "question": "foreign",
+      "mixed": true
+    },
+    {
+      "name": "empty question id rejected by membership check",
+      "category": "B",
+      "entry": "single",
+      "question": "empty"
+    },
+    {
+      "name": "missing locked attempt rejected",
+      "category": "A",
+      "entry": "single",
+      "record": "missing",
+      "http": 404
+    },
+    {
+      "name": "missing row lock rejected",
+      "category": "A",
+      "entry": "single",
+      "lock": "missing",
+      "http": 404
+    },
+    {
+      "name": "another user cannot update the attempt",
+      "category": "A",
+      "entry": "single",
+      "owner": "foreign",
+      "http": 403
+    },
+    {
+      "name": "legacy snapshot is read only",
+      "category": "A",
+      "entry": "single",
+      "snapshotVersion": 0,
+      "http": 409
+    },
+    {
+      "name": "submitted attempt cannot accept draft",
+      "category": "A",
+      "entry": "single",
+      "status": "SUBMITTED",
+      "http": 409
+    },
+    {
+      "name": "expired status cannot accept draft",
+      "category": "A",
+      "entry": "single",
+      "status": "EXPIRED",
+      "http": 409
+    },
+    {
+      "name": "empty snapshot rejects every question",
+      "category": "B",
+      "entry": "single",
+      "snapshot": "empty"
+    }
+  ]
+}

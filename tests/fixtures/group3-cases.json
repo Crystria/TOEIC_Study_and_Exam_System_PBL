@@ -1,0 +1,389 @@
+{
+  "UT-011": [
+    {
+      "name": "draft rejects adjacent duplicates at the head",
+      "category": "A",
+      "entry": "draft",
+      "questions": [1, 1, 2]
+    },
+    {
+      "name": "draft rejects adjacent duplicates at the tail",
+      "category": "A",
+      "entry": "draft",
+      "questions": [1, 2, 2]
+    },
+    {
+      "name": "draft rejects separated duplicates",
+      "category": "A",
+      "entry": "draft",
+      "questions": [1, 2, 1]
+    },
+    {
+      "name": "submit rejects adjacent duplicates at the head",
+      "category": "A",
+      "entry": "submit",
+      "questions": [1, 1, 2]
+    },
+    {
+      "name": "submit rejects adjacent duplicates at the tail",
+      "category": "A",
+      "entry": "submit",
+      "questions": [1, 2, 2]
+    },
+    {
+      "name": "submit rejects separated duplicates",
+      "category": "A",
+      "entry": "submit",
+      "questions": [1, 2, 1]
+    },
+    {
+      "name": "distinct batch is saved as a positive control",
+      "category": "N",
+      "entry": "draft",
+      "questions": [1, 2],
+      "unique": true
+    },
+    {
+      "name": "distinct batch is finalized as a positive control",
+      "category": "N",
+      "entry": "submit",
+      "questions": [1, 2],
+      "unique": true
+    }
+  ],
+  "UT-012": [
+    {
+      "name": "single answer changes A to B then null with real DTO validation",
+      "category": "N",
+      "entry": "single",
+      "storage": "harness"
+    },
+    {
+      "name": "batch changes A to B then null with real DTO validation",
+      "category": "N",
+      "entry": "draft",
+      "storage": "harness"
+    },
+    {
+      "name": "single answer replacement uses real DraftStore with mocked Redis",
+      "category": "N",
+      "entry": "single",
+      "storage": "redis"
+    },
+    {
+      "name": "batch replacement uses real DraftStore with mocked Redis",
+      "category": "N",
+      "entry": "draft",
+      "storage": "redis"
+    }
+  ],
+  "UT-013": [
+    {
+      "name": "single accepts a new answer at deadline minus 1ms",
+      "category": "B",
+      "entry": "single",
+      "clockOffset": -1
+    },
+    {
+      "name": "single at deadline expires using the old draft",
+      "category": "B",
+      "entry": "single",
+      "clockOffset": 0
+    },
+    {
+      "name": "single at deadline plus 1ms expires using the old draft",
+      "category": "B",
+      "entry": "single",
+      "clockOffset": 1
+    },
+    {
+      "name": "draft accepts a new answer at deadline minus 1ms",
+      "category": "B",
+      "entry": "draft",
+      "clockOffset": -1
+    },
+    {
+      "name": "draft at deadline expires using the old draft",
+      "category": "B",
+      "entry": "draft",
+      "clockOffset": 0
+    },
+    {
+      "name": "draft at deadline plus 1ms expires using the old draft",
+      "category": "B",
+      "entry": "draft",
+      "clockOffset": 1
+    },
+    {
+      "name": "submit before deadline uses the submitted override",
+      "category": "B",
+      "entry": "submit",
+      "clockOffset": -1
+    },
+    {
+      "name": "submit at deadline ignores the submitted override",
+      "category": "B",
+      "entry": "submit",
+      "clockOffset": 0
+    },
+    {
+      "name": "submit after deadline ignores the submitted override",
+      "category": "B",
+      "entry": "submit",
+      "clockOffset": 1
+    },
+    {
+      "name": "result before deadline returns a safe active draft",
+      "category": "B",
+      "entry": "result",
+      "clockOffset": -1
+    },
+    {
+      "name": "result at deadline auto finalizes expired",
+      "category": "B",
+      "entry": "result",
+      "clockOffset": 0
+    },
+    {
+      "name": "result after deadline auto finalizes expired",
+      "category": "B",
+      "entry": "result",
+      "clockOffset": 1
+    },
+    {
+      "name": "submit crossing the deadline during draft read ignores the new answer",
+      "category": "B",
+      "entry": "submit",
+      "clockOffset": -1,
+      "readCrossesDeadline": true
+    },
+    {
+      "name": "single expiry defers final writes when draft read fails",
+      "category": "A",
+      "entry": "single",
+      "clockOffset": 0,
+      "readFailure": true
+    },
+    {
+      "name": "batch expiry defers final writes when draft read fails",
+      "category": "A",
+      "entry": "draft",
+      "clockOffset": 0,
+      "readFailure": true
+    }
+  ],
+  "UT-014": [
+    {
+      "name": "submitted attempt rejects single answer mutation",
+      "category": "A",
+      "entry": "single",
+      "status": "SUBMITTED"
+    },
+    {
+      "name": "submitted attempt rejects batch mutation",
+      "category": "A",
+      "entry": "draft",
+      "status": "SUBMITTED"
+    },
+    {
+      "name": "expired attempt rejects single answer mutation",
+      "category": "A",
+      "entry": "single",
+      "status": "EXPIRED"
+    },
+    {
+      "name": "expired attempt rejects batch mutation",
+      "category": "A",
+      "entry": "draft",
+      "status": "EXPIRED"
+    },
+    {
+      "name": "resubmitting a submitted attempt preserves its completed result",
+      "category": "N",
+      "entry": "submit",
+      "status": "SUBMITTED"
+    },
+    {
+      "name": "resubmitting an expired attempt preserves its completed result",
+      "category": "N",
+      "entry": "submit",
+      "status": "EXPIRED"
+    },
+    {
+      "name": "reading a submitted attempt uses its immutable result",
+      "category": "N",
+      "entry": "result",
+      "status": "SUBMITTED"
+    },
+    {
+      "name": "reading an expired attempt uses its immutable result",
+      "category": "N",
+      "entry": "result",
+      "status": "EXPIRED"
+    }
+  ],
+  "UT-015": [
+    {
+      "name": "other user cannot read an active attempt",
+      "category": "A",
+      "entry": "result",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "name": "other user cannot save one answer to an active attempt",
+      "category": "A",
+      "entry": "single",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "name": "other user cannot save a batch to an active attempt",
+      "category": "A",
+      "entry": "draft",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "name": "other user cannot submit an active attempt",
+      "category": "A",
+      "entry": "submit",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "name": "other user cannot trigger expiry through result",
+      "category": "A",
+      "entry": "result",
+      "status": "IN_PROGRESS",
+      "clockOffset": 0
+    },
+    {
+      "name": "other user cannot trigger expiry through single save",
+      "category": "A",
+      "entry": "single",
+      "status": "IN_PROGRESS",
+      "clockOffset": 0
+    },
+    {
+      "name": "other user cannot trigger expiry through batch save",
+      "category": "A",
+      "entry": "draft",
+      "status": "IN_PROGRESS",
+      "clockOffset": 0
+    },
+    {
+      "name": "other user cannot trigger expiry through submit",
+      "category": "A",
+      "entry": "submit",
+      "status": "IN_PROGRESS",
+      "clockOffset": 0
+    },
+    {
+      "name": "other user cannot read a submitted result",
+      "category": "A",
+      "entry": "result",
+      "status": "SUBMITTED"
+    },
+    {
+      "name": "other user cannot mutate a submitted answer",
+      "category": "A",
+      "entry": "single",
+      "status": "SUBMITTED"
+    },
+    {
+      "name": "other user cannot mutate a submitted batch",
+      "category": "A",
+      "entry": "draft",
+      "status": "SUBMITTED"
+    },
+    {
+      "name": "other user cannot obtain a submitted result by resubmitting",
+      "category": "A",
+      "entry": "submit",
+      "status": "SUBMITTED"
+    }
+  ],
+  "UT-023": [
+    {
+      "name": "single propagates draft unavailable without acknowledgement",
+      "category": "A",
+      "entry": "single",
+      "fault": "http503"
+    },
+    {
+      "name": "batch propagates draft unavailable without acknowledgement",
+      "category": "A",
+      "entry": "draft",
+      "fault": "http503"
+    },
+    {
+      "name": "single propagates an unexpected draft exception",
+      "category": "A",
+      "entry": "single",
+      "fault": "error"
+    },
+    {
+      "name": "batch propagates an unexpected draft exception",
+      "category": "A",
+      "entry": "draft",
+      "fault": "error"
+    },
+    {
+      "name": "single propagates the draft deadline race",
+      "category": "B",
+      "entry": "single",
+      "fault": "conflict"
+    },
+    {
+      "name": "batch propagates the draft deadline race",
+      "category": "B",
+      "entry": "draft",
+      "fault": "conflict"
+    },
+    {
+      "name": "single fails when mocked Redis is not ready",
+      "category": "A",
+      "entry": "single",
+      "fault": "redis-not-ready"
+    },
+    {
+      "name": "batch fails when mocked Redis is not ready",
+      "category": "A",
+      "entry": "draft",
+      "fault": "redis-not-ready"
+    },
+    {
+      "name": "single maps a mocked Redis write rejection to 503",
+      "category": "A",
+      "entry": "single",
+      "fault": "redis-reject"
+    },
+    {
+      "name": "batch maps a mocked Redis write rejection to 503",
+      "category": "A",
+      "entry": "draft",
+      "fault": "redis-reject"
+    },
+    {
+      "name": "single maps mocked Redis timeout at 1000ms to 503",
+      "category": "B",
+      "entry": "single",
+      "fault": "redis-timeout"
+    },
+    {
+      "name": "batch maps mocked Redis timeout at 1000ms to 503",
+      "category": "B",
+      "entry": "draft",
+      "fault": "redis-timeout"
+    },
+    {
+      "name": "single maps mocked Redis deadline rejection to 409",
+      "category": "B",
+      "entry": "single",
+      "fault": "redis-deadline"
+    },
+    {
+      "name": "batch maps mocked Redis deadline rejection to 409",
+      "category": "B",
+      "entry": "draft",
+      "fault": "redis-deadline"
+    }
+  ]
+}

@@ -1,0 +1,509 @@
+{
+  "UT-016": [
+    {
+      "name": "mixed answers across all seven unsorted Parts",
+      "category": "N",
+      "kind": "stats",
+      "questions": [
+        ["a", 7, "D"],
+        ["b", 4, "A"],
+        ["c", 5, "B"],
+        ["d", 1, "A"],
+        ["e", 4, "B"],
+        ["f", 2, "C"],
+        ["g", 6, "D"],
+        ["h", 3, "A"],
+        ["i", 5, "C"],
+        ["j", 4, "D"]
+      ],
+      "choices": [
+        ["a", "D"],
+        ["b", "A"],
+        ["c", "B"],
+        ["d", "B"],
+        ["e", null],
+        ["f", "C"],
+        ["g", null],
+        ["h", "A"],
+        ["i", "A"]
+      ],
+      "expected": [
+        [1, "LISTENING", 1, 0, 0],
+        [2, "LISTENING", 1, 1, 1],
+        [3, "LISTENING", 1, 1, 1],
+        [4, "LISTENING", 3, 1, 0.3333333333333333],
+        [5, "READING", 2, 1, 0.5],
+        [6, "READING", 1, 0, 0],
+        [7, "READING", 1, 1, 1]
+      ],
+      "why": "Sai/null/thiếu không đúng; Part 4 và 5 được đếm riêng, sắp tăng dần."
+    },
+    {
+      "name": "zero correct combines wrong null and missing",
+      "category": "B",
+      "kind": "stats",
+      "questions": [
+        ["a", 2, "A"],
+        ["b", 2, "B"],
+        ["c", 2, "C"]
+      ],
+      "choices": [
+        ["a", "B"],
+        ["b", null]
+      ],
+      "expected": [[2, "LISTENING", 3, 0, 0]],
+      "why": "Biên 0; mẫu số vẫn là cả ba câu."
+    },
+    {
+      "name": "one question correct at Listening boundary Part 4",
+      "category": "B",
+      "kind": "stats",
+      "questions": [["a", 4, "A"]],
+      "choices": [["a", "A"]],
+      "expected": [[4, "LISTENING", 1, 1, 1]],
+      "why": "Biên 1 câu và Part cuối Listening."
+    },
+    {
+      "name": "all correct at Reading boundary Part 5",
+      "category": "B",
+      "kind": "stats",
+      "questions": [
+        ["a", 5, "A"],
+        ["b", 5, "B"],
+        ["c", 5, "D"]
+      ],
+      "choices": [
+        ["a", "A"],
+        ["b", "B"],
+        ["c", "D"]
+      ],
+      "expected": [[5, "READING", 3, 3, 1]],
+      "why": "Biên correct=total, accuracy=1; Part đầu Reading."
+    },
+    {
+      "name": "one of three preserves fractional accuracy",
+      "category": "N",
+      "kind": "stats",
+      "questions": [
+        ["a", 7, "A"],
+        ["b", 7, "B"],
+        ["c", 7, "C"]
+      ],
+      "choices": [
+        ["a", "A"],
+        ["b", "D"],
+        ["c", null]
+      ],
+      "expected": [[7, "READING", 3, 1, 0.3333333333333333]],
+      "why": "Phát hiện chia nguyên, mẫu số chỉ đếm câu đã chọn hoặc làm tròn sớm."
+    },
+    {
+      "name": "same answer key in distinct Parts and foreign choice",
+      "category": "N",
+      "kind": "stats",
+      "questions": [
+        ["a", 6, "A"],
+        ["b", 1, "A"]
+      ],
+      "choices": [
+        ["a", "A"],
+        ["b", "A"],
+        ["foreign", "A"]
+      ],
+      "expected": [
+        [1, "LISTENING", 1, 1, 1],
+        [6, "READING", 1, 1, 1]
+      ],
+      "why": "Đếm theo questionId; lựa chọn ngoài danh sách không thêm câu."
+    },
+    {
+      "name": "unsorted Part order does not mutate input",
+      "category": "N",
+      "kind": "stats",
+      "questions": [
+        ["a", 7, "A"],
+        ["b", 5, "A"],
+        ["c", 4, "A"],
+        ["d", 1, "A"]
+      ],
+      "choices": [],
+      "expected": [
+        [1, "LISTENING", 1, 0, 0],
+        [4, "LISTENING", 1, 0, 0],
+        [5, "READING", 1, 0, 0],
+        [7, "READING", 1, 0, 0]
+      ],
+      "why": "Sắp trên tập Part mới, không sort mảng câu hỏi gốc."
+    },
+    {
+      "name": "no choices leaves all snapshot questions in denominator",
+      "category": "B",
+      "kind": "stats",
+      "questions": [
+        ["a", 3, "A"],
+        ["b", 3, "B"]
+      ],
+      "choices": [],
+      "expected": [[3, "LISTENING", 2, 0, 0]],
+      "why": "Map rỗng vẫn có total=2."
+    },
+    {
+      "name": "empty pure statistics has no phantom Part",
+      "category": "B",
+      "kind": "stats",
+      "questions": [],
+      "choices": [["foreign", "A"]],
+      "expected": [],
+      "why": "Contract hàm thuần trả []; không đưa attempt rỗng qua finalize."
+    }
+  ],
+  "UT-017": [
+    {
+      "name": "raw zero both skills",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [0, 0, 0, 0, 0, 0, 0],
+      "raw": [0, 0],
+      "expected": [5, 5, 10],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "raw one both skills",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [0, 0, 0, 1, 1, 0, 0],
+      "raw": [1, 1],
+      "expected": [5, 5, 10],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "raw ninety nine both skills",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [5, 25, 39, 30, 29, 16, 54],
+      "raw": [99, 99],
+      "expected": [495, 490, 985],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "raw one hundred both skills",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [6, 25, 39, 30, 30, 16, 54],
+      "raw": [100, 100],
+      "expected": [495, 495, 990],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "middle raw fifty both skills",
+      "category": "N",
+      "kind": "full",
+      "correctByPart": [3, 12, 20, 15, 10, 10, 30],
+      "raw": [50, 50],
+      "expected": [230, 185, 415],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "Listening perfect Reading zero",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [6, 25, 39, 30, 0, 0, 0],
+      "raw": [100, 0],
+      "expected": [495, 5, 500],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "Reading perfect Listening zero",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [0, 0, 0, 0, 30, 16, 54],
+      "raw": [0, 100],
+      "expected": [5, 495, 500],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "asymmetric totals across multiple Parts",
+      "category": "N",
+      "kind": "full",
+      "correctByPart": [3, 12, 20, 15, 10, 10, 50],
+      "raw": [50, 70],
+      "expected": [230, 310, 540],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "last low plateau before first increase",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [1, 4, 6, 5, 6, 4, 10],
+      "raw": [16, 20],
+      "expected": [5, 5, 10],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "first increase for each skill",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [2, 4, 6, 5, 6, 5, 10],
+      "raw": [17, 21],
+      "expected": [10, 10, 20],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "upper plateaus start",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [6, 25, 39, 23, 27, 16, 54],
+      "raw": [93, 97],
+      "expected": [495, 485, 980],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "adjacent raw keeps same upper plateau",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [6, 25, 39, 24, 28, 16, 54],
+      "raw": [94, 98],
+      "expected": [495, 485, 980],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "Reading leaves upper plateau",
+      "category": "B",
+      "kind": "full",
+      "correctByPart": [6, 25, 39, 25, 29, 16, 54],
+      "raw": [95, 99],
+      "expected": [495, 490, 985],
+      "why": "Tổng theo kỹ năng từ nhiều Part; expected chép từ bảng phiên bản cố định."
+    },
+    {
+      "name": "all 202 reference cells and Full raw pairs",
+      "category": "N",
+      "kind": "sweep",
+      "why": "Bao phủ mọi mốc chuyển và plateau; oracle là snapshot JSON cố định, không gọi hàm đang test."
+    },
+    {
+      "name": "reject raw -1",
+      "category": "B",
+      "kind": "invalid-raw",
+      "raw": -1,
+      "why": "lookup quy định số nguyên 0..100; kiểm tra cả hai kỹ năng."
+    },
+    {
+      "name": "reject raw 101",
+      "category": "B",
+      "kind": "invalid-raw",
+      "raw": 101,
+      "why": "lookup quy định số nguyên 0..100; kiểm tra cả hai kỹ năng."
+    },
+    {
+      "name": "reject raw 0.5",
+      "category": "A",
+      "kind": "invalid-raw",
+      "raw": 0.5,
+      "why": "lookup quy định số nguyên 0..100; kiểm tra cả hai kỹ năng."
+    },
+    {
+      "name": "reject raw NaN",
+      "category": "A",
+      "kind": "invalid-raw",
+      "raw": "NaN",
+      "why": "lookup quy định số nguyên 0..100; kiểm tra cả hai kỹ năng."
+    },
+    {
+      "name": "reject raw Infinity",
+      "category": "A",
+      "kind": "invalid-raw",
+      "raw": "Infinity",
+      "why": "lookup quy định số nguyên 0..100; kiểm tra cả hai kỹ năng."
+    },
+    {
+      "name": "reject raw -Infinity",
+      "category": "A",
+      "kind": "invalid-raw",
+      "raw": "-Infinity",
+      "why": "lookup quy định số nguyên 0..100; kiểm tra cả hai kỹ năng."
+    },
+    {
+      "name": "reject invalid reference table null",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "null",
+      "error": "expected an object",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table number",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "number",
+      "error": "expected an object",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table version-type",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "version-type",
+      "error": "missing version",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table version-empty",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "version-empty",
+      "error": "missing version",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table official",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "official",
+      "error": "official must be boolean",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table source-type",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "source-type",
+      "error": "missing source",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table source-empty",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "source-empty",
+      "error": "missing source",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table array",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "array",
+      "error": "table must be an array",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table length100",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "length100",
+      "error": "expected 101 rows, got 100",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table length102",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "length102",
+      "error": "expected 101 rows, got 102",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table fraction",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "fraction",
+      "error": "raw 50 is not an integer",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table below",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "below",
+      "error": "raw 0 out of range: 0",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table above",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "above",
+      "error": "raw 100 out of range: 500",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table step",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "step",
+      "error": "raw 0 is not a multiple of 5: 7",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "reject invalid reference table decrease",
+      "category": "A",
+      "kind": "invalid-table",
+      "mutation": "decrease",
+      "error": "score decreases at raw 50",
+      "why": "Rẽ nhánh validator khởi tạo; chỉ phá một điều kiện cho mỗi bảng."
+    },
+    {
+      "name": "loader failure fallback production",
+      "category": "A",
+      "kind": "fallback",
+      "policy": "production",
+      "why": "Production/opt-out ném lỗi; fallback dev không được công bố là lookup cho sự kiện Full."
+    },
+    {
+      "name": "loader failure fallback disabled",
+      "category": "A",
+      "kind": "fallback",
+      "policy": "disabled",
+      "why": "Production/opt-out ném lỗi; fallback dev không được công bố là lookup cho sự kiện Full."
+    },
+    {
+      "name": "loader failure fallback development",
+      "category": "A",
+      "kind": "fallback",
+      "policy": "development",
+      "why": "Production/opt-out ném lỗi; fallback dev không được công bố là lookup cho sự kiện Full."
+    },
+    {
+      "name": "refuse Full provenance listening-dev",
+      "category": "A",
+      "kind": "provenance",
+      "mutation": "listening-dev",
+      "why": "Không công bố dev-formula hoặc hai phiên bản không khớp là lookup."
+    },
+    {
+      "name": "refuse Full provenance reading-dev",
+      "category": "A",
+      "kind": "provenance",
+      "mutation": "reading-dev",
+      "why": "Không công bố dev-formula hoặc hai phiên bản không khớp là lookup."
+    },
+    {
+      "name": "refuse Full provenance version-mismatch",
+      "category": "A",
+      "kind": "provenance",
+      "mutation": "version-mismatch",
+      "why": "Không công bố dev-formula hoặc hai phiên bản không khớp là lookup."
+    },
+    {
+      "name": "finalize valid seven Part snapshot in FULL mode",
+      "category": "N",
+      "kind": "finalize",
+      "mode": "FULL",
+      "correctByPart": [3, 12, 20, 15, 10, 10, 50],
+      "raw": [50, 70],
+      "expected": [230, 310, 540],
+      "why": "200 câu hợp lệ, validator thật; chỉ FULL được scale dù PART chọn đủ 7 Part."
+    },
+    {
+      "name": "finalize valid seven Part snapshot in PART mode",
+      "category": "N",
+      "kind": "finalize",
+      "mode": "PART",
+      "correctByPart": [3, 12, 20, 15, 10, 10, 50],
+      "raw": [50, 70],
+      "expected": [230, 310, 540],
+      "why": "200 câu hợp lệ, validator thật; chỉ FULL được scale dù PART chọn đủ 7 Part."
+    }
+  ]
+}
