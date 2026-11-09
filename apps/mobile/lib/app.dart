@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'theme/app_colors.dart';
-import 'features/auth/screens/login_screen.dart';
+import 'features/auth/screens/auth_gate_screen.dart';
 
 class ToeicMobileApp extends StatelessWidget {
   const ToeicMobileApp({super.key});
@@ -63,7 +63,7 @@ class ToeicMobileApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const LoginScreen(),
+      home: const AuthGateScreen(),
     );
   }
 }

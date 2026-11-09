@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/config/app_config.dart';
+
 import '../../../shared/widgets/text_link_button.dart';
 import '../../../theme/app_colors.dart';
 import '../models/email_action_ticket.dart';
@@ -26,6 +28,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<void> _onSendLink() async {
+    if (context.read<AppConfig>().apiEnabled) {
+      _showMessage(
+        'Backend hiện chưa cung cấp API đặt lại mật khẩu.',
+      );
+      return;
+    }
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final provider = context.read<ForgotPasswordProvider>();
     if (provider.isLoading) return;
@@ -60,6 +68,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = context.watch<ForgotPasswordProvider>().isLoading;
+    final apiEnabled = context.watch<AppConfig>().apiEnabled;
 
     return Scaffold(
       body: SafeArea(
@@ -113,8 +122,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
+                    if (apiEnabled)
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 14),
+                        child: Text(
+                          'Chức năng đặt lại mật khẩu chưa được Backend hỗ trợ. '
+                          'Không có yêu cầu đặt lại nào được gửi.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.warning,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
                     ElevatedButton(
-                      onPressed: isLoading ? null : _onSendLink,
+                      onPressed: isLoading || apiEnabled ? null : _onSendLink,
                       child: isLoading
                           ? const SizedBox(
                               width: 20,

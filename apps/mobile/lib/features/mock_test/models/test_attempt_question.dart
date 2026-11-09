@@ -20,6 +20,7 @@ class TestAttemptQuestion {
     this.audioUrl,
     this.imageUrl,
     this.imageDescription,
+    this.transcript,
   });
 
   final String questionId;
@@ -33,6 +34,7 @@ class TestAttemptQuestion {
   final String? audioUrl;
   final String? imageUrl;
   final String? imageDescription;
+  final String? transcript;
 
   bool get isListening => part <= 4;
   bool get usesWrittenOptions => part >= 3;

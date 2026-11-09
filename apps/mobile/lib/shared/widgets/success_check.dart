@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../theme/app_colors.dart';
 
 class SuccessCheck extends StatelessWidget {
@@ -11,7 +12,10 @@ class SuccessCheck extends StatelessWidget {
       width: size,
       height: size,
       alignment: Alignment.center,
-      decoration: const BoxDecoration(color: AppColors.success, shape: BoxShape.circle),
+      decoration: const BoxDecoration(
+        color: AppColors.success,
+        shape: BoxShape.circle,
+      ),
       child: Icon(Icons.check, color: Colors.white, size: size * 0.5),
     );
   }

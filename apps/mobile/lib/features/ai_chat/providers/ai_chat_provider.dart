@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_initializing_formals
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -348,6 +349,27 @@ class AiChatProvider extends ChangeNotifier {
     _clearFailure();
     errorMessage = null;
     status = ChatStatus.idle;
+    notifyListeners();
+  }
+
+
+  /// Invalidates in-flight chat work and drops all account-specific chat state.
+  void resetForUserScopeChange() {
+    _loadRequestId++;
+    _usageRequestId++;
+    _nextLocalMessageId = 1;
+    _retryTimer?.cancel();
+    _retryTimer = null;
+    _retryAvailableAt = null;
+    status = ChatStatus.idle;
+    usageStatus = UsageStatus.idle;
+    messages = [];
+    usage = AiChatUsage.preview();
+    failure = null;
+    usageFailure = null;
+    errorMessage = null;
+    conversationId = null;
+    activeContext = null;
     notifyListeners();
   }
 

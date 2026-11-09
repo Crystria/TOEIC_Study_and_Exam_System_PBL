@@ -14,62 +14,54 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
-  late final TextEditingController _emailController;
+  late final TextEditingController _phoneController;
   late final String? _editingUserId;
+  late final String? _editingSessionId;
 
   @override
   void initState() {
     super.initState();
-
-    // Khởi tạo form từ cùng nguồn User mà ProfileScreen đang hiển thị.
-    final user = context.read<AuthSessionProvider>().currentUser;
+    final sessionProvider = context.read<AuthSessionProvider>();
+    final user = sessionProvider.currentUser;
     _editingUserId = user?.id;
+    _editingSessionId = sessionProvider.currentSession?.id;
     _nameController = TextEditingController(text: user?.fullName ?? '');
-    _emailController = TextEditingController(text: user?.email ?? '');
+    _phoneController = TextEditingController(text: user?.phoneNumber ?? '');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
   String? _validateFullName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Vui lòng nhập họ và tên';
-    }
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    final email = value?.trim() ?? '';
-    if (email.isEmpty) return 'Vui lòng nhập email';
-    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-      return 'Email không hợp lệ';
+      return 'Vui lòng nhập họ và tên.';
     }
     return null;
   }
 
   Future<void> _onSave() async {
-    final form = _formKey.currentState;
-    if (form == null || !form.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final sessionProvider = context.read<AuthSessionProvider>();
     final currentUser = sessionProvider.currentUser;
-    if (currentUser == null) {
-      _showMessage('Không tìm thấy thông tin tài khoản. Vui lòng thử lại.');
-      return;
-    }
-    if (currentUser.id != _editingUserId) {
+    final currentSession = sessionProvider.currentSession;
+    if (currentUser == null ||
+        currentUser.id != _editingUserId ||
+        currentSession?.id != _editingSessionId) {
       _showMessage('Phiên tài khoản đã thay đổi. Vui lòng mở lại màn hình.');
       return;
     }
 
     final fullName = _nameController.text.trim();
-    final email = _emailController.text.trim();
+    final rawPhone = _phoneController.text.trim();
+    final phoneNumber = rawPhone.isEmpty ? null : rawPhone;
 
-    if (fullName == currentUser.fullName && email == currentUser.email) {
+    if (fullName == currentUser.fullName &&
+        phoneNumber == currentUser.phoneNumber) {
       _showMessage('Thông tin chưa có thay đổi.');
       return;
     }
@@ -91,19 +83,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ],
       ),
     );
+    if (confirmed != true || !mounted) return;
 
-    if (confirmed != true) return;
-    if (!mounted) return;
-
-    // Không ghi dữ liệu vào một tài khoản khác nếu session đổi trong lúc mở dialog.
-    final latestUser = context.read<AuthSessionProvider>().currentUser;
-    if (latestUser == null || latestUser.id != _editingUserId) {
+    final latestProvider = context.read<AuthSessionProvider>();
+    if (latestProvider.currentUser?.id != _editingUserId ||
+        latestProvider.currentSession?.id != _editingSessionId) {
       _showMessage('Phiên tài khoản đã thay đổi. Vui lòng mở lại màn hình.');
       return;
     }
 
-    final updatedUser = latestUser.copyWith(fullName: fullName, email: email);
-    context.read<AuthSessionProvider>().setCurrentUser(updatedUser);
+    final updated = await latestProvider.updateProfile(
+      fullName: fullName,
+      phoneNumber: phoneNumber,
+    );
+    if (!mounted) return;
+
+    if (updated == null) {
+      _showMessage(
+        latestProvider.errorMessage ?? 'Không thể cập nhật thông tin cá nhân.',
+      );
+      return;
+    }
 
     _showMessage('Đã cập nhật thông tin cá nhân.');
     Navigator.of(context).pop(true);
@@ -111,12 +111,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.watch<AuthSessionProvider>().currentUser;
+    final sessionProvider = context.watch<AuthSessionProvider>();
+    final currentUser = sessionProvider.currentUser;
+    final isSaving = sessionProvider.isUpdatingProfile;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -141,24 +144,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   TextFormField(
+                    initialValue: currentUser.email,
+                    enabled: false,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      helperText: 'Backend hiện chưa hỗ trợ thay đổi email.',
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
                     controller: _nameController,
                     textCapitalization: TextCapitalization.words,
                     textInputAction: TextInputAction.next,
+                    enabled: !isSaving,
                     decoration: const InputDecoration(labelText: 'Họ và tên'),
                     validator: _validateFullName,
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.done,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    validator: _validateEmail,
+                    enabled: !isSaving,
+                    decoration: const InputDecoration(
+                      labelText: 'Số điện thoại',
+                      hintText: 'Không bắt buộc',
+                    ),
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
-                    onPressed: _onSave,
-                    child: const Text('Lưu thay đổi'),
+                    onPressed: isSaving ? null : _onSave,
+                    child: isSaving
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text('Lưu thay đổi'),
                   ),
                 ],
               ),

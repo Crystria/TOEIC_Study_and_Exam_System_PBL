@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_initializing_formals
 import 'package:flutter/foundation.dart';
 
 import '../models/ai_chat_failure.dart';
@@ -22,6 +23,7 @@ class AiChatHistoryProvider extends ChangeNotifier {
   AiChatFailure? operationFailure;
   bool isCreating = false;
   int _requestId = 0;
+  int _scopeRevision = 0;
 
   List<AiConversation> get conversations =>
       List<AiConversation>.unmodifiable(_conversations);
@@ -47,7 +49,7 @@ class AiChatHistoryProvider extends ChangeNotifier {
       _busyConversationIds.contains(conversationId);
 
   Future<void> loadConversations({bool forceRefresh = false}) async {
-    if (isLoading) return;
+    if (isLoading || isCreating || _busyConversationIds.isNotEmpty) return;
     if (status == HistoryStatus.loaded && !forceRefresh) return;
 
     final requestId = ++_requestId;
@@ -73,31 +75,45 @@ class AiChatHistoryProvider extends ChangeNotifier {
   }
 
   Future<AiConversation?> createConversation({String? title}) async {
-    if (isCreating) return null;
+    if (isCreating || _busyConversationIds.isNotEmpty) return null;
 
     isCreating = true;
     operationErrorMessage = null;
     operationFailure = null;
     errorMessage = null;
+    final scopeRevision = _scopeRevision;
     final requestId = ++_requestId;
     notifyListeners();
 
     try {
       final created = await _repository.createConversation(title: title);
+      if (scopeRevision != _scopeRevision) return null;
+
       final result = await _repository.getConversations();
+      if (scopeRevision != _scopeRevision) return null;
+
       if (requestId == _requestId) {
         _replaceConversations(result);
         status = HistoryStatus.loaded;
+        errorMessage = null;
+        failure = null;
       }
       return created;
     } catch (error) {
-      operationFailure = AiChatFailure.from(error);
-      operationErrorMessage = operationFailure!.userMessage;
-      await _recoverAfterMutationFailure();
+      if (scopeRevision != _scopeRevision) return null;
+      if (requestId == _requestId) {
+        operationFailure = AiChatFailure.from(error);
+        operationErrorMessage = operationFailure!.userMessage;
+        await _recoverAfterMutationFailure(requestId, scopeRevision);
+      }
       return null;
     } finally {
-      isCreating = false;
-      notifyListeners();
+      // Request IDs can change for same-account history operations. Only a
+      // scope change should prevent this operation from clearing isCreating.
+      if (scopeRevision == _scopeRevision) {
+        isCreating = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -112,60 +128,86 @@ class AiChatHistoryProvider extends ChangeNotifier {
       return false;
     }
     if (!_beginConversationOperation(conversationId)) return false;
+    final requestId = _requestId;
+    final scopeRevision = _scopeRevision;
 
     try {
       await _repository.renameConversation(conversationId, normalizedTitle);
-      await _synchronizeAfterMutation();
-      return true;
+      if (requestId != _requestId || scopeRevision != _scopeRevision) {
+        return false;
+      }
+      return await _synchronizeAfterMutation(requestId, scopeRevision);
     } catch (error) {
+      if (requestId != _requestId || scopeRevision != _scopeRevision) {
+        return false;
+      }
       operationFailure = AiChatFailure.from(error);
       operationErrorMessage = operationFailure!.userMessage;
-      await _recoverAfterMutationFailure();
+      await _recoverAfterMutationFailure(requestId, scopeRevision);
       return false;
     } finally {
-      _finishConversationOperation(conversationId);
+      if (requestId == _requestId && scopeRevision == _scopeRevision) {
+        _finishConversationOperation(conversationId);
+      }
     }
   }
 
   Future<bool> deleteConversation(String conversationId) async {
     if (!_beginConversationOperation(conversationId)) return false;
+    final requestId = _requestId;
+    final scopeRevision = _scopeRevision;
 
     try {
       await _repository.deleteConversation(conversationId);
-      await _synchronizeAfterMutation();
-      return true;
+      if (requestId != _requestId || scopeRevision != _scopeRevision) {
+        return false;
+      }
+      return await _synchronizeAfterMutation(requestId, scopeRevision);
     } catch (error) {
+      if (requestId != _requestId || scopeRevision != _scopeRevision) {
+        return false;
+      }
       operationFailure = AiChatFailure.from(error);
       operationErrorMessage = operationFailure!.userMessage;
-      await _recoverAfterMutationFailure();
+      await _recoverAfterMutationFailure(requestId, scopeRevision);
       return false;
     } finally {
-      _finishConversationOperation(conversationId);
+      if (requestId == _requestId && scopeRevision == _scopeRevision) {
+        _finishConversationOperation(conversationId);
+      }
     }
   }
 
-  Future<void> _synchronizeAfterMutation() async {
-    final requestId = ++_requestId;
+  Future<bool> _synchronizeAfterMutation(
+    int requestId,
+    int scopeRevision,
+  ) async {
     final result = await _repository.getConversations();
-    if (requestId != _requestId) return;
+    if (requestId != _requestId || scopeRevision != _scopeRevision) {
+      return false;
+    }
 
     _replaceConversations(result);
     status = HistoryStatus.loaded;
     errorMessage = null;
     failure = null;
+    return true;
   }
 
-  Future<void> _recoverAfterMutationFailure() async {
-    final requestId = ++_requestId;
+  Future<void> _recoverAfterMutationFailure(
+    int requestId,
+    int scopeRevision,
+  ) async {
+    if (requestId != _requestId || scopeRevision != _scopeRevision) return;
     try {
       final result = await _repository.getConversations();
-      if (requestId != _requestId) return;
+      if (requestId != _requestId || scopeRevision != _scopeRevision) return;
       _replaceConversations(result);
       status = HistoryStatus.loaded;
       errorMessage = null;
       failure = null;
     } catch (error) {
-      if (requestId != _requestId) return;
+      if (requestId != _requestId || scopeRevision != _scopeRevision) return;
       status = HistoryStatus.error;
       failure = AiChatFailure.from(error);
       errorMessage = failure!.userMessage;
@@ -173,7 +215,10 @@ class AiChatHistoryProvider extends ChangeNotifier {
   }
 
   bool _beginConversationOperation(String conversationId) {
-    if (_busyConversationIds.contains(conversationId)) return false;
+    // Keep history mutations serial. This prevents one mutation from
+    // invalidating another mutation's synchronization request and leaving a
+    // stale busy marker behind.
+    if (isCreating || _busyConversationIds.isNotEmpty) return false;
 
     operationErrorMessage = null;
     operationFailure = null;
@@ -197,6 +242,23 @@ class AiChatHistoryProvider extends ChangeNotifier {
   void search(String query) {
     if (searchQuery == query) return;
     searchQuery = query;
+    notifyListeners();
+  }
+
+
+  /// Invalidates pending work and clears user-specific history UI state.
+  void resetForUserScopeChange() {
+    _scopeRevision++;
+    _requestId++;
+    _conversations.clear();
+    _busyConversationIds.clear();
+    status = HistoryStatus.idle;
+    searchQuery = '';
+    errorMessage = null;
+    operationErrorMessage = null;
+    failure = null;
+    operationFailure = null;
+    isCreating = false;
     notifyListeners();
   }
 

@@ -120,6 +120,24 @@ class _ReviewFlashcardScreenState extends State<ReviewFlashcardScreen> {
                     color: AppColors.slate500,
                   ),
                 ),
+                if (provider.errorMessage != null) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.dangerBg,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      provider.errorMessage!,
+                      style: const TextStyle(
+                        color: AppColors.danger,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 6),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(99),

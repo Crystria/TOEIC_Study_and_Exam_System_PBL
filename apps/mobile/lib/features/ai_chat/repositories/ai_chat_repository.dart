@@ -20,19 +20,52 @@ class AiChatRepository {
 
   final List<AiConversation> _conversations;
   final Map<String, List<ChatMessage>> _messagesByConversation;
+  int _scopeRevision = 0;
   int _nextConversationNumber = 1;
   int _nextMessageNumber = 1;
   AiChatUsage _usage = AiChatUsage.preview();
 
+  /// Clears mutable mock conversations and restores the shared demo fixtures.
+  /// Conversation data must never survive an account switch in this repository.
+  void resetForUserScopeChange() {
+    _scopeRevision++;
+    _conversations
+      ..clear()
+      ..addAll(AiChatMockData.conversations);
+    _messagesByConversation
+      ..clear()
+      ..addEntries(
+        AiChatMockData.messagesByConversation.entries.map(
+          (entry) => MapEntry(
+            entry.key,
+            List<ChatMessage>.of(entry.value),
+          ),
+        ),
+      );
+    _nextConversationNumber = 1;
+    _nextMessageNumber = 1;
+    _usage = AiChatUsage.preview();
+  }
+
+  void _ensureScope(int revision) {
+    if (revision != _scopeRevision) {
+      throw StateError('Tài khoản đã thay đổi trong lúc xử lý AI Chat.');
+    }
+  }
+
   Future<AiChatUsage> getUsage() async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 100));
+    _ensureScope(revision);
     _refreshPreviewUsage();
     return _usage;
   }
 
   Future<List<AiConversation>> getConversations() async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 250));
 
+    _ensureScope(revision);
     final conversations = List<AiConversation>.of(_conversations)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
@@ -40,7 +73,9 @@ class AiChatRepository {
   }
 
   Future<AiConversation> getConversation(String conversationId) async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 120));
+    _ensureScope(revision);
 
     for (final conversation in _conversations) {
       if (conversation.id == conversationId) return conversation;
@@ -49,7 +84,9 @@ class AiChatRepository {
   }
 
   Future<List<ChatMessage>> getMessages(String conversationId) async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 200));
+    _ensureScope(revision);
 
     final messages = _messagesByConversation[conversationId];
     if (messages == null) {
@@ -75,7 +112,9 @@ class AiChatRepository {
     String? title,
     AiChatContext? context,
   }) async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 150));
+    _ensureScope(revision);
 
     final normalizedTitle = title?.trim();
     if (normalizedTitle != null && normalizedTitle.isEmpty) {
@@ -102,7 +141,9 @@ class AiChatRepository {
     String conversationId,
     ChatMessage userMessage,
   ) async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 650));
+    _ensureScope(revision);
 
     _refreshPreviewUsage();
     if (_usage.isExhausted) {
@@ -169,7 +210,9 @@ class AiChatRepository {
     String conversationId,
     String newTitle,
   ) async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 150));
+    _ensureScope(revision);
 
     final normalizedTitle = newTitle.trim();
     if (normalizedTitle.isEmpty) {
@@ -192,7 +235,9 @@ class AiChatRepository {
   }
 
   Future<void> deleteConversation(String conversationId) async {
+    final revision = _scopeRevision;
     await Future<void>.delayed(const Duration(milliseconds: 150));
+    _ensureScope(revision);
 
     final index = _conversations.indexWhere(
       (conversation) => conversation.id == conversationId,
@@ -232,23 +277,23 @@ class AiChatRepository {
     };
 
     if (normalized.contains('since') || normalized.contains('for')) {
-      return '${contextPrefix}'
+      return '$contextPrefix'
           'Since dùng với mốc thời gian bắt đầu; for dùng với khoảng thời gian. '
           '(Phản hồi mô phỏng)';
     }
     if (normalized.contains('by') || normalized.contains('during')) {
-      return '${contextPrefix}'
+      return '$contextPrefix'
           'By thường diễn tả hạn chót (chậm nhất vào thời điểm nào đó), '
           'còn during nhấn mạnh một sự việc diễn ra trong suốt một khoảng thời gian. '
           '(Phản hồi mô phỏng)';
     }
     if (normalized.contains('mệnh đề quan hệ')) {
-      return '${contextPrefix}'
+      return '$contextPrefix'
           'Để làm câu mệnh đề quan hệ trong TOEIC, hãy xác định danh từ được '
           'bổ nghĩa và vai trò của chỗ trống trong mệnh đề. (Phản hồi mô phỏng)';
     }
 
-    return '${contextPrefix}'
+    return '$contextPrefix'
         'Mình đã nhận được câu hỏi của bạn: "$content". '
         'Đây là phản hồi mô phỏng ở Step 5.5; khi tích hợp backend, '
         'nội dung sẽ được thay bằng phản hồi từ AI service.';

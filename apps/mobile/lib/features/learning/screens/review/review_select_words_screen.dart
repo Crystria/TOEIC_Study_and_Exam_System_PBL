@@ -42,11 +42,19 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
       return;
     }
 
-    await context.read<ReviewFlashcardProvider>().loadQueue(selected);
-    if (!mounted) return;
+    final loaded = await context.read<ReviewFlashcardProvider>().loadQueue(
+      selected,
+      expectedUserId: selectProvider.loadedUserId,
+    );
+    if (!mounted || !loaded) return;
     await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(builder: (_) => const ReviewFlashcardScreen()),
     );
+
+    if (!mounted) return;
+    // The reviewed words may no longer be due. Refresh the server queue so
+    // returning from the flashcards does not show stale items/revisions.
+    await selectProvider.loadDueWords(selectProvider.selectedTopicId);
   }
 
   void _onSkip() {
@@ -114,7 +122,7 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
 
     final words = provider.words;
     final topicName =
-        ReviewSelectWordsProvider.topics[provider.selectedTopicId] ?? 'Chủ đề';
+        provider.topicOptions[provider.selectedTopicId] ?? 'Chủ đề';
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -147,7 +155,7 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Row(
-                children: ReviewSelectWordsProvider.topics.entries.map((topic) {
+                children: provider.topicOptions.entries.map((topic) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChipButton(
@@ -160,62 +168,87 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: words.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final word = words[index];
-                  return AppCard(
-                    padding: const EdgeInsets.all(14),
-                    borderColor: word.selected
-                        ? AppColors.brand
-                        : AppColors.border,
-                    child: InkWell(
-                      onTap: () => provider.toggle(word.id),
-                      child: Row(
-                        children: [
-                          Checkbox(
-                            value: word.selected,
-                            activeColor: AppColors.brand,
-                            onChanged: (_) => provider.toggle(word.id),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+              child: words.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.event_available_outlined,
+                              size: 42,
+                              color: AppColors.slate400,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Không có từ đến hạn ôn trong chủ đề này.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.slate500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: words.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final word = words[index];
+                        return AppCard(
+                          padding: const EdgeInsets.all(14),
+                          borderColor: word.selected
+                              ? AppColors.brand
+                              : AppColors.border,
+                          child: InkWell(
+                            onTap: () => provider.toggle(word.id),
+                            child: Row(
                               children: [
-                                Text(
-                                  word.word,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.slate900,
+                                Checkbox(
+                                  value: word.selected,
+                                  activeColor: AppColors.brand,
+                                  onChanged: (_) => provider.toggle(word.id),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        word.word,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.slate900,
+                                        ),
+                                      ),
+                                      Text(
+                                        word.meaning,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          color: AppColors.slate500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Text(
-                                  word.meaning,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: AppColors.slate500,
+                                  _masteryLabel(word.mastery),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: _masteryColor(word.mastery),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Text(
-                            _masteryLabel(word.mastery),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: _masteryColor(word.mastery),
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),

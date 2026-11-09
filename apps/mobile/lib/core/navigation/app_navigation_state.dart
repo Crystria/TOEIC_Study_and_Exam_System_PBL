@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 class AppNavigationState {
@@ -38,7 +37,8 @@ class AppNavigationState {
       return;
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    final binding = WidgetsBinding.instance;
+    binding.addPostFrameCallback((_) {
       // A new full-screen route may have registered before this callback.
       // Recheck the owner set to avoid showing the navigation bar too early.
       final shouldHideNavigation = _fullScreenOwners.isNotEmpty;
@@ -47,6 +47,10 @@ class AppNavigationState {
         isFullScreenFlow.value = shouldHideNavigation;
       }
     });
+
+    // addPostFrameCallback does not itself request a frame. Ensure the
+    // deferred notifier update is processed even when no other frame is due.
+    binding.ensureVisualUpdate();
   }
 
   /// Releases a full-screen route immediately.
@@ -68,5 +72,14 @@ class AppNavigationState {
   /// Requests a tab change from a route hosted by the root Navigator.
   static void requestTab(int index) {
     requestedTabIndex.value = index;
+  }
+
+  /// Clears a request that can no longer be consumed by the current Home tree.
+  /// This prevents a route transition (especially logout/root replacement)
+  /// from carrying a stale tab request into a later authenticated session.
+  static void clearPendingTabRequest() {
+    if (requestedTabIndex.value != null) {
+      requestedTabIndex.value = null;
+    }
   }
 }

@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_initializing_formals
 import 'package:flutter/foundation.dart';
+
+import '../../../core/errors/app_exception.dart';
 
 import '../models/mock_test.dart';
 import '../models/mock_test_submission.dart';
@@ -26,11 +29,13 @@ class TestHistoryDetailProvider extends ChangeNotifier {
   MockTest? test;
   MockTestSubmission? submission;
   String? errorMessage;
+  int _requestId = 0;
 
   bool get isFinal =>
       attempt != null && attempt!.status != TestAttemptStatus.inProgress;
 
   Future<void> loadDetail(String attemptId) async {
+    final requestId = ++_requestId;
     status = TestHistoryDetailStatus.loading;
     attempt = null;
     test = null;
@@ -40,12 +45,16 @@ class TestHistoryDetailProvider extends ChangeNotifier {
 
     try {
       final loadedAttempt = await _attemptRepository.getAttempt(attemptId);
+      if (requestId != _requestId) return;
       final loadedTest = await _testRepository.getTest(loadedAttempt.testId);
-      final loadedSubmission = await _attemptRepository.getSubmission(
-        attemptId,
-      );
+      if (requestId != _requestId) return;
+      final loadedSubmission = loadedAttempt.readOnlySnapshot
+          ? null
+          : await _attemptRepository.getSubmission(attemptId);
+      if (requestId != _requestId) return;
 
-      if (loadedAttempt.status != TestAttemptStatus.inProgress &&
+      if (!loadedAttempt.readOnlySnapshot &&
+          loadedAttempt.status != TestAttemptStatus.inProgress &&
           loadedSubmission == null) {
         throw StateError(
           'Attempt đã kết thúc nhưng không tìm thấy snapshot kết quả.',
@@ -57,9 +66,19 @@ class TestHistoryDetailProvider extends ChangeNotifier {
       submission = loadedSubmission;
       status = TestHistoryDetailStatus.loaded;
     } catch (error) {
-      errorMessage = 'Không thể tải chi tiết bài thi: $error';
+      if (requestId != _requestId) return;
+      errorMessage = error is AppException
+          ? error.message
+          : 'Không thể tải chi tiết bài thi. Vui lòng thử lại.';
       status = TestHistoryDetailStatus.error;
     }
-    notifyListeners();
+    if (requestId == _requestId) notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    // Invalidate asynchronous work before ChangeNotifier releases its listeners.
+    _requestId++;
+    super.dispose();
   }
 }

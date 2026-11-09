@@ -42,6 +42,7 @@ class QuickQuizProvider extends ChangeNotifier {
   static const int questionCount = 5;
 
   final Random _random = Random();
+  int _scopeRevision = 0;
   List<QuizQuestion> questions = [];
   List<int?> _selectedAnswers = [];
   List<QuizResultEntry> resultEntries = [];
@@ -63,7 +64,14 @@ class QuickQuizProvider extends ChangeNotifier {
   /// Creates exactly five questions from the words studied on the local day.
   /// Each question uses the word's definition as its correct option and three
   /// other distinct definitions from the same five-word quiz set as distractors.
+  ///
+  /// This stays app-side even when the Learning API is enabled: the Backend's
+  /// vocabulary-session endpoint selects only NEW (no progress row) or REVIEW
+  /// (already due) words, while this product flow must test today's studied
+  /// words, which already received their Backend SM-2 update in
+  /// [VocabularyProvider.grade].
   Future<void> loadQuestions(List<FlashcardItem> studiedToday) async {
+    final revision = _scopeRevision;
     status = QuizStatus.loading;
     message = null;
     questions = [];
@@ -75,6 +83,7 @@ class QuickQuizProvider extends ChangeNotifier {
     notifyListeners();
 
     await Future<void>.delayed(const Duration(milliseconds: 250));
+    if (revision != _scopeRevision) return;
 
     final uniqueById = <String, FlashcardItem>{};
     for (final word in studiedToday) {
@@ -248,6 +257,23 @@ class QuickQuizProvider extends ChangeNotifier {
     status = QuizStatus.finished;
     notifyListeners();
     return true;
+  }
+
+
+  /// Discards user-specific quiz state when the active account changes.
+  void resetForUserScopeChange() {
+    _scopeRevision++;
+    questions = [];
+    _selectedAnswers = [];
+    resultEntries = [];
+    currentIndex = 0;
+    selectedOption = null;
+    correctCount = 0;
+    status = QuizStatus.idle;
+    message = null;
+    _lastQuestionWordIds = const [];
+    _lastQuestionWordSet = const <String>{};
+    notifyListeners();
   }
 
   static String _normalizeDefinition(String value) =>

@@ -54,8 +54,10 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
     setState(() => _isGrading = true);
     try {
       final vocabularyProvider = context.read<VocabularyProvider>();
+      final topicsProvider = context.read<VocabularyTopicsProvider>();
+
       await vocabularyProvider.grade(quality);
-      await context.read<VocabularyTopicsProvider>().refreshProgress();
+      await topicsProvider.refreshProgress();
       if (!mounted) return;
 
       if (vocabularyProvider.status == VocabularyStatus.finished &&

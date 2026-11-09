@@ -13,6 +13,7 @@ class TestHistoryItem {
     required this.durationSeconds,
     required this.startedAt,
     this.completedAt,
+    this.deadlineAt,
     this.score,
     this.scoreListening,
     this.scoreReading,
@@ -30,6 +31,7 @@ class TestHistoryItem {
   final int durationSeconds;
   final DateTime startedAt;
   final DateTime? completedAt;
+  final DateTime? deadlineAt;
   final int? score;
   final int? scoreListening;
   final int? scoreReading;

@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_initializing_formals
 import 'package:flutter/foundation.dart';
 
 import '../models/registration_result.dart';
@@ -59,6 +60,7 @@ class RegisterProvider extends ChangeNotifier {
         fullName: normalizedName,
         email: normalizedEmail,
         password: password,
+        confirmPassword: confirmPassword,
       );
       status = RegisterStatus.success;
       notifyListeners();

@@ -2,9 +2,30 @@ import 'repositories/ai_chat_repository.dart';
 
 /// Shared in-app dependencies for the AI Chat feature.
 ///
-/// The repository is app-session scoped and currently backed by mock data.
+/// AI Chat deliberately stays local/mock until the Backend identity and
+/// conversation-ownership checks pass the security review. This decision is
+/// independent of the global API_ENABLED flag used by other features.
 class AiChatDependencies {
   AiChatDependencies._();
 
-  static final AiChatRepository repository = AiChatRepository();
+  /// The current AI Backend does not meet the requirements for safe mobile
+  /// integration. Do not change this to true merely because API_ENABLED is
+  /// true; the blockers must first be fixed and verified in the Backend.
+  static const bool backendIntegrationSafetyPassed = false;
+
+  static final AiChatRepository repository = _createRepository();
+
+  static AiChatRepository _createRepository() {
+    // Fail closed if someone marks the security gate as passed without also
+    // implementing and explicitly wiring an approved API repository.
+    if (backendIntegrationSafetyPassed) {
+      throw StateError(
+        'AI Chat safety gate passed, but no approved Backend repository is '
+        'configured. Implement and review the API repository before enabling '
+        'Backend integration.',
+      );
+    }
+
+    return AiChatRepository();
+  }
 }

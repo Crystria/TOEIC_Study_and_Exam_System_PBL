@@ -134,6 +134,16 @@ class _TestHistoryDetailContent extends StatelessWidget {
               );
             }
 
+            if (attempt.readOnlySnapshot) {
+              return _DetailMessage(
+                message:
+                    'Đây là lượt thi lịch sử cũ. Backend không còn question snapshot '
+                    'cho lượt thi này nên ứng dụng không thể mở lại bài làm hoặc '
+                    'hiển thị giải thích từng câu.',
+                onBack: () => Navigator.of(context).maybePop(),
+              );
+            }
+
             if (attempt.status == TestAttemptStatus.inProgress) {
               return _InProgressDetail(
                 testTitle: test.title,
@@ -680,7 +690,7 @@ String _formatDuration(int seconds) {
   final hours = safeSeconds ~/ 3600;
   final minutes = (safeSeconds % 3600) ~/ 60;
   final remainingSeconds = safeSeconds % 60;
-  if (hours > 0) return '${hours} giờ ${minutes} phút';
+  if (hours > 0) return '$hours giờ $minutes phút';
   if (minutes > 0) return '$minutes phút';
   return '$remainingSeconds giây';
 }
