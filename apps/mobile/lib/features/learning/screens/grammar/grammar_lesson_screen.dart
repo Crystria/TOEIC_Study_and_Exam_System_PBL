@@ -75,7 +75,7 @@ class _GrammarLessonScreenState extends State<GrammarLessonScreen> {
         category: lesson.category,
         summary: lesson.summary,
         content: lessonContent,
-        keyTakeaway: lesson.keyTakeaway,
+        keyTakeaway: lesson.keyTakeaway ?? '',
       ),
     );
     AppNavigationState.requestTab(3);
@@ -192,11 +192,17 @@ class _GrammarLessonScreenState extends State<GrammarLessonScreen> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _InfoChip(label: lesson.level, icon: Icons.signal_cellular_alt),
-                _InfoChip(
-                  label: '${lesson.durationMinutes} phút',
-                  icon: Icons.schedule_outlined,
-                ),
+                if (lesson.level != null && lesson.level!.isNotEmpty)
+                  _InfoChip(
+                    label: lesson.level!,
+                    icon: Icons.signal_cellular_alt,
+                  ),
+                if (lesson.durationMinutes != null &&
+                    lesson.durationMinutes! > 0)
+                  _InfoChip(
+                    label: '${lesson.durationMinutes} phút',
+                    icon: Icons.schedule_outlined,
+                  ),
                 _InfoChip(
                   label: '${lesson.sections.length} phần',
                   icon: Icons.menu_book_outlined,
@@ -294,38 +300,40 @@ class _GrammarLessonScreenState extends State<GrammarLessonScreen> {
               ),
               const SizedBox(height: 12),
             ],
-            AppCard(
-              color: AppColors.successBg,
-              borderColor: AppColors.success.withValues(alpha: 0.25),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.lightbulb_outline, color: AppColors.success),
-                      SizedBox(width: 8),
-                      Text(
-                        'Ghi nhớ',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.slate900,
+            if (lesson.keyTakeaway != null &&
+                lesson.keyTakeaway!.trim().isNotEmpty)
+              AppCard(
+                color: AppColors.successBg,
+                borderColor: AppColors.success.withValues(alpha: 0.25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.lightbulb_outline, color: AppColors.success),
+                        SizedBox(width: 8),
+                        Text(
+                          'Ghi nhớ',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.slate900,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    lesson.keyTakeaway,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.slate700,
-                      height: 1.5,
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      lesson.keyTakeaway!,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.slate700,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: isDone || isMarkingDone ? null : _onMarkDone,

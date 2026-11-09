@@ -11,9 +11,8 @@ import 'email_verification_success_screen.dart';
 import 'reset_password_screen.dart';
 import 'login_screen.dart';
 
-/// Màn hình xác nhận email chung cho hai luồng:
-/// - Xác minh email sau đăng ký.
-/// - Xác nhận đã gửi yêu cầu đặt lại mật khẩu.
+/// Email checkpoint for verification and password-reset flows.
+/// API mode never fabricates a token; only Mock mode can open its local ticket.
 class CheckEmailScreen extends StatefulWidget {
   const CheckEmailScreen({super.key, required this.ticket});
 
@@ -37,11 +36,14 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
   bool get _isVerification => _ticket.type == EmailActionType.emailVerification;
 
   Future<void> _onOpenEmailLink() async {
+    final token = _ticket.token;
+    if (token == null) {
+      _showMessage('Hãy mở liên kết trong email để xác minh tài khoản.');
+      return;
+    }
     if (_openingLink || _ticket.isExpired) {
       if (_ticket.isExpired) {
-        _showMessage(
-          'Liên kết đã hết hạn. Vui lòng quay lại và yêu cầu liên kết mới.',
-        );
+        _showMessage('Liên kết đã hết hạn. Vui lòng yêu cầu liên kết mới.');
       }
       return;
     }
@@ -49,7 +51,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
     if (!_isVerification) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
-          builder: (_) => ResetPasswordScreen(token: _ticket.token),
+          builder: (_) => ResetPasswordScreen(token: token),
         ),
       );
       return;
@@ -57,11 +59,11 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
 
     setState(() => _openingLink = true);
     final provider = context.read<EmailVerificationProvider>();
-    final user = await provider.verifyEmail(_ticket.token);
+    final verified = await provider.verifyEmail(token);
     if (!mounted) return;
     setState(() => _openingLink = false);
 
-    if (user != null) {
+    if (verified) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<void>(
           builder: (_) => const EmailVerificationSuccessScreen(),
@@ -70,7 +72,6 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
       );
       return;
     }
-
     final message = provider.errorMessage;
     if (message != null) _showMessage(message);
   }
@@ -79,26 +80,30 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
     if (_resendingLink || _openingLink) return;
     setState(() => _resendingLink = true);
 
-    EmailActionTicket? newTicket;
+    EmailActionTicket? nextTicket;
     String? errorMessage;
     if (_isVerification) {
       final provider = context.read<EmailVerificationProvider>();
-      newTicket = await provider.requestVerificationLink(_ticket.email);
+      nextTicket = await provider.requestVerificationLink(_ticket.email);
       errorMessage = provider.errorMessage;
     } else {
       final provider = context.read<ForgotPasswordProvider>();
-      newTicket = await provider.sendResetLink(_ticket.email);
+      nextTicket = await provider.sendResetLink(_ticket.email);
       errorMessage = provider.errorMessage;
     }
 
     if (!mounted) return;
     setState(() {
       _resendingLink = false;
-      if (newTicket != null) _ticket = newTicket;
+      if (nextTicket != null) _ticket = nextTicket;
     });
 
-    if (newTicket != null) {
-      _showMessage('Đã tạo liên kết mới trong môi trường mô phỏng.');
+    if (nextTicket != null) {
+      _showMessage(
+        nextTicket.isSimulated
+            ? 'Đã tạo liên kết mới trong môi trường mô phỏng.'
+            : 'Đã gửi yêu cầu. Nếu tài khoản đủ điều kiện, email sẽ được gửi đến hộp thư.',
+      );
     } else if (errorMessage != null) {
       _showMessage(errorMessage);
     }
@@ -127,6 +132,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
         : false;
     final isLoading =
         _openingLink || _resendingLink || verificationLoading || resetLoading;
+    final hasInAppToken = _ticket.token != null;
     final expired = _ticket.isExpired;
 
     return PopScope(
@@ -158,9 +164,11 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _isVerification
-                          ? 'Liên kết xác minh tài khoản được tạo cho ${_ticket.email}. Liên kết có hiệu lực trong 30 phút.'
-                          : 'Liên kết đặt lại mật khẩu được tạo cho ${_ticket.email}. Liên kết có hiệu lực trong 30 phút.',
+                      hasInAppToken
+                          ? 'Liên kết mô phỏng được tạo cho ${_ticket.email}. '
+                                'Liên kết có hiệu lực trong 30 phút.'
+                          : 'Yêu cầu đã được gửi cho ${_ticket.email}. '
+                                'Hãy kiểm tra hộp thư và thư mục spam.',
                       style: const TextStyle(
                         fontSize: 14,
                         color: AppColors.slate500,
@@ -168,35 +176,44 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Đây là luồng mô phỏng: ứng dụng không gửi email thật. '
-                      'Nút bên dưới mô phỏng thao tác mở liên kết nhận được trong email.',
+                    Text(
+                      hasInAppToken
+                          ? 'Đây là luồng mô phỏng: ứng dụng không gửi email thật. '
+                                'Nút bên dưới mô phỏng thao tác mở liên kết.'
+                          : 'Backend gửi liên kết qua email và không trả token xác minh '
+                                'trong response. Liên kết chỉ mở trong ứng dụng khi '
+                                'ứng dụng đã được cấu hình tiếp nhận app link.',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.warning,
+                        color: hasInAppToken
+                            ? AppColors.warning
+                            : AppColors.slate500,
                         height: 1.4,
                       ),
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: isLoading || expired ? null : _onOpenEmailLink,
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
+                    if (hasInAppToken)
+                      ElevatedButton(
+                        onPressed: isLoading || expired
+                            ? null
+                            : _onOpenEmailLink,
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                expired
+                                    ? 'Liên kết đã hết hạn'
+                                    : _isVerification
+                                    ? 'Xác minh email (mô phỏng)'
+                                    : 'Mở liên kết đặt lại (mô phỏng)',
                               ),
-                            )
-                          : Text(
-                              expired
-                                  ? 'Liên kết đã hết hạn'
-                                  : _isVerification
-                                  ? 'Xác minh email (mô phỏng)'
-                                  : 'Mở liên kết đặt lại (mô phỏng)',
-                            ),
-                    ),
+                      ),
                     const SizedBox(height: 8),
                     Center(
                       child: TextButton(

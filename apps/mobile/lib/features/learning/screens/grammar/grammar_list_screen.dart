@@ -211,6 +211,16 @@ class _GrammarListScreenState extends State<GrammarListScreen> {
                   ],
                 ),
               ),
+              if (provider.persistenceError != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  provider.persistenceError!,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.danger,
+                  ),
+                ),
+              ],
               const SizedBox(height: 18),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -274,7 +284,15 @@ class _GrammarListScreenState extends State<GrammarListScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '${lesson.category} · ${lesson.level} · ${lesson.durationMinutes} phút',
+                                    [
+                                      lesson.category,
+                                      if (lesson.level != null &&
+                                          lesson.level!.isNotEmpty)
+                                        lesson.level!,
+                                      if (lesson.durationMinutes != null &&
+                                          lesson.durationMinutes! > 0)
+                                        '${lesson.durationMinutes} phút',
+                                    ].join(' · '),
                                     style: const TextStyle(
                                       fontSize: 11,
                                       color: AppColors.slate500,

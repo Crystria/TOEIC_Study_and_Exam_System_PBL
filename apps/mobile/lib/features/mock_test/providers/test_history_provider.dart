@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_initializing_formals
 import 'package:flutter/foundation.dart';
+
+import '../../../core/errors/app_exception.dart';
 
 import '../models/test_attempt.dart';
 import '../models/test_history_item.dart';
@@ -66,7 +69,9 @@ class TestHistoryProvider extends ChangeNotifier {
       status = TestHistoryStatus.loaded;
     } catch (error) {
       if (requestId != _requestId) return;
-      errorMessage = 'Không thể tải lịch sử làm bài: $error';
+      errorMessage = error is AppException
+          ? error.message
+          : 'Không thể tải lịch sử làm bài. Vui lòng thử lại.';
       status = TestHistoryStatus.error;
     }
     notifyListeners();
@@ -93,7 +98,9 @@ class TestHistoryProvider extends ChangeNotifier {
       status = TestHistoryStatus.loaded;
     } catch (error) {
       if (requestId != _requestId) return;
-      loadMoreErrorMessage = 'Không thể tải thêm lịch sử: $error';
+      loadMoreErrorMessage = error is AppException
+          ? error.message
+          : 'Không thể tải thêm lịch sử. Vui lòng thử lại.';
       status = TestHistoryStatus.loaded;
     }
     notifyListeners();
@@ -103,5 +110,12 @@ class TestHistoryProvider extends ChangeNotifier {
     if (filter == nextFilter) return;
     filter = nextFilter;
     await loadHistory();
+  }
+
+  @override
+  void dispose() {
+    // Invalidate asynchronous work before ChangeNotifier releases its listeners.
+    _requestId++;
+    super.dispose();
   }
 }

@@ -4,10 +4,25 @@ import '../../widgets/quantity_stepper.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../theme/app_colors.dart';
 
+class ReviewGoalSettingsResult {
+  const ReviewGoalSettingsResult({
+    required this.dailyGoal,
+    required this.remindEnabled,
+  });
+
+  final int dailyGoal;
+  final bool remindEnabled;
+}
+
 class ReviewGoalSettingsScreen extends StatefulWidget {
-  const ReviewGoalSettingsScreen({super.key, this.initialGoal = 20});
+  const ReviewGoalSettingsScreen({
+    super.key,
+    this.initialGoal = 20,
+    this.initialRemindEnabled = true,
+  });
 
   final int initialGoal;
+  final bool initialRemindEnabled;
 
   @override
   State<ReviewGoalSettingsScreen> createState() =>
@@ -21,9 +36,10 @@ class _ReviewGoalSettingsScreenState extends State<ReviewGoalSettingsScreen> {
   void initState() {
     super.initState();
     _dailyGoal = widget.initialGoal;
+    _remindEnabled = widget.initialRemindEnabled;
   }
 
-  bool _remindEnabled = true;
+  late bool _remindEnabled;
   static const int _minGoal = 5;
   static const int _maxGoal = 100;
   static const int _step = 5;
@@ -36,7 +52,12 @@ class _ReviewGoalSettingsScreenState extends State<ReviewGoalSettingsScreen> {
   );
 
   void _onSave() {
-    Navigator.of(context).pop(_dailyGoal);
+    Navigator.of(context).pop(
+      ReviewGoalSettingsResult(
+        dailyGoal: _dailyGoal,
+        remindEnabled: _remindEnabled,
+      ),
+    );
   }
 
   void _onCancel(BuildContext context) => Navigator.of(context).maybePop();

@@ -34,7 +34,8 @@ class ProfileScreen extends StatelessWidget {
 
     // Xóa User và metadata session trước khi thay toàn bộ root navigation
     // stack. Các nested Navigator của Home cũng bị hủy theo route này.
-    context.read<AuthSessionProvider>().clearCurrentUser();
+    await context.read<AuthSessionProvider>().logout();
+    if (!context.mounted) return;
 
     Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
       MaterialPageRoute(builder: loginRouteBuilder),

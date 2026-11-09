@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../../../shared/models/app_user.dart';
 import '../models/email_action_ticket.dart';
 import '../models/registration_result.dart';
@@ -8,10 +10,9 @@ import 'auth_repository.dart';
 /// - Không gửi email và không gọi Backend.
 /// - Token được tạo trong bộ nhớ để mô phỏng thao tác mở liên kết.
 /// - Tài khoản, mật khẩu và token mất khi ứng dụng khởi động lại.
-class FakeAuthRepository implements AuthRepository {
+class FakeAuthRepository extends AuthRepository {
   final Map<String, _FakeAccount> _accountsByEmail = {};
   final Map<String, _PendingEmailAction> _pendingActions = {};
-  int _nextUserId = 1;
   int _nextTokenId = 1;
 
   @override
@@ -24,52 +25,23 @@ class FakeAuthRepository implements AuthRepository {
     final normalizedIdentifier = identifier.trim().toLowerCase();
     final account = _findAccount(normalizedIdentifier);
 
-    if (account != null) {
-      if (!account.user.emailVerified) {
-        throw const AuthRepositoryException(
-          'Tài khoản chưa xác minh email. Vui lòng kiểm tra email trước khi đăng nhập.',
-        );
-      }
-      if (account.password != password) {
-        throw const AuthRepositoryException(
-          'Email/tên đăng nhập hoặc mật khẩu không chính xác.',
-        );
-      }
-      return account.user;
+    if (account == null) {
+      throw const AuthRepositoryException(
+        'Email/tên đăng nhập hoặc mật khẩu không chính xác. '
+        'Vui lòng đăng ký tài khoản trước khi đăng nhập.',
+      );
     }
-
-    // Hành vi đăng nhập nhanh mock được giữ lại cho identifier chưa đăng ký.
-    final email = normalizedIdentifier.contains('@')
-        ? normalizedIdentifier
-        : '$normalizedIdentifier@demo.toeic.local';
-    final accountBySyntheticEmail = _accountsByEmail[email];
-    if (accountBySyntheticEmail != null) {
-      if (accountBySyntheticEmail.password != password) {
-        throw const AuthRepositoryException(
-          'Email/tên đăng nhập hoặc mật khẩu không chính xác.',
-        );
-      }
-      return accountBySyntheticEmail.user;
+    if (!account.user.emailVerified) {
+      throw const AuthRepositoryException(
+        'Tài khoản chưa xác minh email. Vui lòng kiểm tra email trước khi đăng nhập.',
+      );
     }
-
-    // Tạo tài khoản mock tạm trong bộ nhớ để các thao tác đổi mật khẩu
-    // và đăng nhập lại có thể kiểm tra cùng một thông tin xác thực.
-    final mockUser = AppUser(
-      id: 'mock-login-${Uri.encodeComponent(normalizedIdentifier)}',
-      fullName: _displayNameFromIdentifier(identifier.trim()),
-      email: email,
-      emailVerified: true,
-    );
-    _accountsByEmail[email] = _FakeAccount(
-      user: mockUser,
-      password: password,
-      identifiers: {
-        normalizedIdentifier,
-        email,
-        mockUser.fullName.toLowerCase(),
-      },
-    );
-    return mockUser;
+    if (account.password != password) {
+      throw const AuthRepositoryException(
+        'Email/tên đăng nhập hoặc mật khẩu không chính xác.',
+      );
+    }
+    return account.user;
   }
 
   @override
@@ -77,8 +49,13 @@ class FakeAuthRepository implements AuthRepository {
     required String fullName,
     required String email,
     required String password,
+    required String confirmPassword,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 350));
+
+    if (password != confirmPassword) {
+      throw const AuthRepositoryException('Mật khẩu xác nhận không khớp.');
+    }
 
     final normalizedEmail = email.trim().toLowerCase();
     if (_accountsByEmail.containsKey(normalizedEmail)) {
@@ -88,7 +65,7 @@ class FakeAuthRepository implements AuthRepository {
     }
 
     final user = AppUser(
-      id: 'mock-user-${_nextUserId++}',
+      id: _newMockUserId(),
       fullName: fullName.trim(),
       email: normalizedEmail,
       emailVerified: false,
@@ -205,7 +182,7 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<AppUser> verifyEmail({required String token}) async {
+  Future<void> verifyEmail({required String token}) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
     final action = _takeValidAction(
       token: token,
@@ -219,7 +196,43 @@ class FakeAuthRepository implements AuthRepository {
     }
 
     account.user = account.user.copyWith(emailVerified: true);
-    return account.user;
+  }
+
+  @override
+  Future<AppUser> updateProfile({
+    required String userId,
+    required String fullName,
+    required String? phoneNumber,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+
+    _FakeAccount? matchedAccount;
+    String? accountEmail;
+    for (final entry in _accountsByEmail.entries) {
+      if (entry.value.user.id == userId) {
+        matchedAccount = entry.value;
+        accountEmail = entry.key;
+        break;
+      }
+    }
+
+    if (matchedAccount == null || accountEmail == null) {
+      throw const AuthRepositoryException(
+        'Không tìm thấy tài khoản cần cập nhật trong phiên thử nghiệm.',
+      );
+    }
+
+    matchedAccount.user = matchedAccount.user.copyWith(
+      fullName: fullName.trim(),
+      phoneNumber: phoneNumber,
+      clearPhoneNumber: phoneNumber == null,
+    );
+    matchedAccount.identifiers
+      ..clear()
+      ..add(accountEmail)
+      ..add(matchedAccount.user.fullName.toLowerCase());
+
+    return matchedAccount.user;
   }
 
   _FakeAccount? _findAccount(String identifier) {
@@ -233,6 +246,21 @@ class FakeAuthRepository implements AuthRepository {
       }
     }
     return null;
+  }
+
+  String _newMockUserId() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    final hex = bytes
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
+    return 'mock-${hex.substring(0, 8)}-'
+        '${hex.substring(8, 12)}-'
+        '${hex.substring(12, 16)}-'
+        '${hex.substring(16, 20)}-'
+        '${hex.substring(20, 32)}';
   }
 
   EmailActionTicket _createTicket({
@@ -279,19 +307,7 @@ class FakeAuthRepository implements AuthRepository {
     return action;
   }
 
-  String _displayNameFromIdentifier(String identifier) {
-    final localPart = identifier.contains('@')
-        ? identifier.split('@').first
-        : identifier;
-    final words = localPart
-        .replaceAll(RegExp(r'[._-]+'), ' ')
-        .split(RegExp(r'\s+'))
-        .where((word) => word.isNotEmpty);
-    final name = words
-        .map((word) => '${word[0].toUpperCase()}${word.substring(1)}')
-        .join(' ');
-    return name.isEmpty ? 'Học viên TOEIC' : name;
-  }
+
 }
 
 class _FakeAccount {

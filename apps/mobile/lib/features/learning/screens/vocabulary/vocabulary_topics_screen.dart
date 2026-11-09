@@ -34,15 +34,27 @@ class _VocabularyTopicsScreenState extends State<VocabularyTopicsScreen> {
   }
 
   Future<void> _onChangeGoal() async {
-    final newGoal = await Navigator.of(context).push<int>(
+    final provider = context.read<VocabularyTopicsProvider>();
+    final result = await Navigator.of(context).push<ReviewGoalSettingsResult>(
       MaterialPageRoute(
         builder: (_) => ReviewGoalSettingsScreen(
-          initialGoal: context.read<VocabularyTopicsProvider>().dailyGoal,
+          initialGoal: provider.dailyGoal,
+          initialRemindEnabled: provider.remindEnabled,
         ),
       ),
     );
-    if (!mounted || newGoal == null) return;
-    await context.read<VocabularyTopicsProvider>().setDailyGoal(newGoal);
+    if (!mounted || result == null) return;
+    try {
+      await provider.saveReviewSettings(
+        dailyGoal: result.dailyGoal,
+        remindEnabled: result.remindEnabled,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Không thể lưu cài đặt ôn từ. Vui lòng thử lại.')),
+      );
+    }
   }
 
   void _onReviewLearned() {

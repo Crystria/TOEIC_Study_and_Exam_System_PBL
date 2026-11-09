@@ -12,6 +12,8 @@ class TestAttempt {
     required this.status,
     required this.startedAt,
     this.completedAt,
+    this.deadlineAtOverride,
+    this.readOnlySnapshot = false,
   });
 
   final String attemptId;
@@ -22,8 +24,11 @@ class TestAttempt {
   final TestAttemptStatus status;
   final DateTime startedAt;
   final DateTime? completedAt;
+  final DateTime? deadlineAtOverride;
+  final bool readOnlySnapshot;
 
-  DateTime get deadlineAt => startedAt.add(Duration(seconds: durationSeconds));
+  DateTime get deadlineAt =>
+      deadlineAtOverride ?? startedAt.add(Duration(seconds: durationSeconds));
 
   TestAttempt copyWith({TestAttemptStatus? status, DateTime? completedAt}) {
     return TestAttempt(
@@ -35,6 +40,8 @@ class TestAttempt {
       status: status ?? this.status,
       startedAt: startedAt,
       completedAt: completedAt ?? this.completedAt,
+      deadlineAtOverride: deadlineAtOverride,
+      readOnlySnapshot: readOnlySnapshot,
     );
   }
 }

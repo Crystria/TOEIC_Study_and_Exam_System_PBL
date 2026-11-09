@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_initializing_formals
 import 'package:flutter/foundation.dart';
+
+import '../../../core/errors/app_exception.dart';
 
 import '../models/mock_test.dart';
 import '../models/test_attempt.dart';
@@ -41,6 +44,7 @@ class SelectTestPartsProvider extends ChangeNotifier {
   int selectedDurationSeconds = defaultPartDurationSeconds;
   String? errorMessage;
   String? createdAttemptId;
+  int _requestId = 0;
 
   TestAttemptMode get mode => _mode;
   Set<int> get selectedParts => Set<int>.unmodifiable(_selectedParts);
@@ -72,6 +76,7 @@ class SelectTestPartsProvider extends ChangeNotifier {
     String testId, {
     TestAttemptMode initialMode = TestAttemptMode.full,
   }) async {
+    final requestId = ++_requestId;
     status = SelectPartsStatus.loading;
     errorMessage = null;
     test = null;
@@ -87,14 +92,18 @@ class SelectTestPartsProvider extends ChangeNotifier {
         _testRepository.getTest(testId),
         _testRepository.getTestParts(testId),
       ]);
+      if (requestId != _requestId) return;
       test = results[0] as MockTest;
       parts = results[1] as List<TestPart>;
       status = SelectPartsStatus.loaded;
     } catch (error) {
-      errorMessage = 'Không thể tải cấu trúc đề thi: $error';
+      if (requestId != _requestId) return;
+      errorMessage = error is AppException
+          ? error.message
+          : 'Không thể tải cấu trúc đề thi. Vui lòng thử lại.';
       status = SelectPartsStatus.error;
     }
-    notifyListeners();
+    if (requestId == _requestId) notifyListeners();
   }
 
   void setMode(TestAttemptMode value) {
@@ -139,8 +148,9 @@ class SelectTestPartsProvider extends ChangeNotifier {
 
   void selectDuration(int seconds) {
     if (status != SelectPartsStatus.loaded ||
-        !durationLabels.containsKey(seconds))
+        !durationLabels.containsKey(seconds)) {
       return;
+    }
     selectedDurationSeconds = seconds;
     errorMessage = null;
     notifyListeners();
@@ -155,6 +165,7 @@ class SelectTestPartsProvider extends ChangeNotifier {
       return null;
     }
 
+    final requestId = _requestId;
     status = SelectPartsStatus.starting;
     errorMessage = null;
     notifyListeners();
@@ -167,15 +178,26 @@ class SelectTestPartsProvider extends ChangeNotifier {
               parts: _selectedParts.toList()..sort(),
               durationSeconds: selectedDurationSeconds,
             );
+      if (requestId != _requestId) return null;
       createdAttemptId = attempt.attemptId;
       status = SelectPartsStatus.loaded;
       notifyListeners();
       return attempt;
     } catch (error) {
-      errorMessage = 'Không thể tạo phiên thi: $error';
+      if (requestId != _requestId) return null;
+      errorMessage = error is AppException
+          ? error.message
+          : 'Không thể tạo phiên thi. Vui lòng thử lại.';
       status = SelectPartsStatus.loaded;
       notifyListeners();
       return null;
     }
+  }
+
+  @override
+  void dispose() {
+    // Invalidate asynchronous work before ChangeNotifier releases its listeners.
+    _requestId++;
+    super.dispose();
   }
 }

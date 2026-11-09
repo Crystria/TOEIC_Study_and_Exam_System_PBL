@@ -22,11 +22,16 @@ class RateLimitBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final exhausted = remaining <= 0 || isQuotaBlocked;
-    final label = isLoading
-        ? 'Đang tải lượt…'
-        : exhausted
-        ? 'Hết lượt hôm nay'
-        : 'Còn $remaining/$limit lượt';
+    late final String label;
+    if (isLoading) {
+      label = 'Đang tải lượt…';
+    } else if (exhausted) {
+      label = isPreview ? 'Demo · hết lượt' : 'Hết lượt hôm nay';
+    } else if (isPreview) {
+      label = 'Demo · $remaining/$limit';
+    } else {
+      label = 'Còn $remaining/$limit lượt';
+    }
 
     final badge = AppPillBadge(
       label: label,
@@ -36,7 +41,10 @@ class RateLimitBadge extends StatelessWidget {
 
     return Tooltip(
       message: isPreview
-          ? 'Số lượt đang hiển thị là dữ liệu mô phỏng trong phiên ứng dụng, chưa phải hạn mức do máy chủ xác nhận.'
+          ? 'AI Chat hiện đang chạy ở chế độ mô phỏng. '
+                'Tin nhắn mới và lịch sử chỉ được giữ trong bộ nhớ phiên ứng dụng; '
+                'số lượt hiển thị cũng là dữ liệu mô phỏng, không phải hạn mức '
+                'do máy chủ xác nhận.'
           : 'Hạn mức được đồng bộ từ máy chủ.',
       child: badge,
     );

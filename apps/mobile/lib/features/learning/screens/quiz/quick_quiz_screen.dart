@@ -36,6 +36,9 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
       await topics.refreshProgress();
       if (!mounted) return;
 
+      // Daily unlock is an app policy. In API mode, each word's SM-2 progress
+      // has already been committed by VocabularyProvider.grade; this quiz
+      // only checks recall and must not submit a second review/session.
       if (!topics.dailyGoalCompleted) {
         quiz.setUnavailable(
           'Quiz chỉ được mở sau khi bạn hoàn thành mục tiêu từ vựng hôm nay.',

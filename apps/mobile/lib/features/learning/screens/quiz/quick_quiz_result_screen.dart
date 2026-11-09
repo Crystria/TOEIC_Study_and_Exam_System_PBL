@@ -95,6 +95,19 @@ class QuickQuizResultScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+              const AppCard(
+                child: Text(
+                  'Điểm Quiz chỉ dùng để tự kiểm tra khả năng ghi nhớ. '
+                  'Tiến trình và lịch ôn từ vựng được cập nhật khi bạn đánh giá '
+                  'từng từ ở lượt học, không thay đổi khi nộp Quiz.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.slate500,
+                    height: 1.45,
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
               Text(
                 wrongAnswers.isEmpty

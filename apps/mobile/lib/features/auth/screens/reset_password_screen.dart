@@ -81,8 +81,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) return 'Vui lòng xác nhận mật khẩu';
-    if (value != _passwordController.text)
+    if (value != _passwordController.text) {
       return 'Mật khẩu xác nhận không khớp';
+    }
     return null;
   }
 

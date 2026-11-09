@@ -5,11 +5,13 @@ import 'package:toeic_mobile/features/profile/screens/profile_screen.dart';
 
 import '../../../core/navigation/app_navigation_state.dart';
 import '../../ai_chat/screens/ai_chat_screen.dart';
+import '../../analytics/screens/analytics_screen.dart';
 import '../../auth/providers/auth_session_provider.dart';
 import '../../learning/screens/grammar/grammar_list_screen.dart';
 import '../../learning/screens/vocabulary/vocabulary_topics_screen.dart';
 import '../../mock_test/screens/test_history/test_history_screen.dart';
 import '../../mock_test/screens/test_selection/mock_test_select_screen.dart';
+import '../models/dashboard_data.dart';
 import '../providers/home_provider.dart';
 import '../widgets/prediction_score_card.dart';
 import '../widgets/quick_action_tile.dart';
@@ -39,11 +41,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     AppNavigationState.requestedTabIndex.addListener(_handleTabChange);
+    // A cross-feature request may be queued just before this Home tree mounts.
+    _handleTabChange();
   }
 
   void _handleTabChange() {
     final index = AppNavigationState.requestedTabIndex.value;
     if (index == null) return;
+
+    // Consume first so re-entrant ValueNotifier notifications cannot process
+    // the same request twice.
+    AppNavigationState.clearPendingTabRequest();
 
     if (index >= 0 && index < _navKeys.length && mounted) {
       // A cross-feature request (for example, asking AI from a Grammar lesson
@@ -59,13 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    // Clear the request after processing it, including invalid indices.
-    AppNavigationState.requestedTabIndex.value = null;
+    // Invalid indices are also consumed above.
   }
 
   @override
   void dispose() {
     AppNavigationState.requestedTabIndex.removeListener(_handleTabChange);
+    AppNavigationState.clearPendingTabRequest();
     super.dispose();
   }
 
@@ -111,9 +119,27 @@ class _HomeScreenState extends State<HomeScreen> {
         _popTabToRoot(0);
         _goToTab(0);
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
+          if (!mounted ||
+              !context.read<AuthSessionProvider>().isAuthenticated ||
+              _tabIndex != 0) {
+            return;
+          }
           _navKeys[0].currentState?.push(
             MaterialPageRoute<void>(builder: (_) => const GrammarListScreen()),
+          );
+        });
+        break;
+      case 'analytics':
+        _popTabToRoot(0);
+        _goToTab(0);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted ||
+              !context.read<AuthSessionProvider>().isAuthenticated ||
+              _tabIndex != 0) {
+            return;
+          }
+          _navKeys[0].currentState?.push(
+            MaterialPageRoute<void>(builder: (_) => const AnalyticsScreen()),
           );
         });
         break;
@@ -121,7 +147,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _popTabToRoot(2);
         _goToTab(2);
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
+          if (!mounted ||
+              !context.read<AuthSessionProvider>().isAuthenticated ||
+              _tabIndex != 2) {
+            return;
+          }
           _navKeys[2].currentState?.push(
             MaterialPageRoute<void>(builder: (_) => const TestHistoryScreen()),
           );
@@ -193,42 +223,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _isRedirectingToLogin = false;
 
-    return ChangeNotifierProvider(
-      create: (_) => HomeProvider(),
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, _) {
-          _handleSystemBack(didPop);
-        },
-        child: Scaffold(
-          backgroundColor: AppColors.bg,
-          resizeToAvoidBottomInset: false,
-          body: IndexedStack(
-            index: _tabIndex,
-            children: [
-              _tabNavigator(0, _DashboardTab(onQuick: _onQuick)),
-              _tabNavigator(1, const VocabularyTopicsScreen()),
-              _tabNavigator(2, const MockTestSelectScreen()),
-              _tabNavigator(3, const AiChatScreen()),
-              _tabNavigator(
-                4,
-                ProfileScreen(loginRouteBuilder: widget.loginRouteBuilder),
-              ),
-            ],
-          ),
-          bottomNavigationBar: ValueListenableBuilder<bool>(
-            valueListenable: AppNavigationState.isFullScreenFlow,
-            builder: (context, isHidden, child) {
-              if (isHidden) {
-                return const SizedBox.shrink();
-              }
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        _handleSystemBack(didPop);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.bg,
+        resizeToAvoidBottomInset: false,
+        body: IndexedStack(
+          index: _tabIndex,
+          children: [
+            _tabNavigator(0, _DashboardTab(onQuick: _onQuick)),
+            _tabNavigator(1, const VocabularyTopicsScreen()),
+            _tabNavigator(2, const MockTestSelectScreen()),
+            _tabNavigator(3, const AiChatScreen()),
+            _tabNavigator(
+              4,
+              ProfileScreen(loginRouteBuilder: widget.loginRouteBuilder),
+            ),
+          ],
+        ),
+        bottomNavigationBar: ValueListenableBuilder<bool>(
+          valueListenable: AppNavigationState.isFullScreenFlow,
+          builder: (context, isHidden, child) {
+            if (isHidden) {
+              return const SizedBox.shrink();
+            }
 
-              return AppBottomNav(
-                currentIndex: _tabIndex,
-                onSelect: _onSelectTab,
-              );
-            },
-          ),
+            return AppBottomNav(
+              currentIndex: _tabIndex,
+              onSelect: _onSelectTab,
+            );
+          },
         ),
       ),
     );
@@ -321,6 +348,20 @@ class _Content extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (data.isDemoData)
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.warningBg,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Text(
+              'Dữ liệu minh họa — API đang tắt, chưa phải thống kê thực tế.',
+              style: TextStyle(color: AppColors.slate700, fontSize: 11),
+            ),
+          ),
         if (data.predictedScore != null)
           PredictionScoreCard(
             score: data.predictedScore!,
@@ -369,6 +410,16 @@ class _Content extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 18),
+        OutlinedButton.icon(
+          onPressed: () => onQuick('analytics'),
+          icon: const Icon(Icons.analytics_outlined),
+          label: const Text('Xem thống kê chi tiết'),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(44),
+            foregroundColor: AppColors.brand,
+          ),
+        ),
         const SizedBox(height: 24),
         const SectionTitle('Luyện tập nhanh'),
         const SizedBox(height: 12),
@@ -377,7 +428,9 @@ class _Content extends StatelessWidget {
             Expanded(
               child: QuickActionTile(
                 title: 'Flashcard',
-                subtitle: data.dueFlashcards > 0
+                subtitle: data.dueFlashcards == null
+                    ? 'Ôn tập từ vựng'
+                    : data.dueFlashcards! > 0
                     ? 'Ôn ${data.dueFlashcards} từ hôm nay'
                     : 'Học từ mới',
                 bg: AppColors.blueChipBg,
@@ -490,7 +543,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Hôm nay bạn đã ôn ${data.todayVocab} từ và ${data.todayLessons} bài ngữ pháp.',
+            'Hôm nay bạn có ${data.todayActivityCount} hoạt động học. Tiếp tục duy trì tiến độ nhé.',
             style: const TextStyle(color: Color(0xFFDBEAFE), fontSize: 13),
           ),
         ],

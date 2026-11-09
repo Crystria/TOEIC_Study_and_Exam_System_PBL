@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../theme/app_colors.dart';
 import '../../home/screens/home_screen.dart';
 import '../providers/auth_session_provider.dart';
@@ -46,7 +47,13 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     // Session được cập nhật tại Screen; Provider không tự điều hướng.
-    context.read<AuthSessionProvider>().setCurrentUser(user);
+    try {
+      await context.read<AuthSessionProvider>().setCurrentUser(user);
+    } catch (_) {
+      _showMessage('Không thể khởi tạo dữ liệu cho tài khoản. Vui lòng thử lại.');
+      return;
+    }
+    if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(
         builder: (_) =>
@@ -95,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = context.watch<LoginProvider>().isLoading;
+    final apiEnabled = context.watch<AppConfig>().apiEnabled;
 
     return Scaffold(
       body: SafeArea(
@@ -114,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         subtitle: 'Ôn thi TOEIC Listening & Reading mỗi ngày, trên Web và Mobile.',
                       ),
                       const SizedBox(height: 28),
-                      const FieldLabel('Email hoặc tên đăng nhập'),
+                      FieldLabel(apiEnabled ? 'Email' : 'Email hoặc tên đăng nhập'),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: _identifierController,
@@ -127,7 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Vui lòng nhập email hoặc tên đăng nhập';
+                            return apiEnabled
+                                ? 'Vui lòng nhập email'
+                                : 'Vui lòng nhập email hoặc tên đăng nhập';
                           }
                           return null;
                         },

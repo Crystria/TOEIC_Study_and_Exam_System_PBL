@@ -80,6 +80,9 @@ class _MockTestTakingScreenState extends State<MockTestTakingScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _provider?.onAppResumed();
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      _provider?.saveDraftNow();
     }
   }
 
@@ -100,11 +103,16 @@ class _MockTestTakingScreenState extends State<MockTestTakingScreen>
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Thoát bài thi?'),
-        content: const Text(
-          'Nếu thoát, màn hình làm bài sẽ đóng. Bạn có thể mở lại phiên thi '
-          'đang diễn ra từ Lịch sử làm bài trong phiên ứng dụng hiện tại. '
-          'Nếu đóng ứng dụng hoàn toàn, dữ liệu mẫu trong bộ nhớ sẽ bị mất. '
-          'Bạn có chắc chắn muốn thoát?',
+        content: Text(
+          _provider?.usesBackend == true
+              ? 'Phiên thi và các đáp án đã đồng bộ được lưu trên máy chủ. '
+                    'Bạn có thể mở lại phiên đang diễn ra từ Lịch sử làm bài. '
+                    'Các đáp án chưa đồng bộ sẽ được giữ tạm trên thiết bị. '
+                    'Bạn có chắc chắn muốn thoát?'
+              : 'Nếu thoát, màn hình làm bài sẽ đóng. Bạn có thể mở lại phiên thi '
+                    'đang diễn ra từ Lịch sử làm bài trong phiên ứng dụng hiện tại. '
+                    'Nếu đóng ứng dụng hoàn toàn, dữ liệu mẫu trong bộ nhớ sẽ bị mất. '
+                    'Bạn có chắc chắn muốn thoát?',
         ),
         actions: [
           TextButton(

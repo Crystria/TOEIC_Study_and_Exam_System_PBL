@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../theme/app_colors.dart';
 
 class ProgressRow extends StatelessWidget {
@@ -30,13 +31,21 @@ class ProgressRow extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.slate900)),
-                Text(progressText,
-                    style: const TextStyle(fontSize: 13, color: AppColors.slate500)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.slate900,
+                  ),
+                ),
+                Text(
+                  progressText,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.slate500,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 6),

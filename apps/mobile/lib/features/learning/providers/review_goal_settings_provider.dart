@@ -6,7 +6,9 @@ class ReviewGoalSettingsProvider extends ChangeNotifier {
   static const int minGoal = 5, maxGoal = 100, step = 5;
 
   Future<void> loadCurrentGoal() async {
-    await Future.delayed(const Duration(milliseconds: 300)); // TODO: repository.getReviewSettings()
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    ); // TODO: repository.getReviewSettings()
     notifyListeners();
   }
 
@@ -26,7 +28,9 @@ class ReviewGoalSettingsProvider extends ChangeNotifier {
   }
 
   Future<bool> save() async {
-    await Future.delayed(const Duration(milliseconds: 400)); // TODO: repository.updateReviewSettings(...)
+    await Future.delayed(
+      const Duration(milliseconds: 400),
+    ); // TODO: repository.updateReviewSettings(...)
     return true; // screen điều hướng quay lại khi true
   }
 }
