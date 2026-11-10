@@ -1,0 +1,20 @@
+To: I Gina Xi
+From: I Sam Arnold
+Date: I Thursda , 10 A ril
+Subject: I Tech su ort re uest 7549
+Hello, Ms. Xi,
+This is in reference to your work order 7549 related to the new phone system. I am happy
+to help you with that. I understand that you do not feel that a high degree of security is
+needed for your voice-mail settings, but the new system does require you to have a
+password to retrieve your voice mail. However, company policy allows me to change the
+settings for employees who do not work with confidential material. I can update the
+security settings so that you do not have to reset the password on a regular basis.
+I want to make sure that you understand the risk involved with a lower level of security.
+Anyone who gains access to your voice-mail account can do more than simply listen to
+your messages. They would be able to delete messages, change your greeting, or change
+your password so that you would lose access to your own voice mail (at least until
+someone here at IT could override the password change). If you still feel comfortable with
+that level of risk, let me know, and I will change the settings so that your password never
+expires.
+Sam Arnold
+Tech Support Associate

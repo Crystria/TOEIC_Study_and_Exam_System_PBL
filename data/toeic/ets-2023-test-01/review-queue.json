@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-10T10:09:05.101Z",
+  "rawOcr": "ocr-pages.json.gz",
+  "questions": [],
+  "groups": [],
+  "audio": [
+    {
+      "sourceId": "ets-2023-test-01-full-lc-audio",
+      "file": "docs\\TEST 1\\1.3. Mp3 full LC Test 01.mp3",
+      "contentReviewed": false
+    }
+  ],
+  "blockers": [
+    "Web/CMS UI acceptance remains outstanding; API acceptance does not assert UI completion",
+    "Full listening track remains unreviewed and needs Test-level DTO/player integration; the Full Test currently uses approved question/group clips",
+    "REVIEW requires actual due >=5; this API workflow only read existing progress and created no study/review sessions"
+  ],
+  "resolved": {
+    "pilotListening": {
+      "evidence": "tmp/test1-target-check-20261110142408-547/user-listening-approval.json",
+      "questions": [
+        1,
+        7,
+        62,
+        63,
+        64,
+        95,
+        96,
+        97
+      ],
+      "clips": 4
+    },
+    "pilotLesson": "PUBLISHED and completed through API; see tmp/test1-admin-api-20261110-060956-258/handoff.json",
+    "runtimeTarget": {
+      "evidence": "tmp/test1-runtime-verified-20261110143224-351/verification.json",
+      "note": "Previously verified identity; this offline operation did not probe live runtime"
+    },
+    "fullSourceText": {
+      "evidence": "tmp/test1-complete-dataset-20261110075905308/completion/source-review.json",
+      "questions": 200,
+      "newlyCompletedQuestions": 173,
+      "groups": 42,
+      "newlyCompletedGroups": 36,
+      "transcripts": 54,
+      "sourceAnswerImageChecked": 200,
+      "originalPilotAndSupplementalPreserved": true,
+      "mp3ListeningApprovalGranted": false
+    },
+    "allClipAndImageApproval": {
+      "evidence": "tmp/test1-media-user-approved-20261110082443599/user-media-approval.json",
+      "clips": 54,
+      "images": 11,
+      "basis": "User confirmation; no assistant listening claim"
+    },
+    "fullExamApi": {
+      "evidence": "tmp/test1-full-resume-20261110095757696/handoff.json",
+      "questions": 200,
+      "groups": 42,
+      "clips": 54,
+      "images": 11,
+      "tests": 1,
+      "supplementalIncluded": true,
+      "reimport": {
+        "add": 0,
+        "update": 0,
+        "same": 104
+      },
+      "uiAccepted": false,
+      "fullTrackAttached": false
+    }
+  }
+}

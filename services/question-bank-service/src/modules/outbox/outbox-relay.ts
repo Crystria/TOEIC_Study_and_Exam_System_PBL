@@ -26,16 +26,19 @@ export class OutboxRelay implements OnModuleInit, OnModuleDestroy {
   private timer?: NodeJS.Timeout;
   private running?: Promise<void>;
   private closing = false;
+  private deadLetterQueueReady = false;
   constructor(
     private readonly prisma: PrismaService,
     private readonly messaging: MessagingService,
     private readonly config: ConfigService = new ConfigService(),
   ) {}
   async onModuleInit() {
-    await this.messaging.declareQueue(
-      this.config.get<string>('QUESTION_OUTBOX_DLQ') || 'question-bank-outbox-dlq',
-      'question-bank.outbox.dead',
-    );
+    try {
+      await this.ensureDeadLetterQueue();
+    } catch {
+      this.logger.warn('Outbox queue is not ready; provisioning will be retried before polling');
+    }
+    if (this.closing) return;
     this.timer = setInterval(() => {
       if (!this.running && !this.closing) {
         this.running = this.poll()
@@ -47,12 +50,24 @@ export class OutboxRelay implements OnModuleInit, OnModuleDestroy {
     }, 500);
     this.timer.unref();
   }
+  private async ensureDeadLetterQueue() {
+    if (this.deadLetterQueueReady) return;
+    await this.messaging.declareQueue(
+      this.config.get<string>('QUESTION_OUTBOX_DLQ') || 'question-bank-outbox-dlq',
+      'question-bank.outbox.dead',
+    );
+    this.deadLetterQueueReady = true;
+  }
   async onModuleDestroy() {
     this.closing = true;
     clearInterval(this.timer);
     await this.running;
   }
   async poll(): Promise<void> {
+    if (this.closing) return;
+    // Do not claim rows or consume event retries until the holding queue exists.
+    await this.ensureDeadLetterQueue();
+    if (this.closing) return;
     await this.prisma.$transaction(
       async (tx) => {
         const events = await tx.$queryRaw<

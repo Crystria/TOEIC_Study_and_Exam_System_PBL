@@ -68,6 +68,7 @@
   text-underline-offset: 3px;
 }
 .api-root button:not([class]),
+.api-root button.api-primary,
 .api-login button,
 .api-nav a {
   border: 1px solid #cbd5e1;
@@ -192,6 +193,28 @@
   align-items: center;
   gap: 10px;
   margin: 14px 0;
+}
+.api-exam-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+}
+.api-exam-map button[aria-current='step'] {
+  background: #e8efff;
+  border-color: #315bd6;
+  font-weight: 700;
+}
+.api-exam-timer {
+  position: sticky;
+  top: 8px;
+  z-index: 2;
+  padding: 12px 16px;
+  border: 1px solid #bdcadd;
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 .api-table {
   width: 100%;

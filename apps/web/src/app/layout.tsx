@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ApiStudentApplication } from '@/components/integration/student-application';
+import { examWritesEnabled } from '@/lib/integration/exam-access';
 
 import { StudentShell } from '@/components/layout/student-shell';
 import { ExamSessionProvider } from '@/components/exams/exam-session-provider';
@@ -28,7 +29,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {process.env.NEXT_PUBLIC_DATA_MODE === 'api' ? (
           <Suspense fallback={<p role="status">Đang tải giao diện…</p>}>
-            <ApiStudentApplication writes={process.env.FRONTEND_TEST_WRITES === 'enabled'}>
+            <ApiStudentApplication
+              writes={process.env.FRONTEND_TEST_WRITES === 'enabled'}
+              examWrites={examWritesEnabled(
+                process.env.FRONTEND_API_ENV,
+                process.env.FRONTEND_EXAM_WRITES,
+              )}
+            >
               {children}
             </ApiStudentApplication>
           </Suspense>

@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-10T06:54:28.048Z",
+  "questionNumber": 154,
+  "before": "B",
+  "after": "D",
+  "evidence": "docs/TEST 1/1.5. Ảnh đáp án Test 01.jpg",
+  "evidenceCrop": "tmp/test1-source-process-20261110-064502-898/answer-151-170.png",
+  "imagePixels": [
+    310,
+    190,
+    599,
+    242
+  ],
+  "questionMapped": false,
+  "databaseTouched": false,
+  "approvedFlagsChanged": false,
+  "semanticAnswerReviewStillRequired": true,
+  "modifiedFiles": [
+    "data/toeic/ets-2023-test-01/answer-key.json",
+    "data/toeic/ets-2023-test-01/dataset.json",
+    "scripts/content/build-test1.cjs"
+  ]
+}

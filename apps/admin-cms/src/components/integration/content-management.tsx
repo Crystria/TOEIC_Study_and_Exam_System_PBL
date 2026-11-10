@@ -21,6 +21,7 @@ import { MediaUpload } from '../../../../web/src/components/integration/media-up
 import { AudioPlayer } from '../../../../web/src/components/ui/audio-player';
 import { RelationPicker } from './relation-picker';
 import { SafeMarkdown } from '../demo/workspace-primitives';
+import { formatPassageBlanks } from '../../../../web/src/lib/exams/passage';
 
 export function useCmsLocation() {
   const path = usePathname(),
@@ -990,7 +991,9 @@ function GroupEditor({
               )}
             </div>
           ))}
-          <SafeMarkdown text={g.passageText} />
+          <SafeMarkdown
+            text={g.part === 6 ? formatPassageBlanks(g.passageText, g.instruction) : g.passageText}
+          />
           <p>{g.instruction}</p>
           <details>
             <summary>Transcript</summary>

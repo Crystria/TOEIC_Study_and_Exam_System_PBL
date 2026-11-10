@@ -21,6 +21,7 @@ import {
   segment,
 } from '../../apps/web/src/lib/integration/contracts';
 import { parseAttempt, remainingTime } from '../../apps/web/src/lib/integration/attempt-contract';
+import { examWritesEnabled, isExamMutation } from '../../apps/web/src/lib/integration/exam-access';
 import { query } from '../../apps/web/src/lib/integration/query';
 import {
   GatewayError,
@@ -404,6 +405,96 @@ test('idempotency key reaches only the business request and USER can start attem
   assert.equal(calls[0].key, null);
   assert.equal(calls[1].key, 'start-key');
   assert.deepEqual(requiredRoles('tests/id/attempts', 'POST'), []);
+});
+
+test('student exams work independently of experimental writes without opening other mutations', async () => {
+  const paths = [
+    [`tests/${wireTest.testId}/attempts`, 'POST'],
+    [`tests/${wireTest.testId}/part-attempts`, 'POST'],
+    ['attempts/attempt-id/draft', 'PUT'],
+    ['attempts/attempt-id/answers/question-id', 'PUT'],
+    ['attempts/attempt-id/submit', 'POST'],
+  ];
+  const calls: string[] = [];
+  const config = cfg(
+    async (input) => {
+      calls.push(String(input));
+      return json(
+        String(input).endsWith('/users/me') ? { ...user, roles: ['USER'] } : wireAttempt(),
+      );
+    },
+    { writesEnabled: false, examWritesEnabled: true },
+  );
+  for (const [path, method] of paths) {
+    assert.equal(isExamMutation(path, method), true);
+    assert.equal((await bridge(path, method, {}, config)).status, 200);
+  }
+  assert.equal(calls.length, paths.length * 2);
+  for (const [path, method] of [
+    ['users/me', 'PATCH'],
+    ['learning/lessons/lesson-id/complete', 'POST'],
+    ['learning/flashcards/word-id/review', 'POST'],
+    ['auth/register', 'POST'],
+  ]) {
+    assert.equal(isExamMutation(path, method), false);
+    assert.equal((await bridge(path, method, {}, config)).status, 503);
+  }
+  assert.equal(calls.length, paths.length * 2);
+  assert.equal((await bridge('tests', 'POST', {}, config)).status, 501);
+  assert.equal(
+    (
+      await bridge(
+        paths[0][0],
+        'POST',
+        {},
+        { ...config, examWritesEnabled: false, writesEnabled: true },
+      )
+    ).status,
+    503,
+  );
+  assert.equal((await bridge(paths[0][0], 'POST', {}, { ...config, app: 'cms' })).status, 501);
+});
+
+test('exam write configuration has an explicit read-only override and stays local/test only', () => {
+  assert.equal(examWritesEnabled('local'), true);
+  assert.equal(examWritesEnabled('test', 'enabled'), true);
+  assert.equal(examWritesEnabled('local', 'disabled'), false);
+  assert.equal(examWritesEnabled('production', 'enabled'), false);
+  assert.equal(examWritesEnabled(undefined, 'enabled'), false);
+});
+
+test('exam writes still reject missing sessions, inactive users, foreign origins and upstream ownership failures', async () => {
+  const path = `tests/${wireTest.testId}/attempts`;
+  let mutations = 0;
+  const config = cfg(
+    async (input) => {
+      if (String(input).endsWith('/users/me')) return json({ ...user, roles: ['USER'] });
+      mutations++;
+      return json({ message: 'Attempt does not belong to user' }, 403);
+    },
+    { examWritesEnabled: true },
+  );
+  const noSession = await handleBridge(req(path, 'POST', {}, ''), path.split('/'), config);
+  assert.equal(noSession.status, 401);
+  assert.equal(
+    (await bridge(path, 'POST', {}, config, { origin: 'https://other.invalid' })).status,
+    403,
+  );
+  assert.equal(mutations, 0);
+  assert.equal(
+    (
+      await bridge(
+        path,
+        'POST',
+        {},
+        { ...config, fetcher: async () => json({ ...user, status: 'INACTIVE' }) },
+      )
+    ).status,
+    403,
+  );
+  assert.equal(mutations, 0);
+  assert.equal((await bridge('attempts/other-user/submit', 'POST', {}, config)).status, 403);
+  assert.equal(mutations, 1);
 });
 test('CMS content permissions follow the concrete backend role rules', async () => {
   for (const p of ['learning/admin/lessons', 'question-groups', 'tests']) {

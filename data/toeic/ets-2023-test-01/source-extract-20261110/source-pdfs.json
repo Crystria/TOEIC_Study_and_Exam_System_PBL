@@ -1,0 +1,16 @@
+[
+  {
+    "code": "11",
+    "file": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "sha256": "e44a1ebd804f9e7a216c1d80f30313fcecfc5c1f6b68ca989a1796e98bbfd4af",
+    "pages": 13,
+    "nativeTextCharacters": 0
+  },
+  {
+    "code": "12",
+    "file": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "sha256": "c6ac0fd02d7953c4242c9fdc7959ba226422d9a8cb1d7cbcd15cffbca4633c82",
+    "pages": 31,
+    "nativeTextCharacters": 0
+  }
+]

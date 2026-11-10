@@ -2703,3 +2703,282 @@ REVIEW vẫn BLOCKED: backend cuối03/11/2026 13:29:48GMT (20:29:48 UTC+7), due
 [Báo cáo lượt39: đủ8 task, expected/actual, file sửa, evidence, lệnh và prompt tiếp tục](frontend-integration-session39.md). Evidence mới `tmp/frontend-integration-session39-20261103/`: `target-preparation.json`, các browser reports, `acceptance-matrix.json`, `final-readback.json`, `review-preflight-final/`, `integration-tests.tap`, `cms-tests.tap`, `build-evidence/`, `source-review.json`, `verification.json`, `shutdown-verification.json`. Credentials mới chỉ ở private/gitignored, không xuất token/password/link kích hoạt.
 
 Stack đầu phiên không chạy; đã khởi chạy riêng stack39 bằng launcher/manifest cũ, giữ Learning/Question Bank bucket riêng. Sau nghiệm thu chỉ dừng launcher/process trees39 được xác minh PID/name/StartTime; không còn listener3000–3007/50052, hạ tầng/user process giữ nguyên. Hai tsconfig do Next tự thêm include được trả đúng bytes snapshot đầu phiên. Lịch sử review giữ prefix, không reset/stash/commit/pull hoặc tạo frontend-current-status.md.
+
+## Nhập dữ liệu TEST 1 ngày 10/11/2026
+
+**Đã nhập thật lô thử Learning gồm 1 chủ đề, 20 từ và 1 bài DRAFT qua Gateway. Chưa hoàn tất đề 200 câu hoặc nghiệm thu UI; chưa mở rộng nhập 100 từ/5 bài.** Hướng dẫn vận hành và chạy lại tại [scripts/content/README.md](../scripts/content/README.md). Evidence mới: `tmp/real-content-20261110-102636-453/`; checkpoint có thẩm quyền: `data/toeic/ets-2023-test-01/import-state.local.json`.
+
+### Nguồn và dữ liệu đã chuẩn bị
+
+Đã đọc kế hoạch DOCX tại repository, các schema/controller/DTO/service liên quan, cấu hình media và renderer web/CMS. Repository không có AGENTS.md hoặc private/task.txt; áp dụng chỉ dẫn AGENTS được người dùng cung cấp trong phiên. Giữ nguyên 63 tệp nguồn trong docs/TEST 1. OCR đủ 131 trang bằng Windows English OCR/Poppler; lưu cả tọa độ chữ trong `ocr-pages.json.gz`. OCR chưa duyệt tiếp tục là dữ liệu thô, đặc biệt phần tiếng Việt trong tài liệu giải không được tự đưa vào hệ thống.
+
+| Hạng mục | Chuẩn bị và đối soát nguồn | Đã nhập backend thật | Trạng thái công bố |
+| --- | --- | --- | --- |
+| Câu hỏi | 200 ID/số câu và tham chiếu trang; **chỉ 20 câu lô thử có text/options đã biên tập**. 12 câu Reading đạt đối soát nội dung; 8 câu Listening còn chờ nghe clip. 180 câu còn lại thiếu nội dung đã duyệt. | 0 | 0 câu trong đề mới; chưa tạo Full Test |
+| Nhóm | 42 khung quan hệ: 13 Part 3, 10 Part 4, 4 Part 6, 15 Part 7; Part 7 chia 10/2/3 văn bản. Lô thử có 4 nhóm, trong đó 2 nhóm đọc đã biên tập, 2 nhóm nghe còn chờ audio. | 0 | 0 |
+| Đáp án | Chép đủ 200 từ ảnh nguồn; 20 câu lô thử đối chiếu thêm ngữ cảnh/tài liệu giải; 180 đáp án chưa đối soát độc lập toàn bộ. Part 2 chỉ A–C. | 0 | 0 |
+| Media | 54 clip phủ số câu 1–100 đúng một lần theo tên; 1 audio toàn bài; 6 crop từ PDF đề, gồm 3 ảnh thi của lô thử và 3 văn bản Part 7 dùng đối chiếu bố cục. Nội dung nghe đã xác nhận: **0/54 clip**. | 0 object upload | Chưa phát hành media |
+| Từ vựng | 100 nghĩa/từ loại/ví dụ được biên tập, có nguồn/trang và 5 chủ đề; ví dụ và định nghĩa được soạn mới. DTO không có trường từ loại riêng nên giữ riêng trong bộ trung gian và ghi trong definition. | **20 từ, 1 chủ đề** | 20 từ/1 chủ đề đang đọc được qua API local; UI chưa nghiệm thu, không coi là phát hành công khai |
+| Ngữ pháp | 5 bài hoàn chỉnh: mục tiêu, lý thuyết, ví dụ, lỗi thường gặp, 5 câu tự luyện/bài, đáp án/lý do và nguồn. Không thêm chức năng tự chấm bài luyện. | **1 bài DRAFT** | **0 PUBLISHED** |
+
+Nguồn ETS/Zenlish do người dùng cung cấp được dùng để chuẩn bị/nghiệm thu local. Chưa có bằng chứng quyền phân phối công khai; không công bố toàn bộ kho trên Internet.
+
+### Importer và contract
+
+Thêm `scripts/content/import-toeic.cjs` cùng công cụ OCR, biên tập, inventory media, kiểm tra đích và nghiệm thu Learning API. Importer có validate không gọi API, plan chỉ đọc nội dung, apply, mapping ID ổn định, khóa tiến trình, checkpoint ghi nguyên tử trước mutation, nhật ký từng bản ghi và đọc lại. Khi timeout tạo câu/nhóm chưa rõ kết quả, tìm lại theo tag nguồn; không tìm thấy thì dừng, không tự POST tiếp. Nhóm được tìm qua tag của thành viên đầu tiên; không đưa ID kỹ thuật vào hướng dẫn thi. Learning dùng idempotency key theo actor. Không tự ghi đè nội dung chưa thuộc mapping hoặc tự đổi cấu trúc nhóm/đề cũ.
+
+Luồng media được ánh xạ đúng từng controller: Question Bank presign → PUT → PATCH owner; Learning `/learning/vocabularies/:id/media/presign` → PUT → confirm. Xác minh origin/bucket/prefix, hash tệp và đọc lại liên kết. Token/URL ký không lưu vào checkpoint/log. **Các nhánh upload/resume mới được kiểm thử bằng transport mô phỏng; phiên này chưa có upload thật.** Gateway hiện có quota presign 30/giờ/người dùng, phải giữ checkpoint khi hết quota, không vượt guard.
+
+Full Test bắt buộc 200 câu/7200 giây; không tạo Full Test 20 câu. Group hỗ trợ audio/image và TEXT asset có thứ tự; bài ba văn bản 186–190 đã giữ 3 asset. Renderer web có bảng Markdown. Cần nghiệm thu thêm Part 7 nhóm 147–148, 176–180 và nhãn chỗ trống Part 6 theo số nguồn; chưa coi kiểm tra source là kiểm tra UI. Payload attempt đang thi theo code bỏ correctOption/explanation/transcript, còn payload final có review; **chưa kiểm chứng lại bằng attempt thật vì Exam không trả lời**.
+
+Test DTO/renderer hiện chưa có media/player ở cấp đề cho audio toàn bài. Không gắn tùy tiện tệp này vào câu/nhóm khác. Windows media metadata: 2758.9501875 giây (xấp xỉ 45:59); bộ đếm frame sơ bộ: 2765.296 giây. Giữ cả hai kết quả và chờ decoder/nghe độc lập; không cắt ở phút 45, không đổi timer hoặc bảng điểm.
+
+### Kết quả kiểm chứng mới
+
+| Kiểm tra | Kết quả và bằng chứng |
+| --- | --- |
+| Môi trường đích | Gateway/Auth/Learning/Analytics có sẵn; Question Bank/Exam unavailable. So sánh toàn bộ ID nội dung Learning qua Gateway với database learning_db đọc bằng Prisma; trước nhập đều rỗng, không có tiến độ/phiên học. Target manifest giữ cấu hình media riêng theo service hiện có, không dùng bucket QA cũ. `target-inspection/{target.json,baseline.json}`. |
+| Đăng nhập | Tệp credentials cũ giữ email quản trị đã đổi. Chỉ đọc danh tính/role từ auth_db, đăng nhập đúng email hiện hành qua Gateway thành công cho CONTENT_ADMIN và SYSTEM_ADMIN; USER trong tệp cũ vẫn hợp lệ. Không sửa mật khẩu, role, env, key hoặc credentials. |
+| Import thật lần đầu | Thêm 22: 1 topic, 20 words, 1 lesson DRAFT. GET xác nhận từng bản ghi. `learning-pilot-apply/{report.json,events.jsonl}`. |
+| API học viên thật | USER đọc 20 từ; tạo đúng 1 phiên NEW/5 flashcard; lưu 5 reviews và GET đọc lại; quiz backend chấm 5/5; GET completed/result giữ kết quả. Rating 4 là đầu vào QA có kiểm soát, không phải tuyên bố về trình độ thật. Owner khác GET session trả 404, anonymous catalog 401, USER admin read 403. `learning-api-acceptance/{report.json,ledger.json,requests.json}`. |
+| Bài học | CONTENT_ADMIN đọc DRAFT/Markdown HTML an toàn; USER GET và complete DRAFT đều 404. Giữ DRAFT vì chưa có nghiệm thu UI; **hoàn thành bài PUBLISHED và tải lại vẫn chưa kiểm chứng**. |
+| Nhập lại sau khi có tiến độ | **0 thêm, 0 cập nhật, 22 same**. Hash tiến độ/phiên học trước và sau đều `414a107cd800512fc430cc4bbaa66a6ee1305ea339924b54067206a2aa2ddbda`. Giữ 5 progress/1 session. `learning-pilot-reimport/report.json`, `progress-before-reimport.json`, `reimport-preservation.json`. |
+| REVIEW | due=0; backend đặt nextReviewDate của 5 mục QA là 11/11/2026. Không tạo REVIEW hoặc sửa lịch/ngày để đủ điều kiện. |
+| Kiểm thử importer | 17/17 mới đạt: validation theo DTO thật, Part 2, group/Part 6/Part 7, request mất phản hồi sau commit, không POST trùng, owner ID, chống ghi đè, media PUT/confirm/readback/reconcile và ràng buộc đích. Đây là unit/transport tests, không thay thế OCR/audio/UI. `importer-tests-release.tap`. |
+| Build | Common, Question Bank, Exam build đạt sau generate Prisma bằng engine local. Không sửa backend source hoặc migration. Hai frontend dev khởi chạy ở API mode; không chạy production FE build mới vì không đổi FE code. |
+| Browser | CMS origin http://127.0.0.1:3007 bị cổng quyền trình duyệt từ chối; không dùng browser khác/CDP/proxy để vượt. Chưa có bằng chứng UI của lô nhập. |
+
+### Điểm chặn và tiếp tục đúng checkpoint
+
+Docker CLI bị từ chối pipe/config và quyền điều khiển Docker Desktop cũng bị từ chối. Cổng Question Bank/Exam/gRPC đang do Docker giữ; thử native không chạy được vì cổng đã thuộc môi trường có sẵn. Không dừng container/process của người dùng hoặc đổi Gateway để đi vòng. Các lần build/lỗi khởi chạy được lưu trong evidence, không tính là stack đã phục hồi.
+
+Giữ `acceptance.learningPilot=false` trong checkpoint; chưa mở rộng ghi 100 từ/5 bài hoặc 200 câu. Bước tiếp theo: có quyền kiểm tra/khôi phục hai dịch vụ Docker và browser origin; đọc `review-queue.json`, nghe clip lô thử, nghiệm thu 20 câu qua preview hợp lệ, nghiệm thu UI Learning, rồi công bố bài thử theo workflow và kiểm tra complete/reload. Chỉ khi lô thử đạt mới mở rộng. Không OCR/seed lại, không xóa mapping, không tạo lại topic hoặc session đã có. Lệnh resume dùng target đã kiểm chứng và `--out` mới nằm trong README công cụ.
+
+Giữ nguyên tất cả thay đổi có trước phiên, nguồn PDF/MP3/DOCX, dữ liệu QA/attempt cũ, apps/mobile, env/key/credentials và lịch sử tài liệu. Chỉ thay tệp theo dõi `.gitignore` để giữ checkpoint máy local khỏi Git, bổ sung mục báo cáo này, và thêm dữ liệu/công cụ dưới `data/toeic/ets-2023-test-01` và `scripts/content`. Không reset/stash/commit/pull hoặc ghi SQL/storage admin. Hai dev frontend do phiên mở vẫn phục vụ local; thông tin process trong `started-processes.json`. Không ghi đè evidence các lượt trước.
+
+## Tiếp tục TEST 1 ngày 10/11/2026 — lô mẫu và nhập thử
+
+**Chưa hoàn tất lượt 2/3; chưa đủ điều kiện chuyển lượt 4/5.** Đã hoàn thành các phần độc lập, giữ nguyên mapping/ledger và mọi dữ liệu đã nhập. Evidence mới: `tmp/real-content-resume-20261110-113233-636/`; baseline/hash nằm trong `baseline/`, bàn giao máy đọc được tại `handoff.json`. Lệnh và điều kiện resume cập nhật trong [hướng dẫn importer](../scripts/content/README.md#tiếp-tục-sau-lần-kiểm-tra-ngày-10112026-lúc-11-giờ).
+
+### Nội dung và sửa hiển thị
+
+Lô chính giữ đúng 20 số nguồn: 1, 7, 62–64, 95–97, 101–103, 131–134, 186–190. Dùng lại ảnh/OCR cũ, không chạy builder hoặc OCR lại. Đối chiếu trực tiếp trang đề LC 9/13, RC 2/5/26/27, ảnh câu 1 và ảnh đáp án. Part 2 vẫn A–C; nhóm 186–190 giữ thứ tự lịch phát thanh → e-mail → tin tuyển dụng. Tám câu Listening chưa được nghe xác nhận, chất lượng vẫn chưa duyệt.
+
+Chuẩn hóa riêng 7 câu 147–148/176–180 và 2 nhóm Part 7, batch `supplemental`, không thêm vào lô 20. Đối chiếu trang RC 9/22/23 và ảnh đáp án; đáp án lần lượt A/B/C/A/B/D/C được kiểm tra độc lập theo nội dung. Mẫu một văn bản giữ bảng hàng hóa, đơn vị £ và 25%/50%/10%; mẫu hai văn bản giữ work order trước e-mail, các trường người gửi/ngày/mã yêu cầu. Hiện có **27 câu đã biên tập, trong đó 19 Reading duyệt nội dung và 8 Listening chờ nghe; 173 câu còn thiếu nội dung biên tập**, vẫn tổng 200 định danh/42 nhóm. Đây chưa phải đề 200 câu hoàn chỉnh. Nguồn/ảnh/OCR và mọi ID cũ không đổi.
+
+Phát hiện renderer web/CMS đưa nguyên `[[1]]` đến `[[4]]` ra màn hình, không có số nguồn cạnh chỗ trống. Thêm helper thuần `apps/web/src/lib/exams/passage.ts`, dùng tại web `exam-flow.tsx` và CMS `content-management.tsx`: chỉ khi instruction chứa khoảng số hợp lệ và token đủ/không trùng mới hiển thị `_______ (131)` đến `_______ (134)`. Không đổi passage lưu, dữ liệu editor, đáp án hoặc backend. Metadata không nhất quán được giữ nguyên để tránh suy đoán số câu.
+
+### Kết quả mới và bảo toàn
+
+| Hạng mục | Kết quả của lần tiếp tục |
+| --- | --- |
+| Tài khoản | Tra đúng userId cũ trong auth_db để lấy email hiện hành; kiểm tra mật khẩu đã lưu khớp trước đăng nhập, không đoán/đổi/in mật khẩu. Ba role đăng nhập thành công; actor importer giữ nguyên. |
+| Phiên học cũ | GET session `f52fb734-6e6d-4d23-8368-da7e67dab635` vẫn COMPLETED, quiz 5/5; không tạo session/review/submit mới. USER gọi admin Learning 403; SYSTEM_ADMIN không có CONTENT_ADMIN gọi admin Learning 403; người không sở hữu đọc session 404; anonymous catalog 401. |
+| Kiểm tra đích Learning | So sánh toàn bộ ID topic/word/lesson giữa Gateway và learning_db vẫn khớp; manifest mới vẫn chỉ có scope `learning`, không cấp scope Exam chưa kiểm chứng. |
+| Importer thật | Plan rồi apply lô pilot Learning qua Gateway: **0 thêm, 0 cập nhật, 22 giữ nguyên**. Có GET đọc lại và nhật ký riêng `learning-plan/`, `learning-apply/`. |
+| Tiến độ/lịch ôn | Hash trước/sau vẫn `414a107cd800512fc430cc4bbaa66a6ee1305ea339924b54067206a2aa2ddbda`, khớp lần trước. Giữ 5 progress/1 session, ngày ôn 11/11/2026; due=0, không tạo REVIEW. Hash bảng nội dung Question Bank, cấu trúc test, attempt, answers và snapshot Exam cũng khớp trước/sau. `api-readback.json`, `database-before.json`, `database-after.json`. |
+| Bài ngữ pháp | CONTENT_ADMIN đọc DRAFT và HTML an toàn; USER đọc DRAFT 404. Chưa có preview UI, chưa công bố hoặc hoàn thành bài; không đưa trạng thái trong dataset lệch với backend. |
+| Kiểm tra nguồn/render | `source-review.json`: 7 câu/2 nhóm bổ sung đã kiểm tra nguồn. `supplemental-validation.json`: 7 câu/2 nhóm đúng cấu trúc. `component-render.json`: React render tĩnh đạt Part 6 và Part 7 một/hai/ba văn bản, gồm bảng/thứ tự. **Không phải bằng chứng UI hoặc nhập Exam thật.** |
+| Kiểm tra code | 14/14 tests trong `exams.test.ts`, gồm 2 regression mới cho số chỗ trống; importer 17/17 unit/transport tests đạt. Hai frontend typecheck/lint và kiểm tra định dạng đạt. Chưa chạy production build mới; không gộp unit/render tĩnh vào nghiệm thu API/UI. |
+
+### Điểm chặn xác minh lại trong phiên mới
+
+- Gateway `/ready` vẫn 503 với Question Bank/Exam unavailable; `/questions` và `/tests` qua Gateway đều 502. Các cổng 3000–3005/50052 do `com.docker.backend` giữ; tận dụng stack cũ, không khởi chạy trùng hoặc dừng process người dùng.
+- Thử log bằng đúng hai compose file vẫn báo `permission denied while trying to connect to the docker API at npipe:////./pipe/docker_engine`. Docker Desktop bị từ chối với `Computer Use was not approved to use Docker Desktop`. **Chưa đọc được log container, nên chưa xác định nguyên nhân bên trong và chưa khôi phục được hai service.**
+- Browser thử mới origin `http://127.0.0.1:3007` bị từ chối: `The user declined permission for this action`, `The origin approval gate did not grant access`, `The user declined approval`. Không chuyển origin/browser/CDP/proxy để vượt chặn. Chưa nghiệm thu UI CMS/web trong lần này; cần cấp quyền origin CMS và quyền web 3006 khi được nhắc.
+- Không có công cụ nghe/ASR/FFmpeg trong runtime đã kiểm tra. Thử native decoder bằng PowerShell bị chặn `running scripts is disabled on this system`; không thay execution policy. **0/54 clip được nghe xác nhận**, không có kết quả decode độc lập mới. Thời lượng 2758.9501875 giây và frame count 2765.296 giây giữ nguyên như bằng chứng cũ. Khoảng trống DTO/player audio cấp đề vẫn chưa giải quyết; không gắn audio toàn bài tùy tiện, không cắt audio hay đổi timer/điểm.
+
+Số đã nhập vẫn **0 câu/0 nhóm/0 media/20 từ/1 bài DRAFT**, 1 chủ đề; chưa tạo TEST 1, 0 bài PUBLISHED, 0 đề công bố. Bộ chuẩn bị hiện có 100 từ/5 bài và 27 câu đã biên tập, trong đó 19 câu Reading/4 nhóm Reading đã duyệt nội dung; không đồng nghĩa đã nhập/công bố. `acceptance.learningPilot=false`, `acceptance.ui=false` được giữ nguyên, không mở rộng lô toàn bộ. Bước tiếp theo là cấp quyền Docker/browser, xử lý lỗi đúng log, đối chiếu đích Question Bank/Exam thật, nghe bốn clip pilot, nhập/đọc lại/kiểm tra UI, rồi công bố bài thử theo workflow và đồng bộ dataset trước reimport. Chỉ khi lô thử có đủ bằng chứng mới tiếp tục lượt 4/5.
+
+## TEST 1 ngày 10/11/2026 — sửa crash startup Question Bank và Exam
+
+**Đã sửa source của lỗi crash có trong log người dùng; chưa xác nhận hai container phục hồi, chưa khép lượt 2/3 hoặc mở lượt 4/5.** Evidence mới: `tmp/test1-finish-20261110-120032-918/`, có baseline/hash trước sửa, `diagnosis.json`, kết quả test/build/lint, `data-preservation.json`, `verification.json` và `handoff.json`. Giữ nguyên dataset/checkpoint và hai evidence cũ; không chạy builder, importer apply, tạo phiên học hoặc đổi lịch ôn trong lần này.
+
+### Lỗi xác định được và thay đổi
+
+Đã đọc đủ tệp `Pasted text(1).txt` người dùng cung cấp. Log ghi cả hai process dừng với `RabbitMQ publish channel is not ready` tại `packages/common/src/messaging/messaging.service.ts:220`. Caller là `OutboxRelay.onModuleInit` của Question Bank và `ExamOutboxRelay.onModuleInit` của Exam. Messaging có cơ chế reconnect nền nhưng hai hook khởi tạo outbox đang throw khi kênh publish chưa có, khiến ứng dụng chết trước khi phục hồi được. Cảnh báo Elasticsearch degraded không phải stack trace gây thoát này. Lý do broker chưa kết nối chưa được chứng minh bởi log hiện có; không đổi env/credentials hoặc suy đoán lỗi mật khẩu.
+
+Sửa đúng hai relay `services/{question-bank-service,exam-service}/src/modules/outbox/outbox-relay.ts`: thử tạo hàng đợi lúc init nhưng giữ ứng dụng sống nếu lỗi; retry trước polling, chỉ đọc/claim outbox sau khi tạo hàng đợi thành công; kiểm tra closing để không khởi động poll sau shutdown. Không tiêu hao số retry của sự kiện khi bước tạo hàng đợi chưa đạt. Giữ queue namespace, stored event ID, confirm, retry/backoff và dead-letter cũ. Không sửa shared MessagingService, schema, migration, timer thi, scoring hoặc dữ liệu.
+
+Hai file spec tương ứng bổ sung 5 regression: startup không có publish channel vẫn trả về, broker phục hồi thì gửi đúng event cũ, broker tiếp tục lỗi không đọc/sửa outbox, shutdown không poll tiếp, namespace Exam vẫn đúng. Chạy cùng ca cũ và messaging DLQ: **Question Bank 7/7, Exam 9/9 đạt**. Production service build cả hai đạt; lint/Prettier các file sửa đạt. Đây là unit/mock lifecycle và build, không phải runtime Docker/Gateway acceptance.
+
+Thêm `scripts/content/recover-test1-services.ps1` để terminal có quyền Docker áp dụng hai source đã sửa vào đúng hai container hiện có rồi restart. Script kiểm tra ID/label service, không tạo container, migrate/seed/reset, xóa volume, sửa env hoặc đụng frontend. Cú pháp đã kiểm tra; chưa thực thi được với Docker. Lệnh chạy và đọc lại nằm trong [hướng dẫn vận hành](../scripts/content/README.md#sửa-lỗi-khởi-động-từ-log-docker-được-cung-cấp-ngày-10112026).
+
+### Runtime, dữ liệu và các lượt
+
+- Docker CLI vẫn báo access denied với config/pipe; Docker Desktop vẫn `Computer Use was not approved to use Docker Desktop`. Không copy/restart được container trong phiên agent, không chạy backend trùng trên cổng khác. `/ready` vẫn 503, Question Bank/Exam unavailable; không coi build là đã phục hồi dịch vụ.
+- CMS thử lại đúng origin 3007 vẫn bị `A saved permission or managed policy denies access`; không thử browser/origin/CDP/proxy khác. Không có nghiệm thu UI mới.
+- Thử lại decoder native qua PowerShell vẫn bị `running scripts is disabled on this system`; không đổi execution policy. Bốn clip pilot và toàn bộ 54 clip vẫn chưa được xác nhận nội dung nghe. Khoảng trống full audio và thời lượng chưa có kết quả độc lập mới.
+- Snapshot Prisma chỉ đọc trước/sau kiểm tra đúng các DB cấu hình: Learning vẫn 1 topic/20 words/1 DRAFT/5 vocabulary progress/1 completed session, 0 lesson progress; Question Bank và Exam vẫn chưa có dữ liệu nhập. Hash toàn bộ nội dung/tiến độ/phiên/test/attempt/answers/snapshot kiểm tra trong `data-preservation.json`. Không động đến các DB QA khác.
+- Validation mới: Learning pilot đạt; Exam pilot vẫn bị chặn bởi 8 câu nghe/4 clip và 2 nhóm nghe chưa duyệt. Không giảm guard hoặc đổi `verifiedScopes`; mapping vẫn 22, media vẫn rỗng, bài vẫn DRAFT, cờ learningPilot/ui vẫn false.
+
+Lượt 1 giữ kết quả khảo sát đã có. Lượt 2 còn xác nhận nghe và chốt chất lượng; lượt 3 còn áp dụng bản sửa vào container, kiểm chứng đích Exam, nhập câu/nhóm/media và UI/hoàn thành bài học. Lượt 4/5 chưa mở vì lô thử chưa đạt. Tổng vẫn 27 câu biên tập (19 Reading duyệt/8 Listening chờ), 173 câu chưa biên tập, 42 khung nhóm/4 nhóm Reading duyệt, 100 từ/5 bài biên tập; đã nhập 0 câu/0 nhóm/0 media/20 từ/1 bài DRAFT, 0 TEST 1/0 bài PUBLISHED. Tiếp tục từ checkpoint cũ và ledger cũ sau khi quyền/runtime/audio đủ điều kiện.
+
+## TEST 1 ngày 10/11/2026 - runtime phục hồi sau recovery của người dùng
+
+Đây là cập nhật mới nhất thay cho trạng thái runtime unavailable của mục trước. Sau khi người dùng chạy recover-test1-services.ps1, agent xác nhận trực tiếp Gateway /ready HTTP 200: redis/auth/questions/exam/analytics/learning đều ok. Probe 503 người dùng gửi diễn ra lúc container mới tới prisma generate; dịch vụ đã hoàn tất khởi động sau đó. Không restart thêm trong phiên agent. Không suy từ readiness rằng RabbitMQ/outbox hoặc toàn bộ nghiệp vụ đã được nghiệm thu: controller readiness Question Bank kiểm tra PostgreSQL, Exam kiểm tra PostgreSQL/Redis.
+
+Evidence: `tmp/test1-runtime-ready-20261110-121822-712/`, gồm gateway-ready.json, gateway-final.json, api-readback.json, api-requests.json, database-before.json, database-after.json, data-preservation.json, verification.json và handoff.json. API thật với ba vai trò đã đăng nhập: catalog questions/groups/tests trả 200; anonymous trả 401; USER và SYSTEM_ADMIN không có CONTENT_ADMIN gọi admin Learning trả 403. Phiên học cũ vẫn COMPLETED, quiz 5/5; owner isolation 404; bài học vẫn DRAFT, USER đọc 404; due=0. Không tạo phiên học, không submit/review/complete hay nhập nội dung. Ba phiên auth QA đã logout.
+
+Hash snapshot toàn bộ nội dung Learning, tiến độ, lịch ôn, session, Question Bank, test/attempt/answers/snapshot Exam trước/sau khớp nhau và khớp snapshot bàn giao trước; hash dataset/checkpoint/review queue/inventory/answer key/ledger giữ nguyên. Số liệu không đổi: 0 câu/0 nhóm/0 media/0 đề, 1 chủ đề/20 từ/1 bài DRAFT đã nhập; 27 câu biên tập (19 Reading duyệt, 8 Listening chờ), 42 khung nhóm/4 Reading duyệt, 100 từ/5 bài biên tập, 0/54 clip nghe duyệt, 0 bài PUBLISHED.
+
+Sửa duy nhất script recovery để chờ readiness tối đa 180 giây sau restart, poll mỗi 2 giây; báo ready khi Gateway/questions/exam đạt, nếu timeout in log và báo lỗi. Bản mới đã qua parser PowerShell; chưa chạy lại với Docker trong phiên agent. Không đổi relay/backend/frontend/env/credentials trong lần này. Validate mới Learning pilot đạt; Exam pilot vẫn chặn do nội dung nghe chưa duyệt. Không chạy importer plan/apply, không tái sử dụng số reimport cũ như kết quả lần này.
+
+Điểm chặn còn lại: Docker CLI agent vẫn permission denied, chưa inspect được cấu hình DB/media thật trong container; catalog Exam rỗng khớp DB cấu hình là kiểm tra read-only, chưa đủ mở verifiedScopes Exam. Trình duyệt thử đúng origin CMS 127.0.0.1:3007 vẫn bị từ chối quyền; không đổi browser/host. Audio chưa có khả năng nghe xác nhận; không thử lách execution policy. Giữ target/checkpoint/ledger và cờ learningPilot/ui=false. Lượt 1 giữ bằng chứng khảo sát; lượt 2 chờ audio, lượt 3 đã hết chặn readiness nhưng còn Exam/media/UI/bài học, lượt 4/5 chưa mở.
+
+
+## TEST 1 ngày 10/11/2026 - đối soát và reimport lô mẫu lúc 13 giờ
+
+**Lượt 2 và lượt 3 vẫn chưa hoàn tất.** Đã thực hiện các phần độc lập và chạy lại importer Learning thật; chưa chuyển lượt 4/5. Evidence mới: `tmp/test1-pilot-finish-20261110125536-610/`, bàn giao tại `handoff.json`, chi tiết tại `verification.json`. Không ghi đè evidence cũ, không chạy builder/OCR/recovery/restart/seed/reset, không đổi env/key/credentials hoặc bật ghi frontend.
+
+| Hạng mục | Kết quả mới |
+| --- | --- |
+| Runtime | Gateway /ready 200, tất cả probe ok; web 3006 và CMS 3007 trả HTTP 200. HTTP reachability không phải nghiệm thu UI. Tái sử dụng stack. |
+| Lô mẫu | Giữ đúng 20 câu 1, 7, 62–64, 95–97, 101–103, 131–134, 186–190; 4 nhóm. 147–148 và 176–180 vẫn supplemental, không nhập. Không tạo test nào. |
+| Nguồn/renderer | Xem lại ảnh câu 1, hai graphic Listening, trang gốc Part 5/6 và ba crop 186–190. Part 2 đúng A–C; Part 6 đúng bốn token và nhãn 131–134 trong render tĩnh; Part 7 đúng lịch phát thanh → e-mail → tuyển dụng, có bảng. Render tĩnh 4 nhóm đạt, gồm hai nhóm supplemental; không thay thế UI. |
+| Audio | Đối soát file/hash/owner/phạm vi/đáp án viết của 4 clip với inventory và dataset; 8 câu Listening. **0/4 clip được nghe duyệt**, vì không có công cụ nghe/ASR trong phiên; không thử lại decoder từng bị chặn. `audio-review.json` chứa từng clip, transcript, lựa chọn, đáp án và mục còn phải nghe. Không đổi cờ chất lượng. |
+| Validation | Learning pilot đạt. Exam pilot quality_blocked với 22 lỗi review liên quan 8 câu/4 clip/2 nhóm nghe; chưa chạy plan/apply Exam. |
+| Importer thật | Xác minh Learning target, plan → apply → GET đọc lại: **0 thêm, 0 cập nhật, 22 same**. Actor/mapping/checkpoint/ledger giữ nguyên hash. Scope vẫn chỉ learning; không tự thêm exam. |
+| Tiến độ | Snapshot đầy đủ Learning/Question Bank/Exam trước/sau và handoff trước khớp hash `02e81e4902df3be19f1c31c396798cd9a68655d6e61a8d23b27a982158f1f85b`. Giữ 5 vocabulary progress, lịch 11/11/2026, 1 session COMPLETED quiz 5/5, 0 lesson progress; không tạo session/review/attempt mới. Due API thực tế 0, không chạy REVIEW. |
+| Bài học | Vẫn 1 DRAFT, USER đọc DRAFT 404 đúng contract. Preview UI chưa thực hiện được nên chưa công bố/complete. Dataset/backend cùng DRAFT. |
+| Browser/đích Exam | @Browser CMS 127.0.0.1:3007 bị origin gate từ chối. Docker CLI tiếp tục permission denied; chưa inspect DB/media bên trong container, catalog rỗng không đủ xác minh đích. Không đổi browser/host, không vượt policy. |
+| Kiểm thử code | Importer **19/19 đạt**, gồm 2 regression mới; Prettier và git diff --check đạt. Không sửa frontend/backend trong phiên này. |
+
+Sửa hai lỗi vận hành importer trong `scripts/content`: thông báo media attachment readback dùng đúng source ID thay vì biến `key` chưa khai báo; importer và target verifier đăng xuất phiên auth do chính lần chạy tạo. CLI ghi kết quả logout vào report, token chỉ ở RAM. Hai lượt plan/apply và target verifier được kiểm tra cleanup thực tế.
+
+**Giới hạn kiểm tra auth:** wrapper `reimport-learning.cjs` dừng ở assertion bổ sung về toàn bộ auth sessions, sau khi plan/apply, GET session cũ, GET due và logout đã đạt. Quan sát một session CMS SYSTEM_ADMIN riêng có revokedAt trong khoảng chạy; không có request của lượt reimport dùng session/role đó. Baseline từng auth row chưa được lưu nên không kết luận nguyên nhân hay mọi trường auth đều bảo toàn. Giữ nguyên `reimport-failure.json`; `auth-reconciliation.json` xác nhận 4 phiên QA của lượt reimport đều đã logout. Không retry importer hay khôi phục auth để làm khớp hash. Bằng chứng bảo toàn nội dung/tiến độ/attempt độc lập vẫn đạt; không ghi nhận wrapper tổng thể là pass.
+
+Số thực có vẫn **1 chủ đề/20 từ/1 bài DRAFT; 0 câu/0 nhóm/0 media/0 test**. Lượt 2 thiếu nghe duyệt bốn clip. Lượt 3 thiếu xác minh DB/media runtime, nhập Exam pilot, nghiệm thu web/CMS và workflow công bố → USER học/complete/reload → reimport sau tiến độ. Giữ `acceptance.learningPilot=false`, `acceptance.ui=false`. Chỉ tiếp tục từ mapping/actor/ledger hiện tại sau khi từng điều kiện tương ứng có bằng chứng; không nhập toàn bộ hay tạo Full Test 20 câu.
+
+
+## TEST 1 ngày 10/11/2026 - nghiệm thu bài mẫu qua API quản trị
+
+Theo yêu cầu mới dùng API backend thay cho thao tác CMS, đã thực hiện workflow công bố và hoàn thành **bài mẫu local**. Evidence mới: `tmp/test1-admin-api-20261110-060956-258/`; `handoff.json` là bàn giao mới nhất. **Backend Learning của lô mẫu đã đạt; lượt 2 và lượt 3 tổng thể vẫn chưa hoàn tất**, vì chưa nghe bốn clip, chưa xác minh đích/nhập Exam pilot và chưa có nghiệm thu giao diện. Không chạy lại browser, recovery, builder/OCR, migrate/seed/reset, không bật ghi frontend hay đổi env/credentials.
+
+| Hạng mục | Kết quả API thực tế |
+| --- | --- |
+| Preview | CONTENT_ADMIN cũ GET bài DRAFT, đối chiếu Markdown/nội dung/đáp án bài luyện B-B-C-A-B và HTML NO_RAW_HTML an toàn. USER gọi admin 403, đọc DRAFT 404 trước công bố. `lesson-preview.json`. Đây là preview API, không phải UI. |
+| Công bố | PATCH /learning/admin/lessons/56983b60-bc78-45e5-8375-066260698924 chuyển PUBLISHED. Loại một câu hướng dẫn release nội bộ khỏi phần nguồn hiển thị cho học viên; giữ nội dung giảng dạy, ví dụ và đáp án. GET admin/USER và catalog đọc được bài đã công bố; có đúng một content audit mới. `publication-operation.json`, `publication-readback.json`. |
+| Dataset | Chỉ bài mẫu được đồng bộ status PUBLISHED, Markdown đã đọc lại và ghi chú công bố qua API. Bốn bài còn lại vẫn DRAFT, chưa nhập. Không chạy builder để tạo lại nguồn. |
+| Hoàn thành | USER cũ POST complete với operationId b482295e-f255-49de-a048-5b0b70d10a3a, baseEntityRevision 0: tạo đúng 1 lesson progress revision 1. Gửi lại cùng operationId trả cùng kết quả, không tạo completion/ledger/event trùng. Đăng nhập mới và GET lại summary vẫn 1 bài hoàn thành. `lesson-completion-operation.json`, `student-readback.json`. Không phải bằng chứng browser reload. |
+| Đồng bộ | Lần GET /sync/users/me ngay sau complete còn thiếu mục LESSON; giữ nguyên bằng chứng độ trễ. GET sau bằng phiên xác thực mới đã trả đúng LESSON COMPLETED/revision 1/completedAt khớp; 5 VOCABULARY và ngày ôn 11/11/2026 không đổi. Hai event LessonCompletedEvent.v2 và LearningProgressChangedEvent.v2 đã publish; event tiến độ có trong sync inbox, không quarantine. `sync-readback-final.json`, `learning-outbox.json`, `sync-diagnosis.json`. Không sửa DB hoặc replay event để làm khớp. |
+| Reimport | Sau đồng bộ dataset: validate → plan → apply → GET bằng importer hiện có, **0 thêm/0 cập nhật/22 same**. Hash mọi model được snapshot trước/sau reimport khớp, gồm completion/ledger/audit/head. Checkpoint giữ actor và 22 mapping; chỉ fingerprint bài mẫu cập nhật theo payload đã công bố. |
+| Bảo toàn | Giữ nguyên 20 từ, chủ đề, 5 vocabulary progress/lịch ôn, 1 session cũ COMPLETED quiz 5/5 và 5 session items; Question Bank/Exam/test/attempt không đổi. Ledger từ vựng cũ, answer key, inventory, review queue và config giữ nguyên hash. Mọi dòng Learning bất biến cũ còn nguyên; tăng có chủ đích 1 lesson progress/1 operation ledger/1 content audit. |
+| Auth/kiểm thử | Snapshot auth cũ trong workflow chính không đổi; 6 phiên QA được tạo và logout, phiên QA xác nhận sync cuối cũng logout HTTP 200. Không thay mật khẩu hay role. Importer 19/19 tests đạt; Learning pilot validate đạt; Exam pilot vẫn quality_blocked vì audio chưa duyệt. |
+
+Hiện thực có **1 chủ đề/20 từ/1 bài PUBLISHED/1 lesson completion**, 5 vocabulary progress/1 session cũ; **0 câu/0 nhóm/0 media/0 test** nhập. Due thực tế 0 nên không chạy REVIEW. Hai nhóm 147–148 và 176–180 vẫn supplemental, không nhập kèm; giữ lô chính 20 câu. Không tạo Full Test 20 câu.
+
+Checkpoint bổ sung riêng `acceptance.learningLessonApi=true` kèm evidence sync chính xác. Giữ `learningPilotApi=true`, `learningPilot=false`, `ui=false`; kết quả API không tự nâng thành nghiệm thu giao diện hay cho phép nhập toàn bộ. Chỉ kết luận backend Learning đã đạt trong phạm vi bài mẫu; chưa chuyển lượt 4/5.
+
+
+## TEST 1 ngày 10/11/2026 - hoàn thành tách nguồn text/ảnh/audio mapping
+
+Theo yêu cầu xử lý thư mục docs/TEST 1, đã xuất bộ tách nguồn tại `data/toeic/ets-2023-test-01/source-extract-20261110/`, kèm `TEST1_Source_Extracted_20261110.zip` (31.609.314 bytes). Evidence mới: `tmp/test1-source-process-20261110-064502-898/handoff.json`, `verification.json`; không ghi đè evidence cũ. Đây là tiền xử lý nguồn, không phải mở nhập toàn bộ hoặc nghiệm thu đề Full.
+
+| Phần việc | Kết quả |
+| --- | --- |
+| Đề sang text | Tái sử dụng OCR có tọa độ đủ 44 trang LC/RC; PDF native text=0. Xuất text câu hỏi, bản OCR theo trang, 200 record JSON, 169 khối câu in đủ A-D. 31 câu Part 1/2 có câu/lựa chọn đọc trong audio nên không bịa text. Giữ nhãn OCR chưa biên tập. |
+| Đáp án | 200 đáp án TXT/CSV/JSON được đối chiếu ảnh nguồn bằng lần chép độc lập. Phát hiện và sửa 154 từ B thành D trong answer-key, dataset outline và hằng số builder; câu chưa nhập, không đổi cờ duyệt nội dung. Có crop ảnh bằng chứng. |
+| Ảnh | 39 crop PNG đã rà mép ảnh: 6 photo Part 1, 5 graphic Listening, 1 photo ví dụ, 4 passage Part 6 và 23 văn bản Part 7. Mapping ghi số câu/nhóm, thứ tự văn bản, trang PDF, tọa độ, hash. Giữ thêm 362 image stream gốc không trùng từ 385 lần dùng; đây là dải scan/overlay, không đếm nhầm thành ảnh câu hỏi. |
+| Text/bố cục | Đối soát chỗ trống 30 câu Part 5, phục hồi lựa chọn 133/171/175 và giá £ trong 173; không cho footer lọt vào đáp án 200. Hai bài báo nhiều cột được đọc trái rồi phải. Reading.txt kèm 19 nhóm passage theo đúng thứ tự; bảng giữ ảnh nguồn và Markdown ở phần đã biên tập. |
+| Audio mapping | 54 clip phủ 1-100 đúng một lần, một audio full. CSV 100 dòng nối từng câu với clip; Part 3/4 chung một clip/nhóm. Kiểm tra đủ tệp/hash; chưa nghe/ASR và không tạo timestamp full audio. MP3/PDF giữ tại nguồn, không nhân bản vào ZIP. |
+| Kiểm tra | Kiểm tra độc lập số câu/Part/options, key, file/hash/ảnh, 42 nhóm/thứ tự văn bản, mapping audio, CRC ZIP và snapshot bảo toàn. Cấu trúc xuất đạt; importer 19 tests được chạy lại riêng. Không coi cấu trúc/OCR là duyệt nghe hay duyệt đủ 200 câu. |
+
+Chỉ sửa một đáp án nguồn của câu chưa nhập; checkpoint, source inventory, review queue, OCR cache, mọi nội dung bài học/tiến độ và trạng thái nghiệm thu hiện có được giữ. Không gọi API nghiệp vụ hay ghi database, không chạy OCR/builder/recovery/importer apply. Bài mẫu PUBLISHED và lesson completion từ handoff API trước vẫn được giữ trong dataset/checkpoint. Lượt 2/3 còn các điều kiện nghe/đích Exam/UI đã nêu ở handoff trước; lô pilot và supplemental không đổi.
+
+
+## TEST 1 ngày 10/11/2026 - người dùng duyệt nghe và xác minh điều kiện môi trường
+
+**Lượt 2 hoàn tất chất lượng lô pilot; điều kiện 2 về đích runtime vẫn còn thiếu bằng chứng container.** Người dùng xác nhận: “đã nghe và duyệt điều kiện 1.” Đã lưu xác nhận cùng hash bốn clip và phạm vi tám câu tại `tmp/test1-target-check-20261110142408-547/user-listening-approval.json`. Cập nhật approved/audioContentReviewed cho tám câu pilot, hai nhóm nghe và bốn media; không tự nhận assistant nghe và không duyệt 50 clip/audio full còn lại. Review queue bỏ đúng các mục pilot đã duyệt và sửa các blocker cũ đã được giải quyết; bài mẫu vẫn PUBLISHED/completed qua API.
+
+| Kiểm tra | Kết quả thực tế |
+| --- | --- |
+| Chất lượng | Exam validate đạt đúng 20 câu/4 nhóm; Learning validate đạt. Importer 19/19 tests đạt. Test âm clip chưa duyệt giờ dùng clone cố ý bỏ duyệt. Mọi payload câu hỏi/bài học không đổi. |
+| Gateway/API | /ready 200, tất cả checks ok; catalog questions/groups/tests trả 200 và khớp ID DB cấu hình, hiện đều 0. Learning vẫn 1 topic/20 words/1 PUBLISHED. |
+| PostgreSQL | Kết nối read-only question_db/exam_db/learning_db đúng tên, migrations tương ứng 4/6/4, không có migration dở. Đây là DB theo cấu hình local, chưa thay thế bằng chứng DB_URL của process/container đang chạy. |
+| MinIO public | localhost:19000 health 200; toeic-media/key-ngẫu-nhiên trả 404/NoSuchKey, server MinIO. Chứng minh bucket/public read route; chưa xác nhận actual runtime presign bucket và chưa PUT/attach. |
+| Runtime Docker | CLI tiếp tục permission denied tại npipe/docker_engine và config. Không truy cập đường vòng, không restart. Chưa có inspect actual DB/media env của container nên điều kiện 2 chưa hoàn tất, scope vẫn chỉ learning. |
+| Bảo toàn | Hash mọi model Learning/Question Bank/Exam snapshot trước/sau khớp; checkpoint, answer key và ledger cũ giữ nguyên. Giữ 5 vocabulary progress/1 lesson progress/1 vocabulary session; auth cũ không đổi, phiên QA tự logout. Không import câu/nhóm/media/test. |
+
+Chuẩn bị `scripts/content/inspect-test1-runtime.ps1` chỉ đọc, lọc bỏ credentials, lấy định danh/container env cần thiết cùng network/port/source hashes để người dùng chạy tại terminal có quyền Docker. Parser PowerShell đạt; chưa thực thi Docker trong agent. Lệnh và output path trong README importer. Không sửa verifiedScopes để vượt guard. Handoff mới: `tmp/test1-target-check-20261110142408-547/handoff.json`; các probe nằm trong `report.json`, `configured-databases.json`, `public-media.json`.
+
+Sau khi có runtime-inspection.json, đối chiếu Gateway routes → service container → PostgreSQL host/name/port mapping và MinIO internal/public endpoint/bucket, rồi mới xác minh Exam target và chạy plan/apply pilot. Luồng presign/PUT/attach/GET sẽ được kiểm tra khi nhập pilot đủ điều kiện; chưa tạo Full Test 20 câu và chưa mở lượt 4/5.
+
+
+## TEST 1 ngày 10/11/2026 - xác minh runtime đạt từ kết quả Docker người dùng cung cấp
+
+Đã đọc `tmp/test1-runtime-inspection-20261110-142904-942/runtime-inspection.json` do người dùng chạy script chỉ đọc. Cả 7 container thuộc project toeic-system, running, cùng mạng Docker. Hash hai compose file và bốn file env liên quan khớp hiện tại. Không chạy lại Docker từ agent hoặc thay cấu hình.
+
+Đối chiếu đã đạt: Gateway route tới đúng auth/question-bank/exam/learning; Exam gRPC tới question-bank-service:50052. Các service dùng postgres:5432 với auth_db/question_db/exam_db/learning_db. Đọc PostgreSQL trực tiếp qua cổng host 5432 trả đúng database và server IP 172.18.0.13, trùng container postgres trong runtime proof. Question Bank dùng minio:9000, bucket toeic-media; cổng 9000 ánh xạ host 19000; public endpoint http://localhost:19000 và media base /toeic-media khớp cả Question Bank, Exam và Learning. Gateway /ready được kiểm tra lại 200, tất cả checks ok; MinIO health 200 và GET key vắng mặt trong bucket trả 404/NoSuchKey.
+
+**Điều kiện 2 về danh tính/cấu hình DB-media đích đã đạt.** Tạo manifest mới `tmp/test1-runtime-verified-20261110143224-351/target.json`, scope learning và exam chỉ được ghi sau các assertion trên; identity của target khớp checkpoint cũ. Đây là xác minh có bằng chứng runtime, không phải thêm scope để vượt guard. Giữ nguyên checkpoint/dataset/answer key/inventory/review queue/ledger theo hash trước-sau. Bằng chứng chi tiết: `tmp/test1-runtime-verified-20261110143224-351/verification.json`, bàn giao `handoff.json`.
+
+Điều kiện 1 giữ xác nhận nghe của người dùng; Exam validate vẫn đạt 20 câu/4 nhóm. Chưa chạy importer plan/apply hoặc presign/PUT/attach, chưa có câu/nhóm/media/test mới. Việc upload/đính kèm thật sẽ được kiểm tra trong nhập pilot bằng API. Hai điều kiện tiền kiểm đã đạt; lượt 3 vẫn còn nhập pilot, đọc lại/bảo toàn và nghiệm thu theo phạm vi API/UI hiện hành. Không tạo Full Test 20 câu hoặc mở lượt 4/5.
+
+
+## TEST 1 ngày 10/11/2026 — pilot đã vào DB và MinIO qua API
+
+**Lượt 2 hoàn tất; lượt 3 đã đạt phần backend/API, còn nghiệm thu giao diện.** Đây là trạng thái mới nhất, thay cho các mục trước còn ghi 0 câu/nhóm/media hoặc chưa duyệt Listening. Bàn giao: `tmp/test1-pilot-import-20261110143745-621/handoff.json`. Không mở rộng lượt 4/5, không tạo Full Test 20 câu.
+
+Hai điều kiện trước ghi đã đạt: người dùng xác nhận nghe duyệt bốn clip thuộc tám câu Listening; danh tính DB/media runtime được đối chiếu từ `tmp/test1-runtime-inspection-20261110-142904-942/runtime-inspection.json`. Manifest mới có bằng chứng `tmp/test1-runtime-verified-20261110143224-351/target.json`, giữ cùng identity checkpoint. Không restart/recovery, không chạy builder/OCR, migrate/seed/reset; không sửa env/key/credentials hoặc bật ghi frontend.
+
+| Hạng mục | Kết quả thực tế |
+| --- | --- |
+| Phạm vi | Đúng 20 câu: 1, 7, 62–64, 95–97, 101–103, 131–134, 186–190. Bốn nhóm; 147–148 và 176–180 vẫn supplemental và chưa nhập. |
+| Import | Validate → plan → apply → GET đạt bằng importer hiện có và CONTENT_ADMIN cũ. **20 câu, 4 nhóm, 7 media** mới; 0 test. Chín thao tác tạo cấp trên gồm 5 câu độc lập và 4 nhóm nguyên tử chứa 15 câu con. |
+| Media thật | Presign → PUT → attach → GET đã hoàn tất cho **3 PNG và 4 MP3** trong MinIO `toeic-media`. Tải công khai cả bảy tệp qua `localhost:19000`, HTTP 200, content-type và SHA-256 khớp nguồn/checkpoint. Không lưu presigned URL hay token. |
+| Nội dung đọc lại | Admin và USER GET đủ 20 câu/4 nhóm, tất cả `isComplete=true`. Options/đáp án/admin transcript đúng dataset; USER không nhận đáp án/transcript/explanation. Part 2 có A–C; Part 6 giữ `[[1]]`–`[[4]]`; Part 7 đúng ba TEXT asset: lịch phát thanh có bảng → e-mail → tuyển dụng. Đây là kiểm tra payload API, chưa phải kiểm tra hiển thị trình duyệt. |
+| Reimport | Apply lần nữa: **0 thêm, 0 cập nhật, 9 same**; giữ 20 câu/4 nhóm/7 media. Hash mọi model nghiệp vụ Question Bank/Learning/Exam trước và sau reimport khớp; delivery acknowledgement của outbox được tách riêng vì có thể tiến triển độc lập. |
+| Bảo toàn | Không tạo lại chủ đề, 20 từ hoặc bài học. Giữ 22 mapping Learning cũ, actor và target checkpoint; hiện tổng 46 mapping nội dung + 7 media. Dataset/answer key/inventory/review queue/ledger cũ và cấu hình runtime không đổi hash. Đối chiếu thêm 11 model Learning với snapshot sau workflow bài học trước đó đều khớp, gồm session items, operation ledger, idempotency, content audit và progress head. |
+| Học viên | USER cũ đọc lại session COMPLETED, `session.result` khớp hash ledger, quiz 5/5; vẫn 5 vocabulary progress, lịch 11/11/2026, 1 bài PUBLISHED/hoàn thành revision 1. Due API thực tế 0, không tạo REVIEW/session học/attempt mới. Exam giữ 0 test/0 attempt. |
+| Auth và kiểm thử | Importer và verifier logout các phiên QA do chúng tạo; không logout phiên cũ. Không khẳng định đã so toàn bộ DB Auth lịch sử trong lần này. Importer **19/19 tests đạt**. |
+
+Evidence chính: `validate/report.json`, `plan/report.json`, `apply/report.json`, `reimport/report.json`, `api-readback-confirmed.json`, ba snapshot `database-before.json`/`database-post-apply.json`/`database-post-reimport.json`, `preservation-post-reimport.json`, `source-preservation.json`, `importer-tests.tap` trong thư mục bàn giao. Verifier đọc session lần đầu dừng vì so nhầm hash toàn bộ view với hash result; giữ nguyên `api-readback.json`. Bản sửa chỉ đọc so `session.result` đúng ledger và đã đạt; không tạo/submit lại phiên để sửa bằng chứng.
+
+Cập nhật riêng `acceptance.examPilotApi=true` và `examPilotReimportApi=true` kèm evidence. Giữ `learningPilotApi=true`, `learningLessonApi=true`; **`ui=false`, `learningPilot=false`, `pilot=false`**. Hai origin CMS trước đó đều bị Browser từ chối, kể cả `localhost:3007` người dùng yêu cầu; workflow API này không thử lại, không đổi host/browser hay dùng công cụ khác để vượt chặn. Chưa có bằng chứng web/CMS hiển thị ảnh/audio, lựa chọn, nhãn chỗ trống, bảng và thứ tự văn bản, hoặc tiến độ tồn tại sau browser reload.
+
+Việc còn lại của lượt 3 là nghiệm thu UI trên dữ liệu vừa nhập, dùng preview hoặc luồng Part đúng contract và session từ vựng cũ; không tạo Full Test 20 câu, không tạo thêm phiên học để lặp bằng chứng. Chỉ chạy REVIEW khi API trả ít nhất năm mục thực đến hạn. Sau khi UI đạt mới xét cờ pilot tổng thể và lượt 4/5; tiếp tục từ checkpoint hiện tại, không nhập lại từ đầu.
+
+
+## TEST 1 ngày 10/11/2026 — hoàn thiện nội dung nguồn đủ 200 câu
+
+Theo yêu cầu mới của người dùng, đã chuẩn hóa offline 173 câu và 36 nhóm còn thiếu từ source-extract-20261110, đối chiếu toàn bộ trang nội dung hai PDF đề, ảnh đáp án và 27 trang transcript tiếng Anh của PDF giải Listening. Không gọi API, không nhập DB/MinIO, không tạo test hoặc đổi cờ nghiệm thu.
+
+- Dataset hiện đủ 200 câu, 42 nhóm, phân bố Part 6/25/39/30/30/16/54; lựa chọn và đáp án khớp ảnh nguồn, giữ 154=D. Cả 200 câu có text/key được đối soát.
+- Có 54 transcript (31 câu Part 1/2, 23 nhóm Part 3/4), mapping 54 clip phủ đủ 100 câu nghe; 11 ảnh phục vụ đề (6 ảnh Part 1, 5 graphic). Bổ sung 8 tham chiếu ảnh từ crop đã có, không nhân bản file. Bài đọc giữ 27 tài liệu theo nhóm/thứ tự; nội dung dùng TEXT, ảnh nguồn chỉ để đối chiếu.
+- Đã sửa OCR ghép footer vào câu 100/198, Aline ở câu 33, thời gian câu 161, metadata e-mail/checkbox Repair, chỗ trống Part 6, nhãn chèn câu 171/175 và cột/giá tiền trong bài Gorman. Đáp án mới được giải thích theo ngữ cảnh/transcript trong dataset; không coi việc đọc transcript là nghe MP3.
+- Giữ nguyên toàn bộ 20 câu/4 nhóm pilot và 7 câu/2 nhóm supplemental, mọi sourceId, Learning và checkpoint. Supplemental tự thuộc scope toàn bộ khi dùng batch all; không gộp vào pilot. Hash 63 file nguồn, answer-key và source-inventory khớp trước/sau. review-queue được cập nhật có chủ đích từ thiếu text sang chờ nghe.
+- 100 câu Reading đã duyệt nội dung; cộng 8 câu Listening pilot trước đây thành 108 câu approved. 92 câu/21 nhóm Listening đã đủ text nhưng vẫn approved=false vì 50 clip còn chưa nghe duyệt. Audio full không đổi trạng thái. Ghi riêng hai lỗi in nguồn: nhóm 53–55 dùng “wafer damage” (cần nghe xác nhận); nhóm 143–146 thiếu “to” trong “add money their accounts”, giữ đúng bản in.
+- 31/31 kiểm thử (19 importer + 12 chuẩn hóa) đạt, Prettier đạt. Validate pilot đạt; validator supplemental đạt 7 câu/2 nhóm. CLI chỉ nhận batch pilot/all nên supplemental được kiểm tra bằng hàm export, không đổi guard. Full validate trả quality_blocked đúng bởi duyệt nghe, không còn lỗi cấu trúc/text/mapping/hash. Checkpoint ui/pilot và lịch sử phiên học không bị sửa.
+
+Bàn giao: tmp/test1-complete-dataset-20261110075905308/handoff.json. Snapshot trước sửa và evidence rà nguồn, cấu trúc, mapping, hash cùng kết quả kiểm thử nằm trong thư mục đó. ZIP/source-export cũ tiếp tục là snapshot nguồn; không dùng chúng hay builder cũ ghi đè dataset mới. Chuẩn hóa nội dung nguồn đã hoàn tất; bước nhập toàn bộ vẫn cần duyệt audio và các điều kiện nghiệm thu hiện có.
+
+
+## TEST 1 ngày 10/11/2026 — người dùng duyệt toàn bộ clip và ảnh
+
+Người dùng xác nhận “các clip audio và image đã được duyệt”. Đã gắn xác nhận vào hash 54 clip và 11 ảnh trong dataset; đây là duyệt của người dùng, không phải assistant nghe. Cập nhật đúng 50 media chưa duyệt, 92 câu và 21 nhóm Listening; toàn bộ payload, sourceId, pilot và checkpoint giữ nguyên. Full validate qua CLI đạt 200 câu/42 nhóm/0 test, không còn lỗi chất lượng/cấu trúc/media.
+
+Full MP3 không được suy là nằm trong xác nhận về các clip; file đó vẫn giữ trạng thái chưa duyệt và cần hỗ trợ DTO/player cấp đề. Giữ nguyên cờ UI/pilot trong checkpoint; importer apply batch all vẫn có guard nghiệm thu pilot, vì vậy chưa nhập DB/MinIO hoặc tạo test. Kiểm thử guard dùng bản clone cố ý chưa duyệt/thiếu lựa chọn để không phụ thuộc trạng thái duyệt thật của dataset, không thay validator hay guard.
+
+Bàn giao: tmp/test1-media-user-approved-20261110082443599/handoff.json; xác nhận hash tại user-media-approval.json, CLI validation tại validate-all/report.json, bảo toàn tại preservation.json. Bước tiếp theo: khép nghiệm thu UI pilot, kiểm tra lại target/Gateway, plan nhập đủ 200 câu (dùng lại 20 câu/4 nhóm/7 media), apply theo checkpoint, GET/hash/reimport; tạo đề Full 200 câu đúng thứ tự sau khi kho câu đạt. Luồng audio toàn bài cần triển khai riêng trước khi nghiệm thu trải nghiệm Full có MP3 duy nhất.
+
+
+## TEST 1 ngày 10/11/2026 - hoàn tất Full 200 qua API BE
+
+Theo yêu cầu trực tiếp của người dùng, đã tiếp tục từ checkpoint và hoàn tất nhập bằng API nghiệp vụ; không có thay đổi service backend, env/credentials, migration, seed hoặc reset. Lần chạy cũ tại tmp/test1-full-execution-20261110082818867 bị dừng; tiến trình đã kết thúc và lock cũ được giữ trong evidence trước khi tiếp tục. Bàn giao mới: tmp/test1-full-resume-20261110095757696/handoff.json.
+
+| Hạng mục | Kết quả đã xác minh |
+| --- | --- |
+| Kho câu hỏi | 200 câu, 42 nhóm, 775 lựa chọn; Part 6/25/39/30/30/16/54. Bổ sung 180 câu so với pilot, gồm 7 supplemental. Giữ nguyên toàn bộ câu/nhóm, sourceId và payload đã chuẩn hóa. |
+| Media | 54 clip MP3 + 11 ảnh, tổng 65 media trong MinIO toeic-media. Giữ 7 media pilot, thêm 58; public GET HTTP 200, MIME và SHA-256 khớp nguồn cho tất cả. |
+| Đề Full | ETS 2023 - Test 01; ID cd2e4422-1d2c-4b87-a83c-3431d89f74bb; 7200 giây, đủ 200 questionId đúng thứ tự 1–200, Part và nhóm. Không tạo attempt nghiệm thu mới. |
+| Đọc lại và quyền | Admin/USER GET đủ 200 câu/42 nhóm và đề Full; tất cả isComplete=true. Đáp án/transcript/explanation chỉ hiện cho admin; USER tạo test trả 403, anonymous đọc test trả 401. |
+| Nhập lại | 0 thêm / 0 cập nhật / 104 same; không upload mới. Hash mọi model nghiệp vụ Question Bank, Learning, Exam khớp trước/sau; delivery acknowledgement outbox được loại riêng. |
+| Bảo toàn | 46 mapping nội dung cũ và 7 media pilot giữ nguyên; checkpoint tổng 265 mapping + 65 media. Learning vẫn 1 chủ đề/20 từ/1 bài PUBLISHED, 5 progress, 1 quiz COMPLETED 5/5, bài hoàn thành revision 1; lịch 11/11/2026, due API 0, không tạo REVIEW/session học. Hash 63 tệp nguồn, answer key, inventory và cấu hình runtime khớp. |
+| Kiểm tra | 35/35 kiểm thử importer/chuẩn hóa đạt; Prettier đạt; Gateway ready HTTP 200. |
+
+Workflow dùng acceptancePath=exam-api-only dựa trên yêu cầu API của người dùng và bằng chứng pilot API/reimport, không suy diễn nghiệm thu trình duyệt. Chỉ thêm examFullApi=true và examFullReimportApi=true cùng evidence; ui/pilot/learningPilot vẫn false. Chưa nghiệm thu giao diện web/CMS.
+
+**Giới hạn còn lại:** Full Test dùng 54 clip theo câu/nhóm. MP3 toàn bài chưa được duyệt riêng và chưa có hỗ trợ Test-level DTO/player; chưa gắn file đó vào đề hoặc media câu hỏi. Trạng thái mới này thay các số liệu lịch sử còn ghi 0 test hoặc supplemental chưa nhập.
+
+Evidence: api-readback-confirmed.json, preservation-post-full.json, preservation-post-reimport.json, source-preservation.json, full-reimport/report.json và final-tests.tap trong thư mục bàn giao trên.

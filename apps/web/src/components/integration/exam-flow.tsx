@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Complete media URLs are supplied by the backend. */
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { examApi } from '../../lib/integration/repositories';
 import { failureMessage, mutationOutcomeUnknown } from '../../lib/integration/client';
 import {
@@ -12,10 +12,17 @@ import {
 } from '../../lib/integration/attempt-contract';
 import { AudioPlayer } from '../ui/audio-player';
 import { LessonMarkdown } from '../learning/lesson-markdown';
+import { formatPassageBlanks } from '../../lib/exams/passage';
 import { Blocked, ResourceState, useResource } from './shared';
 
 const attemptUrl = (a: { attemptId: string; status: string }) =>
   `/exam/server/${a.status === 'IN_PROGRESS' ? 'take' : 'result'}?attempt=${encodeURIComponent(a.attemptId)}`;
+const statusLabel: Record<string, string> = {
+  IN_PROGRESS: 'Đang làm bài',
+  SUBMITTED: 'Đã nộp bài',
+  EXPIRED: 'Đã hết giờ',
+};
+const modeLabel = (mode: string) => (mode === 'FULL' ? 'Thi thử Full Test' : 'Luyện theo Part');
 function Pager({
   page,
   size,
@@ -53,6 +60,7 @@ export function ServerExamDetail({ id, writes }: { id: string; writes: boolean }
     [uncertain, setUncertain] = useState(false);
   const lock = useRef(false),
     pending = useRef<{ key: string; mode: string; parts: number[]; duration: number }>();
+  const fullAvailable = available.data?.length === 7 && available.data.every((p) => p.available);
   return (
     <>
       <Link href="/exam">Danh sách đề</Link>
@@ -63,7 +71,11 @@ export function ServerExamDetail({ id, writes }: { id: string; writes: boolean }
           <p>
             {state.data.questionCount} câu · {state.data.durationSeconds / 60} phút cho Full Test
           </p>
-          <fieldset disabled={busy || uncertain}>
+          <p>
+            Bài làm được lưu theo tài khoản. Đáp án tự động lưu trong khi làm bài; bạn có thể tiếp
+            tục phiên đang làm từ lịch sử. Full Test gồm Listening và Reading, thời gian 120 phút.
+          </p>
+          <fieldset disabled={busy || uncertain || !writes}>
             <legend>Chuẩn bị làm bài</legend>
             <label className="api-field">
               Chế độ
@@ -96,13 +108,13 @@ export function ServerExamDetail({ id, writes }: { id: string; writes: boolean }
                   ))}
                 </div>
                 <label className="api-field">
-                  Thời lượng luyện (giây)
+                  Thời lượng luyện (phút)
                   <input
                     type="number"
-                    min={300}
-                    max={10800}
-                    value={duration}
-                    onChange={(e) => setDuration(Number(e.target.value))}
+                    min={5}
+                    max={180}
+                    value={duration / 60}
+                    onChange={(e) => setDuration(Number(e.target.value) * 60)}
                   />
                 </label>
                 <p>
@@ -113,13 +125,15 @@ export function ServerExamDetail({ id, writes }: { id: string; writes: boolean }
           </fieldset>
           {!writes && (
             <Blocked>
-              Chế độ chỉ đọc. Bật FRONTEND_TEST_WRITES trong môi trường local/test để tạo lượt.
+              Việc tạo phiên thi đang tạm tắt. Bạn vẫn có thể xem lại các bài đã làm trong lịch sử.
             </Blocked>
           )}
           <button
+            className="api-primary"
             disabled={
               busy ||
               !writes ||
+              (!uncertain && mode === 'FULL' && !fullAvailable) ||
               (mode === 'PART' &&
                 (!parts.length ||
                   !Number.isInteger(duration) ||
@@ -152,6 +166,12 @@ export function ServerExamDetail({ id, writes }: { id: string; writes: boolean }
           >
             {busy ? 'Đang tạo lượt…' : uncertain ? 'Thử lại cùng yêu cầu' : 'Bắt đầu làm bài'}
           </button>
+          {mode === 'FULL' && <ResourceState {...available} retry={available.reload} />}
+          {mode === 'FULL' && available.data && !fullAvailable && (
+            <p role="alert">
+              Đề chưa đủ 7 Part hợp lệ để thi Full Test. Bạn có thể chọn luyện các Part đã sẵn sàng.
+            </p>
+          )}
           {error && (
             <p className="api-error" role="alert">
               {error}
@@ -196,10 +216,10 @@ export function ServerHistory() {
         <article className="api-card" key={a.attemptId}>
           <h2>{a.title}</h2>
           <p>
-            {a.mode} · Part {a.parts.join(', ')} · {a.status} ·{' '}
+            {modeLabel(a.mode)} · Part {a.parts.join(', ')} · {statusLabel[a.status]} ·{' '}
             {new Date(a.startedAt).toLocaleString('vi-VN')}
           </p>
-          {a.score !== null && <p>Điểm server: {a.score}</p>}
+          {a.score !== null && <p>Điểm TOEIC tham khảo: {a.score}</p>}
           <Link href={attemptUrl(a)}>
             {a.status === 'IN_PROGRESS' && !a.readOnly ? 'Tiếp tục làm bài' : 'Xem lượt làm bài'}
           </Link>
@@ -270,6 +290,36 @@ function Attempt({
   const router = useRouter();
   const active = a.status === 'IN_PROGRESS' && !a.readOnly,
     editable = active && writes && seconds > 0 && !busy && !uncertain;
+  const answers = useCallback(
+    () => a.questions.map((q) => ({ questionId: q.id, selectedOption: choices[q.id] ?? null })),
+    [a.questions, choices],
+  );
+  const saveDraft = useCallback(async () => {
+    if (lock.current) return;
+    lock.current = true;
+    setBusy(true);
+    setError('');
+    setMessage('Đang lưu đáp án…');
+    try {
+      await examApi.draft(a.attemptId, answers());
+      setDirty(false);
+      setMessage('Đã lưu đáp án. Bạn có thể tiếp tục bài từ lịch sử.');
+    } catch (e) {
+      setError(failureMessage(e));
+      setMessage('Đáp án chưa được xác nhận lưu. Bấm Lưu nháp để thử lại trước khi rời trang.');
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }, [a.attemptId, answers]);
+  useEffect(() => {
+    if (!dirty || !active || !writes || uncertain) return;
+    const timer = setTimeout(() => {
+      if (remainingTime(a.remainingSeconds, performance.now() - received.current) > 0)
+        void saveDraft();
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [dirty, active, writes, uncertain, a.remainingSeconds, saveDraft]);
   useEffect(() => {
     if (!active) return;
     const tick = () =>
@@ -291,11 +341,32 @@ function Attempt({
   useEffect(() => {
     if (active && seconds === 0 && !busy && !expiredRequested.current) {
       expiredRequested.current = true;
-      reload();
+      if (!writes) {
+        reload();
+        return;
+      }
+      lock.current = true;
+      setBusy(true);
+      setMessage('Đã hết giờ. Đang chấm bài với các đáp án đã lưu…');
+      // The server finalizes expired attempts from its saved draft and rejects late answers.
+      void examApi
+        .submit(a.attemptId, [])
+        .then((result) => {
+          setDirty(false);
+          router.replace(attemptUrl(result));
+          reload();
+        })
+        .catch((e) => {
+          setError(failureMessage(e));
+          setMessage('Chưa xác nhận kết quả khi hết giờ. Bấm Nộp bài để kiểm tra lại.');
+          setUncertain(mutationOutcomeUnknown(e));
+        })
+        .finally(() => {
+          lock.current = false;
+          setBusy(false);
+        });
     }
-  }, [active, seconds, busy, reload]);
-  const answers = () =>
-    a.questions.map((q) => ({ questionId: q.id, selectedOption: choices[q.id] ?? null }));
+  }, [active, seconds, busy, reload, writes, a.attemptId, router]);
   const filtered = a.questions.filter(
     (q) =>
       filter === 'ALL' ||
@@ -309,18 +380,18 @@ function Attempt({
     <>
       <h1>{a.title}</h1>
       <p>
-        {a.mode} · Part {a.parts.join(', ')} · {a.status}
+        {modeLabel(a.mode)} · Part {a.parts.join(', ')} · {statusLabel[a.status]}
       </p>
       {active && (
-        <p role="timer" aria-label="Thời gian còn lại">
-          Còn {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')} · Deadline server:{' '}
+        <p className="api-exam-timer" role="timer" aria-label="Thời gian còn lại">
+          Còn {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')} · Hạn nộp:{' '}
           {new Date(a.deadlineAt).toLocaleString('vi-VN')}
         </p>
       )}
       {a.readOnly && <Blocked>Lượt cũ không có snapshot, chỉ đọc dữ liệu hiện có.</Blocked>}
       {!active && (
         <article className="api-card">
-          <h2>Kết quả từ backend</h2>
+          <h2>{a.status === 'EXPIRED' ? 'Kết quả · Đã hết giờ' : 'Kết quả bài làm'}</h2>
           <p>
             {a.totalCorrect ?? 'Chưa có'} / {a.totalQuestions} câu đúng ·{' '}
             {a.accuracy === null ? 'Chưa có độ chính xác' : `${(a.accuracy * 100).toFixed(1)}%`}
@@ -348,6 +419,9 @@ function Attempt({
               Xem lại đáp án và giải thích
             </Link>
           )}
+          <p>
+            <Link href={`/exam/${encodeURIComponent(a.testId)}`}>Làm lại đề này</Link>
+          </p>
         </article>
       )}
       {active && !writes && <Blocked>Chế độ chỉ đọc. Không gửi đáp án hoặc nộp bài.</Blocked>}
@@ -370,7 +444,7 @@ function Attempt({
           {!active && <option value="WRONG">Sai / bỏ trống</option>}
         </select>
       </label>
-      <nav className="api-actions" aria-label="Điều hướng câu hỏi">
+      <nav className="api-exam-map" aria-label="Điều hướng câu hỏi">
         {filtered.map((v, n) => (
           <button
             key={v.id}
@@ -392,13 +466,23 @@ function Attempt({
           {group && (
             <>
               <p>{group.instruction}</p>
-              {group.passage && <LessonMarkdown content={group.passage} />}
-              <AudioPlayer
-                mode="server"
-                missingMessage="Server chưa cấp audio hợp lệ."
-                source={group.audioUrl}
-                label="Audio nhóm"
-              />
+              {group.passage && (
+                <LessonMarkdown
+                  content={
+                    q.part === 6
+                      ? formatPassageBlanks(group.passage, group.instruction)
+                      : group.passage
+                  }
+                />
+              )}
+              {group.audioUrl && (
+                <AudioPlayer
+                  mode="server"
+                  missingMessage="Chưa có tệp nghe cho nhóm câu hỏi này."
+                  source={group.audioUrl}
+                  label="Audio nhóm"
+                />
+              )}
               {group.assets.map((asset) => (
                 <div key={asset.id}>
                   {asset.content && <LessonMarkdown content={asset.content} />}
@@ -473,7 +557,7 @@ function Attempt({
           {!active && (
             <>
               <p>
-                Bạn chọn: {choices[q.id] ?? 'Bỏ trống'} · Đáp án backend:{' '}
+                Bạn chọn: {choices[q.id] ?? 'Bỏ trống'} · Đáp án đúng:{' '}
                 {q.correctOption ?? 'Chưa có'}
               </p>
               {q.explanation && <LessonMarkdown content={q.explanation} />}
@@ -497,33 +581,18 @@ function Attempt({
       )}
       {active && (
         <div className="api-actions">
-          <button
-            disabled={!editable || !dirty}
-            onClick={async () => {
-              if (lock.current) return;
-              lock.current = true;
-              setBusy(true);
-              setError('');
-              try {
-                await examApi.draft(a.attemptId, answers());
-                setDirty(false);
-                setMessage('Server đã xác nhận lưu nháp.');
-              } catch (e) {
-                setError(failureMessage(e));
-              } finally {
-                lock.current = false;
-                setBusy(false);
-              }
-            }}
-          >
+          <button disabled={!editable || !dirty} onClick={() => void saveDraft()}>
             Lưu nháp lên server
           </button>
           <button
+            className="api-primary"
             disabled={busy || !writes}
             onClick={async () => {
               if (
                 lock.current ||
-                !window.confirm('Nộp bài với các lựa chọn hiện tại? Sau khi nộp không thể sửa.')
+                !window.confirm(
+                  `Bạn đã chọn ${Object.values(choices).filter(Boolean).length}/${a.totalQuestions} câu. Nộp bài với các lựa chọn hiện tại? Sau khi nộp không thể sửa.`,
+                )
               )
                 return;
               lock.current = true;

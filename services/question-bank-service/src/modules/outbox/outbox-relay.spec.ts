@@ -32,10 +32,14 @@ describe('outbox relay', () => {
       outboxEvent: { update: jest.fn().mockResolvedValue({}) },
     };
     const prisma = { $transaction: jest.fn((callback) => callback(tx)) };
-    const messaging = { emit: jest.fn().mockResolvedValue(undefined) };
+    const messaging = {
+      emit: jest.fn().mockResolvedValue(undefined),
+      declareQueue: jest.fn().mockResolvedValue(undefined),
+    };
     return {
       tx,
       messaging,
+      prisma,
       relay: new OutboxRelay(
         prisma as unknown as PrismaService,
         messaging as unknown as MessagingService,
@@ -73,5 +77,50 @@ describe('outbox relay', () => {
       expect.objectContaining({ eventId: 'event-1' }),
     );
     expect(tx.outboxEvent.update.mock.calls[0][0].data.deadLetteredAt).toBeInstanceOf(Date);
+  });
+
+  describe('startup while RabbitMQ is unavailable', () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it('starts without a channel, preserves rows, and publishes after provisioning recovers', async () => {
+      const { relay, messaging, prisma, tx } = setup();
+      messaging.declareQueue.mockRejectedValueOnce(
+        new Error('RabbitMQ publish channel is not ready'),
+      );
+      try {
+        await expect(relay.onModuleInit()).resolves.toBeUndefined();
+        expect(prisma.$transaction).not.toHaveBeenCalled();
+        expect(tx.outboxEvent.update).not.toHaveBeenCalled();
+        await jest.advanceTimersByTimeAsync(500);
+        expect(messaging.declareQueue).toHaveBeenCalledTimes(2);
+        expect(messaging.emit).toHaveBeenCalledWith(
+          'question.updated',
+          'q1',
+          expect.objectContaining({ eventId: 'event-1' }),
+        );
+        expect(tx.outboxEvent.update.mock.calls[0][0].data.retryCount).toBeUndefined();
+        await relay.onModuleDestroy();
+        await jest.advanceTimersByTimeAsync(1000);
+        expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+      } finally {
+        await relay.onModuleDestroy();
+      }
+    });
+
+    it('does not query or update outbox events while queue provisioning keeps failing', async () => {
+      const { relay, messaging, prisma, tx } = setup();
+      messaging.declareQueue.mockRejectedValue(new Error('broker offline'));
+      try {
+        await relay.onModuleInit();
+        await jest.advanceTimersByTimeAsync(1500);
+        expect(messaging.declareQueue).toHaveBeenCalledTimes(4);
+        expect(prisma.$transaction).not.toHaveBeenCalled();
+        expect(messaging.emit).not.toHaveBeenCalled();
+        expect(tx.outboxEvent.update).not.toHaveBeenCalled();
+      } finally {
+        await relay.onModuleDestroy();
+      }
+    });
   });
 });

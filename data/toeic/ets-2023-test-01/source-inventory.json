@@ -1,0 +1,1329 @@
+{
+  "files": [
+    {
+      "file": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+      "bytes": 3755847,
+      "sha256": "e44a1ebd804f9e7a216c1d80f30313fcecfc5c1f6b68ca989a1796e98bbfd4af"
+    },
+    {
+      "file": "docs\\TEST 1\\1.10 LINK ĐỀ TEST ONLINE ETS 2023.docx",
+      "bytes": 45595,
+      "sha256": "bd97753736eb55c60fc106af37336fc8f197d59d3319e8e430d9b086c9d97340"
+    },
+    {
+      "file": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+      "bytes": 4931096,
+      "sha256": "c6ac0fd02d7953c4242c9fdc7959ba226422d9a8cb1d7cbcd15cffbca4633c82"
+    },
+    {
+      "file": "docs\\TEST 1\\1.3. Mp3 full LC Test 01.mp3",
+      "bytes": 44221245,
+      "sha256": "af59e91812e4e137688645a2b3947669bcab6f68a10c0484554e7857eea1ed84",
+      "codec": "MPEG Layer III",
+      "frames": 105859,
+      "frameDurationSeconds": 2765.296,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-full-lc-audio",
+      "attachmentStatus": "No test-level audio field/player in current contract; do not attach arbitrarily to a question",
+      "windowsMediaDurationSeconds": 2758.9501875,
+      "windowsMediaDurationDisplay": "00:45:58",
+      "durationDiscrepancy": "Frame-count estimate differs from Windows media metadata; independent decoder/listening still pending. No trimming or timer change."
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 1_1.mp3",
+      "bytes": 475860,
+      "sha256": "d2a69358463602b9caff0d8d6aad8b508106097b99706a177e5f63395c7eddb3",
+      "codec": "MPEG Layer III",
+      "frames": 954,
+      "frameDurationSeconds": 24.921,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": true,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-1-1",
+      "part": 1,
+      "questionNumbers": [
+        1
+      ],
+      "ownerScope": "question",
+      "reviewEvidence": "tmp/test1-target-check-20261110142408-547/user-listening-approval.json"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 1_2.mp3",
+      "bytes": 473775,
+      "sha256": "c5e7a323750861cd78b80a6d9edce685c28b895febc72b5e37a7a23ab1147bb4",
+      "codec": "MPEG Layer III",
+      "frames": 949,
+      "frameDurationSeconds": 24.79,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-2-2",
+      "part": 1,
+      "questionNumbers": [
+        2
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 1_3.mp3",
+      "bytes": 503799,
+      "sha256": "fd75b60d796595766bca14ac4582350e9071c2ea3c2c6923056fd706c6cd6615",
+      "codec": "MPEG Layer III",
+      "frames": 1021,
+      "frameDurationSeconds": 26.671,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-3-3",
+      "part": 1,
+      "questionNumbers": [
+        3
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 1_4.mp3",
+      "bytes": 494625,
+      "sha256": "4bf5ed10944201754b267f745d711737c40a9a4e984346ae331af1b127f270b3",
+      "codec": "MPEG Layer III",
+      "frames": 999,
+      "frameDurationSeconds": 26.096,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-4-4",
+      "part": 1,
+      "questionNumbers": [
+        4
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 1_5.mp3",
+      "bytes": 495876,
+      "sha256": "f6ef5f0008416d332608db1832aabc939190ee7614f28643f2a703f5a8d46ea0",
+      "codec": "MPEG Layer III",
+      "frames": 1002,
+      "frameDurationSeconds": 26.175,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-5-5",
+      "part": 1,
+      "questionNumbers": [
+        5
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 1_6.mp3",
+      "bytes": 500880,
+      "sha256": "d4faf135249be3569c2efbdefc87f56b87554c9d5a5a58b51c4337cf9ff63e88",
+      "codec": "MPEG Layer III",
+      "frames": 1014,
+      "frameDurationSeconds": 26.488,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-6-6",
+      "part": 1,
+      "questionNumbers": [
+        6
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_10.mp3",
+      "bytes": 387873,
+      "sha256": "71e7eabb290a64c0c7ff4ee836aa97b5c91216ddee2001451b239985db03b185",
+      "codec": "MPEG Layer III",
+      "frames": 743,
+      "frameDurationSeconds": 19.409,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-10-10",
+      "part": 2,
+      "questionNumbers": [
+        10
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_11.mp3",
+      "bytes": 406221,
+      "sha256": "aba330913cd8a840f694a6a3781b1ed0c8cc587b02b44516ade96ed24ebdea83",
+      "codec": "MPEG Layer III",
+      "frames": 787,
+      "frameDurationSeconds": 20.558,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-11-11",
+      "part": 2,
+      "questionNumbers": [
+        11
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_12.mp3",
+      "bytes": 379116,
+      "sha256": "82669454fad6cd352189fa8eab42d64a3886e41d52c239686392b655d766896c",
+      "codec": "MPEG Layer III",
+      "frames": 722,
+      "frameDurationSeconds": 18.86,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-12-12",
+      "part": 2,
+      "questionNumbers": [
+        12
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_13.mp3",
+      "bytes": 373278,
+      "sha256": "6688558213e3f62b57c0c90d7fcab1e82608f4c8f44049759b740cfa40790ba2",
+      "codec": "MPEG Layer III",
+      "frames": 708,
+      "frameDurationSeconds": 18.495,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-13-13",
+      "part": 2,
+      "questionNumbers": [
+        13
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_14.mp3",
+      "bytes": 381201,
+      "sha256": "43a317339b054cc797cb2097047fdb731f8831c7f5c1484239fd54fe9f40d2ef",
+      "codec": "MPEG Layer III",
+      "frames": 727,
+      "frameDurationSeconds": 18.991,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-14-14",
+      "part": 2,
+      "questionNumbers": [
+        14
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_15.mp3",
+      "bytes": 407889,
+      "sha256": "35a2f30a70d9d8f8a6c8bb6bebceb9a4b855bf6fd8aa994f9f7900ed706a2048",
+      "codec": "MPEG Layer III",
+      "frames": 791,
+      "frameDurationSeconds": 20.663,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-15-15",
+      "part": 2,
+      "questionNumbers": [
+        15
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_16.mp3",
+      "bytes": 382869,
+      "sha256": "16d7517f88a9866fa79dfb711733917bbe32436763577637ac4d96ed1570a737",
+      "codec": "MPEG Layer III",
+      "frames": 731,
+      "frameDurationSeconds": 19.096,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-16-16",
+      "part": 2,
+      "questionNumbers": [
+        16
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_17.mp3",
+      "bytes": 391209,
+      "sha256": "fdb1d6f410e0d9e4c7327b0fdc8c48757973c1d938182ffc8760b82f93185587",
+      "codec": "MPEG Layer III",
+      "frames": 751,
+      "frameDurationSeconds": 19.618,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-17-17",
+      "part": 2,
+      "questionNumbers": [
+        17
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_18.mp3",
+      "bytes": 413727,
+      "sha256": "9f95bfeb7516916483a25f8c8a1bcad2d49fe7997168903b757f5032327e20ac",
+      "codec": "MPEG Layer III",
+      "frames": 805,
+      "frameDurationSeconds": 21.029,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-18-18",
+      "part": 2,
+      "questionNumbers": [
+        18
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_19.mp3",
+      "bytes": 395796,
+      "sha256": "cab17e9e5151c8affd5d7d957d42482a88e483aa97de93d28d610d0fdc437751",
+      "codec": "MPEG Layer III",
+      "frames": 762,
+      "frameDurationSeconds": 19.905,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-19-19",
+      "part": 2,
+      "questionNumbers": [
+        19
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_20.mp3",
+      "bytes": 401217,
+      "sha256": "ed89c06a3caceb299dbb10baf3d3a6c661cca49de5b45d8b917833d53877d5c0",
+      "codec": "MPEG Layer III",
+      "frames": 775,
+      "frameDurationSeconds": 20.245,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-20-20",
+      "part": 2,
+      "questionNumbers": [
+        20
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_21.mp3",
+      "bytes": 382452,
+      "sha256": "65d6c6eadd8ed4dd2485dfad95a49cb5906800ee433493180b709564d8461c52",
+      "codec": "MPEG Layer III",
+      "frames": 730,
+      "frameDurationSeconds": 19.069,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-21-21",
+      "part": 2,
+      "questionNumbers": [
+        21
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_22.mp3",
+      "bytes": 433326,
+      "sha256": "08ce5e910efb006b815baedb5f17e072b24e1af680de8e33f5cf934cf83bd049",
+      "codec": "MPEG Layer III",
+      "frames": 852,
+      "frameDurationSeconds": 22.256,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-22-22",
+      "part": 2,
+      "questionNumbers": [
+        22
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_23.mp3",
+      "bytes": 412893,
+      "sha256": "a7eb0a7e346fcdab58a575f79d79eac6db4c241aab3edd536a6de83698f74cff",
+      "codec": "MPEG Layer III",
+      "frames": 803,
+      "frameDurationSeconds": 20.976,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-23-23",
+      "part": 2,
+      "questionNumbers": [
+        23
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_24.mp3",
+      "bytes": 432909,
+      "sha256": "f40ee3ed3a1348c136fb88fc3296713ecb12280298f67a5016283ae67382ea32",
+      "codec": "MPEG Layer III",
+      "frames": 851,
+      "frameDurationSeconds": 22.23,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-24-24",
+      "part": 2,
+      "questionNumbers": [
+        24
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_25.mp3",
+      "bytes": 423318,
+      "sha256": "3a3c95069b9892480f4e30315d16969902793c1c62773b9713f82263dae0f380",
+      "codec": "MPEG Layer III",
+      "frames": 828,
+      "frameDurationSeconds": 21.629,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-25-25",
+      "part": 2,
+      "questionNumbers": [
+        25
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_26.mp3",
+      "bytes": 407472,
+      "sha256": "e3b90935d9bce0f8410ae700f8c79ea197d4df42fc1490bb8c961da0888eb301",
+      "codec": "MPEG Layer III",
+      "frames": 790,
+      "frameDurationSeconds": 20.637,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-26-26",
+      "part": 2,
+      "questionNumbers": [
+        26
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_27.mp3",
+      "bytes": 434994,
+      "sha256": "f94e58233496df5d36b58ec45d5d405cae0d86800a5e350ab969d1efffd5b5f7",
+      "codec": "MPEG Layer III",
+      "frames": 856,
+      "frameDurationSeconds": 22.361,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-27-27",
+      "part": 2,
+      "questionNumbers": [
+        27
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_28.mp3",
+      "bytes": 427488,
+      "sha256": "bc12c1908b225469a7f4d467865c860dca5ef666032526bb87c0029fa88c867a",
+      "codec": "MPEG Layer III",
+      "frames": 838,
+      "frameDurationSeconds": 21.891,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-28-28",
+      "part": 2,
+      "questionNumbers": [
+        28
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_29.mp3",
+      "bytes": 424152,
+      "sha256": "11c8f66a0fff16227bb6a23763d43492e33e25674c2a7072886d697680b2fe71",
+      "codec": "MPEG Layer III",
+      "frames": 830,
+      "frameDurationSeconds": 21.682,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-29-29",
+      "part": 2,
+      "questionNumbers": [
+        29
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_30.mp3",
+      "bytes": 415395,
+      "sha256": "71ae4d50bc342feccf609500ec87e52ee78d9e47171939a44a0f0afd2e5061a0",
+      "codec": "MPEG Layer III",
+      "frames": 809,
+      "frameDurationSeconds": 21.133,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-30-30",
+      "part": 2,
+      "questionNumbers": [
+        30
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_31.mp3",
+      "bytes": 425820,
+      "sha256": "2aa26ec6a9d2e458bf3e0ae71d3abd9e8fb02ef361f0793c20595a1732173bf8",
+      "codec": "MPEG Layer III",
+      "frames": 834,
+      "frameDurationSeconds": 21.786,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-31-31",
+      "part": 2,
+      "questionNumbers": [
+        31
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_7.mp3",
+      "bytes": 387456,
+      "sha256": "ce1fe3988b3067a6f33a298c5168730554c9211c31d10d519b9c7d72da7e3481",
+      "codec": "MPEG Layer III",
+      "frames": 742,
+      "frameDurationSeconds": 19.383,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": true,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-7-7",
+      "part": 2,
+      "questionNumbers": [
+        7
+      ],
+      "ownerScope": "question",
+      "reviewEvidence": "tmp/test1-target-check-20261110142408-547/user-listening-approval.json"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_8.mp3",
+      "bytes": 397464,
+      "sha256": "a624d9f50b9db003b538eb72c0b88a3d26b07ed68856397754d75b4e04924c84",
+      "codec": "MPEG Layer III",
+      "frames": 766,
+      "frameDurationSeconds": 20.01,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-8-8",
+      "part": 2,
+      "questionNumbers": [
+        8
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 2_9.mp3",
+      "bytes": 388707,
+      "sha256": "b1777404776fffaa2a8ef03c4ad6c410b2c6e000cd6fa7b48c5b3facd1bc14e9",
+      "codec": "MPEG Layer III",
+      "frames": 745,
+      "frameDurationSeconds": 19.461,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-9-9",
+      "part": 2,
+      "questionNumbers": [
+        9
+      ],
+      "ownerScope": "question"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_32-34.mp3",
+      "bytes": 1329876,
+      "sha256": "88854d7a5abb93b9d37dae0b330d18176b11a69bcc027a33f22e65bfd51e823b",
+      "codec": "MPEG Layer III",
+      "frames": 3002,
+      "frameDurationSeconds": 78.42,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-32-34",
+      "part": 3,
+      "questionNumbers": [
+        32,
+        33,
+        34
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_35-37.mp3",
+      "bytes": 1206861,
+      "sha256": "ed27f2455fe24ce5052db4975f8964c45d8e3f9c01eee88ad16aa2d001228ef1",
+      "codec": "MPEG Layer III",
+      "frames": 2707,
+      "frameDurationSeconds": 70.713,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-35-37",
+      "part": 3,
+      "questionNumbers": [
+        35,
+        36,
+        37
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_38-40.mp3",
+      "bytes": 1218537,
+      "sha256": "8e06b0aa7ea3d7df924f6eb6e164d01235424e024000a4e865a9fde8d146f8b0",
+      "codec": "MPEG Layer III",
+      "frames": 2735,
+      "frameDurationSeconds": 71.445,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-38-40",
+      "part": 3,
+      "questionNumbers": [
+        38,
+        39,
+        40
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_41-43.mp3",
+      "bytes": 1289427,
+      "sha256": "e9830b23109d4ac0cf7b0fcf62f194c96a7236b933bcceb4928567704f813937",
+      "codec": "MPEG Layer III",
+      "frames": 2905,
+      "frameDurationSeconds": 75.886,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-41-43",
+      "part": 3,
+      "questionNumbers": [
+        41,
+        42,
+        43
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_44-46.mp3",
+      "bytes": 1376997,
+      "sha256": "6217ba4fc052af2119a77d91ba04a527571af7e44a3bee9e3e9c1348777da7bf",
+      "codec": "MPEG Layer III",
+      "frames": 3115,
+      "frameDurationSeconds": 81.371,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-44-46",
+      "part": 3,
+      "questionNumbers": [
+        44,
+        45,
+        46
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_47-49.mp3",
+      "bytes": 1292763,
+      "sha256": "799f2b23a9f50160bbc653a302b5196ac11a12be89c022955611cb6e137f55ac",
+      "codec": "MPEG Layer III",
+      "frames": 2913,
+      "frameDurationSeconds": 76.095,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-47-49",
+      "part": 3,
+      "questionNumbers": [
+        47,
+        48,
+        49
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_50-52.mp3",
+      "bytes": 1218537,
+      "sha256": "9b3fb6622a392671e83ab0448229a79f9b24d8074770e1b3b47161f8af0c864d",
+      "codec": "MPEG Layer III",
+      "frames": 2735,
+      "frameDurationSeconds": 71.445,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-50-52",
+      "part": 3,
+      "questionNumbers": [
+        50,
+        51,
+        52
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_53-55.mp3",
+      "bytes": 1289427,
+      "sha256": "04ea9529bf3eaaf59c8c82081600353bf3b30fbc1886b8cfdf63d4987e68a735",
+      "codec": "MPEG Layer III",
+      "frames": 2905,
+      "frameDurationSeconds": 75.886,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-53-55",
+      "part": 3,
+      "questionNumbers": [
+        53,
+        54,
+        55
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_56-58.mp3",
+      "bytes": 1518360,
+      "sha256": "5a266a0dbc6ea03344c8b5ada4aebaf0933b4f161b0044e3f9fae6e049f8eb8d",
+      "codec": "MPEG Layer III",
+      "frames": 3454,
+      "frameDurationSeconds": 90.227,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-56-58",
+      "part": 3,
+      "questionNumbers": [
+        56,
+        57,
+        58
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_59-61.mp3",
+      "bytes": 1431207,
+      "sha256": "24110a7721d9de75249bcb5be27168a3ef47c4b6af6f140eba0a1b99c33dab91",
+      "codec": "MPEG Layer III",
+      "frames": 3245,
+      "frameDurationSeconds": 84.767,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-59-61",
+      "part": 3,
+      "questionNumbers": [
+        59,
+        60,
+        61
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_62-64.mp3",
+      "bytes": 1488336,
+      "sha256": "44451aff774fa22eab271afa8b4c37f0a95cf3d6d99ae13c2047fc2c33d7e1a4",
+      "codec": "MPEG Layer III",
+      "frames": 3382,
+      "frameDurationSeconds": 88.346,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": true,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-62-64",
+      "part": 3,
+      "questionNumbers": [
+        62,
+        63,
+        64
+      ],
+      "ownerScope": "group",
+      "reviewEvidence": "tmp/test1-target-check-20261110142408-547/user-listening-approval.json"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_65-67.mp3",
+      "bytes": 1480413,
+      "sha256": "ffadc23b7d3d89dcc00da6458ac80b15f8479a7e08277a8e7d0acfadc4bc271f",
+      "codec": "MPEG Layer III",
+      "frames": 3363,
+      "frameDurationSeconds": 87.85,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-65-67",
+      "part": 3,
+      "questionNumbers": [
+        65,
+        66,
+        67
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 3_68-70.mp3",
+      "bytes": 1554222,
+      "sha256": "91754ac8dd9859d8e7a49c01aea33190f48b56b33463bb1e274332066b047020",
+      "codec": "MPEG Layer III",
+      "frames": 3540,
+      "frameDurationSeconds": 92.473,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-68-70",
+      "part": 3,
+      "questionNumbers": [
+        68,
+        69,
+        70
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_71-73.mp3",
+      "bytes": 1363236,
+      "sha256": "a73312fb63eeb8c8e326f6e5897194fe58f13be6773dd6ce84f7e28dcff15ee2",
+      "codec": "MPEG Layer III",
+      "frames": 3082,
+      "frameDurationSeconds": 80.509,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-71-73",
+      "part": 4,
+      "questionNumbers": [
+        71,
+        72,
+        73
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_74-76.mp3",
+      "bytes": 1344888,
+      "sha256": "4b02819c00daf5e8a1aa963de780a7d53550c0630cf87e8123494efb8b36b8dc",
+      "codec": "MPEG Layer III",
+      "frames": 3038,
+      "frameDurationSeconds": 79.36,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-74-76",
+      "part": 4,
+      "questionNumbers": [
+        74,
+        75,
+        76
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_77-79.mp3",
+      "bytes": 1429122,
+      "sha256": "8c619f9a0e0b794ee953819a0eae89fc2d98da9b85b9ca3ad0fe0023521184b5",
+      "codec": "MPEG Layer III",
+      "frames": 3240,
+      "frameDurationSeconds": 84.637,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-77-79",
+      "part": 4,
+      "questionNumbers": [
+        77,
+        78,
+        79
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_80-82.mp3",
+      "bytes": 1225209,
+      "sha256": "3d7e0f2397afb98f90be94f5ee118e8be1ff9f884b689c77aba28dbf1524be35",
+      "codec": "MPEG Layer III",
+      "frames": 2751,
+      "frameDurationSeconds": 71.863,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-80-82",
+      "part": 4,
+      "questionNumbers": [
+        80,
+        81,
+        82
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_83-85.mp3",
+      "bytes": 1384920,
+      "sha256": "2ed87c238aea8264fd17f62863986ef92a69b1ebc69c315adee06a31125a487a",
+      "codec": "MPEG Layer III",
+      "frames": 3134,
+      "frameDurationSeconds": 81.868,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-83-85",
+      "part": 4,
+      "questionNumbers": [
+        83,
+        84,
+        85
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_86-88.mp3",
+      "bytes": 1404519,
+      "sha256": "9b1b30d08fe8e7eaaf3f41f12a1de72d686c03db674e8369a87a52cb33c69c7c",
+      "codec": "MPEG Layer III",
+      "frames": 3181,
+      "frameDurationSeconds": 83.096,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-86-88",
+      "part": 4,
+      "questionNumbers": [
+        86,
+        87,
+        88
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_89-91.mp3",
+      "bytes": 1476243,
+      "sha256": "b6b52260fd3fe45c52c8aad0b514d0fb5b11aceea4575ec10f6124561a6859e8",
+      "codec": "MPEG Layer III",
+      "frames": 3353,
+      "frameDurationSeconds": 87.589,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-89-91",
+      "part": 4,
+      "questionNumbers": [
+        89,
+        90,
+        91
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_92-94.mp3",
+      "bytes": 1414110,
+      "sha256": "6aafb95705da894c3c3d35724a5a4a79445590ecf7402309957f7c0819c4510b",
+      "codec": "MPEG Layer III",
+      "frames": 3204,
+      "frameDurationSeconds": 83.696,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-92-94",
+      "part": 4,
+      "questionNumbers": [
+        92,
+        93,
+        94
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_95-97.mp3",
+      "bytes": 1341969,
+      "sha256": "7b65c42a733c9c68773372b3d3c77b590040dd8bea02c2b89cc777dae1d29737",
+      "codec": "MPEG Layer III",
+      "frames": 3031,
+      "frameDurationSeconds": 79.177,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": true,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-95-97",
+      "part": 4,
+      "questionNumbers": [
+        95,
+        96,
+        97
+      ],
+      "ownerScope": "group",
+      "reviewEvidence": "tmp/test1-target-check-20261110142408-547/user-listening-approval.json"
+    },
+    {
+      "file": "docs\\TEST 1\\1.4. File nghe cắt lẻ từng câu\\Test 01_Part 4_98-100.mp3",
+      "bytes": 1768143,
+      "sha256": "5f2b37fbd4051c84310b3ed6c7121d08fb9b8a4d71e935a7448ba808824fe4c1",
+      "codec": "MPEG Layer III",
+      "frames": 4053,
+      "frameDurationSeconds": 105.874,
+      "sampleRates": [
+        44100
+      ],
+      "nonFrameBytesSkipped": 125,
+      "contentReviewed": false,
+      "limitation": "Frame inspection only; no complete decoding/listening or transcript alignment",
+      "sourceId": "ets-2023-test-01-audio-98-100",
+      "part": 4,
+      "questionNumbers": [
+        98,
+        99,
+        100
+      ],
+      "ownerScope": "group"
+    },
+    {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg",
+      "bytes": 62084,
+      "sha256": "dc928510946bad6c18d62932d44156be13dd371692d197bff2da476cad1b95dd"
+    },
+    {
+      "file": "docs\\TEST 1\\1.6. BẢNG QUY ĐỔI ĐIỂM.jpg",
+      "bytes": 318310,
+      "sha256": "8703640880b8bbf65b13d8c24523633065f1ca80efdc57e46bb42944a51a7a4f"
+    },
+    {
+      "file": "docs\\TEST 1\\1.7. GIẢI CHI TIẾT TEST 1 ETS 2023 LC.pdf",
+      "bytes": 7890517,
+      "sha256": "45d28c6a863c97cfd89368c7179ee70923cd7cf98dc9f1961b841ef96efabf3c"
+    },
+    {
+      "file": "docs\\TEST 1\\1.8. GIẢI CHI TIẾT PART 5,6 TEST 1 RC.pdf",
+      "bytes": 3155585,
+      "sha256": "c81bfdf179851033596ceb4d47bb999e606e05cc69a764d24565299a5149de51"
+    },
+    {
+      "file": "docs\\TEST 1\\1.9. GIẢI CHI TIẾT PART 7 TEST 1 RC.pdf",
+      "bytes": 9569007,
+      "sha256": "ec29e3249883c62cbc4caa92242c49d2321fea9d8dce77bd66a409f355362a51"
+    }
+  ],
+  "audio": {
+    "clips": 54,
+    "fullTracks": 1,
+    "filenameCoverageValid": true,
+    "contentReviewed": 54,
+    "reviewEvidence": "tmp/test1-media-user-approved-20261110082443599/user-media-approval.json",
+    "fullTrackContentReviewed": false
+  },
+  "crops": [
+    {
+      "sourceId": "ets-2023-test-01-q001-image",
+      "file": "data\\toeic\\ets-2023-test-01\\media\\q001-image.png",
+      "sha256": "c08aabfd20932592f0bf745877d2d2979ced0983c245761c6e362f618e190546",
+      "ownerSourceId": "ets-2023-test-01-q001",
+      "documentOrder": null,
+      "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+      "pdfPage": 3,
+      "renderedSize": [
+        1932,
+        2500
+      ],
+      "cropPixels": [
+        570,
+        150,
+        1335,
+        1260
+      ],
+      "contentReviewed": true,
+      "usage": "Question/graphic crop"
+    },
+    {
+      "sourceId": "ets-2023-test-01-g62-64-graphic",
+      "file": "data\\toeic\\ets-2023-test-01\\media\\g62-64-graphic.png",
+      "sha256": "9b8c774be32f02d20c4c76bbb8b7bc24a19011c6bca74cfd976148eaeb85701a",
+      "ownerSourceId": "ets-2023-test-01-g62-64",
+      "documentOrder": 1,
+      "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+      "pdfPage": 9,
+      "renderedSize": [
+        1932,
+        2500
+      ],
+      "cropPixels": [
+        1045,
+        145,
+        1665,
+        680
+      ],
+      "contentReviewed": true,
+      "usage": "Question/graphic crop"
+    },
+    {
+      "sourceId": "ets-2023-test-01-g95-97-graphic",
+      "file": "data\\toeic\\ets-2023-test-01\\media\\g95-97-graphic.png",
+      "sha256": "ade9db408a4c78fc48a93b96fd49598aa4d653a128de62536172270bbc829ab7",
+      "ownerSourceId": "ets-2023-test-01-g95-97",
+      "documentOrder": 1,
+      "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+      "pdfPage": 13,
+      "renderedSize": [
+        1932,
+        2500
+      ],
+      "cropPixels": [
+        245,
+        145,
+        890,
+        550
+      ],
+      "contentReviewed": true,
+      "usage": "Question/graphic crop"
+    },
+    {
+      "sourceId": "ets-2023-test-01-g186-190-document-1",
+      "file": "data\\toeic\\ets-2023-test-01\\media\\g186-190-document-1.png",
+      "sha256": "21b73c069ffbf1fa47367802a21a4c0e8e33898123a9c9bee4ba7d8bfec93d7c",
+      "ownerSourceId": "ets-2023-test-01-g186-190",
+      "documentOrder": 1,
+      "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+      "pdfPage": 26,
+      "renderedSize": [
+        1932,
+        2500
+      ],
+      "cropPixels": [
+        370,
+        105,
+        1595,
+        775
+      ],
+      "contentReviewed": true,
+      "usage": "Source layout QA; current payload uses ordered TEXT assets"
+    },
+    {
+      "sourceId": "ets-2023-test-01-g186-190-document-2",
+      "file": "data\\toeic\\ets-2023-test-01\\media\\g186-190-document-2.png",
+      "sha256": "a19a6d4d99df094ed10cf66561d0b47807848fb865bdb9f22e0a25e1b4ddbae0",
+      "ownerSourceId": "ets-2023-test-01-g186-190",
+      "documentOrder": 2,
+      "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+      "pdfPage": 26,
+      "renderedSize": [
+        1932,
+        2500
+      ],
+      "cropPixels": [
+        335,
+        800,
+        1640,
+        1540
+      ],
+      "contentReviewed": true,
+      "usage": "Source layout QA; current payload uses ordered TEXT assets"
+    },
+    {
+      "sourceId": "ets-2023-test-01-g186-190-document-3",
+      "file": "data\\toeic\\ets-2023-test-01\\media\\g186-190-document-3.png",
+      "sha256": "2bd0c18bfb6b846529f7c5c9b81facfb024c4b211f3c05829e63823f7996a11c",
+      "ownerSourceId": "ets-2023-test-01-g186-190",
+      "documentOrder": 3,
+      "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+      "pdfPage": 27,
+      "renderedSize": [
+        1932,
+        2500
+      ],
+      "cropPixels": [
+        370,
+        245,
+        1545,
+        990
+      ],
+      "contentReviewed": true,
+      "usage": "Source layout QA; current payload uses ordered TEXT assets"
+    }
+  ]
+}

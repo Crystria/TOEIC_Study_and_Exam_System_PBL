@@ -11,6 +11,37 @@ import {
   validateSelection,
 } from '../src/lib/exams/selection';
 import type { ExamSelection } from '../src/lib/exams/types';
+import { formatPassageBlanks } from '../src/lib/exams/passage';
+
+test('Part 6 displays source blank numbers while leaving the stored passage unchanged', () => {
+  const passage = 'Shop [[1]]. [[2]] They [[3]]. [[4]]';
+  assert.equal(
+    formatPassageBlanks(passage, 'Questions 131-134'),
+    'Shop _______ (131). _______ (132) They _______ (133). _______ (134)',
+  );
+  assert.equal(passage, 'Shop [[1]]. [[2]] They [[3]]. [[4]]');
+  assert.equal(
+    formatPassageBlanks('[[2]] then [[1]]', 'Questions 135–136'),
+    '_______ (136) then _______ (135)',
+  );
+});
+
+test('Part 6 does not invent source numbers for missing or inconsistent metadata', () => {
+  for (const instruction of [
+    undefined,
+    'Practice',
+    'Questions 0-3',
+    'Questions 199-202',
+    'Questions 134-131',
+  ])
+    assert.equal(
+      formatPassageBlanks('[[1]] [[2]] [[3]] [[4]]', instruction),
+      '[[1]] [[2]] [[3]] [[4]]',
+    );
+  for (const passage of ['[[1]] [[1]] [[3]] [[4]]', '[[1]] [[2]]', '[[0]] [[2]] [[3]] [[4]]'])
+    assert.equal(formatPassageBlanks(passage, 'Questions 131-134'), passage);
+  assert.equal(formatPassageBlanks('No blanks here', 'Questions 186-190'), 'No blanks here');
+});
 
 const [full, , mini, reading] = demoExamTests;
 const choose = (

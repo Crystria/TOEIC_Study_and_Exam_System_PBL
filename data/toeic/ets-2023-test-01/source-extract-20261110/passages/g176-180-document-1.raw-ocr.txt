@@ -1,0 +1,15 @@
+WORK ORDER: 7549
+Requester: Xi, Gina
+Date Entered: Wednesday, 9 April
+Date Due: Thursday, 10 April
+Type: Technology end-user request
+Summary: Voice-mail security settings
+Technician Assigned: Arnold, Sam
+Computer Workstation ID: HYS31
+Description:
+Is it possible to remove the new layers of security on my voice
+mail in the new phone system? I really don't want to use a
+password, and I certainly don't want to change it every month.
+I don't need a high degree of security because my work is not
+confidential. If someone else gained access to my messages,
+it wouldn't do much harm.

@@ -18,9 +18,11 @@ import { ApiAuth, Blocked, ResourceState, SessionGate, useResource } from './sha
 export function ApiStudentApplication({
   children,
   writes = false,
+  examWrites = false,
 }: {
   children: ReactNode;
   writes?: boolean;
+  examWrites?: boolean;
 }) {
   const path = usePathname();
   if (path === '/') return <>{children}</>;
@@ -29,11 +31,26 @@ export function ApiStudentApplication({
     return <ApiAuth register={path === '/register'} writes={writes} />;
   return (
     <SessionGate key={path}>
-      {(user) => <AuthenticatedStudent key={user.id} initial={user} writes={writes} />}
+      {(user) => (
+        <AuthenticatedStudent
+          key={user.id}
+          initial={user}
+          writes={writes}
+          examWrites={examWrites}
+        />
+      )}
     </SessionGate>
   );
 }
-function AuthenticatedStudent({ initial, writes }: { initial: User; writes: boolean }) {
+function AuthenticatedStudent({
+  initial,
+  writes,
+  examWrites,
+}: {
+  initial: User;
+  writes: boolean;
+  examWrites: boolean;
+}) {
   const [user, setUser] = useState(initial),
     path = usePathname(),
     search = useSearchParams();
@@ -41,13 +58,13 @@ function AuthenticatedStudent({ initial, writes }: { initial: User; writes: bool
     <StudentShell apiAccount={user}>
       <div className="api-root" key={`${path}?${search}`}>
         <span className="api-label">API · Dữ liệu server · Local / test</span>
-        {!writes && (
+        {!writes && !path.startsWith('/exam') && path !== '/history' && path !== '/practice' && (
           <Blocked>
             Chế độ chỉ đọc. Chưa bật cập nhật hồ sơ, đánh giá Flashcard hoặc hoàn thành bài học cho
             tài khoản.
           </Blocked>
         )}
-        <StudentDomain user={user} onProfile={setUser} writes={writes} />
+        <StudentDomain user={user} onProfile={setUser} writes={writes} examWrites={examWrites} />
       </div>
     </StudentShell>
   );
@@ -56,10 +73,12 @@ function StudentDomain({
   user,
   onProfile,
   writes,
+  examWrites,
 }: {
   user: User;
   onProfile: (user: User) => void;
   writes: boolean;
+  examWrites: boolean;
 }) {
   const path = usePathname(),
     parts = path.split('/').filter(Boolean);
@@ -78,8 +97,8 @@ function StudentDomain({
   if (path === '/exam' || path === '/practice') return <ExamLibrary />;
   if (parts[0] === 'exam' && parts[1]) {
     if (['result', 'review', 'take'].includes(parts[2]))
-      return <ServerAttemptScreen writes={writes} review={parts[2] === 'review'} />;
-    return <ServerExamDetail id={parts[1]} writes={writes} />;
+      return <ServerAttemptScreen writes={examWrites} review={parts[2] === 'review'} />;
+    return <ServerExamDetail id={parts[1]} writes={examWrites} />;
   }
   if (path === '/history') return <ServerHistory />;
   if (path.startsWith('/history/example'))

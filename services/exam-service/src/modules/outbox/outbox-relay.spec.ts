@@ -1,4 +1,5 @@
 import { MessagingService } from '@toeic/common';
+import { ConfigService } from '@nestjs/config';
 import goldenEvents from '../../../../../packages/contracts/p0/fixtures/events.valid.json';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ExamOutboxRelay } from './outbox-relay';
@@ -20,14 +21,16 @@ describe('Exam outbox relay', () => {
     const messaging = {
       emit: jest.fn().mockResolvedValue(undefined),
       declareConsumerQueue: jest.fn().mockResolvedValue(undefined),
+      declareQueue: jest.fn().mockResolvedValue(undefined),
+    };
+    const prisma = {
+      $transaction: jest.fn((callback: (tx: unknown) => Promise<unknown>) => callback(tx)),
     };
     const relay = new ExamOutboxRelay(
-      {
-        $transaction: (callback: (tx: unknown) => Promise<unknown>) => callback(tx),
-      } as unknown as PrismaService,
+      prisma as unknown as PrismaService,
       messaging as unknown as MessagingService,
     );
-    return { relay, tx, messaging };
+    return { relay, tx, messaging, prisma };
   }
   it.each([
     ['TestSubmittedEvent', 'test.submitted'],
@@ -87,5 +90,68 @@ describe('Exam outbox relay', () => {
       attemptId: 'attempt-1',
     });
     expect(tx.outboxEvent.update.mock.calls[0][0].data.deadLetteredAt).toBeInstanceOf(Date);
+  });
+
+  describe('startup while RabbitMQ is unavailable', () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it('starts without a channel and resumes the stored event after provisioning recovers', async () => {
+      const { relay, messaging, prisma, tx } = setup();
+      messaging.declareQueue.mockRejectedValueOnce(
+        new Error('RabbitMQ publish channel is not ready'),
+      );
+      try {
+        await expect(relay.onModuleInit()).resolves.toBeUndefined();
+        expect(prisma.$transaction).not.toHaveBeenCalled();
+        expect(tx.outboxEvent.update).not.toHaveBeenCalled();
+        await jest.advanceTimersByTimeAsync(500);
+        expect(messaging.declareQueue).toHaveBeenCalledTimes(2);
+        expect(messaging.emit).toHaveBeenCalledWith(
+          'part-practice.submitted',
+          'attempt-1',
+          expect.objectContaining({ eventId: 'e1' }),
+        );
+        expect(tx.outboxEvent.update.mock.calls[0][0].data.retryCount).toBeUndefined();
+        await relay.onModuleDestroy();
+        await jest.advanceTimersByTimeAsync(1000);
+        expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+      } finally {
+        await relay.onModuleDestroy();
+      }
+    });
+
+    it('keeps rows untouched until the queue can be declared', async () => {
+      const { relay, messaging, prisma, tx } = setup();
+      messaging.declareQueue.mockRejectedValue(new Error('broker offline'));
+      try {
+        await relay.onModuleInit();
+        await jest.advanceTimersByTimeAsync(1500);
+        expect(messaging.declareQueue).toHaveBeenCalledTimes(4);
+        expect(prisma.$transaction).not.toHaveBeenCalled();
+        expect(messaging.emit).not.toHaveBeenCalled();
+        expect(tx.outboxEvent.update).not.toHaveBeenCalled();
+      } finally {
+        await relay.onModuleDestroy();
+      }
+    });
+
+    it('retains the configured namespace for the holding queue', async () => {
+      const messaging = { declareQueue: jest.fn().mockResolvedValue(undefined) };
+      const relay = new ExamOutboxRelay(
+        {} as PrismaService,
+        messaging as unknown as MessagingService,
+        new ConfigService({ ANALYTICS_QUEUE_PREFIX: 'qa.test1' }),
+      );
+      try {
+        await relay.onModuleInit();
+        expect(messaging.declareQueue).toHaveBeenCalledWith(
+          'qa.test1.exam-outbox-dlq',
+          'exam.outbox.dead',
+        );
+      } finally {
+        await relay.onModuleDestroy();
+      }
+    });
   });
 });

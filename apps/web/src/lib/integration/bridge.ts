@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { ContractError, parseTokens, parseUser } from './contracts';
+import { isExamMutation } from './exam-access';
 
 export interface BridgeConfig {
   app: 'web' | 'cms';
@@ -8,6 +9,7 @@ export interface BridgeConfig {
   gatewayUrl?: string;
   metadataVerified?: boolean;
   writesEnabled?: boolean;
+  examWritesEnabled?: boolean;
   fetcher?: typeof fetch;
 }
 type Tokens = ReturnType<typeof parseTokens>;
@@ -317,7 +319,11 @@ export async function handleBridge(
     if (!permitted(config.app, path, method)) return respond({ code: 'CONTRACT_BLOCKED' }, 501);
     if (path.startsWith('tests/cms-metadata') && !config.metadataVerified)
       return respond({ code: 'METADATA_RUNTIME_VERIFICATION_REQUIRED' }, 503);
-    if (writeMethods.has(method) && !config.writesEnabled)
+    const canWrite =
+      config.app === 'web' && isExamMutation(path, method)
+        ? (config.examWritesEnabled ?? config.writesEnabled)
+        : config.writesEnabled;
+    if (writeMethods.has(method) && !canWrite)
       return respond({ code: 'ISOLATED_TEST_WRITES_NOT_ENABLED' }, 503);
     const user = await me();
     if (user.status !== 'ACTIVE') {
