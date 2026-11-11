@@ -1,0 +1,1893 @@
+{
+  "info": {
+    "_postman_id": "9e874d22-4ab1-4ea7-9b78-0f8a9058b19b",
+    "name": "TOEIC Mobile - Phase P Backend QA Live Smoke E2E",
+    "description": "QA-only live Gateway smoke/E2E collection. Requires an isolated Backend QA overlay, sanitized seed registry, and two active QA accounts. Writes one exam attempt and logs both QA accounts out. Never run against production.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "item": [
+    {
+      "name": "00 - QA Overlay Preflight",
+      "description": "Run first. The Gateway must be connected to the isolated QA overlay. GET /ready must return {status:\"ready\", qa:true}. Do not run against production.",
+      "item": [
+        {
+          "name": "Gateway readiness (QA mode required)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{gatewayOrigin}}/ready",
+            "description": "Confirms the local API Gateway is ready and explicitly reports qa=true. Stop if qa is false.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const derived = [",
+                  "  \"accessTokenA\", \"refreshTokenA\", \"previousRefreshTokenA\", \"revokedRefreshTokenA\",",
+                  "  \"accessTokenB\", \"refreshTokenB\", \"userAId\", \"userBId\", \"qaUserAFullName\",",
+                  "  \"topicId\", \"vocabularyId\", \"lessonId\", \"testId\", \"attemptId\", \"submittedAttemptId\",",
+                  "  \"firstQuestionId\", \"firstOptionCode\", \"attemptStartKeyA\", \"dueEntityId\", \"dueEntityRevision\",",
+                  "  \"qaReadyConfirmed\"",
+                  "];",
+                  "derived.forEach(key => pm.environment.unset(key));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let d = {};",
+                  "try { d = pm.response.json(); } catch (_) { d = {}; }",
+                  "const gatewayOrigin = (pm.environment.get(\"gatewayOrigin\") || \"\").replace(/\\/+$/, \"\");",
+                  "const configuredBaseUrl = (pm.environment.get(\"baseUrl\") || \"\").replace(/\\/+$/, \"\");",
+                  "const baseUrlMatchesGateway = !!gatewayOrigin && configuredBaseUrl === gatewayOrigin + \"/api/v1\";",
+                  "const qaReady = pm.response.code === 200 && d.status === \"ready\" && d.qa === true && d.checks && typeof d.checks === \"object\" && baseUrlMatchesGateway;",
+                  "pm.test(\"Gateway returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Gateway is ready\", function () { pm.expect(d.status).to.eql(\"ready\"); });",
+                  "pm.test(\"QA_MODE is enabled\", function () { pm.expect(d.qa).to.eql(true); });",
+                  "pm.test(\"Gateway and API base URLs use the same QA host\", function () { pm.expect(baseUrlMatchesGateway).to.eql(true); });",
+                  "pm.test(\"Readiness includes upstream checks\", function () { pm.expect(d.checks).to.be.an(\"object\"); });",
+                  "if (qaReady) {",
+                  "  pm.environment.set(\"qaReadyConfirmed\", \"true\");",
+                  "} else {",
+                  "  pm.environment.unset(\"qaReadyConfirmed\");",
+                  "  pm.execution.setNextRequest(null);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 - Authentication and Profile (QA User A)",
+      "description": "Requires an active QA User A. Credentials are read only from the local Postman environment and are not included in this collection.",
+      "item": [
+        {
+          "name": "Login QA User A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "POST /api/v1/auth/login. Stores token values only in the selected local Postman environment.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{qaUserAEmail}}\",\n  \"password\": \"{{qaUserAPassword}}\",\n  \"deviceId\": \"{{deviceIdA}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Login returns Bearer access and refresh tokens\", function () {",
+                  "  pm.expect(d.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(d.refreshToken).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(d.tokenType).to.eql(\"Bearer\");",
+                  "});",
+                  "if (d.user && d.user.userId && d.accessToken && d.refreshToken) {",
+                  "  pm.environment.set(\"accessTokenA\", d.accessToken);",
+                  "  pm.environment.set(\"refreshTokenA\", d.refreshToken);",
+                  "  pm.environment.set(\"userAId\", d.user.userId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET current profile - User A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Profile returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Profile belongs to the logged-in QA User A\", function () {",
+                  "  pm.expect(d.userId).to.eql(pm.environment.get(\"userAId\"));",
+                  "  pm.expect(d.status).to.eql(\"ACTIVE\");",
+                  "  pm.expect(d.roles).to.be.an(\"array\");",
+                  "});",
+                  "if (typeof d.fullName === \"string\") pm.environment.set(\"qaUserAFullName\", d.fullName);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH current profile - no-op fullName",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me",
+            "description": "Sends the current fullName unchanged. This verifies PATCH transport/mapping without intentionally changing profile data.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"{{qaUserAFullName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Profile PATCH returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Profile remains attached to User A\", function () {",
+                  "  pm.expect(d.userId).to.eql(pm.environment.get(\"userAId\"));",
+                  "  pm.expect(d.fullName).to.eql(pm.environment.get(\"qaUserAFullName\"));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.environment.get(\"qaReadyConfirmed\") !== \"true\") {",
+              "  pm.execution.setNextRequest(null);",
+              "  pm.execution.skipRequest();",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Learning Read APIs (QA User A)",
+      "description": "Read-only authenticated Learning smoke tests. IDs are captured from live responses; synthetic test_data IDs are never used.",
+      "item": [
+        {
+          "name": "List vocabulary topics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/vocabulary-topics?page=1&size=50",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Topic list returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Topic list uses paginated items\", function () {",
+                  "  pm.expect(d.items).to.be.an(\"array\");",
+                  "  pm.expect(d.page).to.eql(1);",
+                  "});",
+                  "const row = Array.isArray(d.items) ? d.items.find(x => x && x.topicId && Number(x.vocabularyCount) > 0) : null;",
+                  "pm.test(\"QA seed has at least one topic with vocabulary\", function () { pm.expect(row, \"Seed a published topic with vocabularies\").to.be.an(\"object\"); });",
+                  "if (row) pm.environment.set(\"topicId\", row.topicId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get vocabulary topic detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/vocabulary-topics/{{topicId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Topic detail returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Topic detail ID matches live list item\", function () { pm.expect(d.topicId).to.eql(pm.environment.get(\"topicId\")); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List vocabularies for selected topic",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/vocabularies?page=1&size=50&topicId={{topicId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Vocabulary list returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "const row = Array.isArray(d.items) ? d.items.find(x => x && x.vocabularyId) : null;",
+                  "pm.test(\"Vocabulary list is paginated and contains a live item\", function () {",
+                  "  pm.expect(d.items).to.be.an(\"array\");",
+                  "  pm.expect(row, \"Seed vocabulary records under the selected topic\").to.be.an(\"object\");",
+                  "});",
+                  "if (row) pm.environment.set(\"vocabularyId\", row.vocabularyId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get vocabulary detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/vocabularies/{{vocabularyId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Vocabulary detail returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Vocabulary detail matches selected live ID\", function () { pm.expect(d.vocabularyId).to.eql(pm.environment.get(\"vocabularyId\")); });",
+                  "pm.test(\"Vocabulary contains learner-facing content\", function () { pm.expect(d.word).to.be.a(\"string\").and.not.empty; pm.expect(d.definition).to.be.a(\"string\").and.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List published grammar lessons",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/lessons?page=1&size=50",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Grammar lesson list returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "const row = Array.isArray(d.items) ? d.items.find(x => x && x.lessonId && x.status === \"PUBLISHED\") : null;",
+                  "pm.test(\"QA seed has at least one published lesson\", function () { pm.expect(row, \"Seed a PUBLISHED grammar lesson\").to.be.an(\"object\"); });",
+                  "if (row) pm.environment.set(\"lessonId\", row.lessonId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get grammar lesson detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/lessons/{{lessonId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Grammar lesson detail returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Lesson detail uses Backend contentMarkdown contract\", function () {",
+                  "  pm.expect(d.lessonId).to.eql(pm.environment.get(\"lessonId\"));",
+                  "  pm.expect(d.contentMarkdown).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(d.renderPolicy).to.eql(\"NO_RAW_HTML\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get due reviews",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/review-today?page=1&size=50",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Due-review list returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Due-review response is paginated\", function () { pm.expect(d.items).to.be.an(\"array\"); pm.expect(d.total).to.be.a(\"number\"); });",
+                  "if (Array.isArray(d.items) && d.items.length) {",
+                  "  const row = d.items.find(x => x && x.entityId && x.revision !== undefined);",
+                  "  if (row) { pm.environment.set(\"dueEntityId\", row.entityId); pm.environment.set(\"dueEntityRevision\", String(row.revision)); }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Learning progress summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/learning/progress",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Learning progress returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Learning progress counters are numeric\", function () {",
+                  "  [\"reviewedVocabularies\", \"vocabulariesLearned\", \"dueVocabularies\", \"grammarLessonsCompleted\", \"sessionsCompleted\"].forEach(k => pm.expect(d[k], k).to.be.a(\"number\"));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.environment.get(\"qaReadyConfirmed\") !== \"true\") {",
+              "  pm.execution.setNextRequest(null);",
+              "  pm.execution.skipRequest();",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Mock Test Lifecycle (QA User A)",
+      "description": "Creates one FULL attempt on the seeded TOEIC test, persists a draft answer, submits it, then verifies result and history. This writes QA data. Do not run against production.",
+      "item": [
+        {
+          "name": "List tests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/tests?page=1&size=50",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Test list returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Test list contains the Backend QA seeded testId\", function () {",
+                  "  pm.expect(d.items).to.be.an(\"array\");",
+                  "  const hit = d.items.find(x => x && x.testId === pm.environment.get(\"seedTestId\"));",
+                  "  pm.expect(hit, \"Capture seedTestId from real Backend QA seed output first\").to.be.an(\"object\");",
+                  "  pm.expect(hit.totalQuestions).to.eql(200);",
+                  "  pm.expect(hit.durationSeconds).to.eql(7200);",
+                  "  pm.environment.set(\"testId\", hit.testId);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get seeded test detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/tests/{{testId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Test detail returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Seeded test has canonical TOEIC full-test shape\", function () {",
+                  "  pm.expect(d.testId).to.eql(pm.environment.get(\"testId\"));",
+                  "  pm.expect(d.durationSeconds).to.eql(7200);",
+                  "  pm.expect(d.questions).to.be.an(\"array\").with.lengthOf(200);",
+                  "  pm.expect(new Set(d.questions.map(q => q.part)).size).to.eql(7);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get seeded test parts availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/tests/{{testId}}/parts",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Test parts returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Backend returns all seven Parts\", function () {",
+                  "  pm.expect(d.testId).to.eql(pm.environment.get(\"testId\"));",
+                  "  pm.expect(d.parts).to.be.an(\"array\").with.lengthOf(7);",
+                  "  pm.expect(d.parts.map(p => p.part).sort((a,b) => a-b)).to.eql([1,2,3,4,5,6,7]);",
+                  "  pm.expect(d.parts.every(p => p.available === true), JSON.stringify(d.parts.filter(p => !p.available))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Start FULL attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{attemptStartKeyA}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/tests/{{testId}}/attempts",
+            "description": "Creates one QA attempt. The request uses a fresh Idempotency-Key per run.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"submittedAttemptId\");",
+                  "pm.environment.unset(\"attemptId\");",
+                  "pm.environment.unset(\"firstQuestionId\");",
+                  "const key = pm.variables.replaceIn(\"{{$guid}}\");",
+                  "pm.environment.set(\"attemptStartKeyA\", \"phase-p-\" + key);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Start attempt returns HTTP 201 Created\", function () { pm.response.to.have.status(201); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Attempt has 200-question IN_PROGRESS snapshot\", function () {",
+                  "  pm.expect(d.attemptId).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(d.testId).to.eql(pm.environment.get(\"testId\"));",
+                  "  pm.expect(d.mode).to.eql(\"FULL\");",
+                  "  pm.expect(d.status).to.eql(\"IN_PROGRESS\");",
+                  "  pm.expect(d.questions).to.be.an(\"array\").with.lengthOf(200);",
+                  "  pm.expect(d.questions.every(q => !Object.prototype.hasOwnProperty.call(q, \"correctOption\"))).to.eql(true);",
+                  "});",
+                  "if (d.attemptId && Array.isArray(d.questions) && d.questions.length) {",
+                  "  pm.environment.set(\"attemptId\", d.attemptId);",
+                  "  pm.environment.set(\"firstQuestionId\", d.questions[0].questionId);",
+                  "  const options = Array.isArray(d.questions[0].options) ? d.questions[0].options : [];",
+                  "  pm.environment.set(\"firstOptionCode\", options.length ? options[0].optionCode : \"A\");",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Save first answer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/attempts/{{attemptId}}/answers/{{firstQuestionId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"selectedOption\": \"{{firstOptionCode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Save answer returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Save-answer response is JSON\", function () { pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.include(\"application/json\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get attempt before submit (answer key must be hidden)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/attempts/{{attemptId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"In-progress attempt returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Question answer key is not exposed before submission\", function () {",
+                  "  pm.expect(d.status).to.eql(\"IN_PROGRESS\");",
+                  "  pm.expect(d.questions).to.be.an(\"array\");",
+                  "  pm.expect(d.questions.every(q => !Object.prototype.hasOwnProperty.call(q, \"correctOption\"))).to.eql(true);",
+                  "});",
+                  "pm.test(\"Saved answer is visible in draft\", function () {",
+                  "  pm.expect(d.answers.some(a => a.questionId === pm.environment.get(\"firstQuestionId\"))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit FULL attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/attempts/{{attemptId}}/submit",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Submit attempt returns HTTP 201 Created\", function () { pm.response.to.have.status(201); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Attempt is finalized\", function () {",
+                  "  pm.expect(d.attemptId).to.eql(pm.environment.get(\"attemptId\"));",
+                  "  pm.expect([\"SUBMITTED\", \"EXPIRED\"]).to.include(d.status);",
+                  "  pm.expect(d.questions).to.be.an(\"array\").with.lengthOf(200);",
+                  "});",
+                  "if (d.status === \"SUBMITTED\") pm.test(\"Correct answers are only returned after submission\", function () { pm.expect(d.questions.every(q => Object.prototype.hasOwnProperty.call(q, \"correctOption\"))).to.eql(true); });",
+                  "if (d.status === \"SUBMITTED\" && d.attemptId === pm.environment.get(\"attemptId\")) pm.environment.set(\"submittedAttemptId\", d.attemptId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get submitted result",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/attempts/{{attemptId}}",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Attempt result returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Result belongs to the completed attempt\", function () {",
+                  "  pm.expect(d.attemptId).to.eql(pm.environment.get(\"attemptId\"));",
+                  "  pm.expect([\"SUBMITTED\", \"EXPIRED\"]).to.include(d.status);",
+                  "  pm.expect(d.totalQuestions).to.eql(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get attempt history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/attempts?page=1&size=20",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Attempt history returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"History contains the just-created attempt\", function () {",
+                  "  pm.expect(d.items).to.be.an(\"array\");",
+                  "  pm.expect(d.items.some(x => x.attemptId === pm.environment.get(\"attemptId\"))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.environment.get(\"qaReadyConfirmed\") !== \"true\") {",
+              "  pm.execution.setNextRequest(null);",
+              "  pm.execution.skipRequest();",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Analytics Read APIs (QA User A)",
+      "description": "Read-only Analytics smoke checks. Analytics projections can be eventually consistent after the Mock Test submit event.",
+      "item": [
+        {
+          "name": "Analytics progress",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/analytics/progress?timeRange=LAST_30_DAYS&limit=50",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Analytics progress returns HTTP 200\", function () { pm.response.to.have.status(200); }); pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics scores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/analytics/scores?page=1&size=20",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Analytics scores returns HTTP 200\", function () { pm.response.to.have.status(200); }); pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics practices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/analytics/practices?page=1&size=20",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Analytics practices returns HTTP 200\", function () { pm.response.to.have.status(200); }); pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics streak",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/analytics/streak",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Analytics streak returns HTTP 200\", function () { pm.response.to.have.status(200); }); pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics prediction",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/analytics/prediction",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Analytics prediction returns HTTP 200\", function () { pm.response.to.have.status(200); }); pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics weak areas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/analytics/weak-areas",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Analytics weak areas returns HTTP 200\", function () { pm.response.to.have.status(200); }); pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.environment.get(\"qaReadyConfirmed\") !== \"true\") {",
+              "  pm.execution.setNextRequest(null);",
+              "  pm.execution.skipRequest();",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Cross-account Authorization (QA User B)",
+      "description": "Requires two independently seeded, ACTIVE accounts. Verifies that User B cannot read User A attempt.",
+      "item": [
+        {
+          "name": "Login QA User B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{qaUserBEmail}}\",\n  \"password\": \"{{qaUserBPassword}}\",\n  \"deviceId\": \"{{deviceIdB}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"User B login returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"User B receives a distinct user identity\", function () {",
+                  "  pm.expect(d.user.userId).to.be.a(\"string\").and.not.eql(pm.environment.get(\"userAId\"));",
+                  "  pm.expect(d.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(d.refreshToken).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "if (d.user && d.accessToken && d.refreshToken) {",
+                  "  pm.environment.set(\"userBId\", d.user.userId);",
+                  "  pm.environment.set(\"accessTokenB\", d.accessToken);",
+                  "  pm.environment.set(\"refreshTokenB\", d.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET current profile - User B",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenB}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"User B profile returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"Profile identity is User B, not User A\", function () {",
+                  "  pm.expect(d.userId).to.eql(pm.environment.get(\"userBId\"));",
+                  "  pm.expect(d.userId).not.eql(pm.environment.get(\"userAId\"));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User B cannot read User A attempt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/attempts/{{attemptId}}",
+            "description": "The Attempt service checks the attempt owner against JWT sub. Expected response is HTTP 403.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenB}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Cross-account attempt read is forbidden\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User B history does not contain User A attempt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/attempts?page=1&size=50",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenB}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"User B history returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.test(\"User A attempt is absent from User B history\", function () {",
+                  "  pm.expect(d.items).to.be.an(\"array\");",
+                  "  pm.expect(d.items.some(x => x.attemptId === pm.environment.get(\"attemptId\"))).to.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout QA User B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/logout",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenB}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshTokenB}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"User B logout returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Logout reports success\", function () { pm.expect(pm.response.json().success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.environment.get(\"qaReadyConfirmed\") !== \"true\") {",
+              "  pm.execution.setNextRequest(null);",
+              "  pm.execution.skipRequest();",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Refresh Rotation and Logout (QA User A)",
+      "description": "Runs last. Verifies one-time refresh-token rotation, replay rejection and logout revocation.",
+      "item": [
+        {
+          "name": "Refresh User A session (rotate token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshTokenA}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const oldToken = pm.environment.get(\"refreshTokenA\");",
+                  "if (!oldToken) throw new Error(\"Login User A before running refresh tests.\");",
+                  "pm.environment.set(\"previousRefreshTokenA\", oldToken);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Refresh returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "const oldRefresh = pm.environment.get(\"previousRefreshTokenA\");",
+                  "pm.test(\"Refresh rotates both access and refresh tokens\", function () {",
+                  "  pm.expect(d.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(d.refreshToken).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(d.refreshToken).not.eql(oldRefresh);",
+                  "});",
+                  "if (d.accessToken && d.refreshToken) {",
+                  "  pm.environment.set(\"accessTokenA\", d.accessToken);",
+                  "  pm.environment.set(\"refreshTokenA\", d.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Replayed previous refresh token is rejected",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{previousRefreshTokenA}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Previously consumed refresh token is rejected\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "New access token remains usable after rotation",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Rotated access token can read current profile\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Rotated token still resolves to User A\", function () { pm.expect(pm.response.json().userId).to.eql(pm.environment.get(\"userAId\")); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout QA User A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/logout",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshTokenA}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set(\"revokedRefreshTokenA\", pm.environment.get(\"refreshTokenA\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"User A logout returns HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Logout reports success\", function () { pm.expect(pm.response.json().success).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Access token is rejected after logout",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me",
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenA}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Revoked User A access token is rejected\", function () { pm.expect([401,403]).to.include(pm.response.code); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh token is rejected after logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{revokedRefreshTokenA}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Revoked refresh token cannot restore the session\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.environment.get(\"qaReadyConfirmed\") !== \"true\") {",
+              "  pm.execution.setNextRequest(null);",
+              "  pm.execution.skipRequest();",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": []
+}

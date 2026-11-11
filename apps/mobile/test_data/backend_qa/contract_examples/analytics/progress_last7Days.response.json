@@ -1,0 +1,132 @@
+{
+  "timeRange": "LAST_7_DAYS",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "asOf": "2026-11-11T09:10:00+00:00",
+  "lifetime": {
+    "vocabulariesLearned": 248,
+    "reviewCount": 420,
+    "grammarLessonsCompleted": 14,
+    "mockTestCount": 5,
+    "practiceCount": 12,
+    "studyDays": 34
+  },
+  "inRange": {
+    "vocabulariesLearned": 18,
+    "reviewCount": 64,
+    "grammarLessonsCompleted": 2,
+    "mockTestCount": 1,
+    "practiceCount": 4,
+    "studyDays": 6
+  },
+  "learningStreakDays": 12,
+  "longestStreak": 18,
+  "scoreTrend": [
+    {
+      "scoreListening": 335,
+      "scoreReading": 350,
+      "totalScore": 685,
+      "attemptId": "0e990487-5e85-5a0e-b335-dce48fefcbc6",
+      "completedAt": "2026-11-10T09:10:00+00:00"
+    }
+  ],
+  "scoreTrendNextCursor": null,
+  "predictedToeicScore": 685,
+  "weakAreas": [
+    {
+      "part": 1,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 12,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 2,
+      "status": "AVAILABLE",
+      "correct": 42,
+      "total": 60,
+      "weaknessScore": 0.3,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 3,
+      "status": "AVAILABLE",
+      "correct": 68,
+      "total": 100,
+      "weaknessScore": 0.32,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 4,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 14,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 5,
+      "status": "AVAILABLE",
+      "correct": 62,
+      "total": 100,
+      "weaknessScore": 0.38,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 6,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 10,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 7,
+      "status": "AVAILABLE",
+      "correct": 71,
+      "total": 100,
+      "weaknessScore": 0.29,
+      "isWeak": false,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    }
+  ],
+  "dailyActivity": [
+    {
+      "date": "2026-11-05",
+      "count": 1
+    },
+    {
+      "date": "2026-11-06",
+      "count": 3
+    },
+    {
+      "date": "2026-11-07",
+      "count": 0
+    },
+    {
+      "date": "2026-11-08",
+      "count": 4
+    },
+    {
+      "date": "2026-11-09",
+      "count": 2
+    },
+    {
+      "date": "2026-11-10",
+      "count": 5
+    },
+    {
+      "date": "2026-11-11",
+      "count": 4
+    }
+  ],
+  "dailyActivityTruncated": false,
+  "updatedAt": "2026-11-11T09:10:00+00:00",
+  "from": "2026-11-05T09:10:00+00:00"
+}

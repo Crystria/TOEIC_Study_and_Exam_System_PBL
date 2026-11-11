@@ -78,6 +78,119 @@ void main() {
       expect(tokens?.refreshToken, isNull);
     });
 
+    test(
+      'compare-and-set rotates only the expected refresh-token pair',
+      () async {
+        await tokenStorage.saveTokens(
+          accessToken: 'old-access',
+          refreshToken: 'old-refresh',
+        );
+
+        final replaced = await tokenStorage.replaceTokensIfRefreshTokenMatches(
+          expectedRefreshToken: 'old-refresh',
+          accessToken: 'rotated-access',
+          refreshToken: 'rotated-refresh',
+        );
+
+        expect(replaced, isTrue);
+        final tokens = await tokenStorage.readTokens();
+        expect(tokens?.accessToken, 'rotated-access');
+        expect(tokens?.refreshToken, 'rotated-refresh');
+      },
+    );
+
+    test(
+      'late compare-and-set cannot overwrite a newer account session',
+      () async {
+        await tokenStorage.saveTokens(
+          accessToken: 'new-user-access',
+          refreshToken: 'new-user-refresh',
+        );
+
+        final replaced = await tokenStorage.replaceTokensIfRefreshTokenMatches(
+          expectedRefreshToken: 'old-user-refresh',
+          accessToken: 'late-old-user-access',
+          refreshToken: 'late-old-user-refresh',
+        );
+
+        expect(replaced, isFalse);
+        final tokens = await tokenStorage.readTokens();
+        expect(tokens?.accessToken, 'new-user-access');
+        expect(tokens?.refreshToken, 'new-user-refresh');
+      },
+    );
+
+    test(
+      'concurrent conditional clear and login preserve the newer pair',
+      () async {
+        await tokenStorage.saveTokens(
+          accessToken: 'old-access',
+          refreshToken: 'old-refresh',
+        );
+
+        final oldSessionClear = tokenStorage.clearTokensIfRefreshTokenMatches(
+          'old-refresh',
+        );
+        final newSessionSave = tokenStorage.saveTokens(
+          accessToken: 'new-access',
+          refreshToken: 'new-refresh',
+        );
+        await Future.wait<void>(<Future<void>>[
+          oldSessionClear.then<void>((_) {}),
+          newSessionSave,
+        ]);
+
+        final tokens = await tokenStorage.readTokens();
+        expect(tokens?.accessToken, 'new-access');
+        expect(tokens?.refreshToken, 'new-refresh');
+      },
+    );
+
+    test(
+      'conditional access-token clear preserves a different session',
+      () async {
+        await tokenStorage.saveTokens(
+          accessToken: 'current-access',
+          refreshToken: 'current-refresh',
+        );
+
+        final cleared = await tokenStorage.clearTokensIfAccessTokenMatches(
+          'rejected-old-access',
+        );
+
+        expect(cleared, isFalse);
+        expect(
+          (await tokenStorage.readTokens())?.accessToken,
+          'current-access',
+        );
+      },
+    );
+
+    test(
+      'conditional refresh-token clear deletes only the matching session',
+      () async {
+        await tokenStorage.saveTokens(
+          accessToken: 'current-access',
+          refreshToken: 'current-refresh',
+        );
+
+        final didNotClear = await tokenStorage.clearTokensIfRefreshTokenMatches(
+          'old-refresh',
+        );
+        expect(didNotClear, isFalse);
+        expect(
+          (await tokenStorage.readTokens())?.refreshToken,
+          'current-refresh',
+        );
+
+        final cleared = await tokenStorage.clearTokensIfRefreshTokenMatches(
+          'current-refresh',
+        );
+        expect(cleared, isTrue);
+        expect(await tokenStorage.readTokens(), isNull);
+      },
+    );
+
     test('returns null when no token record exists', () async {
       expect(await tokenStorage.readTokens(), isNull);
       expect(await tokenStorage.readAccessToken(), isNull);

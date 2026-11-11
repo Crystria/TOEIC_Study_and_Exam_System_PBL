@@ -352,7 +352,6 @@ class AiChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   /// Invalidates in-flight chat work and drops all account-specific chat state.
   void resetForUserScopeChange() {
     _loadRequestId++;

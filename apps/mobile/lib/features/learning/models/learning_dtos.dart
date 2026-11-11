@@ -1,10 +1,7 @@
 import 'learning_models.dart';
 import 'grammar_lesson.dart';
 
-Map<String, dynamic> learningJsonMap(
-  Object? value, {
-  required String context,
-}) {
+Map<String, dynamic> learningJsonMap(Object? value, {required String context}) {
   if (value is Map<String, dynamic>) return value;
   if (value is Map) return Map<String, dynamic>.from(value);
   throw FormatException('$context must be a JSON object.');
@@ -259,10 +256,7 @@ class LearningGrammarLessonDto {
       final explanation = _plainText(currentLines.join('\n')).trim();
       if (explanation.isNotEmpty) {
         result.add(
-          GrammarLessonSection(
-            title: currentTitle,
-            explanation: explanation,
-          ),
+          GrammarLessonSection(title: currentTitle, explanation: explanation),
         );
       }
       currentLines.clear();
@@ -335,10 +329,7 @@ class LearningReviewProgressDto {
       quality: state['quality'] == null
           ? null
           : _validatedQuality(state['quality']),
-      nextReviewDate: learningDate(
-        state['nextReviewDate'],
-        'nextReviewDate',
-      ),
+      nextReviewDate: learningDate(state['nextReviewDate'], 'nextReviewDate'),
     );
   }
 
@@ -378,7 +369,9 @@ class LearningMutationReceiptDto {
     final json = learningJsonMap(value, context: 'Learning mutation result');
     final operationId = learningRequiredString(json, 'operationId');
     if (operationId != expectedOperationId) {
-      throw const FormatException('Mutation returned a different operation ID.');
+      throw const FormatException(
+        'Mutation returned a different operation ID.',
+      );
     }
     final rawProgress = json['progress'];
     if (rawProgress is! List || rawProgress.length != 1) {

@@ -9,6 +9,7 @@ import 'learning_sync_journal.dart';
 
 abstract interface class LearningRepository {
   Future<List<LearningTopic>> getTopics();
+  Future<LearningTopic> getTopic(String topicId);
   Future<List<LearningVocabulary>> getVocabularies({String? topicId});
   Future<LearningVocabulary> getVocabulary(String vocabularyId);
   Future<List<GrammarLesson>> getGrammarLessons({String? category});
@@ -84,9 +85,7 @@ class ApiLearningRepository implements LearningRepository {
     return _getTopicsForScope(scope);
   }
 
-  Future<List<LearningTopic>> _getTopicsForScope(
-    _LearningScope scope,
-  ) async {
+  Future<List<LearningTopic>> _getTopicsForScope(_LearningScope scope) async {
     _ensureScope(scope);
     final cached = _topicsCache;
     if (cached != null) return List.unmodifiable(cached);
@@ -101,6 +100,37 @@ class ApiLearningRepository implements LearningRepository {
     final topics = dtos.map((item) => item.toDomain()).toList(growable: false);
     _topicsCache = topics;
     return List.unmodifiable(topics);
+  }
+
+  @override
+  Future<LearningTopic> getTopic(String topicId) async {
+    final normalizedId = topicId.trim();
+    if (normalizedId.isEmpty) {
+      throw ArgumentError.value(topicId, 'topicId');
+    }
+
+    final scope = _captureScope();
+    final dto = await _api.getTopic(normalizedId);
+    _ensureScope(scope);
+    if (dto.topicId != normalizedId) {
+      throw const FormatException(
+        'Learning topic detail trả về ID không khớp yêu cầu.',
+      );
+    }
+    final topic = dto.toDomain();
+
+    final cachedTopics = _topicsCache;
+    if (cachedTopics != null) {
+      final updated = List<LearningTopic>.of(cachedTopics);
+      final index = updated.indexWhere((item) => item.id == topic.id);
+      if (index >= 0) {
+        updated[index] = topic;
+      } else {
+        updated.add(topic);
+      }
+      _topicsCache = List<LearningTopic>.unmodifiable(updated);
+    }
+    return topic;
   }
 
   @override
@@ -131,11 +161,7 @@ class ApiLearningRepository implements LearningRepository {
       for (final topic in topics) topic.id: topic.name,
     };
     final vocabularies = dtos
-        .map(
-          (dto) => dto.toDomain(
-            topicName: topicNames[dto.topicId] ?? '',
-          ),
-        )
+        .map((dto) => dto.toDomain(topicName: topicNames[dto.topicId] ?? ''))
         .toList(growable: false);
 
     for (final vocabulary in vocabularies) {
@@ -214,9 +240,7 @@ class ApiLearningRepository implements LearningRepository {
   }
 
   @override
-  Future<List<LearningReviewProgress>> getDueProgress({
-    String? topicId,
-  }) async {
+  Future<List<LearningReviewProgress>> getDueProgress({String? topicId}) async {
     final scope = _captureScope();
     final dueDtos = await _collectPages<LearningReviewProgressDto>(
       scope: scope,
@@ -268,11 +292,7 @@ class ApiLearningRepository implements LearningRepository {
 
     final scope = _captureScope();
     final page = await _api.listDueReviews(
-      query: LearningPageQueryDto(
-        page: 1,
-        size: limit,
-        topicId: topicId,
-      ),
+      query: LearningPageQueryDto(page: 1, size: limit, topicId: topicId),
     );
     _ensureScope(scope);
     return _joinDueContent(page.items, scope);
@@ -453,10 +473,7 @@ class ApiLearningRepository implements LearningRepository {
         message: 'Không thể xác nhận thao tác của tài khoản khác.',
       );
     }
-    await _syncJournal.remove(
-      userId: scope.userId,
-      operationId: operationId,
-    );
+    await _syncJournal.remove(userId: scope.userId, operationId: operationId);
     _ensureScope(scope);
   }
 
@@ -470,10 +487,7 @@ class ApiLearningRepository implements LearningRepository {
       return null;
     }
 
-    final revision = _extractCurrentRevision(
-      error.details,
-      operation.entityId,
-    );
+    final revision = _extractCurrentRevision(error.details, operation.entityId);
     if (revision == null) {
       // A different 409 (for example IDEMPOTENCY_CONFLICT) does not contain an
       // authoritative entity revision. Discard the rejected local entry so a

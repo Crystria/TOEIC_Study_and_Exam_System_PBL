@@ -139,6 +139,196 @@ void main() {
       expect(disabledAdapter.requestCount, 0);
     });
 
+    test('refreshes a rejected access token and retries once', () async {
+      await tokenStorage.saveTokens(
+        accessToken: 'expired-access-token',
+        refreshToken: 'refresh-token',
+      );
+      var refreshCalls = 0;
+      adapter.responseFactory = (options) async {
+        final authorization = _authorizationHeader(options.headers);
+        if (authorization == 'Bearer expired-access-token') {
+          return _jsonResponse(<String, Object?>{
+            'code': 'TOKEN_EXPIRED',
+          }, statusCode: 401);
+        }
+        return _jsonResponse(<String, Object?>{'ok': true});
+      };
+      client.setUnauthorizedRefreshHandler((failedAccessToken) async {
+        refreshCalls++;
+        expect(failedAccessToken, 'expired-access-token');
+        await tokenStorage.saveTokens(
+          accessToken: 'fresh-access-token',
+          refreshToken: 'rotated-refresh-token',
+        );
+        return 'fresh-access-token';
+      });
+
+      final response = await client.get<Map<String, dynamic>>(
+        Endpoints.analytics.progress,
+      );
+
+      expect(response.data?['ok'], isTrue);
+      expect(adapter.requestCount, 2);
+      expect(refreshCalls, 1);
+      expect(
+        _authorizationHeader(adapter.lastRequest?.headers),
+        'Bearer fresh-access-token',
+      );
+    });
+
+    test(
+      'pins retry to the token returned by the refresh coordinator',
+      () async {
+        await tokenStorage.saveTokens(
+          accessToken: 'expired-access-token',
+          refreshToken: 'refresh-token',
+        );
+        adapter.responseFactory = (options) async {
+          final authorization = _authorizationHeader(options.headers);
+          if (authorization == 'Bearer expired-access-token') {
+            return _jsonResponse(<String, Object?>{
+              'code': 'TOKEN_EXPIRED',
+            }, statusCode: 401);
+          }
+          return _jsonResponse(<String, Object?>{
+            'authorization': authorization,
+          });
+        };
+        client.setUnauthorizedRefreshHandler((_) async {
+          await tokenStorage.saveTokens(
+            accessToken: 'rotated-access-token',
+            refreshToken: 'rotated-refresh-token',
+          );
+          // Simulate another account logging in between refresh completion and
+          // the stale request retry. The retry must retain the rotated token.
+          await tokenStorage.saveTokens(
+            accessToken: 'different-user-access-token',
+            refreshToken: 'different-user-refresh-token',
+          );
+          return 'rotated-access-token';
+        });
+
+        final response = await client.get<Map<String, dynamic>>(
+          Endpoints.analytics.progress,
+        );
+
+        expect(response.data?['authorization'], 'Bearer rotated-access-token');
+        expect(
+          (await tokenStorage.readTokens())?.accessToken,
+          'different-user-access-token',
+        );
+        expect(adapter.requestCount, 2);
+      },
+    );
+
+    test('does not refresh public requests', () async {
+      var refreshCalls = 0;
+      adapter.responseFactory = (_) async => _jsonResponse(<String, Object?>{
+        'message': 'Invalid credentials',
+      }, statusCode: 401);
+      client.setUnauthorizedRefreshHandler((_) async {
+        refreshCalls++;
+        return 'unused-fresh-token';
+      });
+
+      await expectLater(
+        client.post<Object?>(
+          Endpoints.auth.login,
+          options: Options(
+            extra: <String, dynamic>{ApiClient.skipAuthExtraKey: true},
+          ),
+        ),
+        throwsA(
+          isA<AppException>().having(
+            (error) => error.isUnauthorized,
+            'isUnauthorized',
+            isTrue,
+          ),
+        ),
+      );
+
+      expect(refreshCalls, 0);
+      expect(adapter.requestCount, 1);
+    });
+
+    test(
+      'does not retry more than once after a refreshed request is rejected',
+      () async {
+        await tokenStorage.saveTokens(
+          accessToken: 'old-access-token',
+          refreshToken: 'refresh-token',
+        );
+        var refreshCalls = 0;
+        var rejectedCalls = 0;
+        adapter.responseFactory = (_) async => _jsonResponse(<String, Object?>{
+          'message': 'Unauthorized',
+        }, statusCode: 401);
+        client.setUnauthorizedRefreshHandler(
+          (_) async {
+            refreshCalls++;
+            await tokenStorage.saveTokens(
+              accessToken: 'new-access-token',
+              refreshToken: 'new-refresh-token',
+            );
+            return 'new-access-token';
+          },
+          onRetryRejected: (_) async {
+            rejectedCalls++;
+          },
+        );
+
+        await expectLater(
+          client.get<Object?>(Endpoints.auth.getCurrentUser),
+          throwsA(
+            isA<AppException>().having(
+              (error) => error.isUnauthorized,
+              'isUnauthorized',
+              isTrue,
+            ),
+          ),
+        );
+        expect(adapter.requestCount, 2);
+        expect(refreshCalls, 1);
+        expect(rejectedCalls, 1);
+      },
+    );
+
+    test('does not auto-refresh a logout request', () async {
+      await tokenStorage.saveTokens(
+        accessToken: 'logout-access-token',
+        refreshToken: 'logout-refresh-token',
+      );
+      var refreshCalls = 0;
+      adapter.responseFactory = (_) async => _jsonResponse(<String, Object?>{
+        'message': 'Unauthorized',
+      }, statusCode: 401);
+      client.setUnauthorizedRefreshHandler((_) async {
+        refreshCalls++;
+        return 'unused-fresh-token';
+      });
+
+      await expectLater(
+        client.post<Object?>(
+          Endpoints.auth.logout,
+          data: <String, String>{'refreshToken': 'logout-refresh-token'},
+          options: Options(
+            extra: <String, dynamic>{ApiClient.skipAuthRefreshExtraKey: true},
+          ),
+        ),
+        throwsA(
+          isA<AppException>().having(
+            (error) => error.isUnauthorized,
+            'isUnauthorized',
+            isTrue,
+          ),
+        ),
+      );
+
+      expect(refreshCalls, 0);
+      expect(adapter.requestCount, 1);
+    });
+
     test('maps HTTP 401 to unauthorized AppException', () async {
       adapter.responseFactory = (_) async => _jsonResponse(<String, Object?>{
         'message': 'Invalid credentials',
@@ -200,6 +390,54 @@ void main() {
                 'retryAfter',
                 const Duration(seconds: 30),
               ),
+        ),
+      );
+    });
+
+    test(
+      'retains Gateway correlation id from error response headers',
+      () async {
+        adapter.responseFactory = (_) async => _jsonResponse(
+          <String, Object?>{
+            'code': 'ENTITY_REVISION_CONFLICT',
+            'message': 'Dữ liệu đã thay đổi.',
+          },
+          statusCode: 409,
+          headers: <String, List<String>>{
+            'x-correlation-id': <String>['corr-test-409'],
+          },
+        );
+
+        await expectLater(
+          client.get<Object?>(Endpoints.learning.progress),
+          throwsA(
+            isA<AppException>().having(
+              (error) => error.correlationId,
+              'correlationId',
+              'corr-test-409',
+            ),
+          ),
+        );
+      },
+    );
+
+    test('ignores unsafe Gateway correlation identifiers', () async {
+      adapter.responseFactory = (_) async => _jsonResponse(
+        <String, Object?>{'code': 'BAD_REQUEST'},
+        statusCode: 400,
+        headers: <String, List<String>>{
+          'x-correlation-id': <String>['bad\r\nid'],
+        },
+      );
+
+      await expectLater(
+        client.get<Object?>(Endpoints.analytics.progress),
+        throwsA(
+          isA<AppException>().having(
+            (error) => error.correlationId,
+            'correlationId',
+            isNull,
+          ),
         ),
       );
     });

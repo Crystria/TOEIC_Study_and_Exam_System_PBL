@@ -1,0 +1,151 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/admin/users/:id/status"
+  method: PATCH
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    id: b2b638c2-0db0-4256-a945-715659ac6882
+  body:
+    type: json
+    content: |-
+      {
+        "status": "ACTIVE"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "userId": "fca61808-b608-45a9-8eb2-86c74799a671",
+        "email": "vrH0nSjzQavb3@fIRyBLMEsmHcpaOxxLIMhAq.ahj",
+        "fullName": "string",
+        "phoneNumber": null,
+        "avatarKey": null,
+        "avatarUrl": "http://tnAntWJQABtdxE.qsyo4ZuhE39.HxG1XiZyD",
+        "status": "SUSPENDED",
+        "roles": [
+          "SYSTEM_ADMIN"
+        ],
+        "createdAt": "Z",
+        "updatedAt": "Z"
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 320,
+            "format": "email"
+          },
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255
+          },
+          "phoneNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "avatarKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "avatarUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "INACTIVE"
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "updatedAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          }
+        },
+        "required": [
+          "userId",
+          "email",
+          "fullName",
+          "phoneNumber",
+          "avatarKey",
+          "avatarUrl",
+          "status",
+          "roles",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+order: 1000

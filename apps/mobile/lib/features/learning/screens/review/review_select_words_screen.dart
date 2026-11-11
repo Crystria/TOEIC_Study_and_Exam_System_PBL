@@ -215,7 +215,8 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
                                 ),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         word.word,

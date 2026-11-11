@@ -1,0 +1,32 @@
+{
+  "keys": [
+    {
+      "feature": "vocabulary_progress",
+      "prefix": "toeic.vocabulary.progress.v2.user.",
+      "suffix": "Uri.encodeComponent(userId)",
+      "format": "VocabularyProgressSnapshot JSON"
+    },
+    {
+      "feature": "vocabulary_legacy",
+      "key": "toeic.vocabulary.progress.v1",
+      "format": "legacy snapshot; quarantined before ownership confirmation"
+    },
+    {
+      "feature": "vocabulary_legacy_unassigned",
+      "key": "toeic.vocabulary.progress.legacy.unassigned.v1",
+      "format": "quarantined legacy snapshot"
+    },
+    {
+      "feature": "grammar_progress",
+      "prefix": "toeic.learning.grammar_progress.v1.user.",
+      "suffix": "Uri.encodeComponent(userId)",
+      "format": "startedLessonIds/completedLessonIds/revisions"
+    }
+  ],
+  "non_persistent_mock_state": [
+    "FakeAuthRepository accounts and tickets",
+    "AuthSession local session metadata",
+    "MockTest attempt/draft/history repository maps",
+    "AiChatRepository conversations/messages/usage"
+  ]
+}

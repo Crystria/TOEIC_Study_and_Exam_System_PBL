@@ -214,7 +214,9 @@ class ReviewSelectWordsProvider extends ChangeNotifier {
         } else if (!_apiTopicNames.containsKey(selectedTopicId)) {
           selectedTopicId = _apiWordsByTopic.keys.isNotEmpty
               ? _apiWordsByTopic.keys.first
-              : (_apiTopicNames.keys.isNotEmpty ? _apiTopicNames.keys.first : '');
+              : (_apiTopicNames.keys.isNotEmpty
+                    ? _apiTopicNames.keys.first
+                    : '');
         }
       } else {
         await Future<void>.delayed(const Duration(milliseconds: 250));
@@ -252,7 +254,6 @@ class ReviewSelectWordsProvider extends ChangeNotifier {
       }
     }
   }
-
 
   bool _isCurrent(int revision, String? userId) =>
       revision == _scopeRevision && _currentUserId()?.trim() == userId;

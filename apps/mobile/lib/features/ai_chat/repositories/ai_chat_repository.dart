@@ -36,10 +36,7 @@ class AiChatRepository {
       ..clear()
       ..addEntries(
         AiChatMockData.messagesByConversation.entries.map(
-          (entry) => MapEntry(
-            entry.key,
-            List<ChatMessage>.of(entry.value),
-          ),
+          (entry) => MapEntry(entry.key, List<ChatMessage>.of(entry.value)),
         ),
       );
     _nextConversationNumber = 1;

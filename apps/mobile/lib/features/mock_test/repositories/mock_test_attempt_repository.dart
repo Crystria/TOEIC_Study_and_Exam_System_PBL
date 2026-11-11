@@ -51,6 +51,7 @@ class MockTestAttemptRepository {
     _currentUserId = currentUserId;
     resetForUserScopeChange();
   }
+
   final Map<String, TestAttempt> _attempts = {};
   final Map<String, Map<String, String>> _draftAnswers = {};
   final Map<String, MockTestSubmission> _submissions = {};
@@ -62,7 +63,6 @@ class MockTestAttemptRepository {
   static const int minPartDurationSeconds = 300;
   static const int maxPartDurationSeconds = 10800;
   static const List<int> fullParts = [1, 2, 3, 4, 5, 6, 7];
-
 
   /// Drops in-memory attempts, drafts and results when the account changes.
   /// The public test catalogue remains untouched.
@@ -234,7 +234,9 @@ class MockTestAttemptRepository {
         page: page,
         size: size,
         testId: testId,
-        mode: mode == null ? null : (mode == TestAttemptMode.full ? 'FULL' : 'PART'),
+        mode: mode == null
+            ? null
+            : (mode == TestAttemptMode.full ? 'FULL' : 'PART'),
       );
       _ensureApiScope(scope);
       return ExamHistoryPageDto.fromObject(raw).page;
@@ -416,7 +418,9 @@ class MockTestAttemptRepository {
           await _loadApiAttempt(attemptId, scope);
       _ensureApiScope(scope);
       if (snapshot.status != TestAttemptStatus.inProgress) {
-        throw StateError('Không thể thay đổi đáp án của phiên thi đã kết thúc.');
+        throw StateError(
+          'Không thể thay đổi đáp án của phiên thi đã kết thúc.',
+        );
       }
       final questionSnapshot = snapshot.questions.where(
         (item) => item.question.questionId == questionId,
@@ -426,7 +430,9 @@ class MockTestAttemptRepository {
               !questionSnapshot.first.question.options.any(
                 (option) => option.optionCode == selectedOption,
               ))) {
-        throw ArgumentError('Câu hỏi hoặc mã đáp án không thuộc Attempt hiện tại.');
+        throw ArgumentError(
+          'Câu hỏi hoặc mã đáp án không thuộc Attempt hiện tại.',
+        );
       }
 
       await _localStore.saveAnswer(
@@ -745,13 +751,13 @@ class MockTestAttemptRepository {
     required Future<void> Function() operation,
   }) async {
     final previous = _attemptWriteQueues[attemptId];
-    final next = (previous ?? Future<void>.value())
-        .catchError((_) {})
-        .then((_) async {
-          _ensureApiScope(scope);
-          await operation();
-          _ensureApiScope(scope);
-        });
+    final next = (previous ?? Future<void>.value()).catchError((_) {}).then((
+      _,
+    ) async {
+      _ensureApiScope(scope);
+      await operation();
+      _ensureApiScope(scope);
+    });
 
     _attemptWriteQueues[attemptId] = next;
 
@@ -772,19 +778,28 @@ class MockTestAttemptRepository {
     final structure = await _testRepository.getTestParts(testId);
     _ensureApiScope(scope);
 
-    final questionCount = structure.fold<int>(0, (sum, part) => sum + part.totalQuestions);
+    final questionCount = structure.fold<int>(
+      0,
+      (sum, part) => sum + part.totalQuestions,
+    );
     final expectedCounts = MockTestTakingMockData.expectedQuestionCounts;
-    final validParts = structure.length == 7 &&
+    final validParts =
+        structure.length == 7 &&
         structure.every((part) => part.available) &&
-        expectedCounts.entries.every((entry) => structure.any(
-          (part) => part.part == entry.key && part.totalQuestions == entry.value,
-        ));
+        expectedCounts.entries.every(
+          (entry) => structure.any(
+            (part) =>
+                part.part == entry.key && part.totalQuestions == entry.value,
+          ),
+        );
 
     if (test.totalQuestions != 200 ||
         test.durationSeconds != fullDurationSeconds ||
         questionCount != 200 ||
         !validParts) {
-      throw StateError('Cấu trúc đề thi không đáp ứng quy tắc FULL TOEIC 200 câu.');
+      throw StateError(
+        'Cấu trúc đề thi không đáp ứng quy tắc FULL TOEIC 200 câu.',
+      );
     }
 
     const parts = fullParts;
@@ -800,10 +815,7 @@ class MockTestAttemptRepository {
     );
     _ensureApiScope(scope);
 
-    final raw = await api.startFullAttempt(
-      testId: testId,
-      idempotencyKey: key,
-    );
+    final raw = await api.startFullAttempt(testId: testId, idempotencyKey: key);
     _ensureApiScope(scope);
     final dto = ExamAttemptDto.fromObject(raw);
     _validateStartedAttempt(
@@ -934,8 +946,13 @@ class MockTestAttemptRepository {
         dto.mode != expectedMode ||
         dto.durationSeconds != expectedDuration ||
         actualParts.length != expected.length ||
-        !List.generate(expected.length, (index) => actualParts[index] == expected[index]).every((value) => value)) {
-      throw const FormatException('Attempt được tạo không khớp lựa chọn đã gửi.');
+        !List.generate(
+          expected.length,
+          (index) => actualParts[index] == expected[index],
+        ).every((value) => value)) {
+      throw const FormatException(
+        'Attempt được tạo không khớp lựa chọn đã gửi.',
+      );
     }
     if (dto.questions.length != dto.totalQuestions) {
       throw const FormatException('Attempt snapshot không đủ câu hỏi.');
@@ -943,12 +960,20 @@ class MockTestAttemptRepository {
     if (expectedMode == TestAttemptMode.full) {
       final counts = <int, int>{};
       for (final question in dto.questions) {
-        counts.update(question.question.part, (value) => value + 1, ifAbsent: () => 1);
+        counts.update(
+          question.question.part,
+          (value) => value + 1,
+          ifAbsent: () => 1,
+        );
       }
       final expectedCounts = MockTestTakingMockData.expectedQuestionCounts;
       if (dto.totalQuestions != 200 ||
-          expectedCounts.entries.any((entry) => counts[entry.key] != entry.value)) {
-        throw const FormatException('FULL attempt snapshot không đúng phân bổ 200 câu.');
+          expectedCounts.entries.any(
+            (entry) => counts[entry.key] != entry.value,
+          )) {
+        throw const FormatException(
+          'FULL attempt snapshot không đúng phân bổ 200 câu.',
+        );
       }
     }
   }

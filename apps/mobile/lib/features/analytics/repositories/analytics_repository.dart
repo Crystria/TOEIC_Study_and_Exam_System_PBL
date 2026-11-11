@@ -55,7 +55,10 @@ class ApiAnalyticsRepository implements AnalyticsRepository {
   }
 
   @override
-  Future<AnalyticsHistoryPage> getPractices({int page = 1, int size = 20}) async {
+  Future<AnalyticsHistoryPage> getPractices({
+    int page = 1,
+    int size = 20,
+  }) async {
     _validatePage(page, size);
     final scope = _captureScope();
     final dto = await _api.getPractices(page: page, size: size);
@@ -119,7 +122,7 @@ class _AnalyticsScope {
   final int revision;
 }
 
-/// Deterministic demo fixture for API_ENABLED=false.
+/// Deterministic demo fixture when the Analytics API feature is disabled.
 /// Values are explicitly marked as demo by [isDemoData].
 class MockAnalyticsRepository implements AnalyticsRepository {
   @override
@@ -157,21 +160,21 @@ class MockAnalyticsRepository implements AnalyticsRepository {
     );
     final inRange = switch (range) {
       AnalyticsTimeRange.last7Days => _counters(
-          vocabulariesLearned: 18,
-          reviewCount: 64,
-          grammarLessonsCompleted: 2,
-          mockTestCount: 1,
-          practiceCount: 4,
-          studyDays: 6,
-        ),
+        vocabulariesLearned: 18,
+        reviewCount: 64,
+        grammarLessonsCompleted: 2,
+        mockTestCount: 1,
+        practiceCount: 4,
+        studyDays: 6,
+      ),
       AnalyticsTimeRange.last30Days => _counters(
-          vocabulariesLearned: 52,
-          reviewCount: 166,
-          grammarLessonsCompleted: 5,
-          mockTestCount: 3,
-          practiceCount: 8,
-          studyDays: 18,
-        ),
+        vocabulariesLearned: 52,
+        reviewCount: 166,
+        grammarLessonsCompleted: 5,
+        mockTestCount: 3,
+        practiceCount: 8,
+        studyDays: 18,
+      ),
       AnalyticsTimeRange.allTime => lifetime,
     };
     final rangeDays = switch (range) {
@@ -188,20 +191,25 @@ class MockAnalyticsRepository implements AnalyticsRepository {
         count: count,
       );
     });
-    final trends = [
-      (days: 26, listening: 295, reading: 295, total: 590),
-      (days: 20, listening: 305, reading: 310, total: 615),
-      (days: 13, listening: 315, reading: 315, total: 630),
-      (days: 7, listening: 320, reading: 330, total: 650),
-      (days: 1, listening: 335, reading: 350, total: 685),
-    ].map((item) => AnalyticsScoreTrendPoint(
-      attemptId: 'demo-full-${item.days}',
-      completedAt: now.subtract(Duration(days: item.days)),
-      scoreListening: item.listening,
-      scoreReading: item.reading,
-      totalScore: item.total,
-      scoring: const {'method': 'DEMO', 'official': false},
-    )).toList(growable: false);
+    final trends =
+        [
+              (days: 26, listening: 295, reading: 295, total: 590),
+              (days: 20, listening: 305, reading: 310, total: 615),
+              (days: 13, listening: 315, reading: 315, total: 630),
+              (days: 7, listening: 320, reading: 330, total: 650),
+              (days: 1, listening: 335, reading: 350, total: 685),
+            ]
+            .map(
+              (item) => AnalyticsScoreTrendPoint(
+                attemptId: 'demo-full-${item.days}',
+                completedAt: now.subtract(Duration(days: item.days)),
+                scoreListening: item.listening,
+                scoreReading: item.reading,
+                totalScore: item.total,
+                scoring: const {'method': 'DEMO', 'official': false},
+              ),
+            )
+            .toList(growable: false);
 
     return AnalyticsProgress(
       timeRange: range,
@@ -215,7 +223,13 @@ class MockAnalyticsRepository implements AnalyticsRepository {
       learningStreakDays: 12,
       longestStreak: 18,
       scoreTrend: range == AnalyticsTimeRange.last7Days
-          ? trends.where((item) => item.completedAt.isAfter(today.subtract(const Duration(days: 7)))).toList()
+          ? trends
+                .where(
+                  (item) => item.completedAt.isAfter(
+                    today.subtract(const Duration(days: 7)),
+                  ),
+                )
+                .toList()
           : trends,
       predictedToeicScore: 685,
       weakAreas: const [
@@ -397,7 +411,10 @@ class MockAnalyticsRepository implements AnalyticsRepository {
   }
 
   @override
-  Future<AnalyticsHistoryPage> getPractices({int page = 1, int size = 20}) async {
+  Future<AnalyticsHistoryPage> getPractices({
+    int page = 1,
+    int size = 20,
+  }) async {
     _validatePage(page, size);
     return _page(_practiceItems(), page: page, size: size);
   }

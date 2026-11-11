@@ -1,15 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/config/app_config.dart';
+import '../../../shared/widgets/user_avatar.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/providers/auth_session_provider.dart';
+import '../services/avatar_image_source.dart';
 import 'edit_profile_screen.dart';
 import 'settings_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key, required this.loginRouteBuilder});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({
+    super.key,
+    required this.loginRouteBuilder,
+    this.avatarImageSource,
+  });
 
   final WidgetBuilder loginRouteBuilder;
+  final AvatarImageSource? avatarImageSource;
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late final AvatarImageSource _avatarImageSource =
+      widget.avatarImageSource ?? DeviceAvatarImageSource();
+  bool _isPickingAvatar = false;
+
+  Future<void> _onPickAvatar() async {
+    final session = context.read<AuthSessionProvider>();
+    if (!session.isAuthenticated ||
+        session.isUpdatingAvatar ||
+        session.isUpdatingProfile ||
+        _isPickingAvatar) {
+      return;
+    }
+
+    final initiatingUserId = session.currentUserId;
+    final initiatingSessionId = session.currentSession?.id;
+    setState(() => _isPickingAvatar = true);
+
+    try {
+      final image = await _avatarImageSource.pickFromGallery();
+      if (image == null || !mounted) return;
+
+      final latestSession = context.read<AuthSessionProvider>();
+      if (latestSession.currentUserId != initiatingUserId ||
+          latestSession.currentSession?.id != initiatingSessionId) {
+        _showMessage(
+          'Phiên tài khoản đã thay đổi. '
+          'Vui lòng chọn ảnh lại cho tài khoản hiện tại.',
+        );
+        return;
+      }
+
+      final updatedUser = await latestSession.updateAvatar(
+        imageBytes: image.bytes,
+        contentType: image.contentType,
+      );
+      if (!mounted) return;
+
+      if (updatedUser == null) {
+        _showMessage(
+          latestSession.errorMessage ??
+              'Không thể cập nhật ảnh đại diện. Vui lòng thử lại.',
+        );
+      } else {
+        _showMessage('Đã cập nhật ảnh đại diện.');
+      }
+    } on AvatarImageSelectionException catch (error) {
+      if (mounted) _showMessage(error.message);
+    } on PlatformException {
+      if (mounted) {
+        _showMessage('Không thể mở thư viện ảnh. Vui lòng thử lại.');
+      }
+    } catch (_) {
+      if (mounted) {
+        _showMessage('Không thể chọn ảnh đại diện. Vui lòng thử lại.');
+      }
+    } finally {
+      if (mounted) setState(() => _isPickingAvatar = false);
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
 
   Future<void> _onLogout(BuildContext context) async {
     final shouldLogout = await showDialog<bool>(
@@ -38,14 +118,22 @@ class ProfileScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(builder: loginRouteBuilder),
+      MaterialPageRoute(builder: widget.loginRouteBuilder),
       (_) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthSessionProvider>().currentUser;
+    final session = context.watch<AuthSessionProvider>();
+    final config = context.watch<AppConfig>();
+    final user = session.currentUser;
+    final canUpdateAvatar = config.isAuthApiEnabled && session.isAuthenticated;
+    final isAvatarBusy =
+        canUpdateAvatar &&
+        (_isPickingAvatar ||
+            session.isUpdatingAvatar ||
+            session.isUpdatingProfile);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -69,10 +157,47 @@ class ProfileScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const CircleAvatar(
-                  radius: 30,
-                  backgroundColor: AppColors.blueChipBg,
-                  child: Icon(Icons.person, size: 32, color: AppColors.brand),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    UserAvatar(avatarUrl: user?.avatarUrl, radius: 30),
+                    if (canUpdateAvatar)
+                      Positioned(
+                        right: -3,
+                        bottom: -3,
+                        child: Tooltip(
+                          message: 'Thay đổi ảnh đại diện',
+                          child: Material(
+                            color: AppColors.brand,
+                            shape: const CircleBorder(),
+                            child: InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: isAvatarBusy ? null : _onPickAvatar,
+                              child: SizedBox(
+                                width: 28,
+                                height: 28,
+                                child: Center(
+                                  child: isAvatarBusy
+                                      ? const SizedBox(
+                                          width: 15,
+                                          height: 15,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.edit_outlined,
+                                          size: 15,
+                                          color: Colors.white,
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -96,6 +221,28 @@ class ProfileScreen extends StatelessWidget {
                           color: AppColors.slate500,
                         ),
                       ),
+                      if (canUpdateAvatar) ...[
+                        const SizedBox(height: 6),
+                        TextButton.icon(
+                          onPressed: isAvatarBusy ? null : _onPickAvatar,
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 30),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            alignment: Alignment.centerLeft,
+                          ),
+                          icon: const Icon(
+                            Icons.photo_library_outlined,
+                            size: 16,
+                          ),
+                          label: Text(
+                            isAvatarBusy
+                                ? 'Đang cập nhật...'
+                                : 'Đổi ảnh đại diện',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

@@ -61,10 +61,7 @@ class ExamApiService {
   }) async {
     final response = await _client.post<Object?>(
       Endpoints.mockTest.createPartAttempt(testId),
-      data: {
-        'parts': parts,
-        'durationSeconds': durationSeconds,
-      },
+      data: {'parts': parts, 'durationSeconds': durationSeconds},
       options: Options(headers: {'Idempotency-Key': idempotencyKey}),
     );
     return response.data;
@@ -96,10 +93,12 @@ class ExamApiService {
       Endpoints.mockTest.saveDraft(attemptId),
       data: {
         'answers': answers.entries
-            .map((entry) => {
-                  'questionId': entry.key,
-                  'selectedOption': entry.value,
-                })
+            .map(
+              (entry) => {
+                'questionId': entry.key,
+                'selectedOption': entry.value,
+              },
+            )
             .toList(growable: false),
       },
     );
@@ -113,10 +112,12 @@ class ExamApiService {
       Endpoints.mockTest.submitAttempt(attemptId),
       data: {
         'answers': answers.entries
-            .map((entry) => {
-                  'questionId': entry.key,
-                  'selectedOption': entry.value,
-                })
+            .map(
+              (entry) => {
+                'questionId': entry.key,
+                'selectedOption': entry.value,
+              },
+            )
             .toList(growable: false),
       },
     );

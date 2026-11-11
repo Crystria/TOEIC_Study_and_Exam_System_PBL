@@ -208,7 +208,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final sessionProvider = context.watch<AuthSessionProvider>();
     final session = sessionProvider.currentSession;
     final currentUser = sessionProvider.currentUser;
-    final apiEnabled = context.watch<AppConfig>().apiEnabled;
+    final apiEnabled = context.watch<AppConfig>().isAuthApiEnabled;
     _scheduleReloadForAccount(currentUser?.id);
 
     return Scaffold(

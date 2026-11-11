@@ -114,9 +114,13 @@ class GrammarProgressStorage {
         final preferences = await SharedPreferences.getInstance();
         final key = _key(userId);
         final raw = preferences.getString(key);
-        final decoded = raw == null || raw.isEmpty ? <String, dynamic>{} : jsonDecode(raw);
+        final decoded = raw == null || raw.isEmpty
+            ? <String, dynamic>{}
+            : jsonDecode(raw);
         if (decoded is! Map) {
-          throw const FormatException('Grammar progress must be a JSON object.');
+          throw const FormatException(
+            'Grammar progress must be a JSON object.',
+          );
         }
         final json = Map<String, dynamic>.from(decoded);
         mutation(json);

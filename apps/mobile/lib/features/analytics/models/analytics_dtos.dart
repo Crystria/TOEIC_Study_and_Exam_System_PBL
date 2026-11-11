@@ -1,6 +1,9 @@
 import 'analytics_models.dart';
 
-Map<String, dynamic> analyticsJsonMap(Object? value, {required String context}) {
+Map<String, dynamic> analyticsJsonMap(
+  Object? value, {
+  required String context,
+}) {
   if (value is Map<String, dynamic>) return value;
   if (value is Map) return Map<String, dynamic>.from(value);
   throw FormatException('$context phải là JSON object.');
@@ -41,9 +44,11 @@ String? _optionalString(Map<String, dynamic> json, String field) {
 }
 
 DateTime _requiredDate(Object? value, String field) {
-  if (value is! String) throw FormatException('Trường $field phải là ISO date.');
+  if (value is! String)
+    throw FormatException('Trường $field phải là ISO date.');
   final date = DateTime.tryParse(value);
-  if (date == null) throw FormatException('Trường $field không phải date hợp lệ.');
+  if (date == null)
+    throw FormatException('Trường $field không phải date hợp lệ.');
   return date.toUtc();
 }
 
@@ -59,7 +64,10 @@ bool _optionalBool(Object? value, String field, {bool defaultValue = false}) {
 AnalyticsCounters _counters(Object? value, String label) {
   final json = analyticsJsonMap(value, context: label);
   return AnalyticsCounters(
-    vocabulariesLearned: _requiredInt(json['vocabulariesLearned'], 'vocabulariesLearned'),
+    vocabulariesLearned: _requiredInt(
+      json['vocabulariesLearned'],
+      'vocabulariesLearned',
+    ),
     reviewCount: _requiredInt(json['reviewCount'], 'reviewCount'),
     grammarLessonsCompleted: _requiredInt(
       json['grammarLessonsCompleted'],
@@ -132,16 +140,19 @@ class AnalyticsProgressDto {
     if (trendRaw is! List || weakRaw is! List || activityRaw is! List) {
       throw const FormatException('Danh sách Analytics trả về không hợp lệ.');
     }
-    final activity = activityRaw.map((item) {
-      final itemJson = analyticsJsonMap(item, context: 'Daily activity');
-      final date = _requiredDate(
-        '${_requiredString(itemJson, 'date')}T00:00:00.000Z',
-        'dailyActivity.date',
-      );
-      final count = _requiredInt(itemJson['count'], 'dailyActivity.count');
-      if (count < 0) throw const FormatException('activity count không được âm.');
-      return AnalyticsDailyActivity(date: date, count: count);
-    }).toList(growable: false);
+    final activity = activityRaw
+        .map((item) {
+          final itemJson = analyticsJsonMap(item, context: 'Daily activity');
+          final date = _requiredDate(
+            '${_requiredString(itemJson, 'date')}T00:00:00.000Z',
+            'dailyActivity.date',
+          );
+          final count = _requiredInt(itemJson['count'], 'dailyActivity.count');
+          if (count < 0)
+            throw const FormatException('activity count không được âm.');
+          return AnalyticsDailyActivity(date: date, count: count);
+        })
+        .toList(growable: false);
     return AnalyticsProgressDto(
       value: AnalyticsProgress(
         timeRange: range,
@@ -150,11 +161,17 @@ class AnalyticsProgressDto {
         from: _optionalDate(json['from'], 'from'),
         lifetime: _counters(json['lifetime'], 'Analytics lifetime counters'),
         inRange: _counters(json['inRange'], 'Analytics range counters'),
-        learningStreakDays: _requiredInt(json['learningStreakDays'], 'learningStreakDays'),
+        learningStreakDays: _requiredInt(
+          json['learningStreakDays'],
+          'learningStreakDays',
+        ),
         longestStreak: _requiredInt(json['longestStreak'], 'longestStreak'),
         scoreTrend: trendRaw.map(_scoreTrendPoint).toList(growable: false),
         scoreTrendNextCursor: _optionalString(json, 'scoreTrendNextCursor'),
-        predictedToeicScore: _optionalInt(json['predictedToeicScore'], 'predictedToeicScore'),
+        predictedToeicScore: _optionalInt(
+          json['predictedToeicScore'],
+          'predictedToeicScore',
+        ),
         weakAreas: weakRaw.map(_weakArea).toList(growable: false),
         dailyActivity: activity,
         updatedAt: _optionalDate(json['updatedAt'], 'updatedAt'),
@@ -176,7 +193,10 @@ class AnalyticsStreakDto {
     final last = json['lastActivityDate'];
     return AnalyticsStreakDto(
       AnalyticsStreak(
-        learningStreakDays: _requiredInt(json['learningStreakDays'], 'learningStreakDays'),
+        learningStreakDays: _requiredInt(
+          json['learningStreakDays'],
+          'learningStreakDays',
+        ),
         longestStreak: _requiredInt(json['longestStreak'], 'longestStreak'),
         timezone: _requiredString(json, 'timezone'),
         asOf: _requiredDate(json['asOf'], 'asOf'),
@@ -201,8 +221,14 @@ class AnalyticsPredictionDto {
     }
     return AnalyticsPredictionDto(
       AnalyticsPrediction(
-        predictedToeicScore: _optionalInt(json['predictedToeicScore'], 'predictedToeicScore'),
-        eligibleFullCount: _requiredInt(json['eligibleFullCount'], 'eligibleFullCount'),
+        predictedToeicScore: _optionalInt(
+          json['predictedToeicScore'],
+          'predictedToeicScore',
+        ),
+        eligibleFullCount: _requiredInt(
+          json['eligibleFullCount'],
+          'eligibleFullCount',
+        ),
         usedAttemptIds: rawIds.cast<String>(),
         reason: _optionalString(json, 'reason'),
         method: _requiredString(json, 'method'),
@@ -220,13 +246,17 @@ class AnalyticsWeakAreasDto {
   factory AnalyticsWeakAreasDto.fromObject(Object? value) {
     final json = analyticsJsonMap(value, context: 'Analytics weak areas');
     final rawItems = json['items'];
-    if (rawItems is! List) throw const FormatException('items weak areas không hợp lệ.');
+    if (rawItems is! List)
+      throw const FormatException('items weak areas không hợp lệ.');
     return AnalyticsWeakAreasDto(
       AnalyticsWeakAreaSummary(
         items: rawItems.map(_weakArea).toList(growable: false),
         asOf: _requiredDate(json['asOf'], 'asOf'),
         windowDays: _requiredInt(json['windowDays'], 'windowDays'),
-        minimumQuestions: _requiredInt(json['minimumQuestions'], 'minimumQuestions'),
+        minimumQuestions: _requiredInt(
+          json['minimumQuestions'],
+          'minimumQuestions',
+        ),
         threshold: _requiredDouble(json['threshold'], 'threshold'),
         timezone: _requiredString(json, 'timezone'),
       ),
@@ -290,14 +320,22 @@ class AnalyticsHistoryPageDto {
   factory AnalyticsHistoryPageDto.fromObject(Object? value) {
     final json = analyticsJsonMap(value, context: 'Analytics history page');
     final rawItems = json['items'];
-    if (rawItems is! List) throw const FormatException('items lịch sử không hợp lệ.');
+    if (rawItems is! List)
+      throw const FormatException('items lịch sử không hợp lệ.');
     final total = _requiredInt(json['total'], 'total');
     final page = _requiredInt(json['page'], 'page');
     final size = _requiredInt(json['size'], 'size');
     final totalPages = _requiredInt(json['totalPages'], 'totalPages');
-    if (total < 0 || page < 1 || size < 1 || size > 50 || totalPages < 0 ||
-        totalPages != (total == 0 ? 0 : (total / size).ceil()) || rawItems.length > size) {
-      throw const FormatException('Metadata phân trang Analytics không hợp lệ.');
+    if (total < 0 ||
+        page < 1 ||
+        size < 1 ||
+        size > 50 ||
+        totalPages < 0 ||
+        totalPages != (total == 0 ? 0 : (total / size).ceil()) ||
+        rawItems.length > size) {
+      throw const FormatException(
+        'Metadata phân trang Analytics không hợp lệ.',
+      );
     }
     return AnalyticsHistoryPageDto(
       AnalyticsHistoryPage(

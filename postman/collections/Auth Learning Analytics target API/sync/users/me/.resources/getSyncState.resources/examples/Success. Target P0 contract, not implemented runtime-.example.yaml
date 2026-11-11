@@ -1,0 +1,148 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/sync/users/me?cursor=string&limit=50"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    cursor: string
+    limit: "50"
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "syncVersion": "11414967138657",
+        "resolvedVersion": "570261857697208797",
+        "appliedVersion": "0",
+        "pendingOperationId": "18efcc9b-0b18-40b4-bad5-eec0fa0aecb0",
+        "projectedAt": "Z",
+        "progress": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "nextCursor": null
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "syncVersion": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,18})$",
+            "description": "Decimal string; semantic bound <= 9223372036854775807."
+          },
+          "resolvedVersion": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,18})$",
+            "description": "Decimal string; semantic bound <= 9223372036854775807."
+          },
+          "appliedVersion": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,18})$",
+            "description": "Decimal string; semantic bound <= 9223372036854775807."
+          },
+          "pendingOperationId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectedAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "progress": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "allOf": [
+                    {}
+                  ]
+                },
+                {
+                  "allOf": [
+                    {}
+                  ]
+                }
+              ]
+            }
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "syncVersion",
+          "resolvedVersion",
+          "appliedVersion",
+          "pendingOperationId",
+          "projectedAt",
+          "progress",
+          "nextCursor"
+        ]
+      }
+order: 1000

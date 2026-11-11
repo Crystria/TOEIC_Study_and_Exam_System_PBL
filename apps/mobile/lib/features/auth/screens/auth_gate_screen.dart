@@ -40,9 +40,7 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
     if (!mounted || _isNavigating) return;
     final status = _provider?.status;
     if (status == AuthSessionStatus.authenticated) {
-      _replaceWith(
-        HomeScreen(loginRouteBuilder: (_) => const LoginScreen()),
-      );
+      _replaceWith(HomeScreen(loginRouteBuilder: (_) => const LoginScreen()));
     } else if (status == AuthSessionStatus.unauthenticated) {
       _replaceWith(const LoginScreen());
     }
@@ -53,9 +51,8 @@ class _AuthGateScreenState extends State<AuthGateScreen> {
     _isNavigating = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => screen),
-      );
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute<void>(builder: (_) => screen));
     });
   }
 

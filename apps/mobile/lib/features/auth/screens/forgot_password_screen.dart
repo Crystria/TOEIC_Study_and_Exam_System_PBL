@@ -28,10 +28,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<void> _onSendLink() async {
-    if (context.read<AppConfig>().apiEnabled) {
-      _showMessage(
-        'Backend hiện chưa cung cấp API đặt lại mật khẩu.',
-      );
+    if (context.read<AppConfig>().isAuthApiEnabled) {
+      _showMessage('Backend hiện chưa cung cấp API đặt lại mật khẩu.');
       return;
     }
     if (!(_formKey.currentState?.validate() ?? false)) return;
@@ -68,7 +66,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = context.watch<ForgotPasswordProvider>().isLoading;
-    final apiEnabled = context.watch<AppConfig>().apiEnabled;
+    final apiEnabled = context.watch<AppConfig>().isAuthApiEnabled;
 
     return Scaffold(
       body: SafeArea(

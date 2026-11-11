@@ -1,0 +1,53 @@
+{
+  "source": "Code review of app(3).zip; applies to API_ENABLED=false baseline",
+  "items": [
+    {
+      "feature": "Auth",
+      "limitation": "FakeAuthRepository starts with no accounts. Register and perform simulated verification in the current process; account and email-action tokens are in memory."
+    },
+    {
+      "feature": "Profile",
+      "limitation": "Profile reads AppUser from AuthSessionProvider. Email cannot be changed. Settings reminder toggle persists locally but OS notification scheduling is not implemented."
+    },
+    {
+      "feature": "Home",
+      "limitation": "Dashboard uses MockAnalyticsRepository sample metrics. Marked demo; not tied to actual fixture completion."
+    },
+    {
+      "feature": "Learning Vocabulary",
+      "limitation": "VocabularyProvider._catalog has six words while topic summaries display totals 20 and 24. Quick Quiz requires five unique words studied today and is gated by daily goal; set goal to 5 for offline fixture exercise."
+    },
+    {
+      "feature": "Learning Review Selector",
+      "limitation": "ReviewSelectWordsProvider local mock uses a distinct nine-word data set and IDs v1-v9; it is separate from VocabularyProvider IDs t1-v1..t2-v3."
+    },
+    {
+      "feature": "Learning Audio",
+      "limitation": "Vocabulary audioUrl fields are empty and playAudio is TODO; do not assert successful audio playback."
+    },
+    {
+      "feature": "Learning Grammar",
+      "limitation": "Grammar catalog contains eight local lessons. Progress is stored in SharedPreferences per user."
+    },
+    {
+      "feature": "Mock Test",
+      "limitation": "Question bank contains 200 deterministic local questions, but mock attempt/draft/result state is held in memory; restart persistence, Backend acknowledgement, server idempotency and ownership are not proven."
+    },
+    {
+      "feature": "Mock Test Media",
+      "limitation": "Source media URLs/content are missing or not backed by actual audio/image assets. The question descriptions/transcripts are not a substitute for real media playback."
+    },
+    {
+      "feature": "Analytics",
+      "limitation": "MockAnalyticsRepository returns demo metrics (predicted 685 etc.), not user-derived records."
+    },
+    {
+      "feature": "AI Chat",
+      "limitation": "Local canned replies only; conversation history and quota are in memory; Backend integration safety gate is false."
+    },
+    {
+      "feature": "Network/authorization",
+      "limitation": "API-dependent behaviors must remain Blocked/Not Tested offline, even if a local UI scenario passes."
+    }
+  ]
+}

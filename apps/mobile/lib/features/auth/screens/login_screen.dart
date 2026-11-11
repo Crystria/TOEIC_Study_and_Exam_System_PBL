@@ -50,7 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await context.read<AuthSessionProvider>().setCurrentUser(user);
     } catch (_) {
-      _showMessage('Không thể khởi tạo dữ liệu cho tài khoản. Vui lòng thử lại.');
+      _showMessage(
+        'Không thể khởi tạo dữ liệu cho tài khoản. Vui lòng thử lại.',
+      );
       return;
     }
     if (!mounted) return;
@@ -102,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = context.watch<LoginProvider>().isLoading;
-    final apiEnabled = context.watch<AppConfig>().apiEnabled;
+    final apiEnabled = context.watch<AppConfig>().isAuthApiEnabled;
 
     return Scaffold(
       body: SafeArea(
@@ -122,7 +124,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         subtitle: 'Ôn thi TOEIC Listening & Reading mỗi ngày, trên Web và Mobile.',
                       ),
                       const SizedBox(height: 28),
-                      FieldLabel(apiEnabled ? 'Email' : 'Email hoặc tên đăng nhập'),
+                      FieldLabel(
+                        apiEnabled ? 'Email' : 'Email hoặc tên đăng nhập',
+                      ),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: _identifierController,

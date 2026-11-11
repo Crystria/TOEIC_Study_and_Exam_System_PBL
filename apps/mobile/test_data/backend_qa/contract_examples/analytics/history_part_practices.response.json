@@ -1,0 +1,88 @@
+{
+  "items": [
+    {
+      "partStats": [
+        {
+          "part": 5,
+          "correct": 18,
+          "total": 30
+        }
+      ],
+      "correctCount": 18,
+      "totalQuestions": 30,
+      "accuracy": 0.6,
+      "attemptId": "4e3a230c-172e-568c-a320-5d5ca1c013d2",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "PART",
+      "completedAt": "2026-11-10T09:10:00+00:00"
+    },
+    {
+      "partStats": [
+        {
+          "part": 3,
+          "correct": 21,
+          "total": 30
+        }
+      ],
+      "correctCount": 21,
+      "totalQuestions": 30,
+      "accuracy": 0.7,
+      "attemptId": "76f171c5-1ffd-5136-a4af-94cbf2d419ec",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "PART",
+      "completedAt": "2026-11-08T09:10:00+00:00"
+    },
+    {
+      "partStats": [
+        {
+          "part": 7,
+          "correct": 22,
+          "total": 30
+        }
+      ],
+      "correctCount": 22,
+      "totalQuestions": 30,
+      "accuracy": 0.7333,
+      "attemptId": "930b425a-d5f0-5cba-b5fb-f90942e133a7",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "PART",
+      "completedAt": "2026-11-06T09:10:00+00:00"
+    },
+    {
+      "partStats": [
+        {
+          "part": 2,
+          "correct": 20,
+          "total": 30
+        }
+      ],
+      "correctCount": 20,
+      "totalQuestions": 30,
+      "accuracy": 0.6667,
+      "attemptId": "45396545-1406-5319-82aa-343f8407faa2",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "PART",
+      "completedAt": "2026-11-03T09:10:00+00:00"
+    },
+    {
+      "partStats": [
+        {
+          "part": 6,
+          "correct": 17,
+          "total": 30
+        }
+      ],
+      "correctCount": 17,
+      "totalQuestions": 30,
+      "accuracy": 0.5667,
+      "attemptId": "326f093c-b361-5154-820f-e0e6bf486aff",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "PART",
+      "completedAt": "2026-10-31T09:10:00+00:00"
+    }
+  ],
+  "total": 5,
+  "page": 1,
+  "size": 20,
+  "totalPages": 1
+}

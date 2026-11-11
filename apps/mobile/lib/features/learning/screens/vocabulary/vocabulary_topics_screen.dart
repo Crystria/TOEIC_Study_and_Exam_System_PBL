@@ -52,7 +52,9 @@ class _VocabularyTopicsScreenState extends State<VocabularyTopicsScreen> {
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Không thể lưu cài đặt ôn từ. Vui lòng thử lại.')),
+        const SnackBar(
+          content: Text('Không thể lưu cài đặt ôn từ. Vui lòng thử lại.'),
+        ),
       );
     }
   }

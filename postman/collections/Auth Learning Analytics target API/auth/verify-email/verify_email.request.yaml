@@ -1,0 +1,48 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/auth/verify-email"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "token": "bcQfddBYEYu795luJdGxq0x4Q_iRA0UQ5_OltOWZhEc"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43,128}$"
+        }
+      },
+      "required": [
+        "token"
+      ]
+    }
+auth:
+  type: noauth
+settings: {}
+examples: ./.resources/verify_email.resources/examples
+order: 1000

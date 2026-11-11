@@ -36,6 +36,7 @@ class AppException implements Exception {
     this.details,
     this.cause,
     this.retryAfter,
+    this.correlationId,
   });
 
   const AppException.network({
@@ -44,6 +45,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.network,
        statusCode = null,
        retryAfter = null;
@@ -53,6 +55,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.timeout,
        statusCode = null,
        retryAfter = null;
@@ -63,6 +66,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.unauthorized,
        statusCode = 401,
        retryAfter = null;
@@ -72,6 +76,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.forbidden,
        statusCode = 403,
        retryAfter = null;
@@ -81,6 +86,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.validation,
        statusCode = null,
        retryAfter = null;
@@ -90,6 +96,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.cancelled,
        statusCode = null,
        retryAfter = null;
@@ -99,6 +106,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.parsing,
        statusCode = null,
        retryAfter = null;
@@ -108,6 +116,7 @@ class AppException implements Exception {
     this.cause,
     this.details,
     this.code,
+    this.correlationId,
   }) : type = AppExceptionType.unknown,
        statusCode = null,
        retryAfter = null;
@@ -132,6 +141,9 @@ class AppException implements Exception {
 
   /// Optional server-provided delay before a retry, for example HTTP 429.
   final Duration? retryAfter;
+
+  /// Gateway correlation identifier for safe support/QA tracing.
+  final String? correlationId;
 
   bool get isNetworkError => type == AppExceptionType.network;
   bool get isTimeout => type == AppExceptionType.timeout;
@@ -167,6 +179,7 @@ class AppException implements Exception {
     Object? responseData,
     String? fallbackMessage,
     Duration? retryAfter,
+    String? correlationId,
     Object? cause,
   }) {
     final type = _typeForStatusCode(statusCode, responseData);
@@ -197,6 +210,7 @@ class AppException implements Exception {
       details: details,
       cause: cause,
       retryAfter: safeRetryAfter,
+      correlationId: _nonEmpty(correlationId),
     );
   }
 

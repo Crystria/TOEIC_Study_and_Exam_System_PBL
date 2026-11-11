@@ -72,7 +72,9 @@ class ExamAttemptStartJournal {
     final result = <String, String>{};
     for (final entry in decoded.entries) {
       if (entry.key is! String || entry.value is! String) {
-        throw const FormatException('Exam start journal chứa dữ liệu sai kiểu.');
+        throw const FormatException(
+          'Exam start journal chứa dữ liệu sai kiểu.',
+        );
       }
       result[entry.key as String] = entry.value as String;
     }
@@ -108,7 +110,9 @@ class ExamAttemptStartJournal {
     final bytes = List<int>.generate(16, (_) => random.nextInt(256));
     bytes[6] = (bytes[6] & 0x0f) | 0x40;
     bytes[8] = (bytes[8] & 0x3f) | 0x80;
-    final hex = bytes.map((value) => value.toRadixString(16).padLeft(2, '0')).join();
+    final hex = bytes
+        .map((value) => value.toRadixString(16).padLeft(2, '0'))
+        .join();
     return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
         '${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20, 32)}';
   }

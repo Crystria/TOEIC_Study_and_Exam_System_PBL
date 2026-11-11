@@ -1,0 +1,35 @@
+{
+  "source": "AuthSessionProvider + AuthSession + FakeAuthRepository",
+  "sessionNature": "Device-local in-memory metadata. It is not a Backend JWT/session ID and the FakeAuthRepository account map does not persist after app process restart.",
+  "scenarios": [
+    {
+      "id": "AUTH-SESSION-01",
+      "state": "unauthenticated",
+      "expected": "No current user and no active local session."
+    },
+    {
+      "id": "AUTH-SESSION-02",
+      "state": "authenticated",
+      "setup": "Complete mock registration, verification, then login.",
+      "expected": "AuthSessionProvider has currentUser/currentSession and user-scoped local stores activate."
+    },
+    {
+      "id": "AUTH-SESSION-03",
+      "state": "logout",
+      "setup": "Login then use logout.",
+      "expected": "Current user/session cleared immediately; user-scoped data is unbound."
+    },
+    {
+      "id": "AUTH-SESSION-04",
+      "state": "restart",
+      "setup": "Terminate app process and relaunch in API_ENABLED=false mode.",
+      "expected": "Mock account/session is not guaranteed to restore; register again in the new process."
+    },
+    {
+      "id": "AUTH-SESSION-05",
+      "state": "account-switch",
+      "setup": "Login as QA user A, logout, then login as QA user B.",
+      "expected": "Feature providers reset and per-user local storage scopes remain separate."
+    }
+  ]
+}

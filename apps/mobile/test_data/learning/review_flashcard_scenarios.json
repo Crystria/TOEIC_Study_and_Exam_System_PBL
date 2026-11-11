@@ -1,0 +1,39 @@
+{
+  "qualityValuesAccepted": [
+    1,
+    3,
+    5
+  ],
+  "fixtures": [
+    {
+      "id": "REVIEW-01",
+      "quality": 1,
+      "wordId": "t1-v2",
+      "purpose": "Exercise quality=1 branch; label semantics must be taken from UI/accepted product definition."
+    },
+    {
+      "id": "REVIEW-02",
+      "quality": 3,
+      "wordId": "t1-v3",
+      "purpose": "Exercise quality=3 branch."
+    },
+    {
+      "id": "REVIEW-03",
+      "quality": 5,
+      "wordId": "t2-v2",
+      "purpose": "Exercise quality=5 branch."
+    },
+    {
+      "id": "REVIEW-04",
+      "quality": 2,
+      "wordId": "t1-v1",
+      "expected": "Ignored; provider accepts only 1, 3 or 5."
+    },
+    {
+      "id": "REVIEW-05",
+      "quality": 0,
+      "wordId": "t1-v1",
+      "expected": "Ignored; provider accepts only 1, 3 or 5."
+    }
+  ]
+}

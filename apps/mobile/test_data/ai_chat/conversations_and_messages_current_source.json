@@ -1,0 +1,91 @@
+{
+  "source": "AiChatMockData in app(3).zip",
+  "integrationEnabled": false,
+  "backendIntegrationSafetyPassed": false,
+  "resetBehavior": "AiChatRepository.resetForUserScopeChange restores these four conversations and message lists; current data is in-memory only.",
+  "conversations": [
+    {
+      "id": "ai-conversation-001",
+      "title": "Giải từ by / in / during",
+      "lastMessagePreview": "Với mốc thời hạn, TOEIC thường dùng \"by\".",
+      "updatedMinutesAgo": 18,
+      "messages": [
+        {
+          "role": "user",
+          "text": "Tại sao đáp án là \"by\" mà không phải \"in\"?"
+        },
+        {
+          "role": "assistant",
+          "text": "Với mốc thời hạn, TOEIC thường dùng \"by\" nghĩa là chậm nhất vào.",
+          "bullets": [
+            "by + thời điểm: hạn chót",
+            "during + danh từ: trong suốt một khoảng",
+            "since + mốc: kể từ khi"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-conversation-002",
+      "title": "Phân biệt since và for",
+      "lastMessagePreview": "Since đi với mốc thời gian, for đi với khoảng thời gian.",
+      "updatedDaysAgo": 1,
+      "updatedHoursAgo": 2,
+      "messages": [
+        {
+          "role": "user",
+          "text": "Phân biệt since và for như thế nào?"
+        },
+        {
+          "role": "assistant",
+          "text": "Since dùng với mốc bắt đầu; for dùng với khoảng thời gian.",
+          "bullets": [
+            "since Monday: kể từ thứ Hai",
+            "for two weeks: trong hai tuần"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-conversation-003",
+      "title": "Mệnh đề quan hệ Part 5",
+      "lastMessagePreview": "Cần phân biệt đại từ quan hệ làm chủ ngữ và tân ngữ.",
+      "updatedDaysAgo": 4,
+      "messages": [
+        {
+          "role": "user",
+          "text": "Mệnh đề quan hệ thường xuất hiện thế nào trong Part 5?"
+        },
+        {
+          "role": "assistant",
+          "text": "Hãy xác định danh từ đứng trước chỗ trống và vai trò ngữ pháp của chỗ trống.",
+          "bullets": [
+            "who / that: thường thay thế người làm chủ ngữ",
+            "which / that: thường thay thế vật",
+            "whose: thể hiện quan hệ sở hữu"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-conversation-004",
+      "title": "Từ vựng Office & Business",
+      "lastMessagePreview": "Một số collocation thường gặp trong môi trường văn phòng.",
+      "updatedDaysAgo": 12,
+      "messages": [
+        {
+          "role": "user",
+          "text": "Cho tôi một số từ vựng Office & Business thường gặp."
+        },
+        {
+          "role": "assistant",
+          "text": "Một số từ thường gặp gồm appointment, assignment, department và colleague.",
+          "bullets": [
+            "schedule an appointment: lên lịch cuộc hẹn",
+            "complete an assignment: hoàn thành nhiệm vụ"
+          ]
+        }
+      ]
+    }
+  ]
+}

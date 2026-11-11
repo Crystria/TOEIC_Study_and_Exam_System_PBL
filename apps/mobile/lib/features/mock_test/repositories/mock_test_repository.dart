@@ -70,7 +70,9 @@ class MockTestRepository {
       result.addAll(parsed.items.map((item) => item.toDomain()));
       page++;
       if (page > 501) {
-        throw const FormatException('Danh sách đề thi vượt giới hạn phân trang an toàn.');
+        throw const FormatException(
+          'Danh sách đề thi vượt giới hạn phân trang an toàn.',
+        );
       }
     } while (page <= totalPages);
 
@@ -106,7 +108,9 @@ class MockTestRepository {
     _ensureScope(scope);
     final result = ExamTestPartsDto.fromObject(raw);
     if (result.testId != testId) {
-      throw const FormatException('Cấu trúc Part trả về không thuộc đề thi được yêu cầu.');
+      throw const FormatException(
+        'Cấu trúc Part trả về không thuộc đề thi được yêu cầu.',
+      );
     }
     return result.parts;
   }

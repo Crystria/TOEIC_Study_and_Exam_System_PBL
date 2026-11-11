@@ -1,0 +1,42 @@
+{
+  "source": "FakeAuthRepository._createTicket/_takeValidAction",
+  "tokenBehavior": "Ticket IDs are generated at runtime as mock-emailVerification-N or mock-passwordReset-N. Do not hard-code the sequence across app restarts.",
+  "scenarios": [
+    {
+      "id": "AUTH-EMAIL-01",
+      "type": "emailVerification",
+      "flow": "register -> open verification action -> verify once",
+      "expected": "emailVerified becomes true."
+    },
+    {
+      "id": "AUTH-EMAIL-02",
+      "type": "emailVerification",
+      "flow": "verify with random/unknown token",
+      "expected": "Invalid or already-used link error."
+    },
+    {
+      "id": "AUTH-EMAIL-03",
+      "type": "emailVerification",
+      "flow": "verify same token a second time",
+      "expected": "Token is single-use; second attempt is rejected."
+    },
+    {
+      "id": "AUTH-EMAIL-04",
+      "type": "passwordReset",
+      "flow": "request reset on verified account -> reset using returned mock token",
+      "expected": "Password is updated in current FakeAuthRepository process."
+    },
+    {
+      "id": "AUTH-EMAIL-05",
+      "type": "passwordReset",
+      "flow": "request reset twice for same email and action type",
+      "expected": "Only the newest ticket remains valid."
+    },
+    {
+      "id": "AUTH-EMAIL-06",
+      "type": "passwordReset",
+      "flow": "request reset for unverified email",
+      "expected": "Rejected until email is verified."
+    }
+  ]
+}

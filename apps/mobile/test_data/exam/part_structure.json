@@ -1,0 +1,57 @@
+{
+  "testId": "11111111-1111-4111-8111-000000000005",
+  "parts": [
+    {
+      "part": 1,
+      "title": "Mô tả hình ảnh",
+      "totalQuestions": 6,
+      "groupCount": 6,
+      "available": true
+    },
+    {
+      "part": 2,
+      "title": "Hỏi - đáp",
+      "totalQuestions": 25,
+      "groupCount": 25,
+      "available": true
+    },
+    {
+      "part": 3,
+      "title": "Hội thoại ngắn",
+      "totalQuestions": 39,
+      "groupCount": 13,
+      "available": true
+    },
+    {
+      "part": 4,
+      "title": "Bài nói ngắn",
+      "totalQuestions": 30,
+      "groupCount": 10,
+      "available": true
+    },
+    {
+      "part": 5,
+      "title": "Điền vào câu",
+      "totalQuestions": 30,
+      "groupCount": 0,
+      "available": true
+    },
+    {
+      "part": 6,
+      "title": "Điền vào đoạn văn",
+      "totalQuestions": 16,
+      "groupCount": 4,
+      "available": true
+    },
+    {
+      "part": 7,
+      "title": "Đọc hiểu",
+      "totalQuestions": 54,
+      "groupCount": 15,
+      "available": true
+    }
+  ],
+  "totalQuestions": 200,
+  "durationSeconds": 7200,
+  "durationMinutes": 120
+}

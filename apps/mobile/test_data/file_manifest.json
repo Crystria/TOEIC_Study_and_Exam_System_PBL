@@ -1,0 +1,369 @@
+{
+  "algorithm": "sha256",
+  "fileCount": 71,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 13106,
+      "sha256": "1d32099d87b9dee8bb5040e6a1eb4307e9caacf3e7194dff3c92d0e2ab334458"
+    },
+    {
+      "path": "ai_chat/conversation_action_scenarios.json",
+      "bytes": 1409,
+      "sha256": "4431923f14700717b55442f17e5e3bbb4fe1ba71bfa713659812739608bb7d57"
+    },
+    {
+      "path": "ai_chat/conversations_and_messages_current_source.json",
+      "bytes": 3180,
+      "sha256": "acee2da566d08d2a66ac9291f512d5620b319eada6e2b4c9844b37da51afdc34"
+    },
+    {
+      "path": "ai_chat/failure_reference.json",
+      "bytes": 1768,
+      "sha256": "468ad61dff7426b0dc529a7d3b0c599dc92a22665724c7519763a53fa93b4f43"
+    },
+    {
+      "path": "ai_chat/usage_preview.json",
+      "bytes": 246,
+      "sha256": "0eb1b055b8649739e00dae521d398801c4aaef056f1396b1403008bc457af6fa"
+    },
+    {
+      "path": "analytics/history_full_scores.json",
+      "bytes": 1387,
+      "sha256": "95a6f8252f80404506a289face5a647dacc7f23ce1391c170e49ba86c4c7f737"
+    },
+    {
+      "path": "analytics/history_part_practices.json",
+      "bytes": 1580,
+      "sha256": "92dd5ab38984584fa1e08cb2633801dbe7769d34b6cd167b8cbed454512cba02"
+    },
+    {
+      "path": "analytics/progress_allTime.json",
+      "bytes": 4300,
+      "sha256": "e96a4bd2f623f6522fe15dbc41b4eb15706fbda69a8d0d9ed326254187d0e446"
+    },
+    {
+      "path": "analytics/progress_last30Days.json",
+      "bytes": 4301,
+      "sha256": "acd823d73ae732f228c570cedcd36ced8e763aec228aebeeacb21758a1bf2336"
+    },
+    {
+      "path": "analytics/progress_last7Days.json",
+      "bytes": 2350,
+      "sha256": "ae8b1846b08e4fd021a651b7d2fa177d66a568e9c2982a7cdeb359302de5fa4a"
+    },
+    {
+      "path": "analytics/query_edge_cases.json",
+      "bytes": 1070,
+      "sha256": "6e59446c01b8e742c5b2b59c429b60bc4c0aacd95b75127bebc46b0df329d3eb"
+    },
+    {
+      "path": "analytics/streak_and_prediction.json",
+      "bytes": 1851,
+      "sha256": "7eba846a789bfb7a8e8bc024c1c4936584e56cf86eda848a3d51350d04999c03"
+    },
+    {
+      "path": "attempts/attempt_state_templates.json",
+      "bytes": 2225,
+      "sha256": "b38065709aff046c32620ffc340310db6fe918013fbb58028307582485119ceb"
+    },
+    {
+      "path": "attempts/deadline_boundary_scenarios.json",
+      "bytes": 700,
+      "sha256": "243ed7ba6af69bdca779c947a845bb3ccb3ee36bca14e5cc134ab0706b5602c9"
+    },
+    {
+      "path": "attempts/duplicate_submit_scenario.json",
+      "bytes": 591,
+      "sha256": "94e299f7336a0ef774efcb473a2aa9612d1d10c102016d90f7161205e6cd646a"
+    },
+    {
+      "path": "attempts/history_empty.json",
+      "bytes": 136,
+      "sha256": "f1f99e3efc31955611a0e1e11c2d8592090ef3cf84e260fdeefd6d2101baa11d"
+    },
+    {
+      "path": "attempts/history_page_1.json",
+      "bytes": 12158,
+      "sha256": "6d861136c054a5e3781f74191efc3b0ade37c6fc8d3a71f45f7d3918a22c4359"
+    },
+    {
+      "path": "attempts/history_page_2.json",
+      "bytes": 3050,
+      "sha256": "2176db3492467d7264ed7c5e2a3d5a5abb635ffefb3c951b583e75746c7fd9c3"
+    },
+    {
+      "path": "attempts/network_fault_scenarios.json",
+      "bytes": 1073,
+      "sha256": "dd64f7e23f0c5642806d9524b589a794c9ffc2df6ba195e3861f2c82f916414a"
+    },
+    {
+      "path": "attempts/two_user_ownership_reference.json",
+      "bytes": 618,
+      "sha256": "9ca36397605adb87cc10a0aade0124b21bc7276ed6b03cb3fe6d144be3605095"
+    },
+    {
+      "path": "backend_qa/README.md",
+      "bytes": 5857,
+      "sha256": "18f6df6f4380cc23d2bfab5fd6e16d78dc4b7fb6cf3dd36cfeac88b75a397578"
+    },
+    {
+      "path": "backend_qa/contract_examples/README.md",
+      "bytes": 729,
+      "sha256": "09d1e7c4346216cb2aa841bc94ca76579a21429adb4646629719d73f3a19feb7"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/history_full_scores.response.json",
+      "bytes": 1880,
+      "sha256": "5f251dd4a417559b5c1bbfcc43000f9f78619dd28259207c9b262701c8990e20"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/history_part_practices.response.json",
+      "bytes": 2059,
+      "sha256": "e0db1959942e66c80486a251c8ad7960c95fe07e6ac01460a39bdb91eb65a57b"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/prediction.response.json",
+      "bytes": 314,
+      "sha256": "0267d87d3ec6eeec2e4a6529ad7c1ee0261bbe7f7ab6c1f728a1037cf96cc1a8"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/progress_allTime.response.json",
+      "bytes": 4917,
+      "sha256": "8f24bcc0f2c29980133f76bb0740a7a69247194766af9928f3d2371a284827db"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/progress_last30Days.response.json",
+      "bytes": 4941,
+      "sha256": "b4a2a07571c91168f1b37f73d02201d48b9e8b79778d2ae71bc364b3a564b604"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/progress_last7Days.response.json",
+      "bytes": 2796,
+      "sha256": "56c47d8808ec1f8fcba2d35e5ca6c70040bf2e53cdeab285dcdb7dcba83cf390"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/streak.response.json",
+      "bytes": 163,
+      "sha256": "0422116eef14d4c6576aa70a0d91f914de7243aa146be53b2d5fbc517e093c8e"
+    },
+    {
+      "path": "backend_qa/contract_examples/analytics/weak_areas.response.json",
+      "bytes": 1586,
+      "sha256": "ef24796d7cf0b4a798f238b051554b86a54a44f3c7457724bb3c03b3db11b087"
+    },
+    {
+      "path": "backend_qa/contract_examples/fixture_manifest.json",
+      "bytes": 1217,
+      "sha256": "9d5e5b05945e1154077989c0d503fa704f2b1a0dbef3cca3e736799e5ec7d920"
+    },
+    {
+      "path": "backend_qa/contract_examples/learning/grammar_lesson_detail.response.json",
+      "bytes": 1298,
+      "sha256": "27f05192df24b610bf16f64fce5f495818ec3b20f05fbdcc7062704bfde8659e"
+    },
+    {
+      "path": "backend_qa/contract_examples/learning/grammar_lessons_page_1.response.json",
+      "bytes": 10511,
+      "sha256": "efdfeb0aac7813eaa82031b191276fcc15714f8c5728710b8f9991b315cc1cf0"
+    },
+    {
+      "path": "backend_qa/manifest.json",
+      "bytes": 920,
+      "sha256": "7924a027d4773e944397c40934e4e08b37092fe567a2d489cc45f6a3f11527e1"
+    },
+    {
+      "path": "backend_qa/templates/api_id_registry.template.json",
+      "bytes": 630,
+      "sha256": "64c012886c7a3675eaf44711b088bf3d8246ed02328a9918a359b0225036dfd6"
+    },
+    {
+      "path": "backend_qa/templates/seed_id_registry.template.json",
+      "bytes": 368,
+      "sha256": "0ed013821853e9f89abf91702151b89f18f8d4667cd143c33ee1dc61ec3b0a5f"
+    },
+    {
+      "path": "core/known_offline_limitations.json",
+      "bytes": 2590,
+      "sha256": "5935ee3dc1acdc7e1e83a053fb426da5c61518aff72f8e390cf4684d6a2900e4"
+    },
+    {
+      "path": "core/offline_configuration.json",
+      "bytes": 811,
+      "sha256": "1d973d15a8ce51c7178cd477528d0f44b94dd33e9b0ee8d3b66c97200d0a16cc"
+    },
+    {
+      "path": "core/user_scoped_storage_keys.json",
+      "bytes": 1021,
+      "sha256": "fb3d8b59643611120d843df759ba34fcd04c8ed137c40e3289a2236acda70331"
+    },
+    {
+      "path": "home/dashboard_demo_snapshot.json",
+      "bytes": 685,
+      "sha256": "89715b5e69c173c80bb664f5d02692c1a45e284037c6bb6a3c951ef39026dd48"
+    },
+    {
+      "path": "home/dashboard_state_scenarios.json",
+      "bytes": 847,
+      "sha256": "2d0a89ab33005c98d776c986b2fa9945dca85c7c796081e2ac2f35761b708cbc"
+    },
+    {
+      "path": "learning/grammar_catalog_current_source.json",
+      "bytes": 12810,
+      "sha256": "1a619c3a3f3af9d474afe44ab45f705eb3fb889e195d308551bf710caae5f1c0"
+    },
+    {
+      "path": "learning/grammar_progress_scenarios.json",
+      "bytes": 1535,
+      "sha256": "530138a70f6438ffc99212ddd3ddb6f5b4872def4f800e28549356a11ed5e561"
+    },
+    {
+      "path": "learning/quick_quiz_scenarios.json",
+      "bytes": 4240,
+      "sha256": "2176b20b60ff59fca411230cd42a2ed275d5dcade1a6926bcab86e79b8b90048"
+    },
+    {
+      "path": "learning/review_flashcard_scenarios.json",
+      "bytes": 821,
+      "sha256": "4946ae5bfb146cd8af4dca1a5179b585643fd0ba73ecb9f4074a0883513bdb5d"
+    },
+    {
+      "path": "learning/review_goal_scenarios.json",
+      "bytes": 529,
+      "sha256": "fe9c2a7b02fc004b0cf342019c4613daa1217ce83cb4ef6de8f63c4988084b38"
+    },
+    {
+      "path": "learning/review_selector_mock_data.json",
+      "bytes": 3240,
+      "sha256": "996021acf18c4490183082c004ed9a461acea9dc17e221bceae7d7b91335e5ed"
+    },
+    {
+      "path": "learning/vocabulary_catalog_current_source.json",
+      "bytes": 2478,
+      "sha256": "298d7f2100db3459150d3bf6420f27de608fb514b6f168a8ec4145967436aded"
+    },
+    {
+      "path": "learning/vocabulary_extended_reference_NOT_WIRED.json",
+      "bytes": 10915,
+      "sha256": "050536815f47626403c9aa8384af455e02f625d4b6f07bd693c64650336cb0b9"
+    },
+    {
+      "path": "learning/vocabulary_progress/empty.json",
+      "bytes": 62,
+      "sha256": "325133f638581d80fa24e475685a39dda9fad55feebc2c355c91e9e8c0470105"
+    },
+    {
+      "path": "learning/vocabulary_progress/goal_completed_5.json",
+      "bytes": 2298,
+      "sha256": "8807741f08f697adc30c5f1b020cf1ce4b9a0dd116ec1d0bd9c982b93e7da397"
+    },
+    {
+      "path": "learning/vocabulary_progress/goal_in_progress_3_of_5.json",
+      "bytes": 1405,
+      "sha256": "a97c48117ca082ad89b1828bc1817d01a8ed5d9ce6b689a54906ed6dc2278c74"
+    },
+    {
+      "path": "learning/vocabulary_progress/reminders_disabled.json",
+      "bytes": 956,
+      "sha256": "e47031c3f6a8ee2a0b47af5da590b312f4453e47f92f9c8e11f17b84ffc5cdd7"
+    },
+    {
+      "path": "learning/vocabulary_progress/six_words_default_goal_20.json",
+      "bytes": 2740,
+      "sha256": "7519da56a4f5f331cd0bcfe1df3776246d64d6e6ceca7bd204fd3fb5272415f6"
+    },
+    {
+      "path": "learning/vocabulary_storage_reference.json",
+      "bytes": 462,
+      "sha256": "459a22a6ae1eabf3971a2aa3e3e4a7395156d05132be92bce2b5a9c69970d32f"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 2728,
+      "sha256": "932062e04591e3b482f1a784f846bd1cfa7a95eb064bdc1e77ada2dd91bc2dc3"
+    },
+    {
+      "path": "mappings/feature_data_mapping.json",
+      "bytes": 5361,
+      "sha256": "5d0e4754dd37f5199735c0274e31f408bb8c0282926862adbfaaa65737d69189"
+    },
+    {
+      "path": "mappings/mob_test_data_mapping.json",
+      "bytes": 7156,
+      "sha256": "4950623b37a3bfecc8790d19fbc922ecea9c75d3a277d6e70240d12add166680"
+    },
+    {
+      "path": "media/README.md",
+      "bytes": 956,
+      "sha256": "4c97b4bbf5d8f972ee7b6898926b56f63d7af130b32ab410828da9463d0b5e93"
+    },
+    {
+      "path": "profile/profile_records.json",
+      "bytes": 1644,
+      "sha256": "b75e95668e0ff6b9996b36f62a689a970df6e8b5a0dd791806a873dc7907bedf"
+    },
+    {
+      "path": "profile/profile_update_scenarios.json",
+      "bytes": 1113,
+      "sha256": "7a80e1812358cf2f495f2642fd0a1c832e0caa83c237edc199ba6a2b1cca4feb"
+    },
+    {
+      "path": "profile/settings_preferences.json",
+      "bytes": 1796,
+      "sha256": "25650647223ff7aaa8d44f4f237d8e81cb141803b9bb0ebf8a7a44ea795623ef"
+    },
+    {
+      "path": "tools/build_backend_qa_contract_fixtures.py",
+      "bytes": 9332,
+      "sha256": "d8b5605a6fd9c046b4691abccc3ac27ec423b5cbb33eb780d61da8ed6099d202"
+    },
+    {
+      "path": "tools/capture_backend_qa_seed_id.py",
+      "bytes": 3108,
+      "sha256": "7cb120062fdaa4ddab49dd00b89918a27d5d79689d1c0af87ea19d9c616c6141"
+    },
+    {
+      "path": "tools/export_all_current_app_mock_data.dart",
+      "bytes": 8930,
+      "sha256": "a6d99e6725afb61b1e4481497a0c01eac0feee85279a21a8792bd1df79fa4e39"
+    },
+    {
+      "path": "tools/export_offline_mock_data.dart",
+      "bytes": 3893,
+      "sha256": "5f0b534842adf173f29695014e9419eadfbc524c686e3cc961a1d203e2cffb6b"
+    },
+    {
+      "path": "tools/generate_runtime_fixtures.py",
+      "bytes": 1626,
+      "sha256": "8b3bf552059554c0fe841ddee9df34eaeca1e2b748cd5244d79712b2f572de3d"
+    },
+    {
+      "path": "tools/tests/test_phase_n.py",
+      "bytes": 4276,
+      "sha256": "8c290a5e1ebe9597f9d4f8b0b01801973649e6a0287ca51f98c33b5aa1b0bdf8"
+    },
+    {
+      "path": "tools/validate_all_fixtures.py",
+      "bytes": 325,
+      "sha256": "5f1d07dce0e5fd63a0bb9031075a8de44fd79a45c7e071b955b63f54d959ff51"
+    },
+    {
+      "path": "tools/validate_fixtures.py",
+      "bytes": 952,
+      "sha256": "9cbb70393f64e5620c7ec1d38c4260e0c155d57bf544ec92f6c01d8acb0dc167"
+    },
+    {
+      "path": "tools/validate_phase_n.py",
+      "bytes": 11411,
+      "sha256": "9471fb62f8d83f62277c241b6e0d404c44f84dc0c006cbfc9d8e06f34946e69d"
+    }
+  ],
+  "excludedByPolicy": [
+    "auth/** (credential/account fixtures)",
+    "exam/** (question/answer/tester-only fixtures)",
+    "appium/** (environment templates)",
+    "ai_chat/context_samples_TESTER_REFERENCE.json",
+    "backend_qa/live/** (real QA IDs and response captures; git-ignored)"
+  ],
+  "note": "Checksums cover only safe, shareable fixture/document/tool files. Excluded paths are deliberately not opened or hashed."
+}

@@ -6,6 +6,18 @@ import '../config/app_config.dart';
 import '../errors/app_exception.dart';
 import '../storage/token_storage.dart';
 
+/// Callback invoked after an authenticated request receives HTTP 401.
+/// Return the exact access token to use for one retry, or null to stop.
+typedef UnauthorizedRefreshHandler = Future<String?> Function(
+  String failedAccessToken,
+);
+
+/// Callback invoked when the single retry with a refreshed token also receives
+/// HTTP 401. The handler should clear only that rejected token pair.
+typedef UnauthorizedRetryRejectedHandler = Future<void> Function(
+  String rejectedAccessToken,
+);
+
 /// Shared HTTP client for Backend API calls.
 ///
 /// Keep one instance per application and register it in the composition root
@@ -33,9 +45,25 @@ class ApiClient {
   /// Set this request extra to `true` for public endpoints such as login and
   /// registration, where an old access token must not be attached.
   static const String skipAuthExtraKey = 'toeic_mobile.skip_auth';
+  static const String skipAuthRefreshExtraKey =
+      'toeic_mobile.skip_auth_refresh';
+  static const String _retryAccessTokenExtraKey =
+      'toeic_mobile.retry_access_token';
 
   final AppConfig _config;
   final Dio _dio;
+  UnauthorizedRefreshHandler? _unauthorizedRefreshHandler;
+  UnauthorizedRetryRejectedHandler? _unauthorizedRetryRejectedHandler;
+
+  /// Installs the Auth repository's session refresh coordinator.
+  /// Must be configured before the first authenticated API request.
+  void setUnauthorizedRefreshHandler(
+    UnauthorizedRefreshHandler handler, {
+    UnauthorizedRetryRejectedHandler? onRetryRejected,
+  }) {
+    _unauthorizedRefreshHandler = handler;
+    _unauthorizedRetryRejectedHandler = onRetryRejected;
+  }
 
   /// Sends a GET request and returns Dio's response metadata and decoded data.
   Future<Response<T>> get<T>(
@@ -45,15 +73,15 @@ class ApiClient {
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
   }) {
-    return _execute<T>(path, () {
+    return _execute<T>(path, (requestOptions) {
       return _dio.get<T>(
         path,
         queryParameters: queryParameters,
-        options: options,
+        options: requestOptions,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
       );
-    });
+    }, options: options);
   }
 
   /// Sends a POST request.
@@ -66,17 +94,17 @@ class ApiClient {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) {
-    return _execute<T>(path, () {
+    return _execute<T>(path, (requestOptions) {
       return _dio.post<T>(
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: requestOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-    });
+    }, options: options);
   }
 
   /// Sends a PUT request.
@@ -89,17 +117,17 @@ class ApiClient {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) {
-    return _execute<T>(path, () {
+    return _execute<T>(path, (requestOptions) {
       return _dio.put<T>(
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: requestOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-    });
+    }, options: options);
   }
 
   /// Sends a PATCH request.
@@ -112,17 +140,17 @@ class ApiClient {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) {
-    return _execute<T>(path, () {
+    return _execute<T>(path, (requestOptions) {
       return _dio.patch<T>(
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: requestOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-    });
+    }, options: options);
   }
 
   /// Sends a DELETE request.
@@ -133,15 +161,15 @@ class ApiClient {
     Options? options,
     CancelToken? cancelToken,
   }) {
-    return _execute<T>(path, () {
+    return _execute<T>(path, (requestOptions) {
       return _dio.delete<T>(
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: requestOptions,
         cancelToken: cancelToken,
       );
-    });
+    }, options: options);
   }
 
   /// Closes the underlying transport. The composition root owns this client.
@@ -151,9 +179,11 @@ class ApiClient {
 
   Future<Response<T>> _execute<T>(
     String path,
-    Future<Response<T>> Function() request,
-  ) async {
-    if (!_config.apiEnabled) {
+    Future<Response<T>> Function(Options? requestOptions) request, {
+    Options? options,
+    bool allowAuthRefresh = true,
+  }) async {
+    if (!_config.isAnyApiEnabled) {
       throw const AppException(
         type: AppExceptionType.unknown,
         code: 'api_disabled',
@@ -164,10 +194,62 @@ class ApiClient {
     _validateRelativePath(path);
 
     try {
-      return await request();
+      return await request(options);
     } on AppException {
       rethrow;
     } on DioException catch (error) {
+      final requestExtras = options?.extra;
+      final skipAuth = requestExtras?[skipAuthExtraKey] == true;
+      final skipRefresh = requestExtras?[skipAuthRefreshExtraKey] == true;
+      final statusCode = error.response?.statusCode;
+      final handler = _unauthorizedRefreshHandler;
+      final failedAccessToken = _bearerTokenFrom(error.requestOptions.headers);
+
+      if (!allowAuthRefresh && statusCode == 401 && failedAccessToken != null) {
+        try {
+          await _unauthorizedRetryRejectedHandler?.call(failedAccessToken);
+        } on AppException {
+          rethrow;
+        } on TokenStorageException catch (storageError) {
+          throw _mapTokenStorageException(storageError);
+        } catch (cleanupError) {
+          throw AppException.from(cleanupError);
+        }
+      }
+
+      if (allowAuthRefresh &&
+          !skipAuth &&
+          !skipRefresh &&
+          statusCode == 401 &&
+          handler != null &&
+          failedAccessToken != null) {
+        try {
+          final refreshedAccessToken = await handler(failedAccessToken);
+          if (refreshedAccessToken != null && refreshedAccessToken.isNotEmpty) {
+            // Pin the retry to the exact token rotated for this request. If a
+            // different account logs in immediately afterwards, the stale
+            // request cannot be replayed with that newer account's token.
+            final retryOptions = _withRetryAccessToken(
+              options,
+              refreshedAccessToken,
+            );
+            return await _execute<T>(
+              path,
+              request,
+              options: retryOptions,
+              allowAuthRefresh: false,
+            );
+          }
+        } on AppException {
+          rethrow;
+        } on TokenStorageException catch (refreshError) {
+          throw _mapTokenStorageException(refreshError);
+        } on DioException catch (refreshError) {
+          throw _mapDioException(refreshError);
+        } catch (refreshError) {
+          throw AppException.from(refreshError);
+        }
+      }
       throw _mapDioException(error);
     } on TokenStorageException catch (error) {
       throw _mapTokenStorageException(error);
@@ -178,6 +260,16 @@ class ApiClient {
     } catch (error) {
       throw AppException.from(error);
     }
+  }
+
+  static Options _withRetryAccessToken(Options? options, String accessToken) {
+    final extra = <String, dynamic>{
+      ...?options?.extra,
+      _retryAccessTokenExtraKey: accessToken,
+    };
+    return options == null
+        ? Options(extra: extra)
+        : options.copyWith(extra: extra);
   }
 
   static BaseOptions _buildBaseOptions(AppConfig config) {
@@ -212,6 +304,20 @@ class ApiClient {
         'API path must be a non-empty relative path without a leading slash.',
       );
     }
+  }
+
+  static String? _bearerTokenFrom(Map<String, dynamic> headers) {
+    for (final entry in headers.entries) {
+      if (entry.key.toLowerCase() != 'authorization') continue;
+      final value = entry.value?.toString().trim();
+      if (value == null || value.isEmpty) return null;
+      final match = RegExp(
+        r'^Bearer\s+(.+)$',
+        caseSensitive: false,
+      ).firstMatch(value);
+      return match?.group(1)?.trim();
+    }
+    return null;
   }
 
   static AppException _mapDioException(DioException error) {
@@ -255,6 +361,9 @@ class ApiClient {
           statusCode: statusCode,
           responseData: response?.data,
           retryAfter: _parseRetryAfter(response?.headers),
+          correlationId: _safeCorrelationId(
+            response?.headers.value('x-correlation-id'),
+          ),
           cause: error,
         );
       case DioExceptionType.unknown:
@@ -272,6 +381,15 @@ class ApiClient {
 
   /// Supports the delta-seconds form of the standard Retry-After header.
   /// HTTP-date values are intentionally ignored rather than guessed.
+  static String? _safeCorrelationId(String? value) {
+    final normalized = value?.trim();
+    if (normalized == null ||
+        !RegExp(r'^[A-Za-z0-9._:-]{1,128}$').hasMatch(normalized)) {
+      return null;
+    }
+    return normalized;
+  }
+
   static Duration? _parseRetryAfter(Headers? headers) {
     final rawValue = headers?.value('retry-after')?.trim();
     if (rawValue == null || rawValue.isEmpty) {
@@ -300,6 +418,13 @@ class _BearerTokenInterceptor extends Interceptor {
       options.headers.removeWhere(
         (key, value) => key.toLowerCase() == 'authorization',
       );
+      handler.next(options);
+      return;
+    }
+
+    final retryAccessToken = options.extra[ApiClient._retryAccessTokenExtraKey];
+    if (retryAccessToken is String && retryAccessToken.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer $retryAccessToken';
       handler.next(options);
       return;
     }

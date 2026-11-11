@@ -16,6 +16,5 @@ class EmailActionTicket {
   final DateTime? expiresAt;
 
   bool get isSimulated => token != null;
-  bool get isExpired =>
-      expiresAt != null && DateTime.now().isAfter(expiresAt!);
+  bool get isExpired => expiresAt != null && DateTime.now().isAfter(expiresAt!);
 }

@@ -1,0 +1,170 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/sync/users"
+  method: POST
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: json
+    content: |-
+      {
+        "deviceId": "string",
+        "operationId": "a557a854-f2ab-41d5-a880-5e163732fc14",
+        "baseVersion": "0",
+        "clientOccurredAt": "Z",
+        "operation": {
+          "kind": "",
+          "vocabularyId": "9b9907c9-8dd8-4577-a54b-44f30d9495ac",
+          "baseEntityRevision": "0",
+          "quality": 0
+        }
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "operationId": "52a49f5e-b518-4174-ac9e-a05f140763c5",
+        "accepted": false,
+        "status": "REJECTED",
+        "reason": "string",
+        "syncVersion": "627",
+        "resolvedVersion": "0",
+        "appliedVersion": "74155494550",
+        "projectedAt": "Z",
+        "progress": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "accepted": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPLIED",
+              "REJECTED",
+              "CONFLICT",
+              "BUSY"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "syncVersion": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,18})$",
+            "description": "Decimal string; semantic bound <= 9223372036854775807."
+          },
+          "resolvedVersion": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,18})$",
+            "description": "Decimal string; semantic bound <= 9223372036854775807."
+          },
+          "appliedVersion": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]{0,18})$",
+            "description": "Decimal string; semantic bound <= 9223372036854775807."
+          },
+          "projectedAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "progress": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "allOf": [
+                    {}
+                  ]
+                },
+                {
+                  "allOf": [
+                    {}
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "operationId",
+          "accepted",
+          "status",
+          "reason",
+          "syncVersion",
+          "resolvedVersion",
+          "appliedVersion",
+          "projectedAt",
+          "progress"
+        ]
+      }
+order: 1000

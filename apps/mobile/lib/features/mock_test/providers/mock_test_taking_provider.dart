@@ -285,21 +285,23 @@ class MockTestTakingProvider extends ChangeNotifier {
   /// this batch PUT gives the Backend another consistent snapshot for resume.
   void saveDraftNow() {
     final currentSession = session;
-    if (!usesBackend || status != TakingStatus.loaded || currentSession == null) {
+    if (!usesBackend ||
+        status != TakingStatus.loaded ||
+        currentSession == null) {
       return;
     }
     unawaited(
-      _repository.saveDraft(
-        attemptId: currentSession.attemptId,
-        answers: Map<String, String>.unmodifiable(answers),
-      ).catchError((error) {
-        if (!_disposed && status == TakingStatus.loaded) {
-          errorMessage = error is AppException
-              ? error.message
-              : 'Không thể đồng bộ bản nháp. Đáp án vẫn được giữ tạm trên thiết bị.';
-          notifyListeners();
-        }
-      }),
+      _repository
+          .saveDraft(
+            attemptId: currentSession.attemptId,
+            answers: Map<String, String>.unmodifiable(answers),
+          )
+          .catchError((error) {
+            if (!_disposed && status == TakingStatus.loaded) {
+              errorMessage = error is AppException ? error.message : 'Không thể đồng bộ bản nháp. Đáp án vẫn được giữ tạm trên thiết bị.';
+              notifyListeners();
+            }
+          }),
     );
   }
 

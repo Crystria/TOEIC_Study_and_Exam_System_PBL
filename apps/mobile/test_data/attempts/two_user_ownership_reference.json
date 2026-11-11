@@ -1,0 +1,21 @@
+{
+  "purpose": "Expected ownership-isolation matrix for MOB-024. Reference only; not loaded by current offline app.",
+  "userA": {
+    "userRef": "QA-USER-A",
+    "visibleAttemptIds": [
+      "qa-attempt-submitted-001",
+      "qa-attempt-expired-001"
+    ]
+  },
+  "userB": {
+    "userRef": "QA-USER-B",
+    "visibleAttemptIds": [
+      "qa-attempt-part5-001"
+    ]
+  },
+  "negativeAssertions": [
+    "User A must not read User B attempt detail/result/review.",
+    "User A must not mutate User B attempt answers or submit it.",
+    "No response should disclose the other user's correct answers or explanations."
+  ]
+}

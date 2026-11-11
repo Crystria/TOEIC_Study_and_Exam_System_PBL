@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "namespace": "backend_qa",
+  "offlineSource": "../",
+  "contractExamples": {
+    "path": "contract_examples/",
+    "classification": "synthetic_dto_contract_example",
+    "seedEligible": false,
+    "liveBackendEvidence": false,
+    "ids": "Deterministic synthetic UUIDv5 values; parser tests only."
+  },
+  "liveCaptures": {
+    "path": "live/",
+    "availableAtHandoff": false,
+    "gitIgnored": true,
+    "requires": "A real isolated Backend QA overlay and artifacts/qa/seed.json."
+  },
+  "seedArtifact": {
+    "expectedPathInBackendWorkspace": "artifacts/qa/seed.json",
+    "testIdJsonPath": "fixture.testId",
+    "accountArrayJsonPath": "fixture.accounts",
+    "capturedMobileOutput": "live/seed_id_registry.json",
+    "sensitiveFieldsExcluded": [
+      "email",
+      "password",
+      "accessToken",
+      "refreshToken",
+      "rawSeedPayload"
+    ]
+  },
+  "runtimeAssets": false
+}

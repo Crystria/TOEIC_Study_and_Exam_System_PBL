@@ -223,7 +223,8 @@ class AnalyticsHistoryItem {
   final double? accuracy;
   final Map<String, dynamic>? scoring;
 
-  List<int> get parts => partStats.map((item) => item.part).toList(growable: false);
+  List<int> get parts =>
+      partStats.map((item) => item.part).toList(growable: false);
   bool get isFull => mode == AnalyticsAttemptMode.full;
 }
 

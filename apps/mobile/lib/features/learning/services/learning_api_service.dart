@@ -25,6 +25,13 @@ class LearningApiService {
     );
   }
 
+  Future<LearningTopicDto> getTopic(String topicId) async {
+    final response = await _client.get<Object?>(
+      Endpoints.learning.vocabularyTopic(topicId),
+    );
+    return LearningTopicDto.fromObject(response.data);
+  }
+
   Future<LearningPageDto<LearningVocabularyDto>> listVocabularies({
     required LearningPageQueryDto query,
   }) async {
@@ -79,9 +86,7 @@ class LearningApiService {
   }
 
   Future<LearningProgressSummaryDto> getProgressSummary() async {
-    final response = await _client.get<Object?>(
-      Endpoints.learning.progress,
-    );
+    final response = await _client.get<Object?>(Endpoints.learning.progress);
     return LearningProgressSummaryDto.fromObject(response.data);
   }
 

@@ -1,0 +1,38 @@
+{
+  "source": "EditProfileScreen + FakeAuthRepository.updateProfile",
+  "scenarios": [
+    {
+      "id": "PROFILE-01",
+      "fullName": "Nguyen Minh An QA",
+      "phoneNumber": "0900000199",
+      "expected": "Save updates fullName and phoneNumber."
+    },
+    {
+      "id": "PROFILE-02",
+      "fullName": "   ",
+      "phoneNumber": "0900000199",
+      "expected": "Rejected by UI validation; full name cannot be blank."
+    },
+    {
+      "id": "PROFILE-03",
+      "fullName": "Nguyen Minh An",
+      "phoneNumber": "",
+      "expected": "Phone is optional; empty value is passed as null/cleared when saving."
+    },
+    {
+      "id": "PROFILE-04",
+      "fullName": "Tran Gia Bao",
+      "phoneNumber": null,
+      "expected": "Profile phone number is cleared."
+    },
+    {
+      "id": "PROFILE-05",
+      "expected": "Email field is disabled; current Backend/app UI does not support changing email."
+    },
+    {
+      "id": "PROFILE-06",
+      "setup": "Open edit screen as QA user A, change account before saving.",
+      "expected": "Save is blocked because user/session identity changed."
+    }
+  ]
+}

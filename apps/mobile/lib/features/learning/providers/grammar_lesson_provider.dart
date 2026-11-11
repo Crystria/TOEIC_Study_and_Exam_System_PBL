@@ -14,15 +14,18 @@ class GrammarLessonProvider extends ChangeNotifier {
   GrammarLessonProvider({
     LearningRepository? repository,
     GrammarProgressStorage? progressStorage,
+    List<GrammarLesson>? mockLessons,
     String? Function()? currentUserId,
   }) : _repository = repository,
        _progressStorage = progressStorage ?? GrammarProgressStorage(),
+       _mockLessons = mockLessons ?? GrammarCatalog.lessons,
        _currentUserId = currentUserId ?? _noUser;
 
   static String? _noUser() => null;
 
   final LearningRepository? _repository;
   final GrammarProgressStorage _progressStorage;
+  final List<GrammarLesson> _mockLessons;
   final String? Function() _currentUserId;
 
   GrammarLessonFetchStatus status = GrammarLessonFetchStatus.idle;
@@ -78,7 +81,13 @@ class GrammarLessonProvider extends ChangeNotifier {
 
   Future<GrammarLesson> _loadMockLesson(String id) async {
     await Future<void>.delayed(const Duration(milliseconds: 250));
-    final loadedLesson = GrammarCatalog.findById(id);
+    GrammarLesson? loadedLesson;
+    for (final item in _mockLessons) {
+      if (item.id == id) {
+        loadedLesson = item;
+        break;
+      }
+    }
     if (loadedLesson == null) {
       throw StateError('Grammar lesson not found: $id');
     }

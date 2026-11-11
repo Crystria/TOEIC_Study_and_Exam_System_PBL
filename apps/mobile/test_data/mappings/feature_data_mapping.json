@@ -1,0 +1,140 @@
+{
+  "sourceBaseline": "app(3).zip",
+  "features": [
+    {
+      "feature": "Auth & Session",
+      "sourceFiles": [
+        "features/auth/repositories/fake_auth_repository.dart",
+        "features/auth/providers/auth_session_provider.dart"
+      ],
+      "dataFiles": [
+        "auth/qa_accounts.json",
+        "auth/registration_scenarios.json",
+        "auth/login_scenarios.json",
+        "auth/email_action_scenarios.json",
+        "auth/session_scenarios.json"
+      ],
+      "offlineMode": "UI and in-memory mock flows available; accounts not pre-seeded."
+    },
+    {
+      "feature": "Profile & Settings",
+      "sourceFiles": [
+        "features/profile/screens/profile_screen.dart",
+        "features/profile/screens/edit_profile_screen.dart",
+        "features/profile/screens/settings_screen.dart"
+      ],
+      "dataFiles": [
+        "profile/profile_records.json",
+        "profile/profile_update_scenarios.json",
+        "profile/settings_preferences.json"
+      ],
+      "offlineMode": "Profile from current fake user; settings local preferences."
+    },
+    {
+      "feature": "Home",
+      "sourceFiles": [
+        "features/home/repositories/analytics_home_repository.dart",
+        "features/home/providers/home_provider.dart"
+      ],
+      "dataFiles": [
+        "home/dashboard_demo_snapshot.json",
+        "home/dashboard_state_scenarios.json"
+      ],
+      "offlineMode": "Derived demo dashboard."
+    },
+    {
+      "feature": "Learning Vocabulary",
+      "sourceFiles": [
+        "features/learning/providers/vocabulary_provider.dart",
+        "core/storage/vocabulary_progress_storage.dart"
+      ],
+      "dataFiles": [
+        "learning/vocabulary_catalog_current_source.json",
+        "learning/vocabulary_extended_reference_NOT_WIRED.json",
+        "learning/vocabulary_progress/",
+        "learning/vocabulary_storage_reference.json"
+      ],
+      "offlineMode": "Six source words + local progress; extended data not loaded by app."
+    },
+    {
+      "feature": "Learning Review",
+      "sourceFiles": [
+        "features/learning/providers/review_select_words_provider.dart",
+        "features/learning/providers/review_flashcard_provider.dart"
+      ],
+      "dataFiles": [
+        "learning/review_selector_mock_data.json",
+        "learning/review_flashcard_scenarios.json"
+      ],
+      "offlineMode": "Separate review selector fixtures; flashcard progress local."
+    },
+    {
+      "feature": "Learning Grammar",
+      "sourceFiles": [
+        "features/learning/mock_data/grammar_catalog.dart",
+        "core/storage/grammar_progress_storage.dart"
+      ],
+      "dataFiles": [
+        "learning/grammar_catalog_current_source.json",
+        "learning/grammar_progress_scenarios.json"
+      ],
+      "offlineMode": "Eight current source lessons and per-user progress."
+    },
+    {
+      "feature": "Quick Quiz",
+      "sourceFiles": [
+        "features/learning/providers/quick_quiz_provider.dart"
+      ],
+      "dataFiles": [
+        "learning/quick_quiz_scenarios.json"
+      ],
+      "offlineMode": "Requires five unique words studied today; set daily goal to 5."
+    },
+    {
+      "feature": "Mock Test",
+      "sourceFiles": [
+        "features/mock_test/mock_data/",
+        "features/mock_test/repositories/mock_test_attempt_repository.dart"
+      ],
+      "dataFiles": [
+        "exam/",
+        "attempts/",
+        "tools/export_offline_mock_data.dart"
+      ],
+      "offlineMode": "200 mock questions and expected answer reference; attempt lifecycle in memory."
+    },
+    {
+      "feature": "Analytics",
+      "sourceFiles": [
+        "features/analytics/repositories/analytics_repository.dart"
+      ],
+      "dataFiles": [
+        "analytics/"
+      ],
+      "offlineMode": "Exact demo-repository values, not real learner metrics."
+    },
+    {
+      "feature": "AI Chat",
+      "sourceFiles": [
+        "features/ai_chat/mock_data/ai_chat_mock_data.dart",
+        "features/ai_chat/repositories/ai_chat_repository.dart"
+      ],
+      "dataFiles": [
+        "ai_chat/"
+      ],
+      "offlineMode": "Four canned conversations and local responses; no Backend integration."
+    },
+    {
+      "feature": "Core / user-scoped storage",
+      "sourceFiles": [
+        "core/storage/vocabulary_progress_storage.dart",
+        "core/storage/grammar_progress_storage.dart",
+        "core/session/user_scoped_data_coordinator.dart"
+      ],
+      "dataFiles": [
+        "core/"
+      ],
+      "offlineMode": "Reference keys and JSON shapes for local test fixtures."
+    }
+  ]
+}
