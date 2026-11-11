@@ -1,0 +1,548 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/learning/vocabulary-sessions/:id"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    id: b2b638c2-0db0-4256-a945-715659ac6882
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "sessionId": "f4b3942f-a274-4c7f-a310-2a4e8d5d96b5",
+        "topicId": "52d28454-c8f4-487b-87a5-dbfe0f8be5d9",
+        "mode": "REVIEW",
+        "status": "CANCELED",
+        "startedAt": "Z",
+        "expiresAt": "Z",
+        "vocabularies": [
+          {},
+          {},
+          {},
+          {},
+          {}
+        ],
+        "quiz": [
+          {
+            "questionId": "6ab02b52-c666-467a-9757-42269d6cc65f",
+            "vocabularyId": "07a79cd6-1257-46f9-96b3-5f5e79ec0e79",
+            "prompt": "string",
+            "direction": "MEANING_TO_WORD",
+            "options": [
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "B",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              }
+            ]
+          },
+          {
+            "questionId": "cbcf2eb4-e1e4-4b53-bcc4-5437d3301072",
+            "vocabularyId": "792b52c0-ea2a-456a-b2ba-8f644b143d18",
+            "prompt": "string",
+            "direction": "WORD_TO_MEANING",
+            "options": [
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "A",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "B",
+                "text": "string"
+              }
+            ]
+          },
+          {
+            "questionId": "8b44bbbc-088d-4af9-9078-16b69a4f75d6",
+            "vocabularyId": "d0cd463c-65bb-41ac-a35a-481f9b35c912",
+            "prompt": "string",
+            "direction": "WORD_TO_MEANING",
+            "options": [
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "C",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              }
+            ]
+          },
+          {
+            "questionId": "22082ff2-2adc-4f89-9a54-178a270b34b7",
+            "vocabularyId": "c9c9c556-10ac-471a-8566-da9df31da972",
+            "prompt": "string",
+            "direction": "WORD_TO_MEANING",
+            "options": [
+              {
+                "code": "B",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "C",
+                "text": "string"
+              },
+              {
+                "code": "B",
+                "text": "string"
+              }
+            ]
+          },
+          {
+            "questionId": "666b6838-1050-45ef-b424-11ef5b4075a5",
+            "vocabularyId": "12d9c88b-901b-4948-a606-f83d646844b3",
+            "prompt": "string",
+            "direction": "MEANING_TO_WORD",
+            "options": [
+              {
+                "code": "B",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "D",
+                "text": "string"
+              },
+              {
+                "code": "C",
+                "text": "string"
+              }
+            ]
+          }
+        ],
+        "result": {
+          "sessionId": "af806604-decd-428a-990c-a5c3a68ae29c",
+          "operationId": "015a49d0-5c34-4a0f-8dae-692f6072f93a",
+          "status": "",
+          "quizScore": 4,
+          "quizTotal": "",
+          "completedAt": "Z",
+          "answers": [
+            {
+              "questionId": "22bb1d7a-c715-463e-92e0-9d134a47c985",
+              "selectedOption": "A",
+              "correctOption": "C",
+              "isCorrect": true
+            },
+            {
+              "questionId": "f3fdb919-22dc-4adb-a520-c86ee11f7206",
+              "selectedOption": "D",
+              "correctOption": "D",
+              "isCorrect": true
+            },
+            {
+              "questionId": "5b4a90a9-d5b9-4b78-8069-f33669b2775b",
+              "selectedOption": "D",
+              "correctOption": "B",
+              "isCorrect": true
+            },
+            {
+              "questionId": "e7f1f932-c6d3-4e37-a6c5-8f668ac53fb4",
+              "selectedOption": "C",
+              "correctOption": "A",
+              "isCorrect": true
+            },
+            {
+              "questionId": "c20f5e8a-f23e-486e-9d65-4d6b2e5e4602",
+              "selectedOption": "A",
+              "correctOption": "D",
+              "isCorrect": false
+            }
+          ],
+          "progress": [
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "topicId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "REVIEW"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELED",
+              "EXPIRED"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "expiresAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "vocabularies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "vocabularyId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "topicId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "word": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "phonetic": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "definition": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "example": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "audioKey": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "imageKey": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "audioUrl": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "imageUrl": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "createdAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                }
+              },
+              "required": [
+                "vocabularyId",
+                "topicId",
+                "word",
+                "phonetic",
+                "definition",
+                "example",
+                "audioKey",
+                "imageKey",
+                "audioUrl",
+                "imageUrl",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          "quiz": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "questionId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "vocabularyId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "prompt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "WORD_TO_MEANING",
+                    "MEANING_TO_WORD"
+                  ]
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "A",
+                          "B",
+                          "C",
+                          "D"
+                        ]
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 10000
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "text"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "questionId",
+                "vocabularyId",
+                "prompt",
+                "direction",
+                "options"
+              ]
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "sessionId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                  },
+                  "operationId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                  },
+                  "quizScore": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 5
+                  },
+                  "completedAt": {
+                    "type": "string",
+                    "pattern": "Z$",
+                    "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                  },
+                  "answers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "questionId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                        },
+                        "selectedOption": {
+                          "type": "string",
+                          "enum": [
+                            "A",
+                            "B",
+                            "C",
+                            "D"
+                          ]
+                        },
+                        "correctOption": {
+                          "type": "string",
+                          "enum": [
+                            "A",
+                            "B",
+                            "C",
+                            "D"
+                          ]
+                        },
+                        "isCorrect": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "questionId",
+                        "selectedOption",
+                        "correctOption",
+                        "isCorrect"
+                      ]
+                    }
+                  },
+                  "progress": {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "allOf": [
+                            {}
+                          ]
+                        },
+                        {
+                          "allOf": [
+                            {}
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "sessionId",
+                  "operationId",
+                  "status",
+                  "quizScore",
+                  "quizTotal",
+                  "completedAt",
+                  "answers",
+                  "progress"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "sessionId",
+          "topicId",
+          "mode",
+          "status",
+          "startedAt",
+          "expiresAt",
+          "vocabularies",
+          "quiz"
+        ]
+      }
+order: 1000

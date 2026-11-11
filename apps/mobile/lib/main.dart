@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,6 +7,7 @@ import 'core/config/app_config.dart';
 import 'core/di/app_dependencies.dart';
 import 'core/network/api_client.dart';
 import 'core/session/user_scoped_data_coordinator.dart';
+import 'features/learning/repositories/offline_learning_fixtures.dart';
 import 'core/storage/token_storage.dart';
 import 'core/storage/grammar_progress_storage.dart';
 import 'core/storage/vocabulary_progress_storage.dart';
@@ -41,24 +43,37 @@ import 'features/learning/providers/vocabulary_topic_provider.dart';
 import 'features/mock_test/mock_test_dependencies.dart';
 import 'features/mock_test/services/exam_api_service.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final appDependencies = AppDependencies.fromEnvironment();
+  OfflineLearningFixtures? offlineLearningFixtures;
+  if (kDebugMode &&
+      appDependencies.config.isDevelopment &&
+      !appDependencies.config.isLearningApiEnabled) {
+    try {
+      offlineLearningFixtures = await OfflineLearningFixtures.load();
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Offline fixtures unavailable; using built-in mock data: $error',
+      );
+      debugPrintStack(stackTrace: stackTrace);
+    }
+  }
   final vocabularyStorage = VocabularyProgressStorage();
   final grammarProgressStorage = GrammarProgressStorage();
   late final UserScopedDataCoordinator userDataCoordinator;
   late final AuthSessionProvider authSessionProvider;
 
   MockTestDependencies.configureApi(
-    api: appDependencies.config.apiEnabled
+    api: appDependencies.config.isMockTestApiEnabled
         ? ExamApiService(client: appDependencies.apiClient)
         : null,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
 
   final LearningRepository? learningRepository =
-      appDependencies.config.apiEnabled
+      appDependencies.config.isLearningApiEnabled
       ? ApiLearningRepository(
           api: LearningApiService(client: appDependencies.apiClient),
           currentUserId: () => userDataCoordinator.currentUserId,
@@ -66,7 +81,7 @@ void main() {
       : null;
 
   final AnalyticsRepository analyticsRepository =
-      appDependencies.config.apiEnabled
+      appDependencies.config.isAnalyticsApiEnabled
       ? ApiAnalyticsRepository(
           api: AnalyticsApiService(client: appDependencies.apiClient),
           currentUserId: () => userDataCoordinator.currentUserId,
@@ -80,33 +95,47 @@ void main() {
   );
   final homeProvider = HomeProvider(repository: homeRepository);
 
-  // Keep Auth implementation selected by the existing API_ENABLED flag.
-  final AuthRepository authRepository = appDependencies.config.apiEnabled
+  // Select the Auth implementation independently while retaining the legacy
+  // API_ENABLED fallback through AppConfig.
+  final ApiAuthRepository? apiAuthRepository =
+      appDependencies.config.isAuthApiEnabled
       ? ApiAuthRepository(
           apiService: AuthApiService(client: appDependencies.apiClient),
           tokenStorage: appDependencies.tokenStorage,
           deviceIdProvider: SecureDeviceIdProvider(),
         )
-      : FakeAuthRepository();
+      : null;
+  final AuthRepository authRepository =
+      apiAuthRepository ?? FakeAuthRepository();
+  if (apiAuthRepository != null) {
+    appDependencies.apiClient.setUnauthorizedRefreshHandler(
+      apiAuthRepository.refreshAfterUnauthorized,
+      onRetryRejected: apiAuthRepository.clearRejectedSessionIfCurrent,
+    );
+  }
 
   // App-lifetime providers are created once so the session coordinator can
   // reset every user-owned in-memory cache on logout/account switch.
   final vocabularyTopicsProvider = VocabularyTopicsProvider(
     storage: vocabularyStorage,
     repository: learningRepository,
+    mockTopics: offlineLearningFixtures?.vocabularyTopics,
   );
   final vocabularyProvider = VocabularyProvider(
     storage: vocabularyStorage,
+    catalog: offlineLearningFixtures?.vocabularyCatalog,
     repository: learningRepository,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
   final grammarListProvider = GrammarListProvider(
     repository: learningRepository,
+    mockLessons: offlineLearningFixtures?.grammarLessons,
     progressStorage: grammarProgressStorage,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
   final grammarLessonProvider = GrammarLessonProvider(
     repository: learningRepository,
+    mockLessons: offlineLearningFixtures?.grammarLessons,
     progressStorage: grammarProgressStorage,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
@@ -179,12 +208,18 @@ void main() {
     repository: authRepository,
     userDataCoordinator: userDataCoordinator,
   );
+  apiAuthRepository?.setSessionInvalidationHandler(
+    authSessionProvider.invalidateSessionForUser,
+  );
 
   runApp(
     MultiProvider(
       providers: [
         Provider<AppDependencies>.value(value: appDependencies),
         Provider<AppConfig>.value(value: appDependencies.config),
+        Provider<OfflineLearningFixtures?>.value(
+          value: offlineLearningFixtures,
+        ),
         Provider<TokenStorage>.value(value: appDependencies.tokenStorage),
         Provider<VocabularyProgressStorage>.value(value: vocabularyStorage),
         Provider<GrammarProgressStorage>.value(value: grammarProgressStorage),

@@ -75,7 +75,8 @@ class _AnswerExplanationView extends StatelessWidget {
         correctOption: review.correctOption,
         explanation: review.explanation,
         groupInstruction: provider.currentGroup?.instruction,
-        groupTranscript: provider.currentGroup?.transcript ?? question.transcript,
+        groupTranscript:
+            provider.currentGroup?.transcript ?? question.transcript,
         groupPassageText: provider.currentGroup?.passageText,
         groupAssetContent: provider.currentGroup?.assets
             .where((asset) => asset.content?.trim().isNotEmpty == true)
@@ -234,8 +235,10 @@ class _AnswerExplanationView extends StatelessWidget {
                               const SizedBox(height: 12),
                               _GroupMaterialCard(group: group),
                             ],
-                            if ((group?.transcript?.trim().isNotEmpty != true) &&
-                                (question.transcript?.trim().isNotEmpty == true)) ...[
+                            if ((group?.transcript?.trim().isNotEmpty !=
+                                    true) &&
+                                (question.transcript?.trim().isNotEmpty ==
+                                    true)) ...[
                               const SizedBox(height: 12),
                               AppCard(
                                 child: Column(

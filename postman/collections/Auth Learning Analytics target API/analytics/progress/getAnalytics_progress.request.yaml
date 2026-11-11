@@ -1,0 +1,83 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/analytics/progress?cursor=string&limit=50&timeRange=LAST_30_DAYS"
+method: GET
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Accept
+    value: application/json
+queryParams:
+  - key: cursor
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        }
+      }
+  - key: limit
+    value: "50"
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 50
+          }
+        }
+      }
+  - key: timeRange
+    value: LAST_30_DAYS
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "default": "LAST_30_DAYS",
+            "enum": [
+              "LAST_7_DAYS",
+              "LAST_30_DAYS",
+              "ALL_TIME"
+            ]
+          }
+        }
+      }
+body:
+  type: text
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/getAnalytics_progress.resources/examples
+order: 1000

@@ -1,0 +1,12 @@
+workspace:
+  id: 45bb3ce0-610a-4095-8d64-460d0e51a728
+localResources:
+  specs:
+    - ../packages/contracts/openapi/auth-learning-analytics.internal.v1.json
+    - ../packages/contracts/openapi/auth-learning-analytics.v1.json
+    - ../packages/contracts/openapi/openapi.yaml
+    - ../packages/contracts/proto/question_bank.proto
+    - ../postman/specs/Auth Learning Analytics target API/auth-learning-analytics.v1.json
+resourceNameMappings:
+  specs:
+    - ../postman/specs/Auth Learning Analytics target API/auth-learning-analytics.v1.json: Auth Learning Analytics target API

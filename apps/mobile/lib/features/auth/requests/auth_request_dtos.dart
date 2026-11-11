@@ -62,14 +62,21 @@ class ResendVerificationRequestDto {
 }
 
 class UpdateProfileRequestDto {
-  const UpdateProfileRequestDto({this.fullName, this.phoneNumber});
+  const UpdateProfileRequestDto({
+    this.fullName,
+    this.phoneNumber,
+    this.includePhoneNumber = true,
+  });
 
   final String? fullName;
   final String? phoneNumber;
 
+  /// When false, the field is omitted (leave unchanged). When true with a null
+  /// value, Backend receives explicit null (clear the stored phone number).
+  final bool includePhoneNumber;
+
   Map<String, dynamic> toJson() => {
     if (fullName != null) 'fullName': fullName,
-    // An explicit null tells Backend to clear the optional phone number.
-    'phoneNumber': phoneNumber,
+    if (includePhoneNumber) 'phoneNumber': phoneNumber,
   };
 }

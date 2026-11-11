@@ -1,0 +1,15 @@
+{
+  "scenario": "empty_answers",
+  "answeredCount": 0,
+  "totalQuestions": 200,
+  "unansweredCount": 200,
+  "answers": {},
+  "expected": {
+    "listeningCorrectCount": 0,
+    "readingCorrectCount": 0,
+    "totalCorrectCount": 0,
+    "listeningScore": 5,
+    "readingScore": 5,
+    "totalScore": 10
+  }
+}

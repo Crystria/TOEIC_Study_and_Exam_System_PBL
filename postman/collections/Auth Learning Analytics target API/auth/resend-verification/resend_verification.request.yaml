@@ -1,0 +1,47 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/auth/resend-verification"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "UHDD6Dk@ytI.zke"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "maxLength": 320,
+          "format": "email"
+        }
+      },
+      "required": [
+        "email"
+      ]
+    }
+settings: {}
+examples: ./.resources/resend_verification.resources/examples
+order: 1000

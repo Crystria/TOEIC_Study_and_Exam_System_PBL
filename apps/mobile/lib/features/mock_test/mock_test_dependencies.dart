@@ -3,7 +3,7 @@ import 'repositories/mock_test_repository.dart';
 import 'services/exam_api_service.dart';
 
 /// App-lifetime repositories shared by test selection, active attempts and
-/// history. API configuration is selected once from AppConfig.apiEnabled.
+/// history. API availability is selected from AppConfig.isMockTestApiEnabled in the composition root.
 class MockTestDependencies {
   MockTestDependencies._();
 
@@ -16,14 +16,8 @@ class MockTestDependencies {
     required ExamApiService? api,
     String? Function()? currentUserId,
   }) {
-    testRepository.configureApi(
-      api: api,
-      currentUserId: currentUserId,
-    );
-    attemptRepository.configureApi(
-      api: api,
-      currentUserId: currentUserId,
-    );
+    testRepository.configureApi(api: api, currentUserId: currentUserId);
+    attemptRepository.configureApi(api: api, currentUserId: currentUserId);
   }
 
   static void resetForUserScopeChange() {

@@ -1,0 +1,66 @@
+{
+  "packageName": "TOEIC_Mobile_Test_Data",
+  "schemaVersion": "3.0.0",
+  "generatedAt": "2026-11-11T16:10:00+07:00",
+  "sourceBaseline": {
+    "libArchive": "lib(4).zip",
+    "assembledProject": "toeic_mobile_augmented_project.zip",
+    "mobileOverlays": [
+      "TOEIC_Phase_L_Patch.zip",
+      "TOEIC_Phase_L_Compile_Hotfix.zip",
+      "TOEIC_Phase_M_Patch.zip"
+    ],
+    "verifiedOfflineCatalogs": [
+      "learning/vocabulary_catalog_current_source.json",
+      "learning/grammar_catalog_current_source.json"
+    ],
+    "verifiedScopeNote": "The two runtime-wired Learning catalogs were checked against the assembled Flutter source. Other offline fixtures remain local QA/demo scenarios unless their individual provenance says otherwise; this does not claim that all historical mock data was freshly exported from the current source."
+  },
+  "namespaces": {
+    "offlineFixtures": {
+      "root": ".",
+      "purpose": "Offline UI, mock repository and local-storage test scenarios.",
+      "backendSeedEligible": false,
+      "runtimeWiredFixtures": [
+        "learning/vocabulary_catalog_current_source.json",
+        "learning/grammar_catalog_current_source.json"
+      ]
+    },
+    "backendQa": {
+      "root": "backend_qa/",
+      "purpose": "Synthetic DTO contract examples plus sanitized IDs/captures from an actual isolated Backend QA run.",
+      "contractExamples": "backend_qa/contract_examples/",
+      "liveCaptureOutput": "backend_qa/live/",
+      "contractExamplesSeedEligible": false,
+      "liveCaptureAvailableAtHandoff": false
+    }
+  },
+  "mode": "API_ENABLED=false for Offline runtime fixtures",
+  "purpose": "Keep local/offline fixtures isolated from Backend QA seed identifiers and API response evidence.",
+  "features": [
+    "Auth & Session (offline scenarios)",
+    "Profile & Settings",
+    "Home",
+    "Learning Vocabulary",
+    "Learning Review & Flashcards",
+    "Learning Grammar",
+    "Quick Quiz",
+    "Mock Test (offline reference)",
+    "Analytics (offline demo + API DTO contract examples)",
+    "AI Chat (offline only; Backend integration disabled)",
+    "Core local storage",
+    "Backend QA seed ID registry (generated only from real QA seed artifact)"
+  ],
+  "runtimeWiredFixtures": [
+    "learning/vocabulary_catalog_current_source.json",
+    "learning/grammar_catalog_current_source.json"
+  ],
+  "runtimeWiringNote": "Only the two listed offline Learning catalogs are loaded in debug development mode when API_ENABLED=false. No backend_qa file is a Flutter asset.",
+  "securityExclusions": [
+    "auth/qa_accounts.json",
+    "exam/answer_key_TESTER_ONLY.json",
+    "ai_chat/context_samples_TESTER_REFERENCE.json",
+    "appium/.env.offline.example",
+    "backend_qa/live/**"
+  ]
+}

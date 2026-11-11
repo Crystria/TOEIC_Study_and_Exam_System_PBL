@@ -1,0 +1,59 @@
+{
+  "classification": "SYNTHETIC_TEST_DATA_NOT_PRELOADED_IN_FAKE_AUTH_REPOSITORY",
+  "source": "FakeAuthRepository + RegisterScreen validation in app(3).zip",
+  "passwordPolicyFromUi": {
+    "minimumLength": 8,
+    "requiresUppercase": true,
+    "requiresLowercase": true,
+    "requiresDigit": true,
+    "requiresSpecialCharacter": false
+  },
+  "accountCreation": "Register in the app, then use the simulated email verification action. FakeAuthRepository starts with an empty in-memory account map; these records are input templates only.",
+  "accounts": [
+    {
+      "fixtureId": "qa-user-a",
+      "role": "primary_learner",
+      "fullName": "Nguyen Minh An",
+      "email": "qa.learner.a@example.test",
+      "password": "QaTest2026",
+      "confirmPassword": "QaTest2026",
+      "phoneNumber": "0900000101",
+      "emailVerifiedAfterSetup": true,
+      "setupSteps": [
+        "Register using this fullName/email/password",
+        "Open the simulated verification link/action shown by the app",
+        "Return to Login and sign in"
+      ],
+      "profile": "profile_user_a"
+    },
+    {
+      "fixtureId": "qa-user-b",
+      "role": "secondary_learner",
+      "fullName": "Tran Gia Bao",
+      "email": "qa.learner.b@example.test",
+      "password": "QaTest2026",
+      "confirmPassword": "QaTest2026",
+      "phoneNumber": "0900000102",
+      "emailVerifiedAfterSetup": true,
+      "setupSteps": [
+        "Register as a separate account",
+        "Complete simulated email verification",
+        "Use only for account-isolation UI checks"
+      ]
+    },
+    {
+      "fixtureId": "qa-user-unverified",
+      "role": "unverified_learner",
+      "fullName": "Le Minh Thu",
+      "email": "qa.unverified@example.test",
+      "password": "QaTest2026",
+      "confirmPassword": "QaTest2026",
+      "phoneNumber": null,
+      "emailVerifiedAfterSetup": false,
+      "setupSteps": [
+        "Register but do not complete simulated email verification",
+        "Try login and verify the app rejects the unverified account"
+      ]
+    }
+  ]
+}

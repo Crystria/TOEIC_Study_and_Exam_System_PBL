@@ -1,0 +1,126 @@
+{
+  "items": [
+    {
+      "attemptId": "qa-history-005",
+      "userRef": "QA-USER-A",
+      "testId": "11111111-1111-4111-8111-000000000003",
+      "testTitle": "ETS 2026 Test 03",
+      "mode": "PART",
+      "status": "EXPIRED",
+      "parts": [
+        5
+      ],
+      "startedAt": "2026-11-05T10:00:00+07:00",
+      "completedAt": "2026-11-05T11:00:00+07:00",
+      "durationSeconds": 600,
+      "totalQuestions": 30,
+      "answeredCount": 30,
+      "correctCount": 20,
+      "scoreListening": null,
+      "scoreReading": null,
+      "totalScore": null
+    },
+    {
+      "attemptId": "qa-history-004",
+      "userRef": "QA-USER-B",
+      "testId": "11111111-1111-4111-8111-000000000005",
+      "testTitle": "ETS 2026 Test 05",
+      "mode": "FULL",
+      "status": "SUBMITTED",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "startedAt": "2026-11-04T11:00:00+07:00",
+      "completedAt": "2026-11-04T12:00:00+07:00",
+      "durationSeconds": 7200,
+      "totalQuestions": 200,
+      "answeredCount": 199,
+      "correctCount": 146,
+      "scoreListening": 380,
+      "scoreReading": 345,
+      "totalScore": 725
+    },
+    {
+      "attemptId": "qa-history-003",
+      "userRef": "QA-USER-A",
+      "testId": "11111111-1111-4111-8111-000000000004",
+      "testTitle": "ETS 2026 Test 04",
+      "mode": "FULL",
+      "status": "SUBMITTED",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "startedAt": "2026-11-03T12:00:00+07:00",
+      "completedAt": "2026-11-03T13:00:00+07:00",
+      "durationSeconds": 7200,
+      "totalQuestions": 200,
+      "answeredCount": 198,
+      "correctCount": 145,
+      "scoreListening": 375,
+      "scoreReading": 340,
+      "totalScore": 715
+    },
+    {
+      "attemptId": "qa-history-002",
+      "userRef": "QA-USER-B",
+      "testId": "11111111-1111-4111-8111-000000000003",
+      "testTitle": "ETS 2026 Test 03",
+      "mode": "FULL",
+      "status": "SUBMITTED",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "startedAt": "2026-11-02T13:00:00+07:00",
+      "completedAt": "2026-11-02T14:00:00+07:00",
+      "durationSeconds": 7200,
+      "totalQuestions": 200,
+      "answeredCount": 197,
+      "correctCount": 144,
+      "scoreListening": 370,
+      "scoreReading": 335,
+      "totalScore": 705
+    },
+    {
+      "attemptId": "qa-history-001",
+      "userRef": "QA-USER-A",
+      "testId": "11111111-1111-4111-8111-000000000005",
+      "testTitle": "ETS 2026 Test 05",
+      "mode": "PART",
+      "status": "SUBMITTED",
+      "parts": [
+        5
+      ],
+      "startedAt": "2026-11-09T14:00:00+07:00",
+      "completedAt": "2026-11-09T15:00:00+07:00",
+      "durationSeconds": 600,
+      "totalQuestions": 30,
+      "answeredCount": 26,
+      "correctCount": 22,
+      "scoreListening": null,
+      "scoreReading": null,
+      "totalScore": null
+    }
+  ],
+  "total": 25,
+  "page": 2,
+  "size": 20,
+  "totalPages": 2
+}

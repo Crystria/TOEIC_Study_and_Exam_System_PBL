@@ -1,0 +1,105 @@
+{
+  "source": "RegisterScreen + FakeAuthRepository",
+  "scenarios": [
+    {
+      "id": "AUTH-REG-01",
+      "name": "Valid registration",
+      "input": {
+        "fullName": "Nguyen Minh An",
+        "email": "new.learner@example.test",
+        "password": "QaTest2026",
+        "confirmPassword": "QaTest2026"
+      },
+      "expected": "Registration succeeds and returns a mock verification ticket; account remains unverified until verifyEmail."
+    },
+    {
+      "id": "AUTH-REG-02",
+      "name": "Empty full name",
+      "input": {
+        "fullName": "   ",
+        "email": "new.learner@example.test",
+        "password": "QaTest2026",
+        "confirmPassword": "QaTest2026"
+      },
+      "expected": "UI validation asks for full name; repository should not be called."
+    },
+    {
+      "id": "AUTH-REG-03",
+      "name": "Invalid email",
+      "input": {
+        "fullName": "Test User",
+        "email": "invalid-email",
+        "password": "QaTest2026",
+        "confirmPassword": "QaTest2026"
+      },
+      "expected": "UI validation shows invalid email."
+    },
+    {
+      "id": "AUTH-REG-04",
+      "name": "Password too short",
+      "input": {
+        "fullName": "Test User",
+        "email": "new.learner@example.test",
+        "password": "Qa1",
+        "confirmPassword": "Qa1"
+      },
+      "expected": "UI validation rejects password: at least 8 chars, uppercase, lowercase and digit."
+    },
+    {
+      "id": "AUTH-REG-05",
+      "name": "Password missing uppercase",
+      "input": {
+        "fullName": "Test User",
+        "email": "new.learner@example.test",
+        "password": "qatest2026",
+        "confirmPassword": "qatest2026"
+      },
+      "expected": "UI validation rejects password."
+    },
+    {
+      "id": "AUTH-REG-06",
+      "name": "Password missing lowercase",
+      "input": {
+        "fullName": "Test User",
+        "email": "new.learner@example.test",
+        "password": "QATEST2026",
+        "confirmPassword": "QATEST2026"
+      },
+      "expected": "UI validation rejects password."
+    },
+    {
+      "id": "AUTH-REG-07",
+      "name": "Password missing digit",
+      "input": {
+        "fullName": "Test User",
+        "email": "new.learner@example.test",
+        "password": "QaTestPass",
+        "confirmPassword": "QaTestPass"
+      },
+      "expected": "UI validation rejects password."
+    },
+    {
+      "id": "AUTH-REG-08",
+      "name": "Confirm password mismatch",
+      "input": {
+        "fullName": "Test User",
+        "email": "new.learner@example.test",
+        "password": "QaTest2026",
+        "confirmPassword": "QaTest2027"
+      },
+      "expected": "UI validation/repository rejects mismatched confirmation."
+    },
+    {
+      "id": "AUTH-REG-09",
+      "name": "Duplicate email",
+      "setup": "Register the same email once, then repeat registration during the same app process.",
+      "input": {
+        "fullName": "Test User",
+        "email": "qa.learner.a@example.test",
+        "password": "QaTest2026",
+        "confirmPassword": "QaTest2026"
+      },
+      "expected": "FakeAuthRepository rejects duplicate email in current process."
+    }
+  ]
+}

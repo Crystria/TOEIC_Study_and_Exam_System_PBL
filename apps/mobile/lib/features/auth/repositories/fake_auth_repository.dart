@@ -306,8 +306,6 @@ class FakeAuthRepository extends AuthRepository {
     _pendingActions.remove(token);
     return action;
   }
-
-
 }
 
 class _FakeAccount {

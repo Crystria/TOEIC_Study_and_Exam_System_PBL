@@ -1,0 +1,73 @@
+{
+  "items": [
+    {
+      "scoreListening": 335,
+      "scoreReading": 350,
+      "totalScore": 685,
+      "scoring": {
+        "method": "DEMO",
+        "official": false
+      },
+      "attemptId": "b435d4d7-65a3-5f1e-8f31-a5e0a9233cc4",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "FULL",
+      "completedAt": "2026-11-10T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 320,
+      "scoreReading": 330,
+      "totalScore": 650,
+      "scoring": {
+        "method": "DEMO",
+        "official": false
+      },
+      "attemptId": "564fe2f3-70d4-5936-adeb-e9fa6f93e98b",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "FULL",
+      "completedAt": "2026-11-04T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 315,
+      "scoreReading": 315,
+      "totalScore": 630,
+      "scoring": {
+        "method": "DEMO",
+        "official": false
+      },
+      "attemptId": "a17f5167-a230-543c-95c4-5e0c44a5cbc7",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "FULL",
+      "completedAt": "2026-10-29T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 305,
+      "scoreReading": 310,
+      "totalScore": 615,
+      "scoring": {
+        "method": "DEMO",
+        "official": false
+      },
+      "attemptId": "873b327b-b8f4-5eea-b0d9-3bad160a81cf",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "FULL",
+      "completedAt": "2026-10-22T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 295,
+      "scoreReading": 295,
+      "totalScore": 590,
+      "scoring": {
+        "method": "DEMO",
+        "official": false
+      },
+      "attemptId": "82962a94-4c87-5bed-bf85-d21a13e4049b",
+      "testId": "30dba571-3ee2-5d93-9f44-6f935d14757b",
+      "mode": "FULL",
+      "completedAt": "2026-10-16T09:10:00+00:00"
+    }
+  ],
+  "total": 5,
+  "page": 1,
+  "size": 20,
+  "totalPages": 1
+}

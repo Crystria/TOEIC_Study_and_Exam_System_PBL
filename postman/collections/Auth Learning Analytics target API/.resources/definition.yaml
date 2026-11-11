@@ -1,0 +1,10 @@
+$kind: collection
+description: Accepted design for P1-P6. Not a claim that service controllers implement these endpoints. Server base path includes /api/v1.
+variables:
+  baseUrl: http://localhost:3000/api/v1
+auth:
+  - id: 6415e8f6-a228-46ba-bf8e-dab23378d2fe
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{accessToken}}"

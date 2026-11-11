@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../core/storage/vocabulary_progress_storage.dart';
+import '../models/learning_models.dart';
 import '../repositories/learning_repository.dart';
 
 class TopicSummary {
@@ -31,8 +32,10 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   VocabularyTopicsProvider({
     VocabularyProgressStorage? storage,
     LearningRepository? repository,
+    List<LearningTopic>? mockTopics,
   }) : _storage = storage ?? VocabularyProgressStorage(),
-       _repository = repository {
+       _repository = repository,
+       _mockTopics = mockTopics ?? _defaultMockTopics {
     if (_repository != null) {
       // Never show fixture counts/previews while API data is loading.
       dueForReview = 0;
@@ -45,6 +48,11 @@ class VocabularyTopicsProvider extends ChangeNotifier {
 
   final VocabularyProgressStorage _storage;
   final LearningRepository? _repository;
+  final List<LearningTopic> _mockTopics;
+  static const List<LearningTopic> _defaultMockTopics = [
+    LearningTopic(id: 't1', name: 'Office & Business', vocabularyCount: 20),
+    LearningTopic(id: 't2', name: 'Travel & Transport', vocabularyCount: 24),
+  ];
   Future<void>? _initialization;
   int _scopeRevision = 0;
 
@@ -231,20 +239,16 @@ class VocabularyTopicsProvider extends ChangeNotifier {
       } else {
         await Future<void>.delayed(const Duration(milliseconds: 400));
         if (revision != _scopeRevision) return;
-        topics = [
-          TopicSummary(
-            id: 't1',
-            name: 'Office & Business',
-            learned: learnedByTopic['t1'] ?? 0,
-            total: 20,
-          ),
-          TopicSummary(
-            id: 't2',
-            name: 'Travel & Transport',
-            learned: learnedByTopic['t2'] ?? 0,
-            total: 24,
-          ),
-        ];
+        topics = _mockTopics
+            .map(
+              (topic) => TopicSummary(
+                id: topic.id,
+                name: topic.name,
+                learned: learnedByTopic[topic.id] ?? 0,
+                total: topic.vocabularyCount,
+              ),
+            )
+            .toList(growable: false);
       }
       status = TopicsStatus.loaded;
     } catch (_) {

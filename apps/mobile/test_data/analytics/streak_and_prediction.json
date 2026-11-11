@@ -1,0 +1,84 @@
+{
+  "streak": {
+    "learningStreakDays": 12,
+    "longestStreak": 18,
+    "timezone": "Asia/Ho_Chi_Minh",
+    "lastActivity": "today"
+  },
+  "prediction": {
+    "predictedToeicScore": 685,
+    "eligibleFullCount": 5,
+    "usedAttemptIds": [
+      "demo-full-1",
+      "demo-full-7",
+      "demo-full-13"
+    ],
+    "method": "DEMO_WEIGHTED_LATEST_3",
+    "windowDays": 30
+  },
+  "weakAreaSummary": {
+    "windowDays": 30,
+    "minimumQuestions": 20,
+    "threshold": 0.3,
+    "timezone": "Asia/Ho_Chi_Minh",
+    "items": [
+      {
+        "part": 1,
+        "status": "INSUFFICIENT_DATA",
+        "correct": 12,
+        "total": 18,
+        "weaknessScore": null,
+        "isWeak": null
+      },
+      {
+        "part": 2,
+        "status": "AVAILABLE",
+        "correct": 42,
+        "total": 60,
+        "weaknessScore": 0.3,
+        "isWeak": true
+      },
+      {
+        "part": 3,
+        "status": "AVAILABLE",
+        "correct": 68,
+        "total": 100,
+        "weaknessScore": 0.32,
+        "isWeak": true
+      },
+      {
+        "part": 4,
+        "status": "INSUFFICIENT_DATA",
+        "correct": 14,
+        "total": 18,
+        "weaknessScore": null,
+        "isWeak": null
+      },
+      {
+        "part": 5,
+        "status": "AVAILABLE",
+        "correct": 62,
+        "total": 100,
+        "weaknessScore": 0.38,
+        "isWeak": true
+      },
+      {
+        "part": 6,
+        "status": "INSUFFICIENT_DATA",
+        "correct": 10,
+        "total": 18,
+        "weaknessScore": null,
+        "isWeak": null
+      },
+      {
+        "part": 7,
+        "status": "AVAILABLE",
+        "correct": 71,
+        "total": 100,
+        "weaknessScore": 0.29,
+        "isWeak": false
+      }
+    ]
+  },
+  "warning": "All values are deterministic demo repository output; predicted score is not an official score or live user analytics."
+}

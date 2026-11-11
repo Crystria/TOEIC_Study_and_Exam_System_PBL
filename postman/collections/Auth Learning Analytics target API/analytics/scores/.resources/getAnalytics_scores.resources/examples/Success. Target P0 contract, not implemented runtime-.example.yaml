@@ -1,0 +1,1321 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/analytics/scores?page=1&size=20"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    page: "1"
+    size: "20"
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "items": [
+          {
+            "attemptId": "577be9dc-8f41-48e7-8426-41a63269f614",
+            "userId": "1a0e08c2-9d7b-4264-9769-b2c7a0a02d25",
+            "testId": "69d806c6-df6a-49cc-bb03-5ad4699e130a",
+            "mode": "",
+            "scoreListening": 165,
+            "scoreReading": 255,
+            "totalScore": 595,
+            "correctListeningCount": 16,
+            "correctReadingCount": 13,
+            "correctCount": 12,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 31,
+                "total": 84
+              },
+              {
+                "part": 6,
+                "correct": 12,
+                "total": 12
+              },
+              {
+                "part": 2,
+                "correct": 63,
+                "total": 3
+              },
+              {
+                "part": 6,
+                "correct": 40,
+                "total": 61
+              },
+              {
+                "part": 1,
+                "correct": 44,
+                "total": 54
+              },
+              {
+                "part": 3,
+                "correct": 5,
+                "total": 8
+              },
+              {
+                "part": 5,
+                "correct": 52,
+                "total": 82
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "cae82c46-ec11-48af-b8a2-3dbe2f45281a",
+            "userId": "389043f8-e9f7-4419-8dfc-b403e643d9ad",
+            "testId": "e4c9d655-bcd9-4e8a-a502-6cecca9811dd",
+            "mode": "",
+            "scoreListening": 165,
+            "scoreReading": 175,
+            "totalScore": 310,
+            "correctListeningCount": 72,
+            "correctReadingCount": 50,
+            "correctCount": 113,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 73,
+                "total": 15
+              },
+              {
+                "part": 1,
+                "correct": 1,
+                "total": 59
+              },
+              {
+                "part": 2,
+                "correct": 57,
+                "total": 57
+              },
+              {
+                "part": 5,
+                "correct": 79,
+                "total": 40
+              },
+              {
+                "part": 3,
+                "correct": 28,
+                "total": 28
+              },
+              {
+                "part": 5,
+                "correct": 56,
+                "total": 94
+              },
+              {
+                "part": 3,
+                "correct": 12,
+                "total": 5
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "36594a5a-bd1b-4d23-b822-99f7ba5f8330",
+            "userId": "22160f31-21d6-4984-b230-8fde4d1b435b",
+            "testId": "25dd1611-e3cd-4ba0-8d0c-612520fc4a2d",
+            "mode": "",
+            "scoreListening": 415,
+            "scoreReading": 465,
+            "totalScore": 25,
+            "correctListeningCount": 22,
+            "correctReadingCount": 91,
+            "correctCount": 128,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 52,
+                "total": 21
+              },
+              {
+                "part": 2,
+                "correct": 95,
+                "total": 12
+              },
+              {
+                "part": 6,
+                "correct": 29,
+                "total": 85
+              },
+              {
+                "part": 2,
+                "correct": 41,
+                "total": 34
+              },
+              {
+                "part": 2,
+                "correct": 77,
+                "total": 84
+              },
+              {
+                "part": 3,
+                "correct": 43,
+                "total": 87
+              },
+              {
+                "part": 1,
+                "correct": 50,
+                "total": 41
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "fdbf7393-75df-49bc-80ea-cb6500416c71",
+            "userId": "55a063d7-83c5-4b54-bc5f-73cc4bd548ed",
+            "testId": "d7b78890-3a88-4e5e-a59c-e6a107998a19",
+            "mode": "",
+            "scoreListening": 305,
+            "scoreReading": 320,
+            "totalScore": 780,
+            "correctListeningCount": 46,
+            "correctReadingCount": 32,
+            "correctCount": 90,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 3,
+                "correct": 74,
+                "total": 6
+              },
+              {
+                "part": 3,
+                "correct": 40,
+                "total": 27
+              },
+              {
+                "part": 5,
+                "correct": 69,
+                "total": 56
+              },
+              {
+                "part": 6,
+                "correct": 72,
+                "total": 80
+              },
+              {
+                "part": 1,
+                "correct": 2,
+                "total": 16
+              },
+              {
+                "part": 6,
+                "correct": 64,
+                "total": 51
+              },
+              {
+                "part": 2,
+                "correct": 85,
+                "total": 78
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "e877328f-4bcb-4ea0-891f-faffbdcad314",
+            "userId": "b4597fff-6d55-46ca-9e74-b08eea24c986",
+            "testId": "ce79715e-aa4d-4b2d-b5ce-9e3f93f4feb9",
+            "mode": "",
+            "scoreListening": 70,
+            "scoreReading": 65,
+            "totalScore": 435,
+            "correctListeningCount": 90,
+            "correctReadingCount": 43,
+            "correctCount": 39,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 2,
+                "correct": 59,
+                "total": 58
+              },
+              {
+                "part": 5,
+                "correct": 33,
+                "total": 55
+              },
+              {
+                "part": 6,
+                "correct": 26,
+                "total": 95
+              },
+              {
+                "part": 4,
+                "correct": 39,
+                "total": 41
+              },
+              {
+                "part": 2,
+                "correct": 19,
+                "total": 31
+              },
+              {
+                "part": 2,
+                "correct": 31,
+                "total": 19
+              },
+              {
+                "part": 2,
+                "correct": 76,
+                "total": 85
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "ea1d6120-18e1-4de1-8d6b-cf1d33229fa9",
+            "userId": "07fd6ae4-1981-4057-a573-fd03bb54eac1",
+            "testId": "62cd90b5-633c-486d-bc45-87689a558317",
+            "mode": "",
+            "scoreListening": 145,
+            "scoreReading": 405,
+            "totalScore": 615,
+            "correctListeningCount": 90,
+            "correctReadingCount": 20,
+            "correctCount": 30,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 5,
+                "correct": 28,
+                "total": 75
+              },
+              {
+                "part": 5,
+                "correct": 61,
+                "total": 43
+              },
+              {
+                "part": 5,
+                "correct": 19,
+                "total": 87
+              },
+              {
+                "part": 6,
+                "correct": 40,
+                "total": 16
+              },
+              {
+                "part": 3,
+                "correct": 93,
+                "total": 2
+              },
+              {
+                "part": 1,
+                "correct": 84,
+                "total": 29
+              },
+              {
+                "part": 1,
+                "correct": 2,
+                "total": 56
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "8b9c53f2-6062-4976-85e4-9b4ee7a61686",
+            "userId": "0d1a73db-9191-4c9e-b37b-f6e2bcdc7074",
+            "testId": "ef1378ef-470f-467e-9027-9fe9a9e27343",
+            "mode": "",
+            "scoreListening": 130,
+            "scoreReading": 25,
+            "totalScore": 815,
+            "correctListeningCount": 58,
+            "correctReadingCount": 17,
+            "correctCount": 41,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 60,
+                "total": 78
+              },
+              {
+                "part": 6,
+                "correct": 59,
+                "total": 12
+              },
+              {
+                "part": 6,
+                "correct": 89,
+                "total": 46
+              },
+              {
+                "part": 5,
+                "correct": 39,
+                "total": 51
+              },
+              {
+                "part": 6,
+                "correct": 60,
+                "total": 43
+              },
+              {
+                "part": 5,
+                "correct": 93,
+                "total": 62
+              },
+              {
+                "part": 3,
+                "correct": 39,
+                "total": 48
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "381f2a44-80a6-4981-a352-881993532dfd",
+            "userId": "0ebb720b-31a0-4f34-84ec-64c2d856140e",
+            "testId": "234089bb-50ed-4bb7-bcf8-04caba2b2360",
+            "mode": "",
+            "scoreListening": 20,
+            "scoreReading": 50,
+            "totalScore": 340,
+            "correctListeningCount": 68,
+            "correctReadingCount": 36,
+            "correctCount": 178,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 52,
+                "total": 51
+              },
+              {
+                "part": 3,
+                "correct": 40,
+                "total": 25
+              },
+              {
+                "part": 4,
+                "correct": 63,
+                "total": 90
+              },
+              {
+                "part": 1,
+                "correct": 30,
+                "total": 9
+              },
+              {
+                "part": 2,
+                "correct": 16,
+                "total": 9
+              },
+              {
+                "part": 4,
+                "correct": 48,
+                "total": 87
+              },
+              {
+                "part": 3,
+                "correct": 53,
+                "total": 11
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "74a78113-10f3-4199-9cbf-c035f112e760",
+            "userId": "b8768638-1281-48ef-9558-a19d1c011691",
+            "testId": "81723b64-bf95-4865-bc65-b57b0f04c1f0",
+            "mode": "",
+            "scoreListening": 435,
+            "scoreReading": 190,
+            "totalScore": 540,
+            "correctListeningCount": 87,
+            "correctReadingCount": 3,
+            "correctCount": 178,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 5,
+                "correct": 65,
+                "total": 14
+              },
+              {
+                "part": 3,
+                "correct": 60,
+                "total": 68
+              },
+              {
+                "part": 6,
+                "correct": 90,
+                "total": 64
+              },
+              {
+                "part": 3,
+                "correct": 12,
+                "total": 69
+              },
+              {
+                "part": 1,
+                "correct": 3,
+                "total": 98
+              },
+              {
+                "part": 5,
+                "correct": 86,
+                "total": 48
+              },
+              {
+                "part": 2,
+                "correct": 39,
+                "total": 19
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "8c2965a5-3e42-4886-a0fa-9d14e6287bf2",
+            "userId": "f1e2e097-9e0f-466e-9fb5-fb1d23fa0cfe",
+            "testId": "5c261e33-72b0-498c-820c-1b50986f4d9b",
+            "mode": "",
+            "scoreListening": 265,
+            "scoreReading": 210,
+            "totalScore": 175,
+            "correctListeningCount": 88,
+            "correctReadingCount": 73,
+            "correctCount": 145,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 79,
+                "total": 89
+              },
+              {
+                "part": 4,
+                "correct": 39,
+                "total": 90
+              },
+              {
+                "part": 2,
+                "correct": 94,
+                "total": 40
+              },
+              {
+                "part": 4,
+                "correct": 51,
+                "total": 47
+              },
+              {
+                "part": 2,
+                "correct": 42,
+                "total": 72
+              },
+              {
+                "part": 1,
+                "correct": 35,
+                "total": 11
+              },
+              {
+                "part": 6,
+                "correct": 89,
+                "total": 79
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "aec03d3d-76f4-452e-ba5b-15feb1543726",
+            "userId": "65eef825-33f0-425b-8053-8294398e1d62",
+            "testId": "720d6a5c-95a9-459b-b501-1c0b1e04eec8",
+            "mode": "",
+            "scoreListening": 205,
+            "scoreReading": 185,
+            "totalScore": 175,
+            "correctListeningCount": 37,
+            "correctReadingCount": 23,
+            "correctCount": 192,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 2,
+                "correct": 1,
+                "total": 93
+              },
+              {
+                "part": 1,
+                "correct": 19,
+                "total": 77
+              },
+              {
+                "part": 5,
+                "correct": 69,
+                "total": 1
+              },
+              {
+                "part": 1,
+                "correct": 75,
+                "total": 98
+              },
+              {
+                "part": 6,
+                "correct": 68,
+                "total": 93
+              },
+              {
+                "part": 1,
+                "correct": 77,
+                "total": 13
+              },
+              {
+                "part": 2,
+                "correct": 23,
+                "total": 52
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "d8c9a778-6155-4ad7-88f9-2492317b0cbe",
+            "userId": "3cc5832d-0fc3-451a-a768-15fbb4528686",
+            "testId": "7c245de6-2c28-4c9f-9443-049903c115a7",
+            "mode": "",
+            "scoreListening": 135,
+            "scoreReading": 215,
+            "totalScore": 615,
+            "correctListeningCount": 90,
+            "correctReadingCount": 68,
+            "correctCount": 84,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 1,
+                "correct": 74,
+                "total": 32
+              },
+              {
+                "part": 6,
+                "correct": 74,
+                "total": 67
+              },
+              {
+                "part": 1,
+                "correct": 8,
+                "total": 99
+              },
+              {
+                "part": 4,
+                "correct": 72,
+                "total": 33
+              },
+              {
+                "part": 5,
+                "correct": 69,
+                "total": 55
+              },
+              {
+                "part": 1,
+                "correct": 23,
+                "total": 29
+              },
+              {
+                "part": 5,
+                "correct": 49,
+                "total": 41
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "70dc5d9f-4b70-4ac1-aa2e-078d96bf8c77",
+            "userId": "86278ad1-2fba-4e03-9a32-fb131cafe0da",
+            "testId": "9ec38864-75c4-4a98-bb49-b36fe1a41278",
+            "mode": "",
+            "scoreListening": 420,
+            "scoreReading": 285,
+            "totalScore": 520,
+            "correctListeningCount": 10,
+            "correctReadingCount": 34,
+            "correctCount": 121,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 81,
+                "total": 8
+              },
+              {
+                "part": 2,
+                "correct": 1,
+                "total": 96
+              },
+              {
+                "part": 4,
+                "correct": 26,
+                "total": 22
+              },
+              {
+                "part": 5,
+                "correct": 19,
+                "total": 24
+              },
+              {
+                "part": 1,
+                "correct": 6,
+                "total": 97
+              },
+              {
+                "part": 3,
+                "correct": 87,
+                "total": 92
+              },
+              {
+                "part": 3,
+                "correct": 32,
+                "total": 34
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "21fa1af6-d5f5-48f8-9016-41a8482a773a",
+            "userId": "f442a126-3e6f-4989-a471-f835b7fecdd5",
+            "testId": "2ef5985e-5bcd-40a1-a521-9f2dc8fe7cf6",
+            "mode": "",
+            "scoreListening": 165,
+            "scoreReading": 350,
+            "totalScore": 650,
+            "correctListeningCount": 73,
+            "correctReadingCount": 78,
+            "correctCount": 163,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 61,
+                "total": 36
+              },
+              {
+                "part": 3,
+                "correct": 88,
+                "total": 94
+              },
+              {
+                "part": 6,
+                "correct": 39,
+                "total": 3
+              },
+              {
+                "part": 3,
+                "correct": 72,
+                "total": 13
+              },
+              {
+                "part": 3,
+                "correct": 17,
+                "total": 55
+              },
+              {
+                "part": 5,
+                "correct": 70,
+                "total": 47
+              },
+              {
+                "part": 1,
+                "correct": 80,
+                "total": 86
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "9abcadbd-3ff7-417e-a20d-c7730fcc4016",
+            "userId": "26da09b4-a017-4660-a18a-aa7a7e83dedb",
+            "testId": "88771c76-7f99-4962-b1c9-6f077b2e3159",
+            "mode": "",
+            "scoreListening": 80,
+            "scoreReading": 370,
+            "totalScore": 555,
+            "correctListeningCount": 73,
+            "correctReadingCount": 42,
+            "correctCount": 110,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 3,
+                "correct": 3,
+                "total": 50
+              },
+              {
+                "part": 1,
+                "correct": 18,
+                "total": 19
+              },
+              {
+                "part": 1,
+                "correct": 88,
+                "total": 26
+              },
+              {
+                "part": 2,
+                "correct": 70,
+                "total": 9
+              },
+              {
+                "part": 1,
+                "correct": 94,
+                "total": 16
+              },
+              {
+                "part": 5,
+                "correct": 56,
+                "total": 18
+              },
+              {
+                "part": 6,
+                "correct": 78,
+                "total": 61
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "b60982c4-1af9-4a8c-8b10-ca56770caebe",
+            "userId": "f7bf43f6-07a1-43e0-9e98-db0c5c2ee7d1",
+            "testId": "62b1d5c4-5646-4ada-b546-cc427aa0421a",
+            "mode": "",
+            "scoreListening": 15,
+            "scoreReading": 60,
+            "totalScore": 815,
+            "correctListeningCount": 38,
+            "correctReadingCount": 11,
+            "correctCount": 185,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 50,
+                "total": 85
+              },
+              {
+                "part": 2,
+                "correct": 62,
+                "total": 88
+              },
+              {
+                "part": 4,
+                "correct": 11,
+                "total": 75
+              },
+              {
+                "part": 1,
+                "correct": 18,
+                "total": 31
+              },
+              {
+                "part": 1,
+                "correct": 67,
+                "total": 48
+              },
+              {
+                "part": 1,
+                "correct": 24,
+                "total": 41
+              },
+              {
+                "part": 1,
+                "correct": 19,
+                "total": 91
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "c5908cc0-1f32-4ca5-81ca-12d0ef417a74",
+            "userId": "732784f3-a476-4ad7-b7d0-2e8c286edb4c",
+            "testId": "bb1bd6f5-7dc9-4af7-bdba-5f8885fa70c4",
+            "mode": "",
+            "scoreListening": 190,
+            "scoreReading": 205,
+            "totalScore": 160,
+            "correctListeningCount": 53,
+            "correctReadingCount": 61,
+            "correctCount": 26,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 34,
+                "total": 80
+              },
+              {
+                "part": 6,
+                "correct": 3,
+                "total": 88
+              },
+              {
+                "part": 4,
+                "correct": 70,
+                "total": 51
+              },
+              {
+                "part": 3,
+                "correct": 25,
+                "total": 58
+              },
+              {
+                "part": 5,
+                "correct": 47,
+                "total": 43
+              },
+              {
+                "part": 1,
+                "correct": 49,
+                "total": 40
+              },
+              {
+                "part": 6,
+                "correct": 79,
+                "total": 35
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "ceceb85b-bffc-4744-a567-e90d0f6a6a52",
+            "userId": "b9eab22c-99e1-44a7-88d0-a69693c1ccd7",
+            "testId": "c66c25ea-f782-4628-a43c-43468ebd08a6",
+            "mode": "",
+            "scoreListening": 405,
+            "scoreReading": 195,
+            "totalScore": 745,
+            "correctListeningCount": 25,
+            "correctReadingCount": 53,
+            "correctCount": 179,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 2,
+                "correct": 71,
+                "total": 82
+              },
+              {
+                "part": 3,
+                "correct": 2,
+                "total": 43
+              },
+              {
+                "part": 6,
+                "correct": 7,
+                "total": 77
+              },
+              {
+                "part": 4,
+                "correct": 94,
+                "total": 78
+              },
+              {
+                "part": 5,
+                "correct": 45,
+                "total": 88
+              },
+              {
+                "part": 6,
+                "correct": 53,
+                "total": 80
+              },
+              {
+                "part": 1,
+                "correct": 45,
+                "total": 83
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "2ae2f08a-7c2a-45b4-a383-91a6e2472381",
+            "userId": "9098b178-abe1-44fb-bdb2-8309c94763be",
+            "testId": "2de0a7f1-636c-44cc-85d6-89b9b5fdac34",
+            "mode": "",
+            "scoreListening": 370,
+            "scoreReading": 55,
+            "totalScore": 855,
+            "correctListeningCount": 60,
+            "correctReadingCount": 61,
+            "correctCount": 122,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 2,
+                "correct": 66,
+                "total": 88
+              },
+              {
+                "part": 6,
+                "correct": 41,
+                "total": 56
+              },
+              {
+                "part": 1,
+                "correct": 21,
+                "total": 54
+              },
+              {
+                "part": 5,
+                "correct": 84,
+                "total": 57
+              },
+              {
+                "part": 2,
+                "correct": 6,
+                "total": 86
+              },
+              {
+                "part": 6,
+                "correct": 18,
+                "total": 90
+              },
+              {
+                "part": 6,
+                "correct": 6,
+                "total": 37
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          },
+          {
+            "attemptId": "10d8e22d-61d0-4848-a4b3-9cbcd78bea61",
+            "userId": "ac38838e-d439-4d35-8810-08a52c521800",
+            "testId": "e00aa7fd-e17f-4bbc-b75b-e7f201a1895a",
+            "mode": "",
+            "scoreListening": 70,
+            "scoreReading": 355,
+            "totalScore": 395,
+            "correctListeningCount": 75,
+            "correctReadingCount": 95,
+            "correctCount": 31,
+            "totalQuestions": "",
+            "partStats": [
+              {
+                "part": 2,
+                "correct": 88,
+                "total": 93
+              },
+              {
+                "part": 3,
+                "correct": 69,
+                "total": 56
+              },
+              {
+                "part": 5,
+                "correct": 85,
+                "total": 63
+              },
+              {
+                "part": 1,
+                "correct": 25,
+                "total": 42
+              },
+              {
+                "part": 5,
+                "correct": 68,
+                "total": 90
+              },
+              {
+                "part": 2,
+                "correct": 29,
+                "total": 15
+              },
+              {
+                "part": 3,
+                "correct": 94,
+                "total": 15
+              }
+            ],
+            "completedAt": "Z",
+            "scoring": {
+              "method": "",
+              "tableVersion": "string",
+              "official": ""
+            }
+          }
+        ],
+        "total": 1827495070,
+        "page": 769378370,
+        "size": 16,
+        "totalPages": 700666444
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attemptId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "userId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "testId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "scoreListening": {
+                  "type": "integer",
+                  "minimum": 5,
+                  "maximum": 495
+                },
+                "scoreReading": {
+                  "type": "integer",
+                  "minimum": 5,
+                  "maximum": 495
+                },
+                "totalScore": {
+                  "type": "integer",
+                  "minimum": 10,
+                  "maximum": 990
+                },
+                "correctListeningCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "correctReadingCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "correctCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 200
+                },
+                "partStats": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "part": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 7
+                      },
+                      "correct": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "total": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100
+                      }
+                    },
+                    "required": [
+                      "part",
+                      "correct",
+                      "total"
+                    ]
+                  }
+                },
+                "completedAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                },
+                "scoring": {
+                  "type": "object",
+                  "properties": {
+                    "tableVersion": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    }
+                  },
+                  "required": [
+                    "method",
+                    "tableVersion",
+                    "official"
+                  ]
+                }
+              },
+              "required": [
+                "attemptId",
+                "userId",
+                "testId",
+                "mode",
+                "scoreListening",
+                "scoreReading",
+                "totalScore",
+                "correctListeningCount",
+                "correctReadingCount",
+                "correctCount",
+                "totalQuestions",
+                "partStats",
+                "completedAt",
+                "scoring"
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size",
+          "totalPages"
+        ]
+      }
+order: 1000

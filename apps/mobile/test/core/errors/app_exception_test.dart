@@ -217,6 +217,22 @@ void main() {
       expect(exception.message, isNot(contains('worker')));
     });
 
+    test('retains a gateway correlation id for support tracing', () {
+      final exception = AppException.fromHttpResponse(
+        statusCode: 409,
+        responseData: <String, Object?>{
+          'code': 'ENTITY_REVISION_CONFLICT',
+          'message': 'Dữ liệu đã thay đổi.',
+        },
+        correlationId: 'corr-qa-123',
+      );
+
+      expect(exception.type, AppExceptionType.conflict);
+      expect(exception.code, 'ENTITY_REVISION_CONFLICT');
+      expect(exception.correlationId, 'corr-qa-123');
+      expect(exception.toString(), isNot(contains('corr-qa-123')));
+    });
+
     test('retains positive Retry-After duration only', () {
       final retryable = AppException.fromHttpResponse(
         statusCode: 429,

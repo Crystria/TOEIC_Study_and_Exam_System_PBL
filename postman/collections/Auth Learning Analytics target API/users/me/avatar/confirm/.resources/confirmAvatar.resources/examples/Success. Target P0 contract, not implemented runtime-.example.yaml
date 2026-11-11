@@ -1,0 +1,75 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/users/me/avatar/confirm"
+  method: POST
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Idempotency-Key
+      value: string
+      disabled: false
+      description: ""
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: json
+    content: |-
+      {
+        "uploadId": "e532a651-e037-4a94-92fb-a2a174e33c71"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "objectKey": "string",
+        "url": "http://zCoHwuWcgHKsNwSuHZNStEXusWvTf.wpho3uedItvUR-wGB-iHpYuB2lybYVfqXddgY,vMpFY1vrNCLSnZxR"
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "objectKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "objectKey",
+          "url"
+        ]
+      }
+order: 1000

@@ -1,0 +1,363 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/admin/audit-logs?page=1&size=20&actorUserId=b2b638c2-0db0-4256-a945-715659ac6882&targetUserId=b2b638c2-0db0-4256-a945-715659ac6882&action=string&from=Z&to=Z"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    page: "1"
+    size: "20"
+    actorUserId: b2b638c2-0db0-4256-a945-715659ac6882
+    targetUserId: b2b638c2-0db0-4256-a945-715659ac6882
+    action: string
+    from: Z
+    to: Z
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "items": [
+          {
+            "auditId": "7f673c11-3903-4464-875d-17e5dbd7da6a",
+            "actorUserId": "b3d75f57-d6cf-46cd-8f49-9e10687ac7e6",
+            "targetUserId": "536a3128-10ea-4baf-8418-7c4ef282eb4c",
+            "action": "string",
+            "beforeData": null,
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "bf48ce02-5178-428d-b09a-f740d34245ad",
+            "actorUserId": "fa84e020-5b07-489a-83d5-abdf60f50aac",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": {},
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "b56c4241-58af-44f5-aed0-a7a95a61ccd7",
+            "actorUserId": "46b00fea-5c12-4021-b5cf-60ba29b95428",
+            "targetUserId": null,
+            "action": "str",
+            "beforeData": null,
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "stri"
+          },
+          {
+            "auditId": "fb647bcd-dafe-444e-a92b-3343afe74866",
+            "actorUserId": "da37f9f0-051a-42bb-b8ce-f3d2853cfa13",
+            "targetUserId": "26ad0926-4eb6-4328-8217-1fc10641eb67",
+            "action": "string",
+            "beforeData": {},
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "718e3c4c-0513-44c7-b99a-d73f683cb7cf",
+            "actorUserId": "b272815d-f883-49fa-bec2-a5b9d37a1f3b",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": {},
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "cc24fd13-f0fc-40d9-9520-ae5123296e0b",
+            "actorUserId": "538c6e0c-37d9-41ed-b33a-1fff12e22b2e",
+            "targetUserId": "784cd0d9-028c-4faf-a285-a24db4005cfc",
+            "action": "string",
+            "beforeData": null,
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "4ccda8f8-5e8a-4402-932e-bb49f4381bae",
+            "actorUserId": "e08aceff-5a68-4cf1-9b70-24941d398854",
+            "targetUserId": "f3d5fe9f-f1d1-41cc-ace3-9c303e27c409",
+            "action": "string",
+            "beforeData": {},
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "st"
+          },
+          {
+            "auditId": "3b387d25-87e9-4d77-aa95-b655b4bc2b6c",
+            "actorUserId": "b3b670b4-35e6-442e-98a3-bc736035e593",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": {},
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "strin"
+          },
+          {
+            "auditId": "58e4eadf-d6b1-4c88-beef-77e09fcbc2dc",
+            "actorUserId": "e58bab0f-bb15-4d79-9668-a6ae8b58705d",
+            "targetUserId": "5b28e9f3-08aa-4eca-a891-7254d121418d",
+            "action": "string",
+            "beforeData": {},
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "19613bf4-36f7-4a10-b15f-b332d061b89b",
+            "actorUserId": "d1851dd7-5bca-4522-b87c-05b69a97091c",
+            "targetUserId": "017a36a9-1a7d-4cf2-b62f-b42881336531",
+            "action": "string",
+            "beforeData": null,
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "16328098-028d-40a1-b763-f8205faef28e",
+            "actorUserId": "b6de96e8-8b74-42b4-b80a-5462ddac693b",
+            "targetUserId": "b53872d3-c61f-4cae-80d2-24232fadf788",
+            "action": "string",
+            "beforeData": {},
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "4b619677-4215-4af0-8d31-093fef895479",
+            "actorUserId": "5311ce91-dc68-45fa-83d4-8a44cf54659f",
+            "targetUserId": "63ee508c-a642-443c-a9cb-9da667e1af33",
+            "action": "string",
+            "beforeData": null,
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "3fef0fb0-152c-40cc-bece-85a0ccf208f5",
+            "actorUserId": "5d0f3a28-4d3e-4aef-8c43-c8ef7904f34d",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": null,
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "7c6ec48c-3573-4d5d-87d4-88a4dc867c04",
+            "actorUserId": "894e87a5-e825-4f6e-ada0-971fe5e84320",
+            "targetUserId": "924495ee-4f70-4fbd-a36b-aadccaa3f7e3",
+            "action": "string",
+            "beforeData": null,
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "b3f57b01-75bf-4117-8a13-862e32b6f1cc",
+            "actorUserId": "7faaf045-c4f8-4b0d-975d-35ba21db99d3",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": {},
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "c725f84f-10ec-47bc-9d0c-ed99966fecb3",
+            "actorUserId": "49e22b69-965a-43b7-8a2e-5bffdbb050f9",
+            "targetUserId": "189ed84c-b2b5-4be9-9fce-c92fa92eb8c3",
+            "action": "string",
+            "beforeData": null,
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "7c126e9f-5b69-4f6d-8c47-db8fca07dd1c",
+            "actorUserId": "b08b5ce9-ac5d-4545-8703-be7f94d75bee",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": {},
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "2689e485-cf3b-4c80-a069-0ac386ea9176",
+            "actorUserId": "50f46842-d500-4e2e-874a-0bebefaa501d",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": null,
+            "afterData": null,
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "98bf16ed-79a5-4af6-abc5-da1368f4db7d",
+            "actorUserId": "719a357f-5281-4428-aa0d-a3465c9bf59a",
+            "targetUserId": null,
+            "action": "string",
+            "beforeData": null,
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          },
+          {
+            "auditId": "211d3e8c-5946-4118-9fe3-7cce600c8e9e",
+            "actorUserId": "20c1b070-142c-4b44-a5aa-5522c4974e28",
+            "targetUserId": "c386a383-e9d6-4110-99eb-7b7696e79b06",
+            "action": "string",
+            "beforeData": {},
+            "afterData": {},
+            "occurredAt": "Z",
+            "correlationId": "string"
+          }
+        ],
+        "total": 1329292871,
+        "page": 1400009294,
+        "size": 11,
+        "totalPages": 2025148361
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "auditId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "actorUserId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "targetUserId": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "beforeData": {
+                  "anyOf": [
+                    {
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "afterData": {
+                  "anyOf": [
+                    {
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "occurredAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                },
+                "correlationId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "required": [
+                "auditId",
+                "actorUserId",
+                "targetUserId",
+                "action",
+                "beforeData",
+                "afterData",
+                "occurredAt",
+                "correlationId"
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size",
+          "totalPages"
+        ]
+      }
+order: 1000

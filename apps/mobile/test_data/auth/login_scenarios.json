@@ -1,0 +1,47 @@
+{
+  "source": "FakeAuthRepository.login",
+  "scenarios": [
+    {
+      "id": "AUTH-LOGIN-01",
+      "name": "Valid verified account",
+      "email": "qa.learner.a@example.test",
+      "password": "QaTest2026",
+      "expected": "Login succeeds only after account has been registered and verified in this app process."
+    },
+    {
+      "id": "AUTH-LOGIN-02",
+      "name": "Unknown account",
+      "email": "missing@example.test",
+      "password": "QaTest2026",
+      "expected": "Rejected: account must be registered first."
+    },
+    {
+      "id": "AUTH-LOGIN-03",
+      "name": "Wrong password",
+      "email": "qa.learner.a@example.test",
+      "password": "WrongPass2026",
+      "expected": "Rejected with invalid email/username or password message."
+    },
+    {
+      "id": "AUTH-LOGIN-04",
+      "name": "Unverified account",
+      "email": "qa.unverified@example.test",
+      "password": "QaTest2026",
+      "expected": "Rejected until simulated verification is completed."
+    },
+    {
+      "id": "AUTH-LOGIN-05",
+      "name": "Empty identifier",
+      "email": "",
+      "password": "QaTest2026",
+      "expected": "UI validation blocks submission."
+    },
+    {
+      "id": "AUTH-LOGIN-06",
+      "name": "Whitespace around email",
+      "email": " qa.learner.a@example.test ",
+      "password": "QaTest2026",
+      "expected": "Repository trims and lowercases identifier before lookup."
+    }
+  ]
+}

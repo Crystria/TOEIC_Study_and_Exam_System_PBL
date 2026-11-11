@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "AWAITING_BACKEND_QA_SEED",
+  "capturedAt": null,
+  "sourceArtifact": "artifacts/qa/seed.json",
+  "testId": null,
+  "seededAccountCount": null,
+  "idSource": "Must be copied from the actual Backend QA seed output only.",
+  "secretPolicy": "Never store email, password, access token, refresh token or raw seed payload here."
+}

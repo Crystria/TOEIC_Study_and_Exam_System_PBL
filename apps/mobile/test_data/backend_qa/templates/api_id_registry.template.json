@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "AWAITING_AUTHENTICATED_QA_API_RESPONSES",
+  "capturedAt": null,
+  "gatewayEnvironment": "isolated-local-qa",
+  "idOriginPolicy": "Every non-empty ID must be copied from a real authenticated QA Gateway response or Backend seed artifact.",
+  "entities": {
+    "testIds": [],
+    "topicIds": [],
+    "vocabularyIds": [],
+    "lessonIds": [],
+    "attemptIds": [],
+    "questionIds": [],
+    "groupIds": []
+  },
+  "secretPolicy": "Do not add user email, password, access token, refresh token, cookies, authorization headers, tickets or private media URLs.",
+  "liveBackendEvidence": false
+}

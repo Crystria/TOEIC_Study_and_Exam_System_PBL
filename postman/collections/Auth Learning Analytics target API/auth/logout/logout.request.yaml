@@ -1,0 +1,50 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/auth/logout"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "refreshToken": "{{refreshToken}}"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        }
+      },
+      "required": [
+        "refreshToken"
+      ]
+    }
+auth:
+  type: inherit
+  credentials:
+    id: 6415e8f6-a228-46ba-bf8e-dab23378d2fe
+settings: {}
+examples: ./.resources/logout.resources/examples
+order: 1000

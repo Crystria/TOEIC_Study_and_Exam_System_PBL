@@ -1,0 +1,12 @@
+{
+  "id": "SUBMIT-DUP-01",
+  "attemptId": "qa-attempt-submit-duplicate-001",
+  "sequence": [
+    "Submit the same attempt once",
+    "Repeat submit with the same attempt identifier",
+    "Check result snapshot and history count"
+  ],
+  "expectedLocal": "Current mock repository should retain one final submission for this attempt in the current app process.",
+  "expectedBackend": "Backend must be idempotent; one logical attempt/result only even for repeated or concurrent submit.",
+  "offlineLimitation": "Local map behavior is not proof of database idempotency or concurrency control."
+}

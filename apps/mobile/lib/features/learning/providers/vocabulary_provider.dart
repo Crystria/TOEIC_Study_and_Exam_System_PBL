@@ -42,7 +42,7 @@ class FlashcardItem {
   );
 }
 
-enum VocabularyStatus { idle, loading, loaded, finished, error }
+enum VocabularyStatus { idle, loading, loaded, empty, finished, error }
 
 enum VocabularyLearningMode { topic, random }
 
@@ -50,15 +50,18 @@ class VocabularyProvider extends ChangeNotifier {
   VocabularyProvider({
     VocabularyProgressStorage? storage,
     LearningRepository? repository,
+    List<FlashcardItem>? catalog,
     String? Function()? currentUserId,
   }) : _storage = storage ?? VocabularyProgressStorage(),
        _repository = repository,
+       _catalog = catalog ?? _defaultCatalog,
        _currentUserId = currentUserId ?? _noUser;
 
   static String? _noUser() => null;
 
   final VocabularyProgressStorage _storage;
   final LearningRepository? _repository;
+  final List<FlashcardItem> _catalog;
   final String? Function() _currentUserId;
   Future<void>? _initialization;
   int _scopeRevision = 0;
@@ -69,6 +72,7 @@ class VocabularyProvider extends ChangeNotifier {
   List<FlashcardItem> queue = [];
   int currentIndex = 0;
   String? currentTopicId;
+  String? currentTopicName;
   String? errorMessage;
   String? persistenceError;
 
@@ -76,7 +80,7 @@ class VocabularyProvider extends ChangeNotifier {
   Map<String, StoredVocabularyWord> _progressRecords = {};
   final Map<String, LearningReviewProgress> _serverDueProgress = {};
 
-  static const List<FlashcardItem> _catalog = [
+  static const List<FlashcardItem> _defaultCatalog = [
     FlashcardItem(
       id: 't1-v1',
       word: 'negotiate',
@@ -144,6 +148,8 @@ class VocabularyProvider extends ChangeNotifier {
       topicName: 'Travel & Transport',
     ),
   ];
+
+  bool get isDemoData => _repository == null;
 
   FlashcardItem? get current => currentIndex >= 0 && currentIndex < queue.length
       ? queue[currentIndex]
@@ -215,6 +221,7 @@ class VocabularyProvider extends ChangeNotifier {
     queue = [];
     currentIndex = 0;
     currentTopicId = null;
+    currentTopicName = null;
     errorMessage = null;
     persistenceError = null;
     gradedResults.clear();
@@ -261,12 +268,20 @@ class VocabularyProvider extends ChangeNotifier {
 
     currentMode = VocabularyLearningMode.topic;
     currentTopicId = topicId;
+    currentTopicName = null;
     status = VocabularyStatus.loading;
     errorMessage = null;
     notifyListeners();
 
     try {
       if (_repository != null) {
+        // Fetch the canonical topic detail before loading its vocabulary so
+        // API mode uses the Backend's current topic name rather than the
+        // navigation label cached by the list screen.
+        final topic = await _repository.getTopic(topicId);
+        if (!_isCurrentRequest(revision, requestToken)) return;
+        currentTopicName = topic.name;
+
         final serverItems = await _repository.getVocabularies(topicId: topicId);
         if (!_isCurrentRequest(revision, requestToken)) return;
         final dueProgress = await _repository.getDueProgress(topicId: topicId);
@@ -291,7 +306,7 @@ class VocabularyProvider extends ChangeNotifier {
                     _serverDueProgress[item.id]?.quality ??
                     1,
                 topicId: item.topicId,
-                topicName: item.topicName,
+                topicName: currentTopicName ?? item.topicName,
               ),
             )
             // Preserve the accepted topic-tab rule: show only words marked
@@ -311,9 +326,7 @@ class VocabularyProvider extends ChangeNotifier {
       }
       if (!_isCurrentRequest(revision, requestToken)) return;
       currentIndex = 0;
-      status = queue.isEmpty
-          ? VocabularyStatus.finished
-          : VocabularyStatus.loaded;
+      status = queue.isEmpty ? VocabularyStatus.empty : VocabularyStatus.loaded;
     } catch (error) {
       if (!_isCurrentRequest(revision, requestToken)) return;
       errorMessage = error is AppException
@@ -332,6 +345,7 @@ class VocabularyProvider extends ChangeNotifier {
 
     currentMode = VocabularyLearningMode.random;
     currentTopicId = null;
+    currentTopicName = null;
     status = VocabularyStatus.loading;
     errorMessage = null;
     notifyListeners();
@@ -379,9 +393,7 @@ class VocabularyProvider extends ChangeNotifier {
       }
       if (!_isCurrentRequest(revision, requestToken)) return;
       currentIndex = 0;
-      status = queue.isEmpty
-          ? VocabularyStatus.finished
-          : VocabularyStatus.loaded;
+      status = queue.isEmpty ? VocabularyStatus.empty : VocabularyStatus.loaded;
     } catch (error) {
       if (!_isCurrentRequest(revision, requestToken)) return;
       errorMessage = error is AppException
@@ -498,6 +510,7 @@ class VocabularyProvider extends ChangeNotifier {
     queue = [];
     currentIndex = 0;
     currentTopicId = null;
+    currentTopicName = null;
     currentMode = VocabularyLearningMode.topic;
     status = VocabularyStatus.idle;
     notifyListeners();

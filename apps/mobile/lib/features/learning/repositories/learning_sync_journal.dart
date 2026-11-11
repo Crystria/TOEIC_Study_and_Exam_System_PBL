@@ -53,18 +53,14 @@ class LearningPendingOperation {
     );
     final createdAt = DateTime.tryParse(json['createdAt'] as String? ?? '');
     if (createdAt == null) {
-      throw const FormatException(
-        'Learning journal timestamp is invalid.',
-      );
+      throw const FormatException('Learning journal timestamp is invalid.');
     }
     final operationId = _required(json, 'operationId');
     final entityId = _required(json, 'entityId');
     final baseEntityRevision = _required(json, 'baseEntityRevision');
     final parsedRevision = BigInt.tryParse(baseEntityRevision);
     if (parsedRevision == null || parsedRevision.isNegative) {
-      throw const FormatException(
-        'Learning journal base revision is invalid.',
-      );
+      throw const FormatException('Learning journal base revision is invalid.');
     }
 
     final rawQuality = json['quality'];
@@ -141,8 +137,7 @@ class LearningSyncJournal {
     return _serialize(() async {
       final operations = await _read(userId);
       final existingIndex = operations.indexWhere(
-        (operation) =>
-            operation.kind == kind && operation.entityId == entityId,
+        (operation) => operation.kind == kind && operation.entityId == entityId,
       );
 
       if (existingIndex >= 0) {
@@ -170,10 +165,7 @@ class LearningSyncJournal {
     });
   }
 
-  Future<void> remove({
-    required String userId,
-    required String operationId,
-  }) {
+  Future<void> remove({required String userId, required String operationId}) {
     _validateUserId(userId);
     if (operationId.trim().isEmpty) {
       throw ArgumentError.value(operationId, 'operationId');
@@ -241,9 +233,7 @@ class LearningSyncJournal {
         );
       }
       operations.add(
-        LearningPendingOperation.fromJson(
-          Map<String, dynamic>.from(entry),
-        ),
+        LearningPendingOperation.fromJson(Map<String, dynamic>.from(entry)),
       );
     }
     return operations;
@@ -258,7 +248,9 @@ class LearningSyncJournal {
     if (operations.isEmpty) {
       final existed = preferences.containsKey(key);
       if (existed && !await preferences.remove(key)) {
-        throw StateError('Không thể xóa thao tác học đã hoàn tất khỏi hàng đợi.');
+        throw StateError(
+          'Không thể xóa thao tác học đã hoàn tất khỏi hàng đợi.',
+        );
       }
       return;
     }

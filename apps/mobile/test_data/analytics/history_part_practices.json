@@ -1,0 +1,84 @@
+{
+  "source": "MockAnalyticsRepository._practiceItems",
+  "total": 5,
+  "page": 1,
+  "size": 20,
+  "totalPages": 1,
+  "items": [
+    {
+      "attemptId": "demo-practice-1",
+      "mode": "part",
+      "daysAgo": 1,
+      "partStats": [
+        {
+          "part": 5,
+          "correct": 18,
+          "total": 30
+        }
+      ],
+      "correctCount": 18,
+      "totalQuestions": 30,
+      "accuracy": 0.6
+    },
+    {
+      "attemptId": "demo-practice-3",
+      "mode": "part",
+      "daysAgo": 3,
+      "partStats": [
+        {
+          "part": 3,
+          "correct": 21,
+          "total": 30
+        }
+      ],
+      "correctCount": 21,
+      "totalQuestions": 30,
+      "accuracy": 0.7
+    },
+    {
+      "attemptId": "demo-practice-5",
+      "mode": "part",
+      "daysAgo": 5,
+      "partStats": [
+        {
+          "part": 7,
+          "correct": 22,
+          "total": 30
+        }
+      ],
+      "correctCount": 22,
+      "totalQuestions": 30,
+      "accuracy": 0.7333
+    },
+    {
+      "attemptId": "demo-practice-8",
+      "mode": "part",
+      "daysAgo": 8,
+      "partStats": [
+        {
+          "part": 2,
+          "correct": 20,
+          "total": 30
+        }
+      ],
+      "correctCount": 20,
+      "totalQuestions": 30,
+      "accuracy": 0.6667
+    },
+    {
+      "attemptId": "demo-practice-11",
+      "mode": "part",
+      "daysAgo": 11,
+      "partStats": [
+        {
+          "part": 6,
+          "correct": 17,
+          "total": 30
+        }
+      ],
+      "correctCount": 17,
+      "totalQuestions": 30,
+      "accuracy": 0.5667
+    }
+  ]
+}

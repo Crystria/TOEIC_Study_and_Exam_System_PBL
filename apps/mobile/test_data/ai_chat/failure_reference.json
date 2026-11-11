@@ -1,0 +1,80 @@
+{
+  "source": "AiChatFailureKind / AiChatFailure in app(3).zip",
+  "items": [
+    {
+      "kind": "network",
+      "retryable": true,
+      "blocksSending": false,
+      "statusCode": null
+    },
+    {
+      "kind": "timeout",
+      "retryable": true,
+      "blocksSending": false,
+      "statusCode": 408
+    },
+    {
+      "kind": "unauthenticated",
+      "retryable": false,
+      "blocksSending": true,
+      "statusCode": 401
+    },
+    {
+      "kind": "forbidden",
+      "retryable": false,
+      "blocksSending": true,
+      "statusCode": 403
+    },
+    {
+      "kind": "dailyQuotaExceeded",
+      "retryable": false,
+      "blocksSending": true,
+      "statusCode": 429,
+      "code": "daily_quota_exceeded"
+    },
+    {
+      "kind": "rateLimited",
+      "retryable": true,
+      "blocksSending": false,
+      "statusCode": 429,
+      "retryAfterSeconds": 30
+    },
+    {
+      "kind": "invalidRequest",
+      "retryable": false,
+      "blocksSending": false,
+      "statusCode": 400
+    },
+    {
+      "kind": "conversationNotFound",
+      "retryable": false,
+      "blocksSending": true,
+      "statusCode": 404
+    },
+    {
+      "kind": "serviceUnavailable",
+      "retryable": true,
+      "blocksSending": false,
+      "statusCode": 503
+    },
+    {
+      "kind": "server",
+      "retryable": true,
+      "blocksSending": false,
+      "statusCode": 500
+    },
+    {
+      "kind": "invalidResponse",
+      "retryable": false,
+      "blocksSending": false,
+      "statusCode": 200
+    },
+    {
+      "kind": "unknown",
+      "retryable": true,
+      "blocksSending": false,
+      "statusCode": null
+    }
+  ],
+  "note": "The fixture documents model normalization. Current repository is local mock; it does not simulate real HTTP failures automatically."
+}

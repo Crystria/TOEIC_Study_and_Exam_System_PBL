@@ -7,10 +7,7 @@ import '../models/registration_result.dart';
 /// Mock and API implementations share this contract. Methods not supported by
 /// the current Backend deliberately fail instead of pretending to succeed.
 abstract class AuthRepository {
-  Future<AppUser> login({
-    required String identifier,
-    required String password,
-  });
+  Future<AppUser> login({required String identifier, required String password});
 
   Future<RegistrationResult> register({
     required String fullName,
@@ -50,6 +47,19 @@ abstract class AuthRepository {
   }) async {
     throw const AuthRepositoryException(
       'Repository hiện chưa hỗ trợ cập nhật hồ sơ.',
+    );
+  }
+
+  /// Uploads an avatar through the Backend presign -> object storage PUT ->
+  /// confirm flow. [imageBytes] are supplied by the presentation layer; the
+  /// repository does not depend on a device file-picker package.
+  Future<AppUser> updateAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String contentType,
+  }) async {
+    throw const AuthRepositoryException(
+      'Repository hiện chưa hỗ trợ cập nhật ảnh đại diện.',
     );
   }
 }

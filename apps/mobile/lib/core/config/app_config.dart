@@ -36,6 +36,10 @@ class AppConfig {
     required this.environment,
     required String baseUrl,
     this.apiEnabled = false,
+    this.authApiEnabled,
+    this.learningApiEnabled,
+    this.mockTestApiEnabled,
+    this.analyticsApiEnabled,
     this.connectTimeout = const Duration(seconds: 15),
     this.sendTimeout = const Duration(seconds: 20),
     this.receiveTimeout = const Duration(seconds: 20),
@@ -47,20 +51,46 @@ class AppConfig {
   ///
   /// Supported defines:
   /// - APP_ENV: development | staging | production
-  /// - API_ENABLED: true | false
+  /// - API_ENABLED: legacy global fallback (true | false)
+  /// - API_AUTH_ENABLED: Auth/Profile API override
+  /// - API_LEARNING_ENABLED: Learning API override
+  /// - API_MOCK_TEST_ENABLED: Mock Test API override
+  /// - API_ANALYTICS_ENABLED: Analytics API override
+  /// Feature flags accept true/false (or 1/0); omitted values inherit API_ENABLED.
   /// - API_BASE_URL: absolute HTTP(S) URL, normally ending in /api/v1
   /// - CONNECT_TIMEOUT_MS: connection timeout in milliseconds
   /// - SEND_TIMEOUT_MS: request-send timeout in milliseconds
   /// - RECEIVE_TIMEOUT_MS: response-receive timeout in milliseconds
   factory AppConfig.fromEnvironment() {
+    const globalApiEnabled = bool.fromEnvironment(
+      'API_ENABLED',
+      defaultValue: false,
+    );
     return AppConfig(
       environment: AppEnvironment.parse(
         const String.fromEnvironment('APP_ENV', defaultValue: 'development'),
       ),
       baseUrl: const String.fromEnvironment('API_BASE_URL'),
-      apiEnabled: const bool.fromEnvironment(
-        'API_ENABLED',
-        defaultValue: false,
+      apiEnabled: globalApiEnabled,
+      authApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_AUTH_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_AUTH_ENABLED',
+      ),
+      learningApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_LEARNING_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_LEARNING_ENABLED',
+      ),
+      mockTestApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_MOCK_TEST_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_MOCK_TEST_ENABLED',
+      ),
+      analyticsApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_ANALYTICS_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_ANALYTICS_ENABLED',
       ),
       connectTimeout: Duration(
         milliseconds: const int.fromEnvironment(
@@ -85,7 +115,25 @@ class AppConfig {
 
   final AppEnvironment environment;
   final String baseUrl;
+
+  /// Legacy switch retained for existing launch commands. Feature-specific
+  /// flags override this value when supplied.
   final bool apiEnabled;
+  final bool? authApiEnabled;
+  final bool? learningApiEnabled;
+  final bool? mockTestApiEnabled;
+  final bool? analyticsApiEnabled;
+
+  bool get isAuthApiEnabled => authApiEnabled ?? apiEnabled;
+  bool get isLearningApiEnabled => learningApiEnabled ?? apiEnabled;
+  bool get isMockTestApiEnabled => mockTestApiEnabled ?? apiEnabled;
+  bool get isAnalyticsApiEnabled => analyticsApiEnabled ?? apiEnabled;
+  bool get isAnyApiEnabled =>
+      isAuthApiEnabled ||
+      isLearningApiEnabled ||
+      isMockTestApiEnabled ||
+      isAnalyticsApiEnabled;
+
   final Duration connectTimeout;
   final Duration sendTimeout;
   final Duration receiveTimeout;
@@ -98,11 +146,19 @@ class AppConfig {
   Uri? get baseUri => baseUrl.isEmpty ? null : Uri.parse(baseUrl);
 
   void _validate() {
-    if (apiEnabled && baseUrl.isEmpty) {
+    final hasProtectedFeatureApi =
+        isLearningApiEnabled || isMockTestApiEnabled || isAnalyticsApiEnabled;
+    if (hasProtectedFeatureApi && !isAuthApiEnabled) {
+      throw ArgumentError(
+        'Auth API phải được bật khi bật Learning, Mock Test hoặc Analytics API.',
+      );
+    }
+
+    if (isAnyApiEnabled && baseUrl.isEmpty) {
       throw ArgumentError.value(
         baseUrl,
         'baseUrl',
-        'API_BASE_URL is required when API_ENABLED=true.',
+        'API_BASE_URL is required when any Backend API feature is enabled.',
       );
     }
 
@@ -130,12 +186,33 @@ class AppConfig {
       );
     }
 
-    if (apiEnabled && isProduction && baseUri?.scheme != 'https') {
+    if (isAnyApiEnabled && isProduction && baseUri?.scheme != 'https') {
       throw ArgumentError.value(
         baseUrl,
         'baseUrl',
         'Production API_BASE_URL must use HTTPS.',
       );
+    }
+  }
+
+  static bool _parseFeatureFlag(
+    String value, {
+    required bool fallback,
+    required String name,
+  }) {
+    switch (value.trim().toLowerCase()) {
+      case '':
+        return fallback;
+      case 'true':
+      case '1':
+        return true;
+      case 'false':
+      case '0':
+        return false;
+      default:
+        throw FormatException(
+          '$name phải là true hoặc false nếu được khai báo.',
+        );
     }
   }
 

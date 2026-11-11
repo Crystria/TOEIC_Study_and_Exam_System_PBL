@@ -1,0 +1,28 @@
+{
+  "defaultDailyGoal": 20,
+  "minimum": 5,
+  "maximum": 100,
+  "step": 5,
+  "reviewRatio": 0.75,
+  "newWordRatio": 0.25,
+  "cases": [
+    {
+      "goal": 5,
+      "reviewCount": 4,
+      "newCount": 1
+    },
+    {
+      "goal": 20,
+      "reviewCount": 15,
+      "newCount": 5
+    },
+    {
+      "goal": 100,
+      "reviewCount": 75,
+      "newCount": 25
+    }
+  ],
+  "reminderDefault": true,
+  "reminderUiTime": "20:00",
+  "note": "UI stores reminderEnabled; OS notification scheduling is not implemented in current source."
+}

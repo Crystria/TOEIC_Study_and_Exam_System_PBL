@@ -215,10 +215,7 @@ class _GrammarListScreenState extends State<GrammarListScreen> {
                 const SizedBox(height: 10),
                 Text(
                   provider.persistenceError!,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.danger,
-                  ),
+                  style: const TextStyle(fontSize: 12, color: AppColors.danger),
                 ),
               ],
               const SizedBox(height: 18),

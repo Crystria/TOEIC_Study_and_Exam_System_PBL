@@ -1,0 +1,12 @@
+{
+  "predictedToeicScore": 685,
+  "eligibleFullCount": 5,
+  "usedAttemptIds": [
+    "0e990487-5e85-5a0e-b335-dce48fefcbc6",
+    "b99d4129-5b4a-5fd8-a82f-fde4f974ebf5",
+    "508d0715-18ce-5802-a878-ab18fa82ebed"
+  ],
+  "method": "DEMO_WEIGHTED_LATEST_3",
+  "windowDays": 30,
+  "asOf": "2026-11-11T09:10:00+00:00"
+}

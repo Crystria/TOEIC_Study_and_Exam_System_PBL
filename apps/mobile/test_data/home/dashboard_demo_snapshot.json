@@ -1,0 +1,31 @@
+{
+  "source": "AnalyticsHomeRepository + MockAnalyticsRepository; API_ENABLED=false and no LearningRepository injected",
+  "isDemoData": true,
+  "userName": "resolved from current AppUser; fallback is \"bạn\"",
+  "predictedScore": 685,
+  "streakDays": 12,
+  "vocabLearned": 248,
+  "lessonsDone": 14,
+  "mockTestCount": 5,
+  "todayActivityCount": 4,
+  "dueFlashcards": 15,
+  "weakAreas": [
+    {
+      "part": 2,
+      "accuracy": 70
+    },
+    {
+      "part": 3,
+      "accuracy": 68
+    },
+    {
+      "part": 5,
+      "accuracy": 62
+    },
+    {
+      "part": 7,
+      "accuracy": 71
+    }
+  ],
+  "derivedFrom": "Analytics mock fixture; not persisted per-user achievement data."
+}

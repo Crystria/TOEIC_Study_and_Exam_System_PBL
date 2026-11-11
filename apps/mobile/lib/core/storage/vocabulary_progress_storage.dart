@@ -66,8 +66,9 @@ class VocabularyProgressStorage {
     final legacy = preferences.getString(legacyStorageKey);
     if (legacy == null) return;
 
-    final alreadyQuarantined =
-        preferences.getString(unassignedLegacyStorageKey);
+    final alreadyQuarantined = preferences.getString(
+      unassignedLegacyStorageKey,
+    );
     if (alreadyQuarantined == null) {
       final saved = await preferences.setString(
         unassignedLegacyStorageKey,
@@ -271,7 +272,10 @@ class VocabularyProgressStorage {
     VocabularyProgressSnapshot snapshot,
   ) async {
     final preferences = await SharedPreferences.getInstance();
-    final saved = await preferences.setString(key, jsonEncode(snapshot.toJson()));
+    final saved = await preferences.setString(
+      key,
+      jsonEncode(snapshot.toJson()),
+    );
     if (!saved) {
       throw StateError('Không thể lưu tiến trình từ vựng vào thiết bị.');
     }

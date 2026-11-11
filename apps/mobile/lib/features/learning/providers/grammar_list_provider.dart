@@ -16,15 +16,18 @@ class GrammarListProvider extends ChangeNotifier {
   GrammarListProvider({
     LearningRepository? repository,
     GrammarProgressStorage? progressStorage,
+    List<GrammarLesson>? mockLessons,
     String? Function()? currentUserId,
   }) : _repository = repository,
        _progressStorage = progressStorage ?? GrammarProgressStorage(),
+       _mockLessons = mockLessons ?? GrammarCatalog.lessons,
        _currentUserId = currentUserId ?? _noUser;
 
   static String? _noUser() => null;
 
   final LearningRepository? _repository;
   final GrammarProgressStorage _progressStorage;
+  final List<GrammarLesson> _mockLessons;
   final String? Function() _currentUserId;
 
   GrammarListFetchStatus status = GrammarListFetchStatus.idle;
@@ -97,7 +100,7 @@ class GrammarListProvider extends ChangeNotifier {
 
   Future<List<GrammarLesson>> _loadMockLessons() async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    return GrammarCatalog.lessons;
+    return _mockLessons;
   }
 
   bool _isCurrent(int revision, String? userId) =>

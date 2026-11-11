@@ -18,10 +18,27 @@ class HomeProvider extends ChangeNotifier {
   DashboardData? data;
   String? errorMessage;
   int _requestRevision = 0;
+  Future<void>? _activeLoad;
 
-  Future<void> loadDashboard() async {
-    if (status == HomeStatus.loading) return;
-    final revision = _requestRevision;
+  /// Concurrent initial-load and pull-to-refresh calls share one request.
+  /// Returning the active Future keeps RefreshIndicator open until the
+  /// request actually completes instead of stopping immediately.
+  Future<void> loadDashboard() {
+    final activeLoad = _activeLoad;
+    if (activeLoad != null) return activeLoad;
+
+    final revision = ++_requestRevision;
+    late final Future<void> request;
+    request = _loadDashboard(revision).whenComplete(() {
+      if (revision == _requestRevision && identical(_activeLoad, request)) {
+        _activeLoad = null;
+      }
+    });
+    _activeLoad = request;
+    return request;
+  }
+
+  Future<void> _loadDashboard(int revision) async {
     status = HomeStatus.loading;
     errorMessage = null;
     notifyListeners();
@@ -41,6 +58,7 @@ class HomeProvider extends ChangeNotifier {
 
   void resetForUserScopeChange() {
     _requestRevision++;
+    _activeLoad = null;
     status = HomeStatus.idle;
     data = null;
     errorMessage = null;

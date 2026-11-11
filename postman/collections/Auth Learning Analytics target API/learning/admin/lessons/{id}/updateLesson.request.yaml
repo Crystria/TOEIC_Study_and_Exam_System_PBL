@@ -1,0 +1,87 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/learning/admin/lessons/:id"
+method: PATCH
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: id
+    value: b2b638c2-0db0-4256-a945-715659ac6882
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "lessonTitle": "string",
+      "category": "string",
+      "contentMarkdown": "string",
+      "status": "DRAFT"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "lessonTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "contentMarkdown": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "PUBLISHED"
+          ]
+        }
+      },
+      "required": []
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/updateLesson.resources/examples
+order: 2000

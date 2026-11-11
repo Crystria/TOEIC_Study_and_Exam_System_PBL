@@ -4,12 +4,12 @@ import 'repositories/ai_chat_repository.dart';
 ///
 /// AI Chat deliberately stays local/mock until the Backend identity and
 /// conversation-ownership checks pass the security review. This decision is
-/// independent of the global API_ENABLED flag used by other features.
+/// kept independent from the Auth, Learning, Mock Test, and Analytics API flags.
 class AiChatDependencies {
   AiChatDependencies._();
 
   /// The current AI Backend does not meet the requirements for safe mobile
-  /// integration. Do not change this to true merely because API_ENABLED is
+  /// integration. Do not change this to true merely because any other API feature is
   /// true; the blockers must first be fixed and verified in the Backend.
   static const bool backendIntegrationSafetyPassed = false;
 

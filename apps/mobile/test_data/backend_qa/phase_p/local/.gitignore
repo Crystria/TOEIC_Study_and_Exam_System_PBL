@@ -1,0 +1,3 @@
+# Only local Postman environment exports may contain credentials and session tokens.
+*
+!.gitignore

@@ -1,0 +1,4 @@
+# Live IDs/response evidence can only be created from the team's QA overlay.
+*
+!.gitignore
+!README.md

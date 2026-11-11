@@ -73,6 +73,96 @@ void main() {
     },
   );
 
+  test('invalidates only the matching user after refresh failure', () async {
+    final coordinator = UserScopedDataCoordinator(
+      vocabularyStorage: VocabularyProgressStorage(),
+      resetCallbacks: const [],
+      loadCallbacks: const [],
+    );
+    final provider = AuthSessionProvider(
+      repository: _SessionAuthRepository(),
+      userDataCoordinator: coordinator,
+    );
+    addTearDown(provider.dispose);
+
+    await provider.setCurrentUser(_user('learner-a'));
+    await provider.invalidateSessionForUser('learner-other');
+
+    expect(provider.isAuthenticated, isTrue);
+    expect(provider.currentUserId, 'learner-a');
+
+    await provider.invalidateSessionForUser('learner-a');
+
+    expect(provider.status, AuthSessionStatus.unauthenticated);
+    expect(provider.currentUser, isNull);
+    expect(coordinator.activeUserId, isNull);
+  });
+
+  test(
+    'updates the current user avatar and exposes its loading state',
+    () async {
+      final coordinator = UserScopedDataCoordinator(
+        vocabularyStorage: VocabularyProgressStorage(),
+        resetCallbacks: const [],
+        loadCallbacks: const [],
+      );
+      final repository = _AvatarAuthRepository();
+      final provider = AuthSessionProvider(
+        repository: repository,
+        userDataCoordinator: coordinator,
+      );
+      addTearDown(provider.dispose);
+
+      await provider.setCurrentUser(_user('learner-avatar'));
+      final updatedUser = _user('learner-avatar')
+          .copyWith(avatarUrl: 'https://cdn.example.test/avatar.png');
+      repository.avatarResult = updatedUser;
+
+      final result = await provider.updateAvatar(
+        imageBytes: const [1, 2, 3],
+        contentType: 'image/png',
+      );
+
+      expect(result?.avatarUrl, updatedUser.avatarUrl);
+      expect(provider.currentUser?.avatarUrl, updatedUser.avatarUrl);
+      expect(provider.isUpdatingAvatar, isFalse);
+      expect(provider.errorMessage, isNull);
+    },
+  );
+
+  test('switching accounts invalidates a pending avatar update', () async {
+    final coordinator = UserScopedDataCoordinator(
+      vocabularyStorage: VocabularyProgressStorage(),
+      resetCallbacks: const [],
+      loadCallbacks: const [],
+    );
+    final repository = _DelayedAvatarAuthRepository();
+    final provider = AuthSessionProvider(
+      repository: repository,
+      userDataCoordinator: coordinator,
+    );
+    addTearDown(provider.dispose);
+
+    await provider.setCurrentUser(_user('learner-avatar-a'));
+    final pendingUpdate = provider.updateAvatar(
+      imageBytes: const [1, 2, 3],
+      contentType: 'image/png',
+    );
+    expect(provider.isUpdatingAvatar, isTrue);
+
+    await provider.setCurrentUser(_user('learner-avatar-b'));
+    expect(provider.isUpdatingAvatar, isFalse);
+
+    repository.avatarCompleter.complete(
+      _user('learner-avatar-a')
+          .copyWith(avatarUrl: 'https://cdn.example.test/stale.png'),
+    );
+    expect(await pendingUpdate, isNull);
+    expect(provider.currentUserId, 'learner-avatar-b');
+    expect(provider.currentUser?.avatarUrl, isNull);
+    expect(provider.isUpdatingAvatar, isFalse);
+  });
+
   test('a late session restore cannot overwrite a newer login', () async {
     final coordinator = UserScopedDataCoordinator(
       vocabularyStorage: VocabularyProgressStorage(),
@@ -137,6 +227,28 @@ class _SessionAuthRepository extends FakeAuthRepository {
 
   @override
   Future<bool> logout() async => logoutResult;
+}
+
+class _AvatarAuthRepository extends FakeAuthRepository {
+  AppUser? avatarResult;
+
+  @override
+  Future<AppUser> updateAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String contentType,
+  }) async => avatarResult ?? _user(userId);
+}
+
+class _DelayedAvatarAuthRepository extends FakeAuthRepository {
+  final Completer<AppUser> avatarCompleter = Completer<AppUser>();
+
+  @override
+  Future<AppUser> updateAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String contentType,
+  }) => avatarCompleter.future;
 }
 
 class _DelayedAuthRepository extends FakeAuthRepository {

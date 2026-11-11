@@ -259,7 +259,6 @@ class QuickQuizProvider extends ChangeNotifier {
     return true;
   }
 
-
   /// Discards user-specific quiz state when the active account changes.
   void resetForUserScopeChange() {
     _scopeRevision++;

@@ -4,7 +4,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalExamAnswer {
-  const LocalExamAnswer({required this.selectedOption, required this.updatedAt});
+  const LocalExamAnswer({
+    required this.selectedOption,
+    required this.updatedAt,
+  });
 
   final String? selectedOption;
   final DateTime updatedAt;
@@ -74,8 +77,10 @@ class ExamAttemptLocalStore {
       final data = Map<String, dynamic>.from(entry.value as Map);
       final selected = data['selectedOption'];
       final updatedAt = DateTime.tryParse(data['updatedAt'] as String? ?? '');
-      if ((selected != null && selected is! String) || updatedAt == null) continue;
-      if (selected is String && !const ['A', 'B', 'C', 'D'].contains(selected)) continue;
+      if ((selected != null && selected is! String) || updatedAt == null)
+        continue;
+      if (selected is String && !const ['A', 'B', 'C', 'D'].contains(selected))
+        continue;
       result[entry.key] = LocalExamAnswer(
         selectedOption: selected as String?,
         updatedAt: updatedAt.toUtc(),
@@ -84,7 +89,10 @@ class ExamAttemptLocalStore {
     return Map.unmodifiable(result);
   }
 
-  Future<void> clearAttempt({required String userId, required String attemptId}) {
+  Future<void> clearAttempt({
+    required String userId,
+    required String attemptId,
+  }) {
     _validate(userId, attemptId, '_');
     return _serialize(() async {
       final all = await _read(userId);
@@ -104,7 +112,9 @@ class ExamAttemptLocalStore {
     final result = <String, Map<String, dynamic>>{};
     for (final entry in decoded.entries) {
       if (entry.key is! String || entry.value is! Map) continue;
-      result[entry.key as String] = Map<String, dynamic>.from(entry.value as Map);
+      result[entry.key as String] = Map<String, dynamic>.from(
+        entry.value as Map,
+      );
     }
     return result;
   }
@@ -122,14 +132,19 @@ class ExamAttemptLocalStore {
       return;
     }
     final saved = await preferences.setString(key, jsonEncode(all));
-    if (!saved) throw StateError('Không thể lưu câu trả lời tạm trên thiết bị.');
+    if (!saved)
+      throw StateError('Không thể lưu câu trả lời tạm trên thiết bị.');
   }
 
   String _key(String userId) => '$_prefix${Uri.encodeComponent(userId.trim())}';
 
   void _validate(String userId, String attemptId, String questionId) {
-    if (userId.trim().isEmpty || attemptId.trim().isEmpty || questionId.trim().isEmpty) {
-      throw ArgumentError('userId, attemptId và questionId không được để trống.');
+    if (userId.trim().isEmpty ||
+        attemptId.trim().isEmpty ||
+        questionId.trim().isEmpty) {
+      throw ArgumentError(
+        'userId, attemptId và questionId không được để trống.',
+      );
     }
   }
 

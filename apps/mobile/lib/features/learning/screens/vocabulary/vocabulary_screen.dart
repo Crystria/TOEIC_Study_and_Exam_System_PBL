@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/navigation/full_screen_flow_scope.dart';
 
 import '../../../../shared/widgets/app_badge.dart';
+import '../../../../shared/widgets/data_source_notice.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../theme/app_colors.dart';
 import '../../providers/vocabulary_provider.dart';
@@ -80,9 +81,11 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
   void _navigateToCompletion() {
     if (!mounted || _completionNavigated) return;
     _completionNavigated = true;
+    final topicName =
+        context.read<VocabularyProvider>().currentTopicName ?? widget.topicName;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => VocabularyCompletionScreen(topicName: widget.topicName),
+        builder: (_) => VocabularyCompletionScreen(topicName: topicName),
       ),
     );
   }
@@ -91,13 +94,15 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
     if (_isGrading) return;
 
     final navigator = Navigator.of(context);
+    final isDemoData = context.read<VocabularyProvider>().isDemoData;
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Thoát phiên học?'),
-        content: const Text(
-          'Các từ đã đánh giá được lưu ngay trên thiết bị. '
-          'Bạn có muốn quay lại danh sách từ vựng?',
+        content: Text(
+          isDemoData
+              ? 'Các từ đã đánh giá được lưu trên thiết bị. Bạn có muốn quay lại danh sách từ vựng?'
+              : 'Các từ đã đánh giá được Backend xác nhận và lưu vào tiến trình tài khoản. Bạn có muốn quay lại danh sách từ vựng?',
         ),
         actions: [
           TextButton(
@@ -139,17 +144,80 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
         child: ColoredBox(
           color: AppColors.bg,
           child: Center(
-            child: ElevatedButton(
-              onPressed: provider.reloadCurrentSession,
-              child: const Text('Tải lại từ vựng'),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.cloud_off_outlined,
+                    size: 42,
+                    color: AppColors.slate400,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    provider.errorMessage ??
+                        'Không thể tải từ vựng. Vui lòng thử lại.',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.slate700),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: provider.reloadCurrentSession,
+                    child: const Text('Thử tải lại'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       );
     }
 
-    if (provider.status == VocabularyStatus.finished ||
-        provider.current == null) {
+    if (provider.status == VocabularyStatus.empty ||
+        (provider.status == VocabularyStatus.loaded &&
+            provider.current == null)) {
+      return FullScreenFlowScope(
+        child: ColoredBox(
+          color: AppColors.bg,
+          child: SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.menu_book_outlined,
+                      size: 54,
+                      color: AppColors.slate400,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      widget.mode == VocabularyLearningMode.random
+                          ? 'Hiện chưa có từ vựng phù hợp để học ngẫu nhiên.'
+                          : 'Chủ đề này hiện chưa có từ cần học. Bạn có thể chọn chủ đề khác hoặc quay lại sau.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: AppColors.slate700,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Quay lại danh sách từ vựng'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (provider.status == VocabularyStatus.finished) {
       return FullScreenFlowScope(
         child: ColoredBox(
           color: AppColors.bg,
@@ -211,12 +279,17 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  DataSourceNotice(
+                    isDemoData: provider.isDemoData,
+                    featureName: 'nội dung học từ vựng',
+                  ),
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
-                          widget.topicName,
+                          provider.currentTopicName ?? widget.topicName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(

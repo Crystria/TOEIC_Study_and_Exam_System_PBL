@@ -1,0 +1,107 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/analytics/prediction"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "predictedToeicScore": 260,
+        "eligibleFullCount": 1824261636,
+        "usedAttemptIds": [
+          "7805cb46-4887-4506-9a83-d5d789d0edf1",
+          "f4b25d90-dc34-439a-9975-92ec0d8e3142",
+          "5b60df77-c161-42b0-9959-90c415801871"
+        ],
+        "reason": null,
+        "method": "",
+        "windowDays": "",
+        "asOf": "Z"
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "predictedToeicScore": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eligibleFullCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "usedAttemptIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "asOf": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          }
+        },
+        "required": [
+          "predictedToeicScore",
+          "eligibleFullCount",
+          "usedAttemptIds",
+          "reason",
+          "method",
+          "windowDays",
+          "asOf"
+        ]
+      }
+order: 1000

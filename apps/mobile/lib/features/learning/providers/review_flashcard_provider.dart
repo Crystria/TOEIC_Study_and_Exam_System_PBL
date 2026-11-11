@@ -91,9 +91,7 @@ class ReviewFlashcardProvider extends ChangeNotifier {
 
   Future<void> grade(int quality) async {
     final word = currentWord;
-    if (status != ReviewFlashcardStatus.loaded ||
-        isGrading ||
-        word == null) {
+    if (status != ReviewFlashcardStatus.loaded || isGrading || word == null) {
       return;
     }
     if (quality != 1 && quality != 3 && quality != 5) return;

@@ -1,0 +1,9 @@
+{
+  "source": "AiChatUsage.preview() defaults",
+  "limit": 20,
+  "used": 3,
+  "remaining": 17,
+  "isAuthoritative": false,
+  "resetAt": "next local midnight",
+  "warning": "This is session-local preview quota, not authoritative Backend usage."
+}

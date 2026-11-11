@@ -1,0 +1,71 @@
+{
+  "storageKeyPrefix": "toeic.learning.grammar_progress.v1.user.",
+  "jsonShape": {
+    "startedLessonIds": [
+      "g1"
+    ],
+    "completedLessonIds": [
+      "g2"
+    ],
+    "revisions": {
+      "g2": "demo-revision-1"
+    }
+  },
+  "scenarios": [
+    {
+      "id": "GRAMMAR-01",
+      "name": "No progress",
+      "snapshot": {
+        "startedLessonIds": [],
+        "completedLessonIds": [],
+        "revisions": {}
+      },
+      "expected": "All lessons Not Started."
+    },
+    {
+      "id": "GRAMMAR-02",
+      "name": "In progress",
+      "snapshot": {
+        "startedLessonIds": [
+          "g1",
+          "g3"
+        ],
+        "completedLessonIds": [],
+        "revisions": {}
+      },
+      "expected": "g1 and g3 are In Progress."
+    },
+    {
+      "id": "GRAMMAR-03",
+      "name": "Completed",
+      "snapshot": {
+        "startedLessonIds": [
+          "g1"
+        ],
+        "completedLessonIds": [
+          "g2",
+          "g4"
+        ],
+        "revisions": {
+          "g2": "r1",
+          "g4": "r1"
+        }
+      },
+      "expected": "Completed IDs are removed from started set; completedCount=2."
+    },
+    {
+      "id": "GRAMMAR-04",
+      "name": "Start and complete same lesson",
+      "steps": [
+        "markStarted(g1)",
+        "markCompleted(g1, revision=r2)"
+      ],
+      "expected": "g1 appears only in completedLessonIds."
+    },
+    {
+      "id": "GRAMMAR-05",
+      "name": "Account separation",
+      "expected": "Progress for user A must not be displayed for user B."
+    }
+  ]
+}

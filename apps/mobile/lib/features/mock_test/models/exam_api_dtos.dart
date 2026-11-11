@@ -63,9 +63,11 @@ bool? _optionalBool(Object? value, String field) {
 }
 
 DateTime _requiredDate(Object? value, String field) {
-  if (value is! String) throw FormatException('Trường $field phải là ISO date.');
+  if (value is! String)
+    throw FormatException('Trường $field phải là ISO date.');
   final result = DateTime.tryParse(value);
-  if (result == null) throw FormatException('Trường $field không phải date hợp lệ.');
+  if (result == null)
+    throw FormatException('Trường $field không phải date hợp lệ.');
   return result.toUtc();
 }
 
@@ -116,7 +118,8 @@ class ExamPageDto<T> {
       throw const FormatException('Metadata phân trang Exam API không hợp lệ.');
     }
     final expectedPages = total == 0 ? 0 : (total / size).ceil();
-    if (rawItems.length > size || totalPages != expectedPages ||
+    if (rawItems.length > size ||
+        totalPages != expectedPages ||
         page > (totalPages == 0 ? 1 : totalPages)) {
       throw const FormatException('Metadata phân trang Exam API không hợp lệ.');
     }
@@ -148,7 +151,8 @@ class ExamTestDto {
   factory ExamTestDto.fromObject(Object? value) {
     final json = examJsonMap(value, context: 'Exam test');
     final rawQuestions = json['questions'];
-    final totalQuestions = json['totalQuestions'] ??
+    final totalQuestions =
+        json['totalQuestions'] ??
         (rawQuestions is List ? rawQuestions.length : null);
     return ExamTestDto(
       testId: _uuid(json, 'testId'),
@@ -188,7 +192,9 @@ class ExamTestPartsDto {
       final item = examJsonMap(raw, context: 'Exam Part');
       final part = _requiredInt(item['part'], 'part');
       if (part < 1 || part > 7 || !seen.add(part)) {
-        throw const FormatException('Cấu trúc Part bị trùng hoặc không hợp lệ.');
+        throw const FormatException(
+          'Cấu trúc Part bị trùng hoặc không hợp lệ.',
+        );
       }
       final rawErrors = item['errors'];
       if (rawErrors != null && rawErrors is! List) {
@@ -196,25 +202,32 @@ class ExamTestPartsDto {
       }
       final errors = (rawErrors as List? ?? const []);
       if (errors.any((error) => error is! String)) {
-        throw const FormatException('Part errors chứa giá trị không phải chuỗi.');
+        throw const FormatException(
+          'Part errors chứa giá trị không phải chuỗi.',
+        );
       }
       final available = item['available'];
       if (available is! bool) {
         throw const FormatException('Part available phải là boolean.');
       }
-      final totalQuestions = _requiredInt(item['totalQuestions'], 'totalQuestions');
+      final totalQuestions = _requiredInt(
+        item['totalQuestions'],
+        'totalQuestions',
+      );
       final groupCount = _requiredInt(item['groupCount'], 'groupCount');
       if (totalQuestions < 0 || groupCount < 0) {
         throw const FormatException('Part count không được âm.');
       }
-      parts.add(TestPart(
-        part: part,
-        title: 'Part $part',
-        totalQuestions: totalQuestions,
-        groupCount: groupCount,
-        available: available,
-        errors: List<String>.unmodifiable(errors.cast<String>()),
-      ));
+      parts.add(
+        TestPart(
+          part: part,
+          title: 'Part $part',
+          totalQuestions: totalQuestions,
+          groupCount: groupCount,
+          available: available,
+          errors: List<String>.unmodifiable(errors.cast<String>()),
+        ),
+      );
     }
     parts.sort((a, b) => a.part.compareTo(b.part));
     return ExamTestPartsDto(testId: testId, parts: List.unmodifiable(parts));
@@ -310,7 +323,9 @@ class ExamAttemptDto {
     if (rawParts is! List || (!readOnlySnapshot && rawParts.isEmpty)) {
       throw const FormatException('Attempt phải có ít nhất một Part.');
     }
-    final parts = rawParts.map((value) => _requiredInt(value, 'parts[]')).toList();
+    final parts = rawParts
+        .map((value) => _requiredInt(value, 'parts[]'))
+        .toList();
     if (parts.toSet().length != parts.length ||
         parts.any((part) => part < 1 || part > 7)) {
       throw const FormatException('Attempt parts không hợp lệ.');
@@ -320,7 +335,9 @@ class ExamAttemptDto {
     final rawQuestions = json['questions'];
     final rawAnswers = json['answers'];
     if (rawGroups is! List || rawQuestions is! List || rawAnswers is! List) {
-      throw const FormatException('Attempt snapshot bị thiếu groups/questions/answers.');
+      throw const FormatException(
+        'Attempt snapshot bị thiếu groups/questions/answers.',
+      );
     }
 
     final groups = rawGroups.map(_parseGroup).toList(growable: false);
@@ -336,14 +353,19 @@ class ExamAttemptDto {
           : a.question.orderNo.compareTo(b.question.orderNo);
     });
 
-    final questionIds = questions.map((item) => item.question.questionId).toSet();
+    final questionIds = questions
+        .map((item) => item.question.questionId)
+        .toSet();
     final groupById = {for (final group in groups) group.groupId: group};
     if (questionIds.length != questions.length ||
-        questions.any((item) =>
-            !parts.contains(item.question.part) ||
-            (item.question.groupId != null &&
-                (groupById[item.question.groupId] == null ||
-                    groupById[item.question.groupId]!.part != item.question.part)))) {
+        questions.any(
+          (item) =>
+              !parts.contains(item.question.part) ||
+              (item.question.groupId != null &&
+                  (groupById[item.question.groupId] == null ||
+                      groupById[item.question.groupId]!.part !=
+                          item.question.part)),
+        )) {
       throw const FormatException('Câu hỏi snapshot không khớp Attempt.');
     }
 
@@ -353,11 +375,14 @@ class ExamAttemptDto {
       final answer = examJsonMap(raw, context: 'Attempt answer');
       final questionId = _uuid(answer, 'questionId');
       if (!questionIds.contains(questionId)) {
-        throw const FormatException('Attempt answer chứa questionId ngoài snapshot.');
+        throw const FormatException(
+          'Attempt answer chứa questionId ngoài snapshot.',
+        );
       }
       final selected = answer['selectedOption'];
       if (selected == null) continue;
-      if (selected is! String || !const ['A', 'B', 'C', 'D'].contains(selected)) {
+      if (selected is! String ||
+          !const ['A', 'B', 'C', 'D'].contains(selected)) {
         throw const FormatException('selectedOption của Attempt không hợp lệ.');
       }
       answers[questionId] = selected;
@@ -366,18 +391,30 @@ class ExamAttemptDto {
     final totalQuestions = json['totalQuestions'] == null && readOnlySnapshot
         ? 0
         : _requiredInt(json['totalQuestions'], 'totalQuestions');
-    final durationSeconds = _requiredInt(json['durationSeconds'], 'durationSeconds');
-    final remainingSeconds = _requiredInt(json['remainingSeconds'], 'remainingSeconds');
-    if ((!readOnlySnapshot && totalQuestions < 1) || totalQuestions < 0 ||
-        durationSeconds < 1 || remainingSeconds < 0 ||
+    final durationSeconds = _requiredInt(
+      json['durationSeconds'],
+      'durationSeconds',
+    );
+    final remainingSeconds = _requiredInt(
+      json['remainingSeconds'],
+      'remainingSeconds',
+    );
+    if ((!readOnlySnapshot && totalQuestions < 1) ||
+        totalQuestions < 0 ||
+        durationSeconds < 1 ||
+        remainingSeconds < 0 ||
         remainingSeconds > durationSeconds) {
       throw const FormatException('Attempt duration/count không hợp lệ.');
     }
     if (!readOnlySnapshot && totalQuestions != questions.length) {
-      throw const FormatException('totalQuestions không khớp question snapshot.');
+      throw const FormatException(
+        'totalQuestions không khớp question snapshot.',
+      );
     }
-    if (!readOnlySnapshot && mode == TestAttemptMode.full &&
-        (parts.length != 7 || totalQuestions != 200 ||
+    if (!readOnlySnapshot &&
+        mode == TestAttemptMode.full &&
+        (parts.length != 7 ||
+            totalQuestions != 200 ||
             !const [1, 2, 3, 4, 5, 6, 7].every((p) => parts.contains(p)))) {
       throw const FormatException('FULL attempt phải có đủ 200 câu và 7 Part.');
     }
@@ -387,15 +424,21 @@ class ExamAttemptDto {
         : examJsonMap(json['scoring'], context: 'Attempt scoring');
     final rawStats = json['partStats'];
     final rawStatsList = rawStats is List ? rawStats : const <Object?>[];
-    final partStats = rawStatsList.map((raw) {
-      final stat = examJsonMap(raw, context: 'Attempt part statistic');
-      return MockTestPartSubmission(
-        part: _requiredInt(stat['part'], 'part'),
-        answeredCount: 0,
-        correctCount: _optionalInt(stat['correctCount'], 'correctCount') ?? 0,
-        totalQuestions: _requiredInt(stat['totalQuestions'], 'totalQuestions'),
-      );
-    }).toList(growable: false);
+    final partStats = rawStatsList
+        .map((raw) {
+          final stat = examJsonMap(raw, context: 'Attempt part statistic');
+          return MockTestPartSubmission(
+            part: _requiredInt(stat['part'], 'part'),
+            answeredCount: 0,
+            correctCount:
+                _optionalInt(stat['correctCount'], 'correctCount') ?? 0,
+            totalQuestions: _requiredInt(
+              stat['totalQuestions'],
+              'totalQuestions',
+            ),
+          );
+        })
+        .toList(growable: false);
 
     return ExamAttemptDto(
       attemptId: _uuid(json, 'attemptId'),
@@ -404,7 +447,10 @@ class ExamAttemptDto {
       mode: mode,
       status: status,
       startedAt: _requiredDate(json['startedAt'], 'startedAt'),
-      deadlineAt: _requiredDate(json['deadlineAt'] ?? json['deadline'], 'deadlineAt'),
+      deadlineAt: _requiredDate(
+        json['deadlineAt'] ?? json['deadline'],
+        'deadlineAt',
+      ),
       durationSeconds: durationSeconds,
       serverTime: _requiredDate(json['serverTime'], 'serverTime'),
       remainingSeconds: remainingSeconds,
@@ -423,11 +469,18 @@ class ExamAttemptDto {
       correctCount: _optionalInt(json['correctCount'], 'correctCount'),
       accuracy: _optionalDouble(json['accuracy'], 'accuracy'),
       correctListeningCount: _optionalInt(
-        json['correctListeningCount'], 'correctListeningCount'),
+        json['correctListeningCount'],
+        'correctListeningCount',
+      ),
       correctReadingCount: _optionalInt(
-        json['correctReadingCount'], 'correctReadingCount'),
+        json['correctReadingCount'],
+        'correctReadingCount',
+      ),
       scoreDisclaimer: _optionalString(json, 'scoreDisclaimer'),
-      scoreTableVersion: _optionalString(scoring ?? <String, dynamic>{}, 'tableVersion'),
+      scoreTableVersion: _optionalString(
+        scoring ?? <String, dynamic>{},
+        'tableVersion',
+      ),
       scoreOfficial: _optionalBool(scoring?['official'], 'scoring.official'),
       partStats: List.unmodifiable(partStats),
     );
@@ -446,9 +499,7 @@ class ExamAttemptDto {
     readOnlySnapshot: readOnlySnapshot,
   );
 
-  TestAttemptSession toSession({
-    required Map<String, String> mergedAnswers,
-  }) {
+  TestAttemptSession toSession({required Map<String, String> mergedAnswers}) {
     if (status != TestAttemptStatus.inProgress) {
       throw StateError('Attempt đã kết thúc, không thể tạo session làm bài.');
     }
@@ -485,38 +536,51 @@ class ExamAttemptDto {
       }
     }
 
-    final reviews = questions.map((item) {
-      final question = item.question;
-      return MockTestQuestionReview(
-        question: question,
-        correctOption: item.correctOption!,
-        selectedOption: answers[question.questionId],
-        explanation: item.explanation,
-      );
-    }).toList(growable: false);
+    final reviews = questions
+        .map((item) {
+          final question = item.question;
+          return MockTestQuestionReview(
+            question: question,
+            correctOption: item.correctOption!,
+            selectedOption: answers[question.questionId],
+            explanation: item.explanation,
+          );
+        })
+        .toList(growable: false);
 
     final answeredCount = answers.length;
     final computedCorrect = reviews.where((review) => review.isCorrect).length;
     final correct = correctCount ?? computedCorrect;
     final stats = partStats.isEmpty
         ? _derivePartStats(reviews)
-        : partStats.map((item) {
-            final answered = reviews.where((review) =>
-              review.question.part == item.part && review.isAnswered).length;
-            return MockTestPartSubmission(
-              part: item.part,
-              answeredCount: answered,
-              correctCount: item.correctCount,
-              totalQuestions: item.totalQuestions,
-            );
-          }).toList(growable: false);
+        : partStats
+              .map((item) {
+                final answered = reviews
+                    .where(
+                      (review) =>
+                          review.question.part == item.part &&
+                          review.isAnswered,
+                    )
+                    .length;
+                return MockTestPartSubmission(
+                  part: item.part,
+                  answeredCount: answered,
+                  correctCount: item.correctCount,
+                  totalQuestions: item.totalQuestions,
+                );
+              })
+              .toList(growable: false);
 
-    final listeningCorrect = correctListeningCount ?? reviews
-        .where((review) => review.question.part <= 4 && review.isCorrect)
-        .length;
-    final readingCorrect = correctReadingCount ?? reviews
-        .where((review) => review.question.part >= 5 && review.isCorrect)
-        .length;
+    final listeningCorrect =
+        correctListeningCount ??
+        reviews
+            .where((review) => review.question.part <= 4 && review.isCorrect)
+            .length;
+    final readingCorrect =
+        correctReadingCount ??
+        reviews
+            .where((review) => review.question.part >= 5 && review.isCorrect)
+            .length;
 
     return MockTestSubmission(
       attemptId: attemptId,
@@ -532,12 +596,16 @@ class ExamAttemptDto {
       partStats: List.unmodifiable(stats),
       questionReviews: List.unmodifiable(reviews),
       groups: groups,
-      listeningCorrectCount: mode == TestAttemptMode.full ? listeningCorrect : null,
+      listeningCorrectCount: mode == TestAttemptMode.full
+          ? listeningCorrect
+          : null,
       readingCorrectCount: mode == TestAttemptMode.full ? readingCorrect : null,
       listeningScore: mode == TestAttemptMode.full ? scoreListening : null,
       readingScore: mode == TestAttemptMode.full ? scoreReading : null,
       scoreDisclaimer: mode == TestAttemptMode.full ? scoreDisclaimer : null,
-      scoreTableVersion: mode == TestAttemptMode.full ? scoreTableVersion : null,
+      scoreTableVersion: mode == TestAttemptMode.full
+          ? scoreTableVersion
+          : null,
       scoreOfficial: mode == TestAttemptMode.full ? scoreOfficial : null,
     );
   }
@@ -545,16 +613,18 @@ class ExamAttemptDto {
   List<MockTestPartSubmission> _derivePartStats(
     List<MockTestQuestionReview> reviews,
   ) {
-    return parts.map((part) {
-      final items = reviews.where((review) => review.question.part == part);
-      final values = items.toList(growable: false);
-      return MockTestPartSubmission(
-        part: part,
-        answeredCount: values.where((review) => review.isAnswered).length,
-        correctCount: values.where((review) => review.isCorrect).length,
-        totalQuestions: values.length,
-      );
-    }).toList(growable: false);
+    return parts
+        .map((part) {
+          final items = reviews.where((review) => review.question.part == part);
+          final values = items.toList(growable: false);
+          return MockTestPartSubmission(
+            part: part,
+            answeredCount: values.where((review) => review.isAnswered).length,
+            correctCount: values.where((review) => review.isCorrect).length,
+            totalQuestions: values.length,
+          );
+        })
+        .toList(growable: false);
   }
 }
 
@@ -570,23 +640,24 @@ class ExamQuestionSnapshotDto {
   final String? explanation;
 }
 
-
 TestAttemptGroup _parseGroup(Object? value) {
   final json = examJsonMap(value, context: 'Attempt group');
   final rawAssets = json['assets'];
   if (rawAssets != null && rawAssets is! List) {
     throw const FormatException('Group assets phải là danh sách.');
   }
-  final assets = (rawAssets as List? ?? const []).map((raw) {
-    final asset = examJsonMap(raw, context: 'Attempt group asset');
-    return TestAttemptGroupAsset(
-      assetId: _requiredString(asset, 'assetId'),
-      kind: _requiredString(asset, 'kind'),
-      orderNo: _requiredInt(asset['orderNo'], 'orderNo'),
-      content: _optionalString(asset, 'content'),
-      publicUrl: _optionalString(asset, 'publicUrl'),
-    );
-  }).toList(growable: false);
+  final assets = (rawAssets as List? ?? const [])
+      .map((raw) {
+        final asset = examJsonMap(raw, context: 'Attempt group asset');
+        return TestAttemptGroupAsset(
+          assetId: _requiredString(asset, 'assetId'),
+          kind: _requiredString(asset, 'kind'),
+          orderNo: _requiredInt(asset['orderNo'], 'orderNo'),
+          content: _optionalString(asset, 'content'),
+          publicUrl: _optionalString(asset, 'publicUrl'),
+        );
+      })
+      .toList(growable: false);
 
   return TestAttemptGroup(
     groupId: _uuid(json, 'groupId'),
@@ -607,17 +678,19 @@ ExamQuestionSnapshotDto _parseQuestion(Object? value) {
   if (rawOptions is! List || rawOptions.isEmpty) {
     throw const FormatException('Question options bị thiếu.');
   }
-  final options = rawOptions.map((raw) {
-    final option = examJsonMap(raw, context: 'Question option');
-    final code = _requiredString(option, 'optionCode');
-    if (!const ['A', 'B', 'C', 'D'].contains(code)) {
-      throw const FormatException('Question optionCode không hợp lệ.');
-    }
-    return TestAttemptOption(
-      optionCode: code,
-      optionText: _requiredText(option, 'optionText'),
-    );
-  }).toList(growable: false);
+  final options = rawOptions
+      .map((raw) {
+        final option = examJsonMap(raw, context: 'Question option');
+        final code = _requiredString(option, 'optionCode');
+        if (!const ['A', 'B', 'C', 'D'].contains(code)) {
+          throw const FormatException('Question optionCode không hợp lệ.');
+        }
+        return TestAttemptOption(
+          optionCode: code,
+          optionText: _requiredText(option, 'optionText'),
+        );
+      })
+      .toList(growable: false);
   if (options.map((item) => item.optionCode).toSet().length != options.length) {
     throw const FormatException('Question có optionCode trùng.');
   }
@@ -629,9 +702,13 @@ ExamQuestionSnapshotDto _parseQuestion(Object? value) {
   final groupId = groupIdRaw == null
       ? null
       : _uuid({'groupId': groupIdRaw}, 'groupId');
-  final positionInGroup = _optionalInt(json['positionInGroup'], 'positionInGroup');
+  final positionInGroup = _optionalInt(
+    json['positionInGroup'],
+    'positionInGroup',
+  );
   final correctOption = _optionalString(json, 'correctOption');
-  if (correctOption != null && !options.any((item) => item.optionCode == correctOption)) {
+  if (correctOption != null &&
+      !options.any((item) => item.optionCode == correctOption)) {
     throw const FormatException('correctOption không tồn tại trong options.');
   }
 
@@ -686,15 +763,24 @@ class ExamHistoryPageDto {
           parts: (json['parts'] as List? ?? const [])
               .map((item) => _requiredInt(item, 'parts[]'))
               .toList(growable: false),
-          durationSeconds: _requiredInt(json['durationSeconds'], 'durationSeconds'),
+          durationSeconds: _requiredInt(
+            json['durationSeconds'],
+            'durationSeconds',
+          ),
           startedAt: _requiredDate(json['startedAt'], 'startedAt'),
           completedAt: _optionalDate(json['completedAt'], 'completedAt'),
           score: _optionalInt(json['score'], 'score'),
-          scoreListening: _optionalInt(json['scoreListening'], 'scoreListening'),
+          scoreListening: _optionalInt(
+            json['scoreListening'],
+            'scoreListening',
+          ),
           scoreReading: _optionalInt(json['scoreReading'], 'scoreReading'),
           accuracy: _optionalDouble(json['accuracy'], 'accuracy'),
           correctCount: _optionalInt(json['correctCount'], 'correctCount'),
-          totalQuestions: _optionalInt(json['totalQuestions'], 'totalQuestions'),
+          totalQuestions: _optionalInt(
+            json['totalQuestions'],
+            'totalQuestions',
+          ),
           deadlineAt: _optionalDate(json['deadlineAt'], 'deadlineAt'),
         );
       },

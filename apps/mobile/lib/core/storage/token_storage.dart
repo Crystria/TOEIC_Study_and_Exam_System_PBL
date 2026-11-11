@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -96,6 +97,7 @@ class TokenStorage {
   static const int _schemaVersion = 1;
 
   final SecureKeyValueStore _secureStore;
+  Future<void> _mutationQueue = Future<void>.value();
 
   /// Saves a complete token pair as one secure-storage record.
   ///
@@ -108,46 +110,38 @@ class TokenStorage {
     DateTime? accessTokenExpiresAt,
     DateTime? refreshTokenExpiresAt,
   }) async {
-    final normalizedAccessToken = accessToken.trim();
-    if (normalizedAccessToken.isEmpty) {
-      throw ArgumentError.value(
-        accessToken,
-        'accessToken',
-        'Access token must not be empty.',
-      );
-    }
+    final payload = _encodeTokenBundle(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      accessTokenExpiresAt: accessTokenExpiresAt,
+      refreshTokenExpiresAt: refreshTokenExpiresAt,
+    );
+    await _serializeMutation<void>(() => _writeTokenBundle(payload));
+  }
 
-    final normalizedRefreshToken = refreshToken?.trim();
-    final storedRefreshToken =
-        normalizedRefreshToken == null || normalizedRefreshToken.isEmpty
-        ? null
-        : normalizedRefreshToken;
+  /// Atomically replaces a token pair only if [expectedRefreshToken] is still
+  /// the stored refresh credential. This prevents a late refresh response from
+  /// overwriting tokens saved by a newer login/account switch.
+  Future<bool> replaceTokensIfRefreshTokenMatches({
+    required String expectedRefreshToken,
+    required String accessToken,
+    required String refreshToken,
+    DateTime? accessTokenExpiresAt,
+    DateTime? refreshTokenExpiresAt,
+  }) {
+    final payload = _encodeTokenBundle(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      accessTokenExpiresAt: accessTokenExpiresAt,
+      refreshTokenExpiresAt: refreshTokenExpiresAt,
+    );
 
-    if (refreshTokenExpiresAt != null && storedRefreshToken == null) {
-      throw ArgumentError.value(
-        refreshTokenExpiresAt,
-        'refreshTokenExpiresAt',
-        'A refresh-token expiry requires a refresh token.',
-      );
-    }
-
-    final payload = jsonEncode(<String, Object?>{
-      'schemaVersion': _schemaVersion,
-      'accessToken': normalizedAccessToken,
-      'refreshToken': storedRefreshToken,
-      'accessTokenExpiresAt': accessTokenExpiresAt?.toUtc().toIso8601String(),
-      'refreshTokenExpiresAt': refreshTokenExpiresAt?.toUtc().toIso8601String(),
+    return _serializeMutation<bool>(() async {
+      final latest = await readTokens();
+      if (latest?.refreshToken != expectedRefreshToken) return false;
+      await _writeTokenBundle(payload);
+      return true;
     });
-
-    try {
-      await _secureStore.write(key: _tokenBundleKey, value: payload);
-    } catch (error) {
-      throw TokenStorageException(
-        operation: TokenStorageOperation.write,
-        message: 'Không thể lưu thông tin xác thực an toàn.',
-        cause: error,
-      );
-    }
   }
 
   /// Returns the stored bundle, or null when the user has no saved tokens.
@@ -241,6 +235,82 @@ class TokenStorage {
   /// Do not use deleteAll(): the same secure-storage plugin may later hold
   /// unrelated credentials owned by other modules.
   Future<void> clearTokens() async {
+    await _serializeMutation<void>(_deleteTokenBundle);
+  }
+
+  /// Deletes the bundle only if the access token still matches the rejected
+  /// request. The comparison and delete are serialized with token writes.
+  Future<bool> clearTokensIfAccessTokenMatches(String expectedAccessToken) {
+    return _serializeMutation<bool>(() async {
+      final latest = await readTokens();
+      if (latest?.accessToken != expectedAccessToken) return false;
+      await _deleteTokenBundle();
+      return true;
+    });
+  }
+
+  /// Deletes the bundle only if its refresh credential still matches the
+  /// session that failed to refresh.
+  Future<bool> clearTokensIfRefreshTokenMatches(String expectedRefreshToken) {
+    return _serializeMutation<bool>(() async {
+      final latest = await readTokens();
+      if (latest?.refreshToken != expectedRefreshToken) return false;
+      await _deleteTokenBundle();
+      return true;
+    });
+  }
+
+  String _encodeTokenBundle({
+    required String accessToken,
+    String? refreshToken,
+    DateTime? accessTokenExpiresAt,
+    DateTime? refreshTokenExpiresAt,
+  }) {
+    final normalizedAccessToken = accessToken.trim();
+    if (normalizedAccessToken.isEmpty) {
+      throw ArgumentError.value(
+        accessToken,
+        'accessToken',
+        'Access token must not be empty.',
+      );
+    }
+
+    final normalizedRefreshToken = refreshToken?.trim();
+    final storedRefreshToken =
+        normalizedRefreshToken == null || normalizedRefreshToken.isEmpty
+        ? null
+        : normalizedRefreshToken;
+
+    if (refreshTokenExpiresAt != null && storedRefreshToken == null) {
+      throw ArgumentError.value(
+        refreshTokenExpiresAt,
+        'refreshTokenExpiresAt',
+        'A refresh-token expiry requires a refresh token.',
+      );
+    }
+
+    return jsonEncode(<String, Object?>{
+      'schemaVersion': _schemaVersion,
+      'accessToken': normalizedAccessToken,
+      'refreshToken': storedRefreshToken,
+      'accessTokenExpiresAt': accessTokenExpiresAt?.toUtc().toIso8601String(),
+      'refreshTokenExpiresAt': refreshTokenExpiresAt?.toUtc().toIso8601String(),
+    });
+  }
+
+  Future<void> _writeTokenBundle(String payload) async {
+    try {
+      await _secureStore.write(key: _tokenBundleKey, value: payload);
+    } catch (error) {
+      throw TokenStorageException(
+        operation: TokenStorageOperation.write,
+        message: 'Không thể lưu thông tin xác thực an toàn.',
+        cause: error,
+      );
+    }
+  }
+
+  Future<void> _deleteTokenBundle() async {
     try {
       await _secureStore.delete(key: _tokenBundleKey);
     } catch (error) {
@@ -250,6 +320,20 @@ class TokenStorage {
         cause: error,
       );
     }
+  }
+
+  Future<T> _serializeMutation<T>(Future<T> Function() operation) {
+    final completer = Completer<T>();
+    final previous = _mutationQueue;
+    _mutationQueue = () async {
+      try {
+        await previous;
+        completer.complete(await operation());
+      } catch (error, stackTrace) {
+        completer.completeError(error, stackTrace);
+      }
+    }();
+    return completer.future;
   }
 
   static DateTime? _parseDateTime(Object? value, String fieldName) {

@@ -1,0 +1,62 @@
+{
+  "source": "SettingsScreen + VocabularyProgressStorage + ReviewGoalSettingsScreen",
+  "defaults": {
+    "notificationsEnabled": true,
+    "dailyVocabularyGoal": 20,
+    "dailyGoalMin": 5,
+    "dailyGoalMax": 100,
+    "dailyGoalStep": 5,
+    "reminderDisplayTime": "20:00",
+    "passwordChangeMode": "available_in_fake_auth_only"
+  },
+  "scenarios": [
+    {
+      "id": "SETTINGS-01",
+      "notificationsEnabled": true,
+      "expected": "Reminder preference enabled and stored in user-scoped local storage; actual OS notification scheduling is not implemented."
+    },
+    {
+      "id": "SETTINGS-02",
+      "notificationsEnabled": false,
+      "expected": "Reminder preference disabled and stored in user-scoped local storage."
+    },
+    {
+      "id": "SETTINGS-03",
+      "dailyGoal": 5,
+      "expected": "Minimum valid daily goal."
+    },
+    {
+      "id": "SETTINGS-04",
+      "dailyGoal": 20,
+      "expected": "Default daily goal."
+    },
+    {
+      "id": "SETTINGS-05",
+      "dailyGoal": 100,
+      "expected": "Maximum valid daily goal."
+    },
+    {
+      "id": "SETTINGS-06",
+      "dailyGoal": 4,
+      "expected": "Rejected/ignored because below minimum."
+    },
+    {
+      "id": "SETTINGS-07",
+      "dailyGoal": 105,
+      "expected": "Rejected/ignored because above maximum."
+    },
+    {
+      "id": "SETTINGS-08",
+      "dailyGoal": 22,
+      "expected": "Rejected/ignored because step size is 5."
+    },
+    {
+      "id": "SETTINGS-09",
+      "expected": "Change password screen is available only when API_ENABLED=false; API mode currently reports Backend endpoint unavailable."
+    },
+    {
+      "id": "SETTINGS-10",
+      "expected": "Legacy vocabulary progress import requires explicit ownership confirmation and must not overwrite existing user data."
+    }
+  ]
+}

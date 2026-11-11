@@ -3,6 +3,7 @@ import '../../../core/errors/app_exception.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../../shared/models/app_user.dart';
 import '../models/auth_api_dtos.dart';
+import '../models/avatar_api_dtos.dart';
 import '../models/email_action_ticket.dart';
 import '../models/registration_result.dart';
 import '../requests/auth_request_dtos.dart';
@@ -24,8 +25,21 @@ class ApiAuthRepository extends AuthRepository {
   final TokenStorage _tokenStorage;
   final DeviceIdProvider _deviceIdProvider;
   Future<void>? _refreshInFlight;
+  String? _lastRefreshFromAccessToken;
+  String? _lastRefreshToAccessToken;
+  String? _activeUserId;
+  Future<void> Function(String userId)? _sessionInvalidationHandler;
 
   static const Duration _refreshWindow = Duration(seconds: 30);
+
+  /// Called when this repository has invalidated the active user's token pair.
+  /// The composition root connects this to AuthSessionProvider so account
+  /// scoped UI and caches are reset together with secure token storage.
+  void setSessionInvalidationHandler(
+    Future<void> Function(String userId) handler,
+  ) {
+    _sessionInvalidationHandler = handler;
+  }
 
   @override
   Future<AppUser> login({
@@ -42,11 +56,7 @@ class ApiAuthRepository extends AuthRepository {
     try {
       final deviceId = await _deviceIdProvider.getOrCreate();
       final response = await _api.login(
-        LoginRequestDto(
-          email: email,
-          password: password,
-          deviceId: deviceId,
-        ),
+        LoginRequestDto(email: email, password: password, deviceId: deviceId),
       );
       if (response.user.status.toUpperCase() != 'ACTIVE') {
         throw const AuthRepositoryException(
@@ -54,6 +64,8 @@ class ApiAuthRepository extends AuthRepository {
         );
       }
       await _saveTokenResponse(response);
+      _resetRefreshMarker();
+      _activeUserId = response.user.userId;
       return response.user.toDomain();
     } catch (error) {
       throw _toRepositoryException(error);
@@ -133,37 +145,46 @@ class ApiAuthRepository extends AuthRepository {
 
   @override
   Future<AppUser?> restoreSession() async {
+    StoredTokens? sessionTokens;
     try {
-      final tokens = await _tokenStorage.readTokens();
-      if (tokens == null) return null;
+      sessionTokens = await _tokenStorage.readTokens();
+      if (sessionTokens == null) {
+        _resetRefreshMarker();
+        _activeUserId = null;
+        return null;
+      }
 
-      if (!tokens.hasRefreshToken) {
-        await _tokenStorage.clearTokens();
+      if (!sessionTokens.hasRefreshToken) {
+        await _clearRestoreSessionIfStillCurrent(sessionTokens);
         return null;
       }
 
       final now = DateTime.now().toUtc();
-      final refreshExpiry = tokens.refreshTokenExpiresAt;
+      final refreshExpiry = sessionTokens.refreshTokenExpiresAt;
       if (refreshExpiry != null && !refreshExpiry.isAfter(now)) {
-        await _tokenStorage.clearTokens();
+        await _clearRestoreSessionIfStillCurrent(sessionTokens);
         return null;
       }
 
-      final accessExpiry = tokens.accessTokenExpiresAt;
+      final accessExpiry = sessionTokens.accessTokenExpiresAt;
       if (accessExpiry != null &&
           !accessExpiry.isAfter(now.add(_refreshWindow))) {
         await _refreshTokensSingleFlight();
       }
 
-      final user = await _withAuthRefresh(_api.getCurrentUser);
+      final user = await _api.getCurrentUser();
       if (user.status.toUpperCase() != 'ACTIVE') {
-        await _tokenStorage.clearTokens();
+        await _clearRestoreSessionIfStillCurrent(sessionTokens);
         return null;
       }
+      _activeUserId = user.userId;
       return user.toDomain();
     } on AppException catch (error) {
       if (error.isUnauthorized) {
-        await _tokenStorage.clearTokens();
+        final expectedTokens = sessionTokens;
+        if (expectedTokens != null) {
+          await _clearRestoreSessionIfStillCurrent(expectedTokens);
+        }
         return null;
       }
       throw _toRepositoryException(error);
@@ -179,14 +200,13 @@ class ApiAuthRepository extends AuthRepository {
     required String? phoneNumber,
   }) async {
     try {
-      final dto = await _withAuthRefresh(
-        () => _api.updateCurrentUser(
-          UpdateProfileRequestDto(
-            fullName: fullName.trim(),
-            phoneNumber: phoneNumber?.trim().isEmpty == true
-                ? null
-                : phoneNumber?.trim(),
-          ),
+      final dto = await _api.updateCurrentUser(
+        UpdateProfileRequestDto(
+          fullName: fullName.trim(),
+          phoneNumber: phoneNumber?.trim().isEmpty == true
+              ? null
+              : phoneNumber?.trim(),
+          includePhoneNumber: true,
         ),
       );
       if (dto.userId != userId) {
@@ -201,31 +221,180 @@ class ApiAuthRepository extends AuthRepository {
   }
 
   @override
-  Future<bool> logout() async {
-    var serverConfirmed = false;
+  Future<AppUser> updateAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String contentType,
+  }) async {
+    final normalizedContentType = contentType.trim().toLowerCase();
+    if (imageBytes.isEmpty ||
+        imageBytes.length > AvatarUploadConstraints.maxBytes) {
+      throw const AuthRepositoryException(
+        'Ảnh đại diện phải có dung lượng từ 1 byte đến 2 MiB.',
+      );
+    }
+    if (!RegExp(r'^image/[a-z0-9][a-z0-9.+-]*$')
+        .hasMatch(normalizedContentType)) {
+      throw const AuthRepositoryException(
+        'Định dạng tệp ảnh đại diện không hợp lệ.',
+      );
+    }
+    final uploadBytes = List<int>.unmodifiable(imageBytes);
+    if (uploadBytes.any((byte) => byte < 0 || byte > 255)) {
+      throw const AuthRepositoryException(
+        'Dữ liệu ảnh đại diện chứa byte không hợp lệ.',
+      );
+    }
+
     try {
       final tokens = await _tokenStorage.readTokens();
-      if (tokens == null || !tokens.hasRefreshToken) {
+      if (tokens == null || _activeUserId != userId) {
+        throw const AuthRepositoryException(
+          'Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.',
+        );
+      }
+
+      final ticket = await _api.presignAvatar(
+        AvatarPresignRequestDto(
+          contentType: normalizedContentType,
+          sizeBytes: uploadBytes.length,
+        ),
+      );
+      await _ensureAvatarSession(userId: userId, snapshot: tokens);
+      await _api.uploadAvatar(
+        ticket: ticket,
+        expectedContentType: normalizedContentType,
+        bytes: uploadBytes,
+      );
+      await _ensureAvatarSession(userId: userId, snapshot: tokens);
+      final confirmation = await _api.confirmAvatar(
+        AvatarConfirmRequestDto(uploadId: ticket.uploadId),
+      );
+      await _ensureAvatarSession(userId: userId, snapshot: tokens);
+      if (confirmation.objectKey != ticket.objectKey) {
+        throw const FormatException(
+          'Avatar confirm trả về objectKey không khớp upload ticket.',
+        );
+      }
+
+      // Re-read the authoritative UserPresenter after confirm. It contains the
+      // newly signed avatarUrl; the signed URL is not synthesized on-device.
+      final currentUser = await _api.getCurrentUser();
+      await _ensureAvatarSession(userId: userId, snapshot: tokens);
+      if (currentUser.userId != userId ||
+          currentUser.avatarKey != ticket.objectKey ||
+          currentUser.avatarUrl == null ||
+          currentUser.avatarUrl!.isEmpty) {
+        throw const FormatException(
+          'Backend chưa xác nhận ảnh đại diện cho tài khoản hiện tại.',
+        );
+      }
+      return currentUser.toDomain();
+    } catch (error) {
+      throw _toRepositoryException(error);
+    }
+  }
+
+  Future<void> _ensureAvatarSession({
+    required String userId,
+    required StoredTokens snapshot,
+  }) async {
+    final latest = await _tokenStorage.readTokens();
+    final accessTokenUnchanged = latest?.accessToken == snapshot.accessToken;
+    final accessTokenRotatedByThisRepository =
+        latest != null &&
+        _lastRefreshFromAccessToken == snapshot.accessToken &&
+        _lastRefreshToAccessToken == latest.accessToken;
+
+    if (latest == null ||
+        (!accessTokenUnchanged && !accessTokenRotatedByThisRepository) ||
+        _activeUserId != userId) {
+      throw const AuthRepositoryException(
+        'Tài khoản đã thay đổi trong lúc cập nhật ảnh đại diện. Vui lòng thử lại.',
+      );
+    }
+  }
+
+  @override
+  Future<bool> logout() async {
+    var serverConfirmed = false;
+    String? accessTokenToClear;
+    final userIdAtStart = _activeUserId;
+
+    try {
+      final initialTokens = await _tokenStorage.readTokens();
+      if (initialTokens == null) {
+        serverConfirmed = true;
+        if (_activeUserId == userIdAtStart) _activeUserId = null;
+      } else if (!initialTokens.hasRefreshToken) {
+        // No refresh credential exists to revoke remotely. Clear only the
+        // exact access-token pair observed at logout start.
+        accessTokenToClear = initialTokens.accessToken;
         serverConfirmed = true;
       } else {
-        await _withAuthRefresh(() async {
+        accessTokenToClear = await _withAuthRefresh<String?>(() async {
           final latest = await _tokenStorage.readTokens();
-          final refreshToken = latest?.refreshToken;
-          if (refreshToken == null) return;
-          await _api.logout(RefreshRequestDto(refreshToken: refreshToken));
+          if (latest == null ||
+              !latest.hasRefreshToken ||
+              !_belongsToLogoutSession(initialTokens, latest)) {
+            return null;
+          }
+          final requestAccessToken = latest.accessToken;
+          await _api.logout(
+            RefreshRequestDto(refreshToken: latest.refreshToken!),
+          );
+          return requestAccessToken;
         });
-        serverConfirmed = true;
+        serverConfirmed = accessTokenToClear != null;
       }
     } catch (_) {
       serverConfirmed = false;
     }
 
-    try {
-      await _tokenStorage.clearTokens();
-    } catch (_) {
-      serverConfirmed = false;
+    if (accessTokenToClear != null) {
+      try {
+        final cleared = await _clearTokensIfAccessTokenMatches(
+          accessTokenToClear,
+        );
+        if (cleared && _activeUserId == userIdAtStart) {
+          _activeUserId = null;
+        }
+      } catch (_) {
+        serverConfirmed = false;
+      }
     }
+
     return serverConfirmed;
+  }
+
+  bool _belongsToLogoutSession(
+    StoredTokens initialTokens,
+    StoredTokens latestTokens,
+  ) {
+    if (initialTokens.refreshToken == latestTokens.refreshToken) {
+      return true;
+    }
+    return _lastRefreshFromAccessToken == initialTokens.accessToken &&
+        _lastRefreshToAccessToken == latestTokens.accessToken;
+  }
+
+  Future<bool> _clearRestoreSessionIfStillCurrent(
+    StoredTokens expectedTokens,
+  ) async {
+    final latest = await _tokenStorage.readTokens();
+    if (latest == null) return true;
+
+    final sameSession =
+        latest.accessToken == expectedTokens.accessToken ||
+        (expectedTokens.refreshToken != null &&
+            latest.refreshToken == expectedTokens.refreshToken) ||
+        (_lastRefreshFromAccessToken == expectedTokens.accessToken &&
+            _lastRefreshToAccessToken == latest.accessToken);
+    if (!sameSession) return false;
+
+    final cleared = await _clearTokensIfAccessTokenMatches(latest.accessToken);
+    if (cleared) _activeUserId = null;
+    return cleared;
   }
 
   @override
@@ -258,6 +427,58 @@ class ApiAuthRepository extends AuthRepository {
     );
   }
 
+  /// Shared ApiClient callback for authenticated requests rejected with 401.
+  /// Returns the exact rotated access token when one retry is safe, or null
+  /// when no usable session exists. Network/server refresh failures propagate
+  /// instead of being disguised as the original 401.
+  Future<String?> refreshAfterUnauthorized(String failedAccessToken) async {
+    final current = await _tokenStorage.readTokens();
+    if (current == null) return null;
+
+    // Retry only when this exact access token was rotated by this repository.
+    // A login/account switch must not replay an old user's request as a new user.
+    if (current.accessToken != failedAccessToken) {
+      return _lastRefreshFromAccessToken == failedAccessToken &&
+              _lastRefreshToAccessToken == current.accessToken
+          ? current.accessToken
+          : null;
+    }
+
+    final expectedUserId = _activeUserId;
+    if (!current.hasRefreshToken) {
+      final cleared = await _clearTokensIfAccessTokenMatches(failedAccessToken);
+      if (cleared) await _invalidateSessionIfCurrent(expectedUserId);
+      return null;
+    }
+
+    try {
+      await _refreshTokensSingleFlight();
+      final latest = await _tokenStorage.readTokens();
+      if (latest == null ||
+          _lastRefreshFromAccessToken != failedAccessToken ||
+          _lastRefreshToAccessToken != latest.accessToken) {
+        return null;
+      }
+      return latest.accessToken;
+    } on AppException catch (error) {
+      if (error.isUnauthorized) {
+        await _invalidateSessionIfTokenPairWasCleared(expectedUserId);
+        return null;
+      }
+      rethrow;
+    }
+  }
+
+  /// Clears only the credential pair rejected after the one refresh retry.
+  /// A concurrent login/account switch is never cleared by an old request.
+  Future<void> clearRejectedSessionIfCurrent(String rejectedAccessToken) async {
+    final expectedUserId = _activeUserId;
+    final cleared = await _clearTokensIfAccessTokenMatches(rejectedAccessToken);
+    if (cleared) {
+      await _invalidateSessionIfCurrent(expectedUserId);
+    }
+  }
+
   Future<T> _withAuthRefresh<T>(Future<T> Function() request) async {
     final accessTokenBeforeRequest = await _tokenStorage.readAccessToken();
     try {
@@ -274,11 +495,18 @@ class ApiAuthRepository extends AuthRepository {
       }
       // Retry once only. If the refreshed token is rejected too, discard the
       // unusable token pair so the next startup cannot restore a dead session.
+      final accessTokenForRetry = await _tokenStorage.readAccessToken();
       try {
         return await request();
       } on AppException catch (retryError) {
-        if (retryError.isUnauthorized) {
-          await _tokenStorage.clearTokens();
+        if (retryError.isUnauthorized && accessTokenForRetry != null) {
+          final expectedUserId = _activeUserId;
+          final cleared = await _clearTokensIfAccessTokenMatches(
+            accessTokenForRetry,
+          );
+          if (cleared) {
+            await _invalidateSessionIfCurrent(expectedUserId);
+          }
         }
         rethrow;
       }
@@ -304,7 +532,7 @@ class ApiAuthRepository extends AuthRepository {
 
     final expiry = current.refreshTokenExpiresAt;
     if (expiry != null && !expiry.isAfter(DateTime.now().toUtc())) {
-      await _tokenStorage.clearTokens();
+      await _clearTokensIfRefreshTokenMatches(current.refreshToken!);
       throw const AppException.unauthorized(
         message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
       );
@@ -314,17 +542,74 @@ class ApiAuthRepository extends AuthRepository {
       final next = await _api.refresh(
         RefreshRequestDto(refreshToken: current.refreshToken!),
       );
-      final latest = await _tokenStorage.readTokens();
-      if (latest?.refreshToken != current.refreshToken) {
+      final now = DateTime.now().toUtc();
+      final replaced = await _tokenStorage.replaceTokensIfRefreshTokenMatches(
+        expectedRefreshToken: current.refreshToken!,
+        accessToken: next.accessToken,
+        refreshToken: next.refreshToken,
+        accessTokenExpiresAt: now.add(Duration(seconds: next.expiresIn)),
+        refreshTokenExpiresAt: now.add(
+          Duration(seconds: next.refreshExpiresIn),
+        ),
+      );
+      if (!replaced) {
         // A different login/session has replaced this credential while the
-        // refresh request was in flight. Never overwrite that newer account.
+        // refresh request was in flight. The compare-and-set in TokenStorage
+        // prevents this late response from overwriting that newer session.
         return;
       }
-      await _saveTokenResponse(next);
+      _lastRefreshFromAccessToken = current.accessToken;
+      _lastRefreshToAccessToken = next.accessToken;
     } on AppException catch (error) {
-      if (error.isUnauthorized) await _tokenStorage.clearTokens();
+      if (error.isUnauthorized) {
+        await _clearTokensIfRefreshTokenMatches(current.refreshToken!);
+      }
       rethrow;
     }
+  }
+
+  Future<bool> _clearTokensIfRefreshTokenMatches(
+    String expectedRefreshToken,
+  ) async {
+    final cleared = await _tokenStorage.clearTokensIfRefreshTokenMatches(
+      expectedRefreshToken,
+    );
+    if (cleared) _resetRefreshMarker();
+    return cleared;
+  }
+
+  Future<bool> _clearTokensIfAccessTokenMatches(
+    String expectedAccessToken,
+  ) async {
+    final cleared = await _tokenStorage.clearTokensIfAccessTokenMatches(
+      expectedAccessToken,
+    );
+    if (cleared) _resetRefreshMarker();
+    return cleared;
+  }
+
+  Future<void> _invalidateSessionIfTokenPairWasCleared(
+    String? expectedUserId,
+  ) async {
+    if (expectedUserId == null || _activeUserId != expectedUserId) return;
+    final latest = await _tokenStorage.readTokens();
+    if (latest == null && _activeUserId == expectedUserId) {
+      _activeUserId = null;
+      await _sessionInvalidationHandler?.call(expectedUserId);
+    }
+  }
+
+  Future<void> _invalidateSessionIfCurrent(String? expectedUserId) async {
+    if (expectedUserId == null || _activeUserId != expectedUserId) return;
+    final latest = await _tokenStorage.readTokens();
+    if (latest != null || _activeUserId != expectedUserId) return;
+    _activeUserId = null;
+    await _sessionInvalidationHandler?.call(expectedUserId);
+  }
+
+  void _resetRefreshMarker() {
+    _lastRefreshFromAccessToken = null;
+    _lastRefreshToAccessToken = null;
   }
 
   Future<void> _saveTokenResponse(AuthTokenResponseDto response) async {

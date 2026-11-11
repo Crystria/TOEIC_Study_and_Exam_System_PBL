@@ -24,6 +24,7 @@ class AuthSessionProvider extends ChangeNotifier {
   AuthSessionStatus _status = AuthSessionStatus.initializing;
   String? _errorMessage;
   bool _isUpdatingProfile = false;
+  bool _isUpdatingAvatar = false;
   int _userRevision = 0;
   int _authTransitionRevision = 0;
 
@@ -36,6 +37,7 @@ class AuthSessionProvider extends ChangeNotifier {
   bool get hasCurrentUser => _currentUser != null;
   bool get hasActiveSession => _currentSession != null;
   bool get isUpdatingProfile => _isUpdatingProfile;
+  bool get isUpdatingAvatar => _isUpdatingAvatar;
   bool get isAuthenticated =>
       _status == AuthSessionStatus.authenticated &&
       _currentUser != null &&
@@ -127,7 +129,7 @@ class AuthSessionProvider extends ChangeNotifier {
       notifyListeners();
       return null;
     }
-    if (_isUpdatingProfile) return null;
+    if (_isUpdatingProfile || _isUpdatingAvatar) return null;
 
     final revision = _userRevision;
     _isUpdatingProfile = true;
@@ -163,6 +165,61 @@ class AuthSessionProvider extends ChangeNotifier {
     }
   }
 
+  /// Updates the authenticated user's avatar through the configured
+  /// AuthRepository. A late response from a previous account is discarded.
+  Future<AppUser?> updateAvatar({
+    required List<int> imageBytes,
+    required String contentType,
+  }) async {
+    final previousUser = _currentUser;
+    if (previousUser == null || !isAuthenticated) {
+      _errorMessage = 'Phiên đăng nhập không còn hợp lệ.';
+      notifyListeners();
+      return null;
+    }
+    if (_isUpdatingAvatar || _isUpdatingProfile) return null;
+
+    final revision = _userRevision;
+    _isUpdatingAvatar = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final updatedUser = await _repository.updateAvatar(
+        userId: previousUser.id,
+        imageBytes: imageBytes,
+        contentType: contentType,
+      );
+      if (revision != _userRevision ||
+          _currentUser?.id != previousUser.id ||
+          !isAuthenticated) {
+        return null;
+      }
+      if (updatedUser.id != previousUser.id) {
+        throw const AuthRepositoryException(
+          'Backend trả về ảnh đại diện không thuộc tài khoản hiện tại.',
+        );
+      }
+      _currentUser = updatedUser;
+      return updatedUser;
+    } on AuthRepositoryException catch (error) {
+      if (revision != _userRevision) return null;
+      _errorMessage = error.message;
+      return null;
+    } catch (_) {
+      if (revision != _userRevision) return null;
+      _errorMessage = 'Không thể cập nhật ảnh đại diện. Vui lòng thử lại.';
+      return null;
+    } finally {
+      // A completion from an older account must not clear the loading state
+      // of an avatar upload started by the newly authenticated account.
+      if (revision == _userRevision) {
+        _isUpdatingAvatar = false;
+        notifyListeners();
+      }
+    }
+  }
+
   /// Clears the local account scope before waiting for the remote revoke.
   /// A slow/offline Backend must not leave the previous user's app state active.
   Future<bool> logout() async {
@@ -190,6 +247,23 @@ class AuthSessionProvider extends ChangeNotifier {
     return localResetConfirmed && serverConfirmed;
   }
 
+  /// Invalidates the active UI session after ApiAuthRepository has confirmed
+  /// that the matching user's token pair is no longer usable.
+  /// A late 401 from an older account cannot sign out a newer account.
+  Future<void> invalidateSessionForUser(String userId) async {
+    if (_currentUser?.id != userId) return;
+
+    _authTransitionRevision++;
+    _clearSessionState(AuthSessionStatus.unauthenticated);
+    notifyListeners();
+
+    try {
+      await _userDataCoordinator.clearCurrentUser();
+    } catch (_) {
+      // The coordinator still unbinds storage in its finally path.
+    }
+  }
+
   /// Compatibility path for callers that only need to clear local state.
   /// New logout flows must use [logout] so token storage is also cleared.
   Future<void> clearCurrentUser() async {
@@ -214,6 +288,7 @@ class AuthSessionProvider extends ChangeNotifier {
       if (transitionRevision != _authTransitionRevision) return;
       _userRevision++;
       _isUpdatingProfile = false;
+      _isUpdatingAvatar = false;
     }
     if (transitionRevision != _authTransitionRevision) return;
 
@@ -238,5 +313,6 @@ class AuthSessionProvider extends ChangeNotifier {
     _status = status;
     _errorMessage = message;
     _isUpdatingProfile = false;
+    _isUpdatingAvatar = false;
   }
 }

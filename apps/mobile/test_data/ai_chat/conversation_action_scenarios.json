@@ -1,0 +1,47 @@
+{
+  "scenarios": [
+    {
+      "id": "AI-CHAT-01",
+      "action": "open_history",
+      "expected": "Four seeded demo conversations appear, sorted newest first."
+    },
+    {
+      "id": "AI-CHAT-02",
+      "action": "open_conversation",
+      "conversationId": "ai-conversation-001",
+      "expected": "Two static messages displayed."
+    },
+    {
+      "id": "AI-CHAT-03",
+      "action": "create_new_conversation_from_history",
+      "expected": "New in-memory conversation titled Cuộc trò chuyện mới; creation path is history screen."
+    },
+    {
+      "id": "AI-CHAT-04",
+      "action": "send_message",
+      "input": "Phân biệt since và for trong TOEIC",
+      "expected": "Local repository returns a canned simulated reply and increments preview usage."
+    },
+    {
+      "id": "AI-CHAT-05",
+      "action": "rename",
+      "input": "Ôn ngữ pháp TOEIC",
+      "expected": "Conversation title changes in memory."
+    },
+    {
+      "id": "AI-CHAT-06",
+      "action": "delete",
+      "expected": "Conversation and its messages are removed from memory."
+    },
+    {
+      "id": "AI-CHAT-07",
+      "action": "account_switch",
+      "expected": "Repository resets to the four default conversations and usage preview."
+    },
+    {
+      "id": "AI-CHAT-08",
+      "action": "restart_app",
+      "expected": "Conversation mutations are not persisted across process restart."
+    }
+  ]
+}

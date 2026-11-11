@@ -1,0 +1,34 @@
+{
+  "dailyGoal": 5,
+  "remindEnabled": false,
+  "words": {
+    "t1-v1": {
+      "id": "t1-v1",
+      "word": "negotiate",
+      "phonetic": "/nɪˈɡoʊʃieɪt/",
+      "definition": "thương lượng, đàm phán",
+      "example": "We need to negotiate the contract terms.",
+      "audioUrl": "",
+      "topicId": "t1",
+      "topicName": "Office & Business",
+      "grade": 5,
+      "serverRevision": null,
+      "firstStudiedAt": "2026-11-07T13:29:23+07:00",
+      "lastStudiedAt": "2026-11-10T13:19:23+07:00"
+    },
+    "t1-v2": {
+      "id": "t1-v2",
+      "word": "invoice",
+      "phonetic": "/ˈɪnvɔɪs/",
+      "definition": "hóa đơn",
+      "example": "Please send the invoice by Friday.",
+      "audioUrl": "",
+      "topicId": "t1",
+      "topicName": "Office & Business",
+      "grade": 3,
+      "serverRevision": null,
+      "firstStudiedAt": "2026-11-06T13:29:23+07:00",
+      "lastStudiedAt": "2026-11-10T13:24:23+07:00"
+    }
+  }
+}

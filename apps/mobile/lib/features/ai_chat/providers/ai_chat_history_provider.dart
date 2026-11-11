@@ -245,7 +245,6 @@ class AiChatHistoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   /// Invalidates pending work and clears user-specific history UI state.
   void resetForUserScopeChange() {
     _scopeRevision++;

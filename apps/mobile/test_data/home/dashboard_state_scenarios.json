@@ -1,0 +1,29 @@
+{
+  "scenarios": [
+    {
+      "id": "HOME-01",
+      "state": "loading",
+      "expected": "Loading placeholder while dashboard repository resolves."
+    },
+    {
+      "id": "HOME-02",
+      "state": "loaded_demo",
+      "expected": "Displays sample score 685, 12-day streak, 248 learned vocabulary, 14 grammar lessons, 5 mock tests and 4 today activities. Values are source demo."
+    },
+    {
+      "id": "HOME-03",
+      "state": "empty_user_name",
+      "expected": "Greeting falls back to \"bạn\" when user name is null/blank."
+    },
+    {
+      "id": "HOME-04",
+      "state": "repository_error",
+      "expected": "Displays generic dashboard load error and retry path."
+    },
+    {
+      "id": "HOME-05",
+      "state": "account_switch",
+      "expected": "HomeProvider resets to idle and clears previous dashboard data."
+    }
+  ]
+}

@@ -51,7 +51,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         actions: [
           IconButton(
             tooltip: 'Tải lại',
-            onPressed: provider.status == AnalyticsStatus.loading ? null : _refresh,
+            onPressed: provider.status == AnalyticsStatus.loading
+                ? null
+                : _refresh,
             icon: const Icon(Icons.refresh),
           ),
         ],
@@ -118,13 +120,19 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     const SizedBox(height: 12),
                     Text(
                       provider.errorMessage!,
-                      style: const TextStyle(color: AppColors.danger, fontSize: 12),
+                      style: const TextStyle(
+                        color: AppColors.danger,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                   const SizedBox(height: 12),
                   Text(
                     'Dữ liệu được tổng hợp theo múi giờ ${progress.timezone}.',
-                    style: const TextStyle(color: AppColors.slate400, fontSize: 11),
+                    style: const TextStyle(
+                      color: AppColors.slate400,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -153,7 +161,11 @@ class _InitialState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.analytics_outlined, size: 42, color: AppColors.slate400),
+            const Icon(
+              Icons.analytics_outlined,
+              size: 42,
+              color: AppColors.slate400,
+            ),
             const SizedBox(height: 12),
             Text(
               errorMessage ?? 'Chưa có dữ liệu thống kê.',
@@ -329,7 +341,10 @@ class _SmallMetric extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 2),
-      Text(label, style: const TextStyle(color: AppColors.slate500, fontSize: 12)),
+      Text(
+        label,
+        style: const TextStyle(color: AppColors.slate500, fontSize: 12),
+      ),
     ],
   );
 }
@@ -361,7 +376,13 @@ class _ScoreTrendCard extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
-                Text('${points.length} lượt', style: const TextStyle(color: AppColors.slate400, fontSize: 12)),
+                Text(
+                  '${points.length} lượt',
+                  style: const TextStyle(
+                    color: AppColors.slate400,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -374,9 +395,18 @@ class _ScoreTrendCard extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('0', style: TextStyle(color: AppColors.slate400, fontSize: 10)),
-                Text('495', style: TextStyle(color: AppColors.slate400, fontSize: 10)),
-                Text('990', style: TextStyle(color: AppColors.slate400, fontSize: 10)),
+                Text(
+                  '0',
+                  style: TextStyle(color: AppColors.slate400, fontSize: 10),
+                ),
+                Text(
+                  '495',
+                  style: TextStyle(color: AppColors.slate400, fontSize: 10),
+                ),
+                Text(
+                  '990',
+                  style: TextStyle(color: AppColors.slate400, fontSize: 10),
+                ),
               ],
             ),
           ],
@@ -408,13 +438,16 @@ class _ScoreChartPainter extends CustomPainter {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
     }
     if (points.isEmpty) return;
-    final ordered = [...points]..sort((a, b) => a.completedAt.compareTo(b.completedAt));
+    final ordered = [...points]
+      ..sort((a, b) => a.completedAt.compareTo(b.completedAt));
     final path = Path();
     for (var index = 0; index < ordered.length; index++) {
       final x = ordered.length == 1
           ? size.width / 2
           : size.width * index / (ordered.length - 1);
-      final y = size.height * (1 - ordered[index].totalScore.clamp(0, 990).toDouble() / 990);
+      final y =
+          size.height *
+          (1 - ordered[index].totalScore.clamp(0, 990).toDouble() / 990);
       final point = Offset(x, y);
       if (index == 0) {
         path.moveTo(point.dx, point.dy);
@@ -427,7 +460,9 @@ class _ScoreChartPainter extends CustomPainter {
       final x = ordered.length == 1
           ? size.width / 2
           : size.width * index / (ordered.length - 1);
-      final y = size.height * (1 - ordered[index].totalScore.clamp(0, 990).toDouble() / 990);
+      final y =
+          size.height *
+          (1 - ordered[index].totalScore.clamp(0, 990).toDouble() / 990);
       canvas.drawCircle(Offset(x, y), 4, pointPaint);
     }
   }
@@ -449,8 +484,13 @@ class _ActivityCard extends StatelessWidget {
         child: Text('Chưa có hoạt động học tập trong khoảng thời gian này.'),
       );
     }
-    final visible = activity.length > 30 ? activity.sublist(activity.length - 30) : activity;
-    final maxCount = visible.fold<int>(1, (maxValue, item) => math.max(maxValue, item.count).toInt());
+    final visible = activity.length > 30
+        ? activity.sublist(activity.length - 30)
+        : activity;
+    final maxCount = visible.fold<int>(
+      1,
+      (maxValue, item) => math.max(maxValue, item.count).toInt(),
+    );
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -458,8 +498,14 @@ class _ActivityCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Số hoạt động mỗi ngày', style: TextStyle(color: AppColors.slate500, fontSize: 12)),
-              Text('${visible.fold<int>(0, (sum, item) => sum + item.count)} hoạt động', style: const TextStyle(color: AppColors.slate500, fontSize: 12)),
+              const Text(
+                'Số hoạt động mỗi ngày',
+                style: TextStyle(color: AppColors.slate500, fontSize: 12),
+              ),
+              Text(
+                '${visible.fold<int>(0, (sum, item) => sum + item.count)} hoạt động',
+                style: const TextStyle(color: AppColors.slate500, fontSize: 12),
+              ),
             ],
           ),
           const SizedBox(height: 14),
@@ -482,10 +528,14 @@ class _ActivityCard extends StatelessWidget {
                                 width: double.infinity,
                                 height: visible[index].count == 0
                                     ? 3.0
-                                    : math.max(
-                                        5.0,
-                                        78.0 * visible[index].count / maxCount,
-                                      ).toDouble(),
+                                    : math
+                                          .max(
+                                            5.0,
+                                            78.0 *
+                                                visible[index].count /
+                                                maxCount,
+                                          )
+                                          .toDouble(),
                                 decoration: BoxDecoration(
                                   color: visible[index].count == 0
                                       ? AppColors.slate200
@@ -496,10 +546,16 @@ class _ActivityCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          if (visible.length <= 7 || index == 0 || index == visible.length - 1 || index % 5 == 0)
+                          if (visible.length <= 7 ||
+                              index == 0 ||
+                              index == visible.length - 1 ||
+                              index % 5 == 0)
                             Text(
                               '${visible[index].date.day}',
-                              style: const TextStyle(fontSize: 9, color: AppColors.slate400),
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: AppColors.slate400,
+                              ),
                             )
                           else
                             const SizedBox(height: 11),
@@ -537,7 +593,10 @@ class _StreakAndPrediction extends StatelessWidget {
             children: [
               const CircleAvatar(
                 backgroundColor: AppColors.warningBg,
-                child: Icon(Icons.local_fire_department, color: AppColors.warning),
+                child: Icon(
+                  Icons.local_fire_department,
+                  color: AppColors.warning,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -546,11 +605,17 @@ class _StreakAndPrediction extends StatelessWidget {
                   children: [
                     Text(
                       '${progress.learningStreakDays} ngày liên tiếp',
-                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                      ),
                     ),
                     Text(
                       'Kỷ lục: ${progress.longestStreak} ngày',
-                      style: const TextStyle(color: AppColors.slate500, fontSize: 12),
+                      style: const TextStyle(
+                        color: AppColors.slate500,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
@@ -563,7 +628,10 @@ class _StreakAndPrediction extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Điểm TOEIC dự đoán', style: TextStyle(color: AppColors.slate500, fontSize: 12)),
+              const Text(
+                'Điểm TOEIC dự đoán',
+                style: TextStyle(color: AppColors.slate500, fontSize: 12),
+              ),
               const SizedBox(height: 6),
               if (predicted == null)
                 const Text(
@@ -577,10 +645,17 @@ class _StreakAndPrediction extends StatelessWidget {
                   children: [
                     Text(
                       '$predicted',
-                      style: const TextStyle(color: AppColors.brand, fontSize: 36, fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                        color: AppColors.brand,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     const SizedBox(width: 6),
-                    const Text('/ 990', style: TextStyle(color: AppColors.slate400)),
+                    const Text(
+                      '/ 990',
+                      style: TextStyle(color: AppColors.slate400),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -621,7 +696,13 @@ class _WeakAreasCard extends StatelessWidget {
               children: [
                 SizedBox(
                   width: 58,
-                  child: Text('Part ${item.part}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                  child: Text(
+                    'Part ${item.part}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: item.isAvailable
@@ -635,20 +716,28 @@ class _WeakAreasCard extends StatelessWidget {
                                 minHeight: 7,
                                 backgroundColor: AppColors.border,
                                 valueColor: AlwaysStoppedAnimation(
-                                  item.isWeak == true ? AppColors.warning : AppColors.success,
+                                  item.isWeak == true
+                                      ? AppColors.warning
+                                      : AppColors.success,
                                 ),
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               '${item.correct}/${item.total} câu đúng',
-                              style: const TextStyle(fontSize: 10, color: AppColors.slate400),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.slate400,
+                              ),
                             ),
                           ],
                         )
                       : Text(
                           'Cần thêm dữ liệu (tối thiểu 20 câu)',
-                          style: const TextStyle(fontSize: 11, color: AppColors.slate400),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.slate400,
+                          ),
                         ),
                 ),
                 const SizedBox(width: 10),
@@ -660,13 +749,16 @@ class _WeakAreasCard extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 12,
-                      color: item.isWeak == true ? AppColors.warning : AppColors.slate500,
+                      color: item.isWeak == true
+                          ? AppColors.warning
+                          : AppColors.slate500,
                     ),
                   ),
                 ),
               ],
             ),
-            if (item.part != items.last.part) const Divider(height: 22, color: AppColors.border),
+            if (item.part != items.last.part)
+              const Divider(height: 22, color: AppColors.border),
           ],
           const SizedBox(height: 8),
           const Align(
@@ -705,9 +797,19 @@ class _HistorySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.slate900)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            color: AppColors.slate900,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(description, style: const TextStyle(fontSize: 11, color: AppColors.slate400)),
+        Text(
+          description,
+          style: const TextStyle(fontSize: 11, color: AppColors.slate400),
+        ),
         const SizedBox(height: 10),
         AppCard(
           padding: const EdgeInsets.fromLTRB(14, 4, 14, 8),
@@ -716,12 +818,19 @@ class _HistorySection extends StatelessWidget {
               if (items.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Text(emptyMessage, style: const TextStyle(color: AppColors.slate500, fontSize: 12)),
+                  child: Text(
+                    emptyMessage,
+                    style: const TextStyle(
+                      color: AppColors.slate500,
+                      fontSize: 12,
+                    ),
+                  ),
                 )
               else
                 for (var index = 0; index < items.length; index++) ...[
                   _HistoryRow(item: items[index]),
-                  if (index != items.length - 1) const Divider(height: 20, color: AppColors.border),
+                  if (index != items.length - 1)
+                    const Divider(height: 20, color: AppColors.border),
                 ],
               if (page?.hasNext == true) ...[
                 const Divider(height: 20, color: AppColors.border),
@@ -741,7 +850,10 @@ class _HistorySection extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Hiển thị ${items.length}/${page!.total} lượt',
-                    style: const TextStyle(color: AppColors.slate400, fontSize: 10),
+                    style: const TextStyle(
+                      color: AppColors.slate400,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
             ],
@@ -770,9 +882,13 @@ class _HistoryRow extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 18,
-          backgroundColor: isFull ? AppColors.blueChipBg : AppColors.purpleChipBg,
+          backgroundColor: isFull
+              ? AppColors.blueChipBg
+              : AppColors.purpleChipBg,
           child: Icon(
-            isFull ? Icons.assignment_turned_in_outlined : Icons.headphones_outlined,
+            isFull
+                ? Icons.assignment_turned_in_outlined
+                : Icons.headphones_outlined,
             size: 18,
             color: isFull ? AppColors.brand : AppColors.purpleChipFg,
           ),
@@ -784,7 +900,10 @@ class _HistoryRow extends StatelessWidget {
             children: [
               Text(
                 isFull ? 'Bài thi TOEIC Full' : 'Luyện tập theo Part',
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 3),
               Text(
@@ -796,7 +915,9 @@ class _HistoryRow extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Text(
-          isFull ? '${item.totalScore ?? '—'}' : '${((item.accuracy ?? 0) * 100).round()}%',
+          isFull
+              ? '${item.totalScore ?? '—'}'
+              : '${((item.accuracy ?? 0) * 100).round()}%',
           style: TextStyle(
             color: isFull ? AppColors.brand : AppColors.slate700,
             fontSize: 15,

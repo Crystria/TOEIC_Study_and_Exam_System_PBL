@@ -1,0 +1,163 @@
+{
+  "source": "26 MOB cases from Test Report Android; scope aligned with Software Test Documentation §1.1 and §3.4",
+  "items": [
+    {
+      "testCaseId": "MOB-001",
+      "fixture": "none",
+      "offlineCapability": "AUTO_UI",
+      "note": "Chỉ cần APK; không cần tài khoản hay Backend."
+    },
+    {
+      "testCaseId": "MOB-002",
+      "fixture": "auth/qa_accounts.json#QA-USER-A",
+      "offlineCapability": "PARTIAL",
+      "note": "FakeAuthRepository không seed sẵn; phải đăng ký + xác minh trong cùng tiến trình app."
+    },
+    {
+      "testCaseId": "MOB-003",
+      "fixture": "auth/login_scenarios.json",
+      "offlineCapability": "AUTO_UI",
+      "note": "Dữ liệu thiếu/unknown credentials kiểm tra validation và từ chối login."
+    },
+    {
+      "testCaseId": "MOB-004",
+      "fixture": "auth/qa_accounts.json#QA-USER-A",
+      "offlineCapability": "AUTO_UI",
+      "note": "Dùng màn hình login; tài khoản không bắt buộc cho focus/keyboard."
+    },
+    {
+      "testCaseId": "MOB-005",
+      "fixture": "auth/qa_accounts.json#QA-USER-A",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể kiểm tra app resume UI sau khi user đã login; TTL/refresh token không có trong FakeAuth."
+    },
+    {
+      "testCaseId": "MOB-006",
+      "fixture": "auth/login_scenarios.json#AUTH-UNVERIFIED-01",
+      "offlineCapability": "BLOCKED",
+      "note": "FakeAuth không mô phỏng access/refresh token expiry hoặc revoke như Backend."
+    },
+    {
+      "testCaseId": "MOB-007",
+      "fixture": "auth/qa_accounts.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể kiểm tra logout/UI; revoke token server chỉ test được với API thật."
+    },
+    {
+      "testCaseId": "MOB-008",
+      "fixture": "auth/login_scenarios.json#AUTH-EMPTY-01",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể test UI logged-out; protected API 401/403 không tồn tại ở offline mock mode."
+    },
+    {
+      "testCaseId": "MOB-009",
+      "fixture": "exam/test_catalog.json; exam/part_structure.json",
+      "offlineCapability": "AUTO_UI/PARTIAL",
+      "note": "Catalogue và cấu trúc 200 câu có sẵn trong app mock; không có request Backend."
+    },
+    {
+      "testCaseId": "MOB-010",
+      "fixture": "exam/question_index_reference.json#Q001",
+      "offlineCapability": "PARTIAL",
+      "note": "Question structure/UI có thể test; imageUrl thực không có trong Part 1 mock."
+    },
+    {
+      "testCaseId": "MOB-011",
+      "fixture": "media/README.md",
+      "offlineCapability": "BLOCKED/MANUAL",
+      "note": "Source baseline ghi rõ audio player chưa kết nối; không có file audio thực."
+    },
+    {
+      "testCaseId": "MOB-012",
+      "fixture": "media/README.md",
+      "offlineCapability": "BLOCKED/MANUAL",
+      "note": "Source baseline ghi rõ audio player chưa kết nối; không có file audio thực."
+    },
+    {
+      "testCaseId": "MOB-013",
+      "fixture": "exam/answer_sets/first_50_answered_correct.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể thao tác chọn/đổi/xóa đáp án và điều hướng; không có server ACK/persistence."
+    },
+    {
+      "testCaseId": "MOB-014",
+      "fixture": "exam/answer_sets/first_50_answered_correct.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể thao tác chọn/đổi/xóa đáp án và điều hướng; không có server ACK/persistence."
+    },
+    {
+      "testCaseId": "MOB-015",
+      "fixture": "exam/answer_sets/first_50_answered_correct.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể thao tác chọn/đổi/xóa đáp án và điều hướng; không có server ACK/persistence."
+    },
+    {
+      "testCaseId": "MOB-016",
+      "fixture": "attempts/attempt_state_templates.json#qa-attempt-in-progress-001",
+      "offlineCapability": "BLOCKED",
+      "note": "Offline path giữ attempt/draft trong memory; không tự khôi phục sau process restart theo yêu cầu draft persistence."
+    },
+    {
+      "testCaseId": "MOB-017",
+      "fixture": "attempts/network_fault_scenarios.json",
+      "offlineCapability": "MANUAL_REQUIRED/BLOCKED",
+      "note": "API_ENABLED=false không gửi request nên không kiểm thử retry/ack/network recovery của API."
+    },
+    {
+      "testCaseId": "MOB-018",
+      "fixture": "attempts/duplicate_submit_scenario.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể kiểm tra UI/local idempotency trong cùng session; không xác minh số bản ghi Backend."
+    },
+    {
+      "testCaseId": "MOB-019",
+      "fixture": "attempts/deadline_boundary_scenarios.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể kiểm tra timer client, nhưng không giả lập server clock/deadline fixture chính xác bằng data file."
+    },
+    {
+      "testCaseId": "MOB-020",
+      "fixture": "exam/answer_sets/*.json; exam/score_reference.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Dùng answer key/reference và score mapping để đối chiếu logic mock sau submit; bảng score được đánh dấu non-official."
+    },
+    {
+      "testCaseId": "MOB-021",
+      "fixture": "exam/answer_sets/*.json; exam/score_reference.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Dùng answer key/reference và score mapping để đối chiếu logic mock sau submit; bảng score được đánh dấu non-official."
+    },
+    {
+      "testCaseId": "MOB-022",
+      "fixture": "attempts/two_user_ownership_reference.json",
+      "offlineCapability": "BLOCKED",
+      "note": "Ownership enforcement phải test với API/Backend thật; mock local không chứng minh authorization phía server."
+    },
+    {
+      "testCaseId": "MOB-023",
+      "fixture": "exam/answer_key_TESTER_ONLY.json",
+      "offlineCapability": "PARTIAL",
+      "note": "Có thể kiểm tra màn hình review sau submit trong local mock; không kiểm tra server không lộ đáp án trước submit."
+    },
+    {
+      "testCaseId": "MOB-024",
+      "fixture": "attempts/two_user_ownership_reference.json",
+      "offlineCapability": "BLOCKED",
+      "note": "Không thể kết luận isolation/ownerId bằng dữ liệu in-memory."
+    },
+    {
+      "testCaseId": "MOB-025",
+      "fixture": "attempts/history_empty.json; attempts/history_page_1.json; attempts/history_page_2.json",
+      "offlineCapability": "PARTIAL",
+      "note": "JSON là expected fixture/template; current app history in-memory không có importer, pagination dataset phải được tạo bằng thao tác submit hoặc bổ sung seed hook."
+    },
+    {
+      "testCaseId": "MOB-026",
+      "fixture": "exam/*; auth/*; attempts/*",
+      "offlineCapability": "BLOCKED",
+      "note": "EX-05 đòi hỏi API thật; không dùng dữ liệu mock/offline để ghi Pass E2E."
+    }
+  ],
+  "featureDataPack": "mappings/feature_data_mapping.json",
+  "note": "Existing MOB-001..MOB-026 mapping retained from earlier Offline Test Data pack; see feature_data_mapping.json for all current app feature areas."
+}

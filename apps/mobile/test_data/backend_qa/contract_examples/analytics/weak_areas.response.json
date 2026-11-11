@@ -1,0 +1,72 @@
+{
+  "windowDays": 30,
+  "minimumQuestions": 20,
+  "threshold": 0.3,
+  "timezone": "Asia/Ho_Chi_Minh",
+  "items": [
+    {
+      "part": 1,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 12,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 2,
+      "status": "AVAILABLE",
+      "correct": 42,
+      "total": 60,
+      "weaknessScore": 0.3,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 3,
+      "status": "AVAILABLE",
+      "correct": 68,
+      "total": 100,
+      "weaknessScore": 0.32,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 4,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 14,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 5,
+      "status": "AVAILABLE",
+      "correct": 62,
+      "total": 100,
+      "weaknessScore": 0.38,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 6,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 10,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 7,
+      "status": "AVAILABLE",
+      "correct": 71,
+      "total": 100,
+      "weaknessScore": 0.29,
+      "isWeak": false,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    }
+  ],
+  "asOf": "2026-11-11T09:10:00+00:00"
+}

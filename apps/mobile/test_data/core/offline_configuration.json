@@ -1,0 +1,24 @@
+{
+  "source": "AppConfig.fromEnvironment + main.dart in app(3).zip",
+  "recommendedBuildDefines": {
+    "APP_ENV": "development",
+    "API_ENABLED": "false",
+    "API_BASE_URL": ""
+  },
+  "defaults": {
+    "APP_ENV": "development",
+    "API_ENABLED": false,
+    "API_BASE_URL": "",
+    "CONNECT_TIMEOUT_MS": 15000,
+    "SEND_TIMEOUT_MS": 20000,
+    "RECEIVE_TIMEOUT_MS": 20000
+  },
+  "featureRepositorySelection": {
+    "auth": "FakeAuthRepository",
+    "analytics": "MockAnalyticsRepository",
+    "mockTest": "MockTestRepository + local attempt repository",
+    "learning": "local provider catalog when LearningRepository is null",
+    "aiChat": "AiChatRepository always local mock; backend safety gate false"
+  },
+  "warning": "No fixture data should enable API_ENABLED=true or modify production settings."
+}

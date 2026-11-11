@@ -1,0 +1,76 @@
+{
+  "dailyGoal": 5,
+  "remindEnabled": true,
+  "words": {
+    "t1-v1": {
+      "id": "t1-v1",
+      "word": "negotiate",
+      "phonetic": "/nɪˈɡoʊʃieɪt/",
+      "definition": "thương lượng, đàm phán",
+      "example": "We need to negotiate the contract terms.",
+      "audioUrl": "",
+      "topicId": "t1",
+      "topicName": "Office & Business",
+      "grade": 5,
+      "serverRevision": null,
+      "firstStudiedAt": "2026-11-07T13:29:23+07:00",
+      "lastStudiedAt": "2026-11-10T13:04:23+07:00"
+    },
+    "t1-v2": {
+      "id": "t1-v2",
+      "word": "invoice",
+      "phonetic": "/ˈɪnvɔɪs/",
+      "definition": "hóa đơn",
+      "example": "Please send the invoice by Friday.",
+      "audioUrl": "",
+      "topicId": "t1",
+      "topicName": "Office & Business",
+      "grade": 3,
+      "serverRevision": null,
+      "firstStudiedAt": "2026-11-06T13:29:23+07:00",
+      "lastStudiedAt": "2026-11-10T13:09:23+07:00"
+    },
+    "t1-v3": {
+      "id": "t1-v3",
+      "word": "procurement",
+      "phonetic": "/prəˈkjʊrmənt/",
+      "definition": "việc mua sắm, thu mua",
+      "example": "Procurement approved the order.",
+      "audioUrl": "",
+      "topicId": "t1",
+      "topicName": "Office & Business",
+      "grade": 1,
+      "serverRevision": null,
+      "firstStudiedAt": "2026-11-05T13:29:23+07:00",
+      "lastStudiedAt": "2026-11-10T13:14:23+07:00"
+    },
+    "t2-v1": {
+      "id": "t2-v1",
+      "word": "itinerary",
+      "phonetic": "/aɪˈtɪnəreri/",
+      "definition": "lịch trình",
+      "example": "Please check the travel itinerary.",
+      "audioUrl": "",
+      "topicId": "t2",
+      "topicName": "Travel & Transport",
+      "grade": 5,
+      "serverRevision": null,
+      "firstStudiedAt": "2026-11-04T13:29:23+07:00",
+      "lastStudiedAt": "2026-11-10T13:19:23+07:00"
+    },
+    "t2-v2": {
+      "id": "t2-v2",
+      "word": "boarding pass",
+      "phonetic": "/ˈbɔːrdɪŋ pæs/",
+      "definition": "thẻ lên máy bay",
+      "example": "Show your boarding pass at the gate.",
+      "audioUrl": "",
+      "topicId": "t2",
+      "topicName": "Travel & Transport",
+      "grade": 3,
+      "serverRevision": null,
+      "firstStudiedAt": "2026-11-03T13:29:23+07:00",
+      "lastStudiedAt": "2026-11-10T13:24:23+07:00"
+    }
+  }
+}

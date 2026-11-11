@@ -54,6 +54,64 @@ void main() {
       );
     });
 
+    test('supports independent feature API switches', () {
+      final config = AppConfig(
+        environment: AppEnvironment.development,
+        baseUrl: 'https://api.example.test/api/v1',
+        apiEnabled: false,
+        authApiEnabled: true,
+        learningApiEnabled: false,
+        mockTestApiEnabled: true,
+        analyticsApiEnabled: false,
+      );
+
+      expect(config.isAuthApiEnabled, isTrue);
+      expect(config.isLearningApiEnabled, isFalse);
+      expect(config.isMockTestApiEnabled, isTrue);
+      expect(config.isAnalyticsApiEnabled, isFalse);
+      expect(config.isAnyApiEnabled, isTrue);
+    });
+
+    test('requires Auth API for protected feature APIs', () {
+      expect(
+        () => AppConfig(
+          environment: AppEnvironment.development,
+          baseUrl: 'https://api.example.test/api/v1',
+          apiEnabled: false,
+          authApiEnabled: false,
+          learningApiEnabled: true,
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('legacy global API switch remains the feature fallback', () {
+      final config = AppConfig(
+        environment: AppEnvironment.development,
+        baseUrl: 'https://api.example.test/api/v1',
+        apiEnabled: true,
+      );
+
+      expect(config.isAuthApiEnabled, isTrue);
+      expect(config.isLearningApiEnabled, isTrue);
+      expect(config.isMockTestApiEnabled, isTrue);
+      expect(config.isAnalyticsApiEnabled, isTrue);
+    });
+
+    test('allows all feature APIs to stay disabled with no base URL', () {
+      final config = AppConfig(
+        environment: AppEnvironment.development,
+        baseUrl: '',
+        apiEnabled: true,
+        authApiEnabled: false,
+        learningApiEnabled: false,
+        mockTestApiEnabled: false,
+        analyticsApiEnabled: false,
+      );
+
+      expect(config.isAnyApiEnabled, isFalse);
+    });
+
     test('requires HTTPS for production API mode', () {
       expect(
         () => AppConfig(
