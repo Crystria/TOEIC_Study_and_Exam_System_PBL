@@ -4,7 +4,9 @@ import '../config/app_config.dart';
 import '../network/api_client.dart';
 import '../storage/token_storage.dart';
 
-/// Composition root quản lý các dependency cấp ứng dụng.
+/// Builds application-wide infrastructure dependencies (configuration,
+/// secure token storage, and the shared API client). Feature repositories are
+/// selected separately by `AppFeatureDependencies` at the composition root.
 class AppDependencies {
   AppDependencies._({
     required this.config,

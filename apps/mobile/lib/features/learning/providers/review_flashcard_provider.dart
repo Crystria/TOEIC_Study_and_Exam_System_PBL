@@ -2,8 +2,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
-import '../../../core/storage/vocabulary_progress_storage.dart';
-import '../models/learning_models.dart';
 import '../repositories/learning_repository.dart';
 import 'review_select_words_provider.dart';
 
@@ -25,19 +23,14 @@ class ReviewResultTally {
 
 class ReviewFlashcardProvider extends ChangeNotifier {
   ReviewFlashcardProvider({
-    LearningRepository? repository,
-    VocabularyProgressStorage? storage,
-    String? Function()? currentUserId,
+    required LearningRepository repository,
+    required String? Function() currentUserId,
     Future<void> Function()? onProgressPersisted,
   }) : _repository = repository,
-       _storage = storage ?? VocabularyProgressStorage(),
-       _currentUserId = currentUserId ?? _noUser,
+       _currentUserId = currentUserId,
        _onProgressPersisted = onProgressPersisted;
 
-  static String? _noUser() => null;
-
-  final LearningRepository? _repository;
-  final VocabularyProgressStorage _storage;
+  final LearningRepository _repository;
   final String? Function() _currentUserId;
   final Future<void> Function()? _onProgressPersisted;
 
@@ -67,8 +60,7 @@ class ReviewFlashcardProvider extends ChangeNotifier {
     if (expectedUserId != null && expectedUserId != userIdAtStart) {
       return false;
     }
-    if (_repository != null &&
-        (userIdAtStart == null || userIdAtStart.isEmpty)) {
+    if (userIdAtStart == null || userIdAtStart.isEmpty) {
       return false;
     }
 
@@ -104,23 +96,20 @@ class ReviewFlashcardProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      LearningMutationReceipt? receipt;
-      if (_repository != null) {
-        if (userIdAtStart == null || userIdAtStart.isEmpty) {
-          throw const AppException.unauthorized(
-            message: 'Bạn cần đăng nhập để đồng bộ tiến trình ôn tập.',
-          );
-        }
-
-        receipt = await _repository.reviewFlashcard(
-          vocabularyId: word.id,
-          quality: quality,
-          baseEntityRevision: word.baseEntityRevision,
+      if (userIdAtStart == null || userIdAtStart.isEmpty) {
+        throw const AppException.unauthorized(
+          message: 'Bạn cần đăng nhập để đồng bộ tiến trình ôn tập.',
         );
-        if (!_isCurrent(revision, userIdAtStart)) return;
       }
 
-      await _storage.recordStudiedWord(
+      final receipt = await _repository.reviewFlashcard(
+        vocabularyId: word.id,
+        quality: quality,
+        baseEntityRevision: word.baseEntityRevision,
+      );
+      if (!_isCurrent(revision, userIdAtStart)) return;
+
+      await _repository.recordStudiedVocabulary(
         wordId: word.id,
         word: word.word,
         phonetic: word.phonetic,
@@ -130,20 +119,16 @@ class ReviewFlashcardProvider extends ChangeNotifier {
         topicId: word.topicId,
         topicName: word.topicName,
         grade: quality,
-        serverRevision: receipt?.revision,
+        serverRevision: receipt.revision,
       );
       if (!_isCurrent(revision, userIdAtStart)) return;
 
-      // Keep the journal entry until both Backend and local account cache have
-      // committed. If local storage/acknowledgement fails, the next attempt
-      // replays the same Backend operationId instead of grading twice.
-      if (receipt != null && userIdAtStart != null) {
-        await _repository!.acknowledgeMutation(
-          userId: userIdAtStart,
-          operationId: receipt.operationId,
-        );
-        if (!_isCurrent(revision, userIdAtStart)) return;
-      }
+      // Keep the operation journal entry until local progress is committed.
+      await _repository.acknowledgeMutation(
+        userId: userIdAtStart,
+        operationId: receipt.operationId,
+      );
+      if (!_isCurrent(revision, userIdAtStart)) return;
 
       // Refresh account-scoped vocabulary totals and due counts. A refresh
       // failure must not roll back a review already accepted by the server.

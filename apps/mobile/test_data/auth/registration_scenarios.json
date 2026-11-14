@@ -1,5 +1,5 @@
 {
-  "source": "RegisterScreen + FakeAuthRepository",
+  "source": "RegisterScreen + TestDataAuthRepository",
   "scenarios": [
     {
       "id": "AUTH-REG-01",
@@ -99,7 +99,7 @@
         "password": "QaTest2026",
         "confirmPassword": "QaTest2026"
       },
-      "expected": "FakeAuthRepository rejects duplicate email in current process."
+      "expected": "TestDataAuthRepository rejects duplicate email in current process."
     }
   ]
 }

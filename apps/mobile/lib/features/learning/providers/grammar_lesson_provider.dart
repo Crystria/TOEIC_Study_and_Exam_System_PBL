@@ -2,30 +2,19 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
-import '../../../core/storage/grammar_progress_storage.dart';
-import '../mock_data/grammar_catalog.dart';
 import '../models/grammar_lesson.dart';
-import '../models/learning_models.dart';
 import '../repositories/learning_repository.dart';
 
 enum GrammarLessonFetchStatus { idle, loading, loaded, markingDone, error }
 
 class GrammarLessonProvider extends ChangeNotifier {
   GrammarLessonProvider({
-    LearningRepository? repository,
-    GrammarProgressStorage? progressStorage,
-    List<GrammarLesson>? mockLessons,
-    String? Function()? currentUserId,
+    required LearningRepository repository,
+    required String? Function() currentUserId,
   }) : _repository = repository,
-       _progressStorage = progressStorage ?? GrammarProgressStorage(),
-       _mockLessons = mockLessons ?? GrammarCatalog.lessons,
-       _currentUserId = currentUserId ?? _noUser;
+       _currentUserId = currentUserId;
 
-  static String? _noUser() => null;
-
-  final LearningRepository? _repository;
-  final GrammarProgressStorage _progressStorage;
-  final List<GrammarLesson> _mockLessons;
+  final LearningRepository _repository;
   final String? Function() _currentUserId;
 
   GrammarLessonFetchStatus status = GrammarLessonFetchStatus.idle;
@@ -59,9 +48,7 @@ class GrammarLessonProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final loadedLesson = _repository == null
-          ? await _loadMockLesson(id)
-          : await _repository.getGrammarLesson(id);
+      final loadedLesson = await _repository.getGrammarLesson(id);
       if (!_isCurrent(scopeRevision, requestToken, userIdAtStart)) return;
       lesson = loadedLesson;
       completionErrorMessage = null;
@@ -77,21 +64,6 @@ class GrammarLessonProvider extends ChangeNotifier {
     if (_isCurrent(scopeRevision, requestToken, userIdAtStart)) {
       notifyListeners();
     }
-  }
-
-  Future<GrammarLesson> _loadMockLesson(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 250));
-    GrammarLesson? loadedLesson;
-    for (final item in _mockLessons) {
-      if (item.id == id) {
-        loadedLesson = item;
-        break;
-      }
-    }
-    if (loadedLesson == null) {
-      throw StateError('Grammar lesson not found: $id');
-    }
-    return loadedLesson;
   }
 
   bool _isCurrent(int scopeRevision, int requestToken, String? userId) =>
@@ -113,44 +85,34 @@ class GrammarLessonProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      LearningMutationReceipt? receipt;
-      if (_repository != null) {
-        if (userId == null || userId.trim().isEmpty) {
-          throw const AppException.unauthorized(
-            message: 'Bạn cần đăng nhập để lưu tiến trình Grammar.',
-          );
-        }
-        final baseRevision = await _progressStorage.revisionFor(
-          userId,
-          currentLesson.id,
+      if (userId == null || userId.trim().isEmpty) {
+        throw const AppException.unauthorized(
+          message: 'Bạn cần đăng nhập để lưu tiến trình Grammar.',
         );
-        if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
-        receipt = await _repository.completeGrammarLesson(
-          lessonId: currentLesson.id,
-          baseEntityRevision: baseRevision,
-        );
-        if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
-      } else {
-        await Future<void>.delayed(const Duration(milliseconds: 200));
-        if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
       }
+      final baseRevision = await _repository.getGrammarLessonRevision(
+        userId,
+        currentLesson.id,
+      );
+      if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
+      final receipt = await _repository.completeGrammarLesson(
+        lessonId: currentLesson.id,
+        baseEntityRevision: baseRevision,
+      );
+      if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
 
-      if (userId != null && userId.trim().isNotEmpty) {
-        await _progressStorage.markCompleted(
-          userId,
-          currentLesson.id,
-          revision: receipt?.revision ?? '1',
-        );
-        if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
-      }
+      await _repository.markGrammarLessonCompleted(
+        userId,
+        currentLesson.id,
+        revision: receipt.revision,
+      );
+      if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
 
-      if (receipt != null && userId != null) {
-        await _repository!.acknowledgeMutation(
-          userId: userId,
-          operationId: receipt.operationId,
-        );
-        if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
-      }
+      await _repository.acknowledgeMutation(
+        userId: userId,
+        operationId: receipt.operationId,
+      );
+      if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
       return true;
     } catch (error) {
       if (!_isCurrent(scopeRevision, requestToken, userId)) return false;

@@ -1,6 +1,6 @@
 {
-  "source": "AuthSessionProvider + AuthSession + FakeAuthRepository",
-  "sessionNature": "Device-local in-memory metadata. It is not a Backend JWT/session ID and the FakeAuthRepository account map does not persist after app process restart.",
+  "source": "AuthSessionProvider + AuthSession + TestDataAuthRepository",
+  "sessionNature": "Device-local in-memory metadata. It is not a Backend JWT/session ID and the TestDataAuthRepository account map does not persist after app process restart.",
   "scenarios": [
     {
       "id": "AUTH-SESSION-01",

@@ -16,6 +16,7 @@ class LoginProvider extends ChangeNotifier {
   String? errorMessage;
 
   bool get isLoading => status == LoginStatus.loading;
+  bool get supportsUsernameLogin => _repository.supportsUsernameLogin;
 
   Future<AppUser?> login(String identifier, String password) async {
     if (isLoading) return null;

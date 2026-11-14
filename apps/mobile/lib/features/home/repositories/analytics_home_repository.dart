@@ -11,14 +11,14 @@ import 'home_repository.dart';
 class AnalyticsHomeRepository implements HomeRepository {
   AnalyticsHomeRepository({
     required AnalyticsRepository analyticsRepository,
+    required LearningRepository learningRepository,
     required String? Function() currentUserName,
-    LearningRepository? learningRepository,
   }) : _analyticsRepository = analyticsRepository,
        _learningRepository = learningRepository,
        _currentUserName = currentUserName;
 
   final AnalyticsRepository _analyticsRepository;
-  final LearningRepository? _learningRepository;
+  final LearningRepository _learningRepository;
   final String? Function() _currentUserName;
 
   @override
@@ -28,17 +28,13 @@ class AnalyticsHomeRepository implements HomeRepository {
     );
 
     int? dueFlashcards;
-    final learningRepository = _learningRepository;
-    if (learningRepository != null) {
-      try {
-        final learningSummary = await learningRepository.getProgressSummary();
-        dueFlashcards = learningSummary.dueVocabularies;
-      } catch (_) {
-        // Dashboard analytics remain useful when the optional Learning
-        // summary endpoint is temporarily unavailable.
-      }
-    } else if (_analyticsRepository.isDemoData) {
-      dueFlashcards = 15;
+    try {
+      final learningSummary = await _learningRepository.getProgressSummary();
+      dueFlashcards = learningSummary.dueVocabularies;
+    } catch (_) {
+      // Dashboard analytics remain useful when Learning is temporarily
+      // unavailable. This is an optional dashboard aggregate, not a data
+      // source fallback; Learning itself still reports its original error.
     }
 
     // The Analytics service defines activity days in Asia/Ho_Chi_Minh.
@@ -66,6 +62,7 @@ class AnalyticsHomeRepository implements HomeRepository {
       mockTestCount: progress.lifetime.mockTestCount,
       todayActivityCount: todayActivityCount,
       dueFlashcards: dueFlashcards,
+      isIllustrative: progress.isIllustrative,
       weakAreas: progress.weakAreas
           .where((item) => item.isAvailable && item.accuracyPercent != null)
           .map(
@@ -73,7 +70,6 @@ class AnalyticsHomeRepository implements HomeRepository {
                 WeakArea(part: item.part, accuracy: item.accuracyPercent!),
           )
           .toList(growable: false),
-      isDemoData: _analyticsRepository.isDemoData,
     );
   }
 }

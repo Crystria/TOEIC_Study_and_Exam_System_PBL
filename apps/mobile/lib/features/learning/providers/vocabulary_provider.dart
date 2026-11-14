@@ -2,8 +2,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
-import '../../../core/storage/vocabulary_progress_storage.dart';
 import '../models/learning_models.dart';
+import '../models/learning_progress.dart';
 import '../repositories/learning_repository.dart';
 
 class FlashcardItem {
@@ -48,20 +48,12 @@ enum VocabularyLearningMode { topic, random }
 
 class VocabularyProvider extends ChangeNotifier {
   VocabularyProvider({
-    VocabularyProgressStorage? storage,
-    LearningRepository? repository,
-    List<FlashcardItem>? catalog,
-    String? Function()? currentUserId,
-  }) : _storage = storage ?? VocabularyProgressStorage(),
-       _repository = repository,
-       _catalog = catalog ?? _defaultCatalog,
-       _currentUserId = currentUserId ?? _noUser;
+    required LearningRepository repository,
+    required String? Function() currentUserId,
+  }) : _repository = repository,
+       _currentUserId = currentUserId;
 
-  static String? _noUser() => null;
-
-  final VocabularyProgressStorage _storage;
-  final LearningRepository? _repository;
-  final List<FlashcardItem> _catalog;
+  final LearningRepository _repository;
   final String? Function() _currentUserId;
   Future<void>? _initialization;
   int _scopeRevision = 0;
@@ -77,79 +69,8 @@ class VocabularyProvider extends ChangeNotifier {
   String? persistenceError;
 
   final Map<String, int> gradedResults = <String, int>{};
-  Map<String, StoredVocabularyWord> _progressRecords = {};
+  Map<String, LearningVocabularyProgressRecord> _progressRecords = {};
   final Map<String, LearningReviewProgress> _serverDueProgress = {};
-
-  static const List<FlashcardItem> _defaultCatalog = [
-    FlashcardItem(
-      id: 't1-v1',
-      word: 'negotiate',
-      phonetic: '/nɪˈɡoʊʃieɪt/',
-      definition: 'thương lượng, đàm phán',
-      example: 'We need to negotiate the contract terms.',
-      audioUrl: '',
-      masteryGrade: 5,
-      topicId: 't1',
-      topicName: 'Office & Business',
-    ),
-    FlashcardItem(
-      id: 't1-v2',
-      word: 'invoice',
-      phonetic: '/ˈɪnvɔɪs/',
-      definition: 'hóa đơn',
-      example: 'Please send the invoice by Friday.',
-      audioUrl: '',
-      masteryGrade: 3,
-      topicId: 't1',
-      topicName: 'Office & Business',
-    ),
-    FlashcardItem(
-      id: 't1-v3',
-      word: 'procurement',
-      phonetic: '/prəˈkjʊrmənt/',
-      definition: 'việc mua sắm, thu mua',
-      example: 'Procurement approved the order.',
-      audioUrl: '',
-      masteryGrade: 1,
-      topicId: 't1',
-      topicName: 'Office & Business',
-    ),
-    FlashcardItem(
-      id: 't2-v1',
-      word: 'itinerary',
-      phonetic: '/aɪˈtɪnəreri/',
-      definition: 'lịch trình',
-      example: 'Please check the travel itinerary.',
-      audioUrl: '',
-      masteryGrade: 5,
-      topicId: 't2',
-      topicName: 'Travel & Transport',
-    ),
-    FlashcardItem(
-      id: 't2-v2',
-      word: 'boarding pass',
-      phonetic: '/ˈbɔːrdɪŋ pæs/',
-      definition: 'thẻ lên máy bay',
-      example: 'Show your boarding pass at the gate.',
-      audioUrl: '',
-      masteryGrade: 3,
-      topicId: 't2',
-      topicName: 'Travel & Transport',
-    ),
-    FlashcardItem(
-      id: 't2-v3',
-      word: 'destination',
-      phonetic: '/ˌdestɪˈneɪʃn/',
-      definition: 'điểm đến',
-      example: 'Our final destination is Seoul.',
-      audioUrl: '',
-      masteryGrade: 1,
-      topicId: 't2',
-      topicName: 'Travel & Transport',
-    ),
-  ];
-
-  bool get isDemoData => _repository == null;
 
   FlashcardItem? get current => currentIndex >= 0 && currentIndex < queue.length
       ? queue[currentIndex]
@@ -165,12 +86,12 @@ class VocabularyProvider extends ChangeNotifier {
   Set<String> get todayStudiedWordIds =>
       _todayRecords.map((record) => record.id).toSet();
 
-  List<StoredVocabularyWord> get _todayRecords {
-    final today = VocabularyProgressSnapshot.dateKey(DateTime.now());
+  List<LearningVocabularyProgressRecord> get _todayRecords {
+    final today = LearningVocabularyProgress.dateKey(DateTime.now());
     final result = _progressRecords.values
         .where(
           (record) =>
-              VocabularyProgressSnapshot.dateKey(record.lastStudiedAt) == today,
+              LearningVocabularyProgress.dateKey(record.lastStudiedAt) == today,
         )
         .toList();
     result.sort((a, b) => a.lastStudiedAt.compareTo(b.lastStudiedAt));
@@ -184,7 +105,7 @@ class VocabularyProvider extends ChangeNotifier {
   Future<void> _loadPersistedProgress() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _storage.loadSnapshot();
+      final snapshot = await _repository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applySnapshot(snapshot);
       persistenceError = null;
@@ -199,7 +120,7 @@ class VocabularyProvider extends ChangeNotifier {
   Future<void> refreshPersistedProgress() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _storage.loadSnapshot();
+      final snapshot = await _repository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applySnapshot(snapshot);
       persistenceError = null;
@@ -230,8 +151,10 @@ class VocabularyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _applySnapshot(VocabularyProgressSnapshot snapshot) {
-    _progressRecords = Map<String, StoredVocabularyWord>.from(snapshot.words);
+  void _applySnapshot(LearningVocabularyProgress snapshot) {
+    _progressRecords = Map<String, LearningVocabularyProgressRecord>.from(
+      snapshot.words,
+    );
     gradedResults
       ..clear()
       ..addEntries(
@@ -241,7 +164,7 @@ class VocabularyProvider extends ChangeNotifier {
       );
   }
 
-  FlashcardItem _toFlashcardItem(StoredVocabularyWord record) {
+  FlashcardItem _toFlashcardItem(LearningVocabularyProgressRecord record) {
     return FlashcardItem(
       id: record.id,
       word: record.word,
@@ -274,56 +197,41 @@ class VocabularyProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      if (_repository != null) {
-        // Fetch the canonical topic detail before loading its vocabulary so
-        // API mode uses the Backend's current topic name rather than the
-        // navigation label cached by the list screen.
-        final topic = await _repository.getTopic(topicId);
-        if (!_isCurrentRequest(revision, requestToken)) return;
-        currentTopicName = topic.name;
+      // Fetch canonical content through the Repository. The same mapping and
+      // filtering rules apply to API and Test Data implementations.
+      final topic = await _repository.getTopic(topicId);
+      if (!_isCurrentRequest(revision, requestToken)) return;
+      currentTopicName = topic.name;
 
-        final serverItems = await _repository.getVocabularies(topicId: topicId);
-        if (!_isCurrentRequest(revision, requestToken)) return;
-        final dueProgress = await _repository.getDueProgress(topicId: topicId);
-        if (!_isCurrentRequest(revision, requestToken)) return;
-        _serverDueProgress
-          ..clear()
-          ..addEntries(
-            dueProgress.map((item) => MapEntry(item.entityId, item)),
-          );
+      final items = await _repository.getVocabularies(topicId: topicId);
+      if (!_isCurrentRequest(revision, requestToken)) return;
+      final dueProgress = await _repository.getDueProgress(topicId: topicId);
+      if (!_isCurrentRequest(revision, requestToken)) return;
+      _serverDueProgress
+        ..clear()
+        ..addEntries(dueProgress.map((item) => MapEntry(item.entityId, item)));
 
-        queue = serverItems
-            .map(
-              (item) => FlashcardItem(
-                id: item.id,
-                word: item.word,
-                phonetic: item.phonetic,
-                definition: item.definition,
-                example: item.example,
-                audioUrl: item.audioUrl,
-                masteryGrade:
-                    _progressRecords[item.id]?.grade ??
-                    _serverDueProgress[item.id]?.quality ??
-                    1,
-                topicId: item.topicId,
-                topicName: currentTopicName ?? item.topicName,
-              ),
-            )
-            // Preserve the accepted topic-tab rule: show only words marked
-            // "đã thuộc". Server grade is available only for its due queue;
-            // all other per-word progress is retained in this user's cache.
-            .where((item) => _effectiveGrade(item) == 5)
-            .where((item) => !_wasStudiedToday(item.id))
-            .toList();
-      } else {
-        await Future<void>.delayed(const Duration(milliseconds: 250));
-        if (!_isCurrentRequest(revision, requestToken)) return;
-        queue = _catalog
-            .where((item) => item.topicId == topicId)
-            .where((item) => _effectiveGrade(item) == 5)
-            .where((item) => !_wasStudiedToday(item.id))
-            .toList();
-      }
+      queue = items
+          .map(
+            (item) => FlashcardItem(
+              id: item.id,
+              word: item.word,
+              phonetic: item.phonetic,
+              definition: item.definition,
+              example: item.example,
+              audioUrl: item.audioUrl,
+              masteryGrade:
+                  _progressRecords[item.id]?.grade ??
+                  _serverDueProgress[item.id]?.quality ??
+                  1,
+              topicId: item.topicId,
+              topicName: currentTopicName ?? item.topicName,
+            ),
+          )
+          // The topic flow intentionally shows words already mastered.
+          .where((item) => _effectiveGrade(item) == 5)
+          .where((item) => !_wasStudiedToday(item.id))
+          .toList();
       if (!_isCurrentRequest(revision, requestToken)) return;
       currentIndex = 0;
       status = queue.isEmpty ? VocabularyStatus.empty : VocabularyStatus.loaded;
@@ -351,46 +259,35 @@ class VocabularyProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      if (_repository != null) {
-        final serverItems = await _repository.getVocabularies();
-        if (!_isCurrentRequest(revision, requestToken)) return;
-        final dueProgress = await _repository.getDueProgress();
-        if (!_isCurrentRequest(revision, requestToken)) return;
-        _serverDueProgress
-          ..clear()
-          ..addEntries(
-            dueProgress.map((item) => MapEntry(item.entityId, item)),
-          );
-        queue = serverItems
-            .where((item) => !_wasStudiedToday(item.id))
-            .map(
-              (item) => FlashcardItem(
-                id: item.id,
-                word: item.word,
-                phonetic: item.phonetic,
-                definition: item.definition,
-                example: item.example,
-                audioUrl: item.audioUrl,
-                masteryGrade:
-                    _progressRecords[item.id]?.grade ??
-                    _serverDueProgress[item.id]?.quality ??
-                    1,
-                topicId: item.topicId,
-                topicName: item.topicName,
-              ),
-            )
-            .map((item) => item.withGrade(_effectiveGrade(item)))
-            .toList();
-        queue.shuffle();
-      } else {
-        await Future<void>.delayed(const Duration(milliseconds: 250));
-        if (!_isCurrentRequest(revision, requestToken)) return;
-        queue = _catalog
-            .where((item) => !_wasStudiedToday(item.id))
-            .map((item) => item.withGrade(_effectiveGrade(item)))
-            .toList();
-        queue.shuffle();
-      }
+      final items = await _repository.getVocabularies();
+      if (!_isCurrentRequest(revision, requestToken)) return;
+      final dueProgress = await _repository.getDueProgress();
+      if (!_isCurrentRequest(revision, requestToken)) return;
+      _serverDueProgress
+        ..clear()
+        ..addEntries(dueProgress.map((item) => MapEntry(item.entityId, item)));
+      queue =
+          items
+              .where((item) => !_wasStudiedToday(item.id))
+              .map(
+                (item) => FlashcardItem(
+                  id: item.id,
+                  word: item.word,
+                  phonetic: item.phonetic,
+                  definition: item.definition,
+                  example: item.example,
+                  audioUrl: item.audioUrl,
+                  masteryGrade:
+                      _progressRecords[item.id]?.grade ??
+                      _serverDueProgress[item.id]?.quality ??
+                      1,
+                  topicId: item.topicId,
+                  topicName: item.topicName,
+                ),
+              )
+              .map((item) => item.withGrade(_effectiveGrade(item)))
+              .toList()
+            ..shuffle();
       if (!_isCurrentRequest(revision, requestToken)) return;
       currentIndex = 0;
       status = queue.isEmpty ? VocabularyStatus.empty : VocabularyStatus.loaded;
@@ -429,25 +326,22 @@ class VocabularyProvider extends ChangeNotifier {
     try {
       // The durable journal keeps the same operationId until local persistence
       // succeeds and acknowledgeMutation removes the pending entry.
-      LearningMutationReceipt? receipt;
-      if (_repository != null) {
-        if (userIdAtStart == null || userIdAtStart.isEmpty) {
-          throw const AppException.unauthorized(
-            message: 'Bạn cần đăng nhập để đồng bộ tiến trình từ vựng.',
-          );
-        }
-        receipt = await _repository.reviewFlashcard(
-          vocabularyId: item.id,
-          quality: quality,
-          baseEntityRevision:
-              _progressRecords[item.id]?.serverRevision ??
-              _serverDueProgress[item.id]?.revision ??
-              '0',
+      if (userIdAtStart == null || userIdAtStart.isEmpty) {
+        throw const AppException.unauthorized(
+          message: 'Bạn cần đăng nhập để lưu tiến trình từ vựng.',
         );
-        if (!_isCurrentAccount(revision, userIdAtStart)) return;
       }
+      final receipt = await _repository.reviewFlashcard(
+        vocabularyId: item.id,
+        quality: quality,
+        baseEntityRevision:
+            _progressRecords[item.id]?.serverRevision ??
+            _serverDueProgress[item.id]?.revision ??
+            '0',
+      );
+      if (!_isCurrentAccount(revision, userIdAtStart)) return;
 
-      final snapshot = await _storage.recordStudiedWord(
+      final snapshot = await _repository.recordStudiedVocabulary(
         wordId: item.id,
         word: item.word,
         phonetic: item.phonetic,
@@ -457,18 +351,16 @@ class VocabularyProvider extends ChangeNotifier {
         topicId: item.topicId,
         topicName: item.topicName,
         grade: quality,
-        serverRevision: receipt?.revision,
+        serverRevision: receipt.revision,
       );
       if (!_isCurrentAccount(revision, userIdAtStart)) return;
       _applySnapshot(snapshot);
 
-      if (receipt != null && userIdAtStart != null) {
-        await _repository!.acknowledgeMutation(
-          userId: userIdAtStart,
-          operationId: receipt.operationId,
-        );
-        if (!_isCurrentAccount(revision, userIdAtStart)) return;
-      }
+      await _repository.acknowledgeMutation(
+        userId: userIdAtStart,
+        operationId: receipt.operationId,
+      );
+      if (!_isCurrentAccount(revision, userIdAtStart)) return;
 
       // A request may finish after the user has started another queue. The
       // successful grade still belongs to this account, but must not advance

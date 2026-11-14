@@ -5,7 +5,6 @@ import '../../../../core/navigation/full_screen_flow_scope.dart';
 import '../../../../theme/app_colors.dart';
 import '../../models/test_attempt.dart';
 import '../../providers/mock_test_taking_provider.dart';
-import '../../repositories/mock_test_attempt_repository.dart';
 import '../../providers/select_test_parts_provider.dart';
 import '../test_taking/mock_test_taking_screen.dart';
 
@@ -13,13 +12,11 @@ class SelectTestPartsScreen extends StatefulWidget {
   const SelectTestPartsScreen({
     super.key,
     required this.testId,
-    required this.attemptRepository,
     this.initialMode = TestAttemptMode.full,
   });
 
   final String testId;
   final TestAttemptMode initialMode;
-  final MockTestAttemptRepository attemptRepository;
 
   @override
   State<SelectTestPartsScreen> createState() => _SelectTestPartsScreenState();
@@ -51,14 +48,24 @@ class _SelectTestPartsScreenState extends State<SelectTestPartsScreen> {
       return;
     }
 
+    final takingProvider = context.read<MockTestTakingProvider>();
+    await takingProvider.loadAttempt(attempt.attemptId);
+    if (!mounted) return;
+    if (takingProvider.status != TakingStatus.loaded &&
+        takingProvider.status != TakingStatus.submitted) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            takingProvider.errorMessage ?? 'Không thể tải phiên thi vừa tạo.',
+          ),
+        ),
+      );
+      return;
+    }
+
     navigator.push(
       MaterialPageRoute<void>(
-        builder: (_) => ChangeNotifierProvider<MockTestTakingProvider>(
-          create: (_) =>
-              MockTestTakingProvider(repository: widget.attemptRepository)
-                ..loadAttempt(attempt.attemptId),
-          child: MockTestTakingScreen(attemptId: attempt.attemptId),
-        ),
+        builder: (_) => MockTestTakingScreen(attemptId: attempt.attemptId),
       ),
     );
   }

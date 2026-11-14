@@ -11,7 +11,7 @@
       "testCaseId": "MOB-002",
       "fixture": "auth/qa_accounts.json#QA-USER-A",
       "offlineCapability": "PARTIAL",
-      "note": "FakeAuthRepository không seed sẵn; phải đăng ký + xác minh trong cùng tiến trình app."
+      "note": "TestDataAuthRepository không seed sẵn; phải đăng ký + xác minh trong cùng tiến trình app."
     },
     {
       "testCaseId": "MOB-003",

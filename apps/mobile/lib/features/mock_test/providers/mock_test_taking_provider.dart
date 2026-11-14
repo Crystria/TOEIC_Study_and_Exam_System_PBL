@@ -33,8 +33,6 @@ class MockTestTakingProvider extends ChangeNotifier {
   int _loadRequestId = 0;
   bool _disposed = false;
 
-  bool get usesBackend => _repository.usesBackend;
-
   int get totalQuestions => questions.length;
   int get answeredCount => answers.length;
   int get unansweredCount => totalQuestions - answeredCount;
@@ -64,6 +62,24 @@ class MockTestTakingProvider extends ChangeNotifier {
   }
 
   List<int> get availableParts => session?.parts ?? const [];
+
+  void resetForUserScopeChange() {
+    if (_disposed) return;
+    _loadRequestId++;
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
+    session = null;
+    status = TakingStatus.idle;
+    questions = const [];
+    groups = const [];
+    answers.clear();
+    currentIndex = 0;
+    remainingSeconds = 0;
+    errorMessage = null;
+    submission = null;
+    _autoSubmitStarted = false;
+    notifyListeners();
+  }
 
   Future<void> loadAttempt(
     String attemptId, {
@@ -268,28 +284,21 @@ class MockTestTakingProvider extends ChangeNotifier {
     }
   }
 
-  /// Re-syncs the authoritative server deadline when an API-backed attempt
-  /// returns to the foreground. Mock mode keeps its original local countdown.
+  /// Re-reads the Attempt when the application returns to the foreground.
+  /// Each Repository implementation reconciles its own authoritative state.
   void onAppResumed() {
     if (status != TakingStatus.loaded) return;
     final attemptId = session?.attemptId;
-    if (usesBackend && attemptId != null) {
+    if (attemptId != null) {
       unawaited(loadAttempt(attemptId, preserveCurrentIndex: true));
-    } else {
-      _refreshRemainingTime();
     }
   }
 
-  /// Flushes the current draft while the application is leaving the foreground.
-  /// Every individual answer is already sent through PUT /answers/:questionId;
-  /// this batch PUT gives the Backend another consistent snapshot for resume.
+  /// Persists the current draft through the repository. API mode synchronizes
+  /// it with the Exam Service and Test Data mode writes it to local storage.
   void saveDraftNow() {
     final currentSession = session;
-    if (!usesBackend ||
-        status != TakingStatus.loaded ||
-        currentSession == null) {
-      return;
-    }
+    if (status != TakingStatus.loaded || currentSession == null) return;
     unawaited(
       _repository
           .saveDraft(
@@ -298,7 +307,9 @@ class MockTestTakingProvider extends ChangeNotifier {
           )
           .catchError((error) {
             if (!_disposed && status == TakingStatus.loaded) {
-              errorMessage = error is AppException ? error.message : 'Không thể đồng bộ bản nháp. Đáp án vẫn được giữ tạm trên thiết bị.';
+              errorMessage = error is AppException
+                  ? error.message
+                  : 'Không thể lưu bản nháp. Vui lòng thử lại.';
               notifyListeners();
             }
           }),

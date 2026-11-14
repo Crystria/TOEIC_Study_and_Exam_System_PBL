@@ -14,7 +14,7 @@
     "RECEIVE_TIMEOUT_MS": 20000
   },
   "featureRepositorySelection": {
-    "auth": "FakeAuthRepository",
+    "auth": "TestDataAuthRepository",
     "analytics": "MockAnalyticsRepository",
     "mockTest": "MockTestRepository + local attempt repository",
     "learning": "local provider catalog when LearningRepository is null",

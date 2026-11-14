@@ -3,7 +3,7 @@
   "items": [
     {
       "feature": "Auth",
-      "limitation": "FakeAuthRepository starts with no accounts. Register and perform simulated verification in the current process; account and email-action tokens are in memory."
+      "limitation": "TestDataAuthRepository starts with no accounts. Register and perform simulated verification in the current process; account and email-action tokens are in memory."
     },
     {
       "feature": "Profile",

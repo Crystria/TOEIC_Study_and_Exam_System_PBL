@@ -2,8 +2,8 @@ import 'ai_chat_context.dart';
 
 /// A conversation summary used by the in-app AI Chat history.
 ///
-/// This model is intentionally independent of backend DTOs. The current
-/// feature implementation uses local in-memory data.
+/// This model is intentionally independent of backend DTOs. Development
+/// runtime history is persisted through the AI Chat Local Data Source.
 class AiConversation {
   const AiConversation({
     required this.id,

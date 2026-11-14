@@ -24,7 +24,7 @@
     }
   ],
   "non_persistent_mock_state": [
-    "FakeAuthRepository accounts and tickets",
+    "TestDataAuthRepository accounts and tickets",
     "AuthSession local session metadata",
     "MockTest attempt/draft/history repository maps",
     "AiChatRepository conversations/messages/usage"

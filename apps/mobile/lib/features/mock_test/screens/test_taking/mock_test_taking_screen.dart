@@ -46,6 +46,7 @@ class _MockTestTakingScreenState extends State<MockTestTakingScreen>
     _provider?.removeListener(_handleProviderChanged);
     _provider = nextProvider;
     nextProvider.addListener(_handleProviderChanged);
+    _handleProviderChanged();
   }
 
   void _handleProviderChanged() {
@@ -103,16 +104,10 @@ class _MockTestTakingScreenState extends State<MockTestTakingScreen>
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Thoát bài thi?'),
-        content: Text(
-          _provider?.usesBackend == true
-              ? 'Phiên thi và các đáp án đã đồng bộ được lưu trên máy chủ. '
-                    'Bạn có thể mở lại phiên đang diễn ra từ Lịch sử làm bài. '
-                    'Các đáp án chưa đồng bộ sẽ được giữ tạm trên thiết bị. '
-                    'Bạn có chắc chắn muốn thoát?'
-              : 'Nếu thoát, màn hình làm bài sẽ đóng. Bạn có thể mở lại phiên thi '
-                    'đang diễn ra từ Lịch sử làm bài trong phiên ứng dụng hiện tại. '
-                    'Nếu đóng ứng dụng hoàn toàn, dữ liệu mẫu trong bộ nhớ sẽ bị mất. '
-                    'Bạn có chắc chắn muốn thoát?',
+        content: const Text(
+          'Các câu trả lời sẽ được lưu thông qua cơ chế lưu trữ của ứng dụng. '
+          'Bạn có thể mở lại phiên thi đang diễn ra từ Lịch sử làm bài. '
+          'Bạn có chắc chắn muốn thoát?',
         ),
         actions: [
           TextButton(

@@ -4,60 +4,39 @@ import 'package:provider/provider.dart';
 import '../../../../theme/app_colors.dart';
 import '../../models/mock_test.dart';
 import '../../models/test_attempt.dart';
-import '../../mock_test_dependencies.dart';
 import '../../providers/mock_test_select_provider.dart';
-import '../../providers/select_test_parts_provider.dart';
-import '../../repositories/mock_test_attempt_repository.dart';
-import '../../repositories/mock_test_repository.dart';
 import '../../widgets/filter_tab.dart';
 import '../test_history/test_history_screen.dart';
 import 'select_test_parts_screen.dart';
 
-class MockTestSelectScreen extends StatelessWidget {
+class MockTestSelectScreen extends StatefulWidget {
   const MockTestSelectScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<MockTestRepository>.value(
-          value: MockTestDependencies.testRepository,
-        ),
-        Provider<MockTestAttemptRepository>.value(
-          value: MockTestDependencies.attemptRepository,
-        ),
-        ChangeNotifierProvider<MockTestSelectProvider>(
-          create: (context) => MockTestSelectProvider(
-            repository: context.read<MockTestRepository>(),
-          )..loadTests(),
-        ),
-        ChangeNotifierProvider<SelectTestPartsProvider>(
-          create: (context) => SelectTestPartsProvider(
-            testRepository: context.read<MockTestRepository>(),
-            attemptRepository: context.read<MockTestAttemptRepository>(),
-          ),
-        ),
-      ],
-      child: const _MockTestSelectView(),
-    );
+  State<MockTestSelectScreen> createState() => _MockTestSelectScreenState();
+}
+
+class _MockTestSelectScreenState extends State<MockTestSelectScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<MockTestSelectProvider>().loadTests();
+    });
   }
+
+  @override
+  Widget build(BuildContext context) => const _MockTestSelectView();
 }
 
 class _MockTestSelectView extends StatelessWidget {
   const _MockTestSelectView();
 
   void _openHistory(BuildContext context) {
-    final attemptRepository = context.read<MockTestAttemptRepository>();
-    final testRepository = context.read<MockTestRepository>();
-
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => TestHistoryScreen(
-          attemptRepository: attemptRepository,
-          testRepository: testRepository,
-        ),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const TestHistoryScreen()));
   }
 
   void _openSelection(
@@ -65,18 +44,10 @@ class _MockTestSelectView extends StatelessWidget {
     MockTest test,
     TestAttemptMode mode,
   ) {
-    final partsProvider = context.read<SelectTestPartsProvider>();
-    final attemptRepository = context.read<MockTestAttemptRepository>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => ChangeNotifierProvider<SelectTestPartsProvider>.value(
-          value: partsProvider,
-          child: SelectTestPartsScreen(
-            testId: test.testId,
-            initialMode: mode,
-            attemptRepository: attemptRepository,
-          ),
-        ),
+        builder: (_) =>
+            SelectTestPartsScreen(testId: test.testId, initialMode: mode),
       ),
     );
   }
@@ -235,14 +206,6 @@ class _MockTestSelectView extends StatelessWidget {
                         .toList(),
                   ),
                 ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 4, 16, 12),
-                child: Text(
-                  'Danh sách hiện sử dụng dữ liệu mẫu; chưa kết nối Backend.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: AppColors.slate400),
-                ),
-              ),
             ],
           ),
         ),

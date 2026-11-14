@@ -14,7 +14,7 @@
     {
       "id": "AI-CHAT-03",
       "action": "create_new_conversation_from_history",
-      "expected": "New in-memory conversation titled Cuộc trò chuyện mới; creation path is history screen."
+      "expected": "New conversation is created from history screen and persisted in the active user scope."
     },
     {
       "id": "AI-CHAT-04",
@@ -26,22 +26,22 @@
       "id": "AI-CHAT-05",
       "action": "rename",
       "input": "Ôn ngữ pháp TOEIC",
-      "expected": "Conversation title changes in memory."
+      "expected": "Conversation title changes and is persisted in the active user scope."
     },
     {
       "id": "AI-CHAT-06",
       "action": "delete",
-      "expected": "Conversation and its messages are removed from memory."
+      "expected": "Conversation and its messages are deleted from the active user scope."
     },
     {
       "id": "AI-CHAT-07",
       "action": "account_switch",
-      "expected": "Repository resets to the four default conversations and usage preview."
+      "expected": "Account switching resets in-memory state; the next account loads its own isolated conversation snapshot."
     },
     {
       "id": "AI-CHAT-08",
       "action": "restart_app",
-      "expected": "Conversation mutations are not persisted across process restart."
+      "expected": "Runtime conversation changes remain available after application restart for the same user."
     }
   ]
 }

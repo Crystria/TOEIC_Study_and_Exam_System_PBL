@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/config/app_config.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/providers/auth_session_provider.dart';
@@ -126,9 +125,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final session = context.watch<AuthSessionProvider>();
-    final config = context.watch<AppConfig>();
     final user = session.currentUser;
-    final canUpdateAvatar = config.isAuthApiEnabled && session.isAuthenticated;
+    final canUpdateAvatar = session.isAuthenticated && session.canUpdateAvatar;
     final isAvatarBusy =
         canUpdateAvatar &&
         (_isPickingAvatar ||

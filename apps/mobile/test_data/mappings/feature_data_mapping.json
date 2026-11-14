@@ -4,7 +4,7 @@
     {
       "feature": "Auth & Session",
       "sourceFiles": [
-        "features/auth/repositories/fake_auth_repository.dart",
+        "features/auth/repositories/test_data_auth_repository.dart",
         "features/auth/providers/auth_session_provider.dart"
       ],
       "dataFiles": [

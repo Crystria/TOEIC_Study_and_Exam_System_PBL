@@ -1,5 +1,5 @@
 {
-  "source": "FakeAuthRepository.login",
+  "source": "TestDataAuthRepository.login",
   "scenarios": [
     {
       "id": "AUTH-LOGIN-01",

@@ -18,7 +18,7 @@ class DashboardData {
     required this.todayActivityCount,
     required this.dueFlashcards,
     required this.weakAreas,
-    required this.isDemoData,
+    this.isIllustrative = false,
   });
 
   final String userName;
@@ -30,5 +30,7 @@ class DashboardData {
   final int todayActivityCount;
   final int? dueFlashcards;
   final List<WeakArea> weakAreas;
-  final bool isDemoData;
+
+  /// Domain metadata propagated from Analytics, not an environment switch.
+  final bool isIllustrative;
 }

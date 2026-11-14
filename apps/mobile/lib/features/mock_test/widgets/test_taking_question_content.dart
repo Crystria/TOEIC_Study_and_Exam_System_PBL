@@ -250,8 +250,8 @@ class _AudioPromptCard extends StatelessWidget {
                 const SizedBox(height: 7),
                 Text(
                   hasSource
-                      ? 'Đã nhận nguồn audio. Trình phát chưa được kết nối trong bản mock.'
-                      : 'Chưa có tệp audio trong bộ dữ liệu mẫu.',
+                      ? 'Đã nhận nguồn audio nhưng trình phát hiện chưa khả dụng.'
+                      : 'Chưa có tệp audio cho câu hỏi này.',
                   style: const TextStyle(
                     fontSize: 11,
                     color: AppColors.slate500,

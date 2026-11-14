@@ -1,48 +1,37 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter / Dart generated output
 .dart_tool/
-.flutter-plugins-dependencies
+.packages
 .pub-cache/
-.pub/
-/build/
-/coverage/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+coverage/
 
-# Symbolication related
-app.*.symbols
+# Local machine configuration and signing credentials
+android/local.properties
+android/key.properties
+**/*.keystore
+**/*.jks
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
 
-# Obfuscation related
-app.*.map.json
+# Native build caches
+android/.gradle/
+android/.kotlin/
+ios/Flutter/ephemeral/
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Python validator caches
+__pycache__/
+*.py[cod]
 
-# Widget Preview related
-.widget_preview/
+# Mobile test-only local credentials and tester reference material (never commit)
+test_data/auth/qa_accounts.json
+test_data/exam/answer_key_TESTER_ONLY.json
+test_data/ai_chat/context_samples_TESTER_REFERENCE.json
+
+# Local Appium environment overrides
+qa-local/
+.env
+.env.*
+!.env.example
+!.env.template

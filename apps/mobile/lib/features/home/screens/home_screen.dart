@@ -16,6 +16,7 @@ import '../providers/home_provider.dart';
 import '../widgets/prediction_score_card.dart';
 import '../widgets/quick_action_tile.dart';
 import '../widgets/section_title.dart';
+import '../../../shared/widgets/data_source_notice.dart';
 import '../../../shared/widgets/app_badge.dart';
 import '../../../shared/widgets/app_bottom_nav.dart';
 import '../../../shared/widgets/stat_card.dart';
@@ -348,20 +349,10 @@ class _Content extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (data.isDemoData)
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.warningBg,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Text(
-              'Dữ liệu minh họa — API đang tắt, chưa phải thống kê thực tế.',
-              style: TextStyle(color: AppColors.slate700, fontSize: 11),
-            ),
-          ),
+        DataSourceNotice(
+          isIllustrative: data.isIllustrative,
+          featureName: 'thống kê trên trang chủ',
+        ),
         if (data.predictedScore != null)
           PredictionScoreCard(
             score: data.predictedScore!,

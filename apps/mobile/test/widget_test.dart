@@ -3,18 +3,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 import 'package:toeic_mobile/app.dart';
-import 'package:toeic_mobile/core/config/app_config.dart';
 import 'package:toeic_mobile/core/session/user_scoped_data_coordinator.dart';
 import 'package:toeic_mobile/core/storage/vocabulary_progress_storage.dart';
 import 'package:toeic_mobile/features/auth/providers/auth_session_provider.dart';
 import 'package:toeic_mobile/features/auth/providers/login_provider.dart';
-import 'package:toeic_mobile/features/auth/repositories/fake_auth_repository.dart';
+import 'package:toeic_mobile/features/auth/repositories/test_data_auth_repository.dart';
 
 void main() {
   testWidgets('TOEIC Master displays the login screen', (
     WidgetTester tester,
   ) async {
-    final repository = FakeAuthRepository();
+    final repository = TestDataAuthRepository();
     final coordinator = UserScopedDataCoordinator(
       vocabularyStorage: VocabularyProgressStorage(),
       resetCallbacks: const [],
@@ -28,13 +27,6 @@ void main() {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider<AppConfig>.value(
-            value: AppConfig(
-              environment: AppEnvironment.development,
-              baseUrl: '',
-              apiEnabled: false,
-            ),
-          ),
           ChangeNotifierProvider<AuthSessionProvider>.value(
             value: sessionProvider,
           ),

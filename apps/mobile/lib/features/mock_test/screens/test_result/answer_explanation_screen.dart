@@ -322,7 +322,7 @@ class _AnswerExplanationView extends StatelessWidget {
                                         : OptionState.neutral;
                                     final label =
                                         option.optionText.trim().isEmpty
-                                        ? 'Nội dung lựa chọn không có trong dữ liệu mẫu.'
+                                        ? 'Nội dung lựa chọn chưa được cung cấp.'
                                         : option.optionText;
                                     return Padding(
                                       padding: const EdgeInsets.only(bottom: 9),
@@ -366,9 +366,7 @@ class _AnswerExplanationView extends StatelessWidget {
                             const SizedBox(height: 8),
                             AppCard(
                               child: Text(
-                                review.explanation ??
-                                    'Bộ dữ liệu mẫu chưa có phần giải thích chi tiết cho câu này. '
-                                        'Khi kết nối Exam Service, nội dung explanation sẽ được lấy từ kết quả Attempt đã nộp.',
+                                review.explanation ?? 'Chưa có phần giải thích chi tiết cho câu này.',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   height: 1.55,
@@ -559,9 +557,7 @@ class _GroupMaterialCard extends StatelessWidget {
           if (!hasContent) ...[
             const SizedBox(height: 8),
             Text(
-              group.audioUrl == null
-                  ? 'Audio hoặc nội dung media của nhóm chưa có trong dữ liệu mẫu.'
-                  : 'Nhóm có audio đính kèm; trình phát media sẽ được kết nối cùng API ở giai đoạn tích hợp.',
+              group.audioUrl == null ? 'Nhóm này chưa có nội dung media.' : 'Nhóm có audio đính kèm nhưng trình phát media hiện chưa khả dụng.',
               style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.slate500,

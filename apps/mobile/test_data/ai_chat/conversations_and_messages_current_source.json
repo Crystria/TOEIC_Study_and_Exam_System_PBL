@@ -1,8 +1,8 @@
 {
-  "source": "AiChatMockData in app(3).zip",
+  "source": "Development JSON fixture loaded by AssetAiChatTestDataSource",
   "integrationEnabled": false,
   "backendIntegrationSafetyPassed": false,
-  "resetBehavior": "AiChatRepository.resetForUserScopeChange restores these four conversations and message lists; current data is in-memory only.",
+  "resetBehavior": "Runtime changes are stored locally by user scope. Account switching clears only in-memory state; each user history is reloaded from that user's local snapshot.",
   "conversations": [
     {
       "id": "ai-conversation-001",

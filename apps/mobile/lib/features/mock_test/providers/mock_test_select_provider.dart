@@ -49,6 +49,16 @@ class MockTestSelectProvider extends ChangeNotifier {
     if (!_isDisposed && requestId == _requestId) notifyListeners();
   }
 
+  void resetForUserScopeChange() {
+    if (_isDisposed) return;
+    _requestId++;
+    status = TestSelectStatus.idle;
+    filter = TestFilter.all;
+    _tests = const [];
+    errorMessage = null;
+    notifyListeners();
+  }
+
   void changeFilter(TestFilter value) {
     if (_isDisposed || filter == value) return;
     filter = value;

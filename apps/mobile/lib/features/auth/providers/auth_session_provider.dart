@@ -38,6 +38,9 @@ class AuthSessionProvider extends ChangeNotifier {
   bool get hasActiveSession => _currentSession != null;
   bool get isUpdatingProfile => _isUpdatingProfile;
   bool get isUpdatingAvatar => _isUpdatingAvatar;
+  bool get canUpdateProfile => _repository.supportsProfileUpdates;
+  bool get canUpdateAvatar => _repository.supportsAvatarUpload;
+  bool get canChangePassword => _repository.supportsPasswordChange;
   bool get isAuthenticated =>
       _status == AuthSessionStatus.authenticated &&
       _currentUser != null &&

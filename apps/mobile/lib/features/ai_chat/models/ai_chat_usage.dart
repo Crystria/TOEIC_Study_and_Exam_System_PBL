@@ -1,7 +1,8 @@
 /// Usage/quota snapshot for the AI Chat feature.
 ///
-/// The current app repository supplies a session-local preview. Production
-/// usage must be constructed from the authenticated backend response.
+/// The Development repository supplies a simulated, non-authoritative preview
+/// and persists it per user. Production usage must come from an approved
+/// authenticated Backend response.
 class AiChatUsage {
   const AiChatUsage({
     required this.limit,

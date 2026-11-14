@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toeic_mobile/core/config/app_config.dart';
 import 'package:toeic_mobile/core/session/user_scoped_data_coordinator.dart';
 import 'package:toeic_mobile/core/storage/vocabulary_progress_storage.dart';
 import 'package:toeic_mobile/features/auth/providers/auth_session_provider.dart';
-import 'package:toeic_mobile/features/auth/repositories/fake_auth_repository.dart';
+import 'package:toeic_mobile/features/auth/repositories/test_data_auth_repository.dart';
 import 'package:toeic_mobile/features/profile/screens/profile_screen.dart';
 import 'package:toeic_mobile/features/profile/services/avatar_image_source.dart';
 import 'package:toeic_mobile/shared/models/app_user.dart';
@@ -39,19 +38,12 @@ void main() {
       ),
     );
 
-    final appConfig = AppConfig(
-      environment: AppEnvironment.development,
-      baseUrl: 'https://api.example.test',
-      authApiEnabled: true,
-    );
-
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AuthSessionProvider>.value(
             value: sessionProvider,
           ),
-          Provider<AppConfig>.value(value: appConfig),
         ],
         child: MaterialApp(
           home: ProfileScreen(
@@ -87,19 +79,12 @@ void main() {
       );
       addTearDown(sessionProvider.dispose);
 
-      final appConfig = AppConfig(
-        environment: AppEnvironment.development,
-        baseUrl: 'https://api.example.test',
-        authApiEnabled: true,
-      );
-
       await tester.pumpWidget(
         MultiProvider(
           providers: [
             ChangeNotifierProvider<AuthSessionProvider>.value(
               value: sessionProvider,
             ),
-            Provider<AppConfig>.value(value: appConfig),
           ],
           child: MaterialApp(
             home: ProfileScreen(
@@ -117,10 +102,12 @@ void main() {
     },
   );
 
-  testWidgets('hides avatar upload while Auth API is disabled', (tester) async {
+  testWidgets('hides avatar upload when repository does not support it', (
+    tester,
+  ) async {
     final source = _FakeAvatarImageSource();
     final sessionProvider = AuthSessionProvider(
-      repository: _AvatarRepository(),
+      repository: TestDataAuthRepository(),
       userDataCoordinator: UserScopedDataCoordinator(
         vocabularyStorage: VocabularyProgressStorage(),
         resetCallbacks: const [],
@@ -136,19 +123,12 @@ void main() {
       ),
     );
 
-    final appConfig = AppConfig(
-      environment: AppEnvironment.development,
-      baseUrl: '',
-      authApiEnabled: false,
-    );
-
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AuthSessionProvider>.value(
             value: sessionProvider,
           ),
-          Provider<AppConfig>.value(value: appConfig),
         ],
         child: MaterialApp(
           home: ProfileScreen(
@@ -178,7 +158,10 @@ class _FakeAvatarImageSource implements AvatarImageSource {
   }
 }
 
-class _AvatarRepository extends FakeAuthRepository {
+class _AvatarRepository extends TestDataAuthRepository {
+  @override
+  bool get supportsAvatarUpload => true;
+
   String? receivedUserId;
   String? receivedContentType;
   List<int>? receivedBytes;

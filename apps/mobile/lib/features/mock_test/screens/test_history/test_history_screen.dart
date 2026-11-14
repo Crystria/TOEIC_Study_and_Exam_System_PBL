@@ -2,65 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../theme/app_colors.dart';
-import '../../mock_test_dependencies.dart';
 import '../../models/test_attempt.dart';
 import '../../models/test_history_item.dart';
 import '../../providers/test_history_provider.dart';
-import '../../repositories/mock_test_attempt_repository.dart';
-import '../../repositories/mock_test_repository.dart';
 import '../../widgets/filter_tab.dart';
 import 'test_history_detail_full_screen.dart';
 import 'test_history_detail_part_screen.dart';
 
-class TestHistoryScreen extends StatelessWidget {
-  const TestHistoryScreen({
-    super.key,
-    this.attemptRepository,
-    this.testRepository,
-  });
-
-  /// Optional injection preserves compatibility with existing Home navigation.
-  /// The defaults point to the same app-session repositories used by selection.
-  final MockTestAttemptRepository? attemptRepository;
-  final MockTestRepository? testRepository;
+class TestHistoryScreen extends StatefulWidget {
+  const TestHistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final attempts =
-        attemptRepository ?? MockTestDependencies.attemptRepository;
-    final tests = testRepository ?? MockTestDependencies.testRepository;
+  State<TestHistoryScreen> createState() => _TestHistoryScreenState();
+}
 
-    return ChangeNotifierProvider<TestHistoryProvider>(
-      create: (_) => TestHistoryProvider(repository: attempts)..loadHistory(),
-      child: _TestHistoryView(
-        attemptRepository: attempts,
-        testRepository: tests,
-      ),
-    );
+class _TestHistoryScreenState extends State<TestHistoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<TestHistoryProvider>().loadHistory();
+    });
   }
+
+  @override
+  Widget build(BuildContext context) => const _TestHistoryView();
 }
 
 class _TestHistoryView extends StatelessWidget {
-  const _TestHistoryView({
-    required this.attemptRepository,
-    required this.testRepository,
-  });
-
-  final MockTestAttemptRepository attemptRepository;
-  final MockTestRepository testRepository;
+  const _TestHistoryView();
 
   Future<void> _openDetail(BuildContext context, TestHistoryItem item) async {
     final Widget screen = item.mode == TestAttemptMode.full
-        ? TestHistoryDetailFullScreen(
-            attemptId: item.attemptId,
-            attemptRepository: attemptRepository,
-            testRepository: testRepository,
-          )
-        : TestHistoryDetailPartScreen(
-            attemptId: item.attemptId,
-            attemptRepository: attemptRepository,
-            testRepository: testRepository,
-          );
+        ? TestHistoryDetailFullScreen(attemptId: item.attemptId)
+        : TestHistoryDetailPartScreen(attemptId: item.attemptId);
 
     await Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (_) => screen));
@@ -216,14 +192,6 @@ class _TestHistoryView extends StatelessWidget {
                     ),
                   );
                 },
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 4, 16, 10),
-              child: Text(
-                'Lịch sử hiện được lưu trong bộ nhớ của phiên ứng dụng; chưa đồng bộ Backend.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11, color: AppColors.slate400),
               ),
             ),
           ],

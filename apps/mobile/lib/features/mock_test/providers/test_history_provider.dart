@@ -46,6 +46,18 @@ class TestHistoryProvider extends ChangeNotifier {
     }
   }
 
+  void resetForUserScopeChange() {
+    _requestId++;
+    _items.clear();
+    filter = TestHistoryFilter.all;
+    status = TestHistoryStatus.idle;
+    errorMessage = null;
+    loadMoreErrorMessage = null;
+    totalItems = 0;
+    _page = 0;
+    notifyListeners();
+  }
+
   Future<void> loadHistory() async {
     final requestId = ++_requestId;
     status = TestHistoryStatus.loading;

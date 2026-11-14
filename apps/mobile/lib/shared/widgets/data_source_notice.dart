@@ -2,23 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../../theme/app_colors.dart';
 
-/// Explains when a feature is rendering local/demo data instead of Backend data.
-///
-/// Keep the notice hidden for API-backed repositories so the shared widget does
-/// not imply that live data is only illustrative.
+/// Explains when a domain response is explicitly marked as illustrative.
+/// The widget does not inspect or select the configured data source.
 class DataSourceNotice extends StatelessWidget {
   const DataSourceNotice({
     super.key,
-    required this.isDemoData,
+    required this.isIllustrative,
     required this.featureName,
   });
 
-  final bool isDemoData;
+  final bool isIllustrative;
   final String featureName;
 
   @override
   Widget build(BuildContext context) {
-    if (!isDemoData) return const SizedBox.shrink();
+    if (!isIllustrative) return const SizedBox.shrink();
 
     final normalizedFeatureName = featureName.trim();
     final subject = normalizedFeatureName.isEmpty

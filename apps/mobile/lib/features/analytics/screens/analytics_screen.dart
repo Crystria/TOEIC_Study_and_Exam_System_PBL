@@ -70,7 +70,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                 children: [
-                  if (provider.isDemoData) const _DemoDataNotice(),
+                  if (provider.progress?.isIllustrative == true)
+                    const _DemoDataNotice(),
                   _RangeSelector(
                     selected: progress.timeRange,
                     onSelected: (range) => provider.load(range: range),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/config/app_config.dart';
-
 import '../../../shared/widgets/text_link_button.dart';
 import '../../../theme/app_colors.dart';
 import '../models/email_action_ticket.dart';
@@ -28,12 +26,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<void> _onSendLink() async {
-    if (context.read<AppConfig>().isAuthApiEnabled) {
+    final provider = context.read<ForgotPasswordProvider>();
+    if (!provider.supportsPasswordReset) {
       _showMessage('Backend hiện chưa cung cấp API đặt lại mật khẩu.');
       return;
     }
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    final provider = context.read<ForgotPasswordProvider>();
     if (provider.isLoading) return;
 
     final EmailActionTicket? ticket = await provider.sendResetLink(
@@ -65,8 +63,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.watch<ForgotPasswordProvider>().isLoading;
-    final apiEnabled = context.watch<AppConfig>().isAuthApiEnabled;
+    final provider = context.watch<ForgotPasswordProvider>();
+    final isLoading = provider.isLoading;
+    final supportsPasswordReset = provider.supportsPasswordReset;
 
     return Scaffold(
       body: SafeArea(
@@ -120,7 +119,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    if (apiEnabled)
+                    if (!supportsPasswordReset)
                       const Padding(
                         padding: EdgeInsets.only(bottom: 14),
                         child: Text(
@@ -134,7 +133,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                     ElevatedButton(
-                      onPressed: isLoading || apiEnabled ? null : _onSendLink,
+                      onPressed: isLoading || !supportsPasswordReset
+                          ? null
+                          : _onSendLink,
                       child: isLoading
                           ? const SizedBox(
                               width: 20,

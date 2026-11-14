@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/config/app_config.dart';
-import '../../../core/storage/vocabulary_progress_storage.dart';
 import '../../../theme/app_colors.dart';
 import '../../auth/providers/auth_session_provider.dart';
 import '../../auth/screens/change_password_screen.dart';
@@ -17,11 +15,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notificationsEnabled = true;
   bool _isLoadingNotifications = true;
   bool _isSavingNotifications = false;
-  bool _hasUnassignedLegacyData = false;
-  bool _isImportingLegacyData = false;
   String? _settingsUserId;
   int _settingsLoadRevision = 0;
   bool _settingsReloadScheduled = false;
@@ -35,53 +30,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadNotifications() async {
     if (!mounted) return;
     final revision = ++_settingsLoadRevision;
-    final session = context.read<AuthSessionProvider>();
-    final userId = session.currentUser?.id;
+    final userId = context.read<AuthSessionProvider>().currentUser?.id;
     if (userId == null || userId.trim().isEmpty) {
       _settingsUserId = null;
       setState(() {
         _isLoadingNotifications = false;
         _isSavingNotifications = false;
-        _hasUnassignedLegacyData = false;
       });
       return;
     }
 
     _settingsUserId = userId;
     setState(() => _isLoadingNotifications = true);
-    try {
-      final storage = context.read<VocabularyProgressStorage>();
-      final topicsProvider = context.read<VocabularyTopicsProvider>();
-      final snapshot = await storage.loadSnapshot();
-      if (!_isCurrentSettingsLoad(revision, userId, storage, session)) return;
-
-      final hasLegacyData = await storage.hasUnassignedLegacyData();
-      if (!_isCurrentSettingsLoad(revision, userId, storage, session)) return;
-
-      await topicsProvider.refreshProgress();
-      if (!_isCurrentSettingsLoad(revision, userId, storage, session)) return;
-
-      setState(() {
-        _notificationsEnabled = snapshot.remindEnabled;
-        _hasUnassignedLegacyData = hasLegacyData;
-        _isLoadingNotifications = false;
-      });
-    } catch (_) {
-      if (!mounted || revision != _settingsLoadRevision) return;
-      setState(() => _isLoadingNotifications = false);
-    }
-  }
-
-  bool _isCurrentSettingsLoad(
-    int revision,
-    String userId,
-    VocabularyProgressStorage storage,
-    AuthSessionProvider session,
-  ) {
-    return mounted &&
-        revision == _settingsLoadRevision &&
-        session.currentUser?.id == userId &&
-        storage.activeUserId == userId;
+    final topicsProvider = context.read<VocabularyTopicsProvider>();
+    await Future.wait([
+      topicsProvider.refreshProgress(),
+      topicsProvider.refreshLegacyProgressStatus(),
+    ]);
+    if (!mounted || revision != _settingsLoadRevision) return;
+    if (context.read<AuthSessionProvider>().currentUser?.id != userId) return;
+    setState(() => _isLoadingNotifications = false);
   }
 
   void _scheduleReloadForAccount(String? currentUserId) {
@@ -98,7 +66,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _importLegacyProgress() async {
-    if (_isImportingLegacyData || !_hasUnassignedLegacyData) return;
+    final topicsProvider = context.read<VocabularyTopicsProvider>();
+    if (topicsProvider.isImportingLegacyProgress ||
+        !topicsProvider.hasUnassignedLegacyProgress) {
+      return;
+    }
     final userId = _settingsUserId;
     if (userId == null ||
         context.read<AuthSessionProvider>().currentUser?.id != userId) {
@@ -127,26 +99,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
     if (confirmed != true || !mounted) return;
+    if (context.read<AuthSessionProvider>().currentUser?.id != userId) {
+      _showSettingsMessage(
+        'Phiên tài khoản đã thay đổi. Vui lòng kiểm tra lại dữ liệu học cũ.',
+      );
+      return;
+    }
 
-    setState(() => _isImportingLegacyData = true);
     try {
-      final storage = context.read<VocabularyProgressStorage>();
-      await storage.importUnassignedLegacyData(confirmOwnership: true);
-      if (!mounted ||
-          context.read<AuthSessionProvider>().currentUser?.id != userId ||
-          storage.activeUserId != userId) {
-        return;
-      }
-
-      await Future.wait([
-        context.read<VocabularyProvider>().refreshPersistedProgress(),
-        context.read<VocabularyTopicsProvider>().refreshProgress(),
-      ]);
+      await topicsProvider.importLegacyProgress(confirmOwnership: true);
       if (!mounted ||
           context.read<AuthSessionProvider>().currentUser?.id != userId) {
         return;
       }
-      setState(() => _hasUnassignedLegacyData = false);
+
+      await context.read<VocabularyProvider>().refreshPersistedProgress();
+      await topicsProvider.refreshProgress();
+      if (!mounted ||
+          context.read<AuthSessionProvider>().currentUser?.id != userId) {
+        return;
+      }
       _showSettingsMessage('Đã nhập tiến trình học cũ cho tài khoản này.');
     } catch (error) {
       if (!mounted) return;
@@ -155,8 +127,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ? error.message.toString()
             : 'Không thể nhập dữ liệu học cũ. Vui lòng thử lại.',
       );
-    } finally {
-      if (mounted) setState(() => _isImportingLegacyData = false);
     }
   }
 
@@ -174,24 +144,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     setState(() => _isSavingNotifications = true);
     try {
-      await context.read<VocabularyProgressStorage>().saveReminderEnabled(
-        value,
+      final topicsProvider = context.read<VocabularyTopicsProvider>();
+      await topicsProvider.saveReviewSettings(
+        dailyGoal: topicsProvider.dailyGoal,
+        remindEnabled: value,
       );
       if (!mounted ||
           context.read<AuthSessionProvider>().currentUser?.id !=
               _settingsUserId) {
         return;
       }
-
-      // VocabularyTopicsProvider is the single in-memory source for review
-      // goal/reminder preferences. Refresh it after the Settings screen writes.
-      await context.read<VocabularyTopicsProvider>().refreshProgress();
-      if (!mounted ||
-          context.read<AuthSessionProvider>().currentUser?.id !=
-              _settingsUserId) {
-        return;
-      }
-      setState(() => _notificationsEnabled = value);
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -208,7 +170,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final sessionProvider = context.watch<AuthSessionProvider>();
     final session = sessionProvider.currentSession;
     final currentUser = sessionProvider.currentUser;
-    final apiEnabled = context.watch<AppConfig>().isAuthApiEnabled;
+    final topicsProvider = context.watch<VocabularyTopicsProvider>();
+    final canChangePassword = sessionProvider.canChangePassword;
     _scheduleReloadForAccount(currentUser?.id);
 
     return Scaffold(
@@ -221,7 +184,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          if (_hasUnassignedLegacyData)
+          if (topicsProvider.hasUnassignedLegacyProgress)
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(16),
@@ -250,10 +213,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 10),
                   OutlinedButton(
-                    onPressed: _isImportingLegacyData
+                    onPressed: topicsProvider.isImportingLegacyProgress
                         ? null
                         : _importLegacyProgress,
-                    child: _isImportingLegacyData
+                    child: topicsProvider.isImportingLegacyProgress
                         ? const SizedBox(
                             width: 18,
                             height: 18,
@@ -265,7 +228,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           SwitchListTile.adaptive(
-            value: _notificationsEnabled,
+            value: topicsProvider.remindEnabled,
             onChanged: _isLoadingNotifications || _isSavingNotifications
                 ? null
                 : _updateNotifications,
@@ -303,17 +266,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               leading: const Icon(Icons.lock_outline, color: AppColors.brand),
               title: const Text('Đổi mật khẩu'),
               subtitle: Text(
-                apiEnabled
-                    ? 'Chưa khả dụng với Backend hiện tại'
-                    : 'Cập nhật mật khẩu cho tài khoản thử nghiệm',
+                !canChangePassword
+                    ? 'Chưa được hỗ trợ với tài khoản hiện tại'
+                    : 'Tài khoản hiện tại hỗ trợ đổi mật khẩu',
               ),
               trailing: const Icon(
                 Icons.chevron_right,
                 color: AppColors.slate400,
               ),
-              onTap: apiEnabled
+              onTap: !canChangePassword
                   ? () => _showSettingsMessage(
-                      'Backend hiện chưa cung cấp API đổi mật khẩu.',
+                      'Tài khoản hiện tại chưa hỗ trợ đổi mật khẩu.',
                     )
                   : () => Navigator.of(context).push(
                       MaterialPageRoute(

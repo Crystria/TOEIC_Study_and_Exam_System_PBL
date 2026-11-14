@@ -1,19 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:toeic_mobile/features/analytics/data_sources/test_data/analytics_test_data_source.dart';
 import 'package:toeic_mobile/features/analytics/models/analytics_models.dart';
 import 'package:toeic_mobile/features/analytics/providers/analytics_provider.dart';
-import 'package:toeic_mobile/features/analytics/repositories/analytics_repository.dart';
+import 'package:toeic_mobile/features/analytics/repositories/test_data/test_data_analytics_repository.dart';
 
 void main() {
   test('loads the selected range and clearly identifies demo data', () async {
-    final provider = AnalyticsProvider(repository: MockAnalyticsRepository());
+    final provider = AnalyticsProvider(
+      repository: TestDataAnalyticsRepository(
+        testDataSource: AnalyticsTestDataSource(),
+      ),
+    );
     addTearDown(provider.dispose);
 
     await provider.load(range: AnalyticsTimeRange.last7Days);
 
     expect(provider.status, AnalyticsStatus.loaded);
-    expect(provider.isDemoData, isTrue);
+    expect(provider.progress?.isIllustrative, isTrue);
     expect(provider.progress?.timeRange, AnalyticsTimeRange.last7Days);
     expect(provider.scores, isNotNull);
     expect(provider.practices, isNotNull);
@@ -28,7 +33,7 @@ void main() {
     final pendingLoad = provider.load(range: AnalyticsTimeRange.last30Days);
     provider.resetForUserScopeChange();
     repository.progressCompleter.complete(
-      await MockAnalyticsRepository().getProgress(
+      await AnalyticsTestDataSource().getProgress(
         AnalyticsTimeRange.last30Days,
       ),
     );
@@ -41,7 +46,10 @@ void main() {
   });
 }
 
-class _DelayedProgressAnalyticsRepository extends MockAnalyticsRepository {
+class _DelayedProgressAnalyticsRepository extends TestDataAnalyticsRepository {
+  _DelayedProgressAnalyticsRepository()
+    : super(testDataSource: AnalyticsTestDataSource());
+
   final Completer<AnalyticsProgress> progressCompleter =
       Completer<AnalyticsProgress>();
 

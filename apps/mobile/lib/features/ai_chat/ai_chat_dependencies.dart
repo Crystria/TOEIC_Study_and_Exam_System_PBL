@@ -1,31 +1,62 @@
+import 'package:flutter/foundation.dart' show kReleaseMode;
+
+import '../../core/config/app_config.dart';
+import 'data_sources/local/shared_preferences_ai_chat_local_data_source.dart';
+import 'data_sources/test_data/asset_ai_chat_test_data_source.dart';
 import 'repositories/ai_chat_repository.dart';
+import 'repositories/test_data/test_data_ai_chat_repository.dart';
+import 'repositories/unavailable_ai_chat_repository.dart';
 
-/// Shared in-app dependencies for the AI Chat feature.
+/// AI Chat dependencies are created by the application composition root.
 ///
-/// AI Chat deliberately stays local/mock until the Backend identity and
-/// conversation-ownership checks pass the security review. This decision is
-/// kept independent from the Auth, Learning, Mock Test, and Analytics API flags.
+/// Backend integration has an independent security gate. Enabling API_ENABLED
+/// for another feature never enables AI Chat or selects a mock fallback.
 class AiChatDependencies {
-  AiChatDependencies._();
+  AiChatDependencies._({
+    required this.repository,
+    required this.isAvailable,
+    required this.usesDevelopmentTestData,
+  });
 
-  /// The current AI Backend does not meet the requirements for safe mobile
-  /// integration. Do not change this to true merely because any other API feature is
-  /// true; the blockers must first be fixed and verified in the Backend.
+  /// Must remain false until Auth identity, conversation ownership, and access
+  /// control have passed an explicit Backend security review.
   static const bool backendIntegrationSafetyPassed = false;
 
-  static final AiChatRepository repository = _createRepository();
+  final AiChatRepository repository;
+  final bool isAvailable;
+  final bool usesDevelopmentTestData;
 
-  static AiChatRepository _createRepository() {
-    // Fail closed if someone marks the security gate as passed without also
-    // implementing and explicitly wiring an approved API repository.
+  factory AiChatDependencies.create({
+    required AppEnvironment environment,
+    required String? Function() currentUserId,
+    bool releaseBuild = kReleaseMode,
+  }) {
     if (backendIntegrationSafetyPassed) {
       throw StateError(
-        'AI Chat safety gate passed, but no approved Backend repository is '
-        'configured. Implement and review the API repository before enabling '
-        'Backend integration.',
+        'AI Chat Backend integration is marked approved, but no reviewed API '
+        'repository is implemented. Keep the safety gate disabled until the '
+        'approved implementation is wired here.',
       );
     }
 
-    return AiChatRepository();
+    if (environment == AppEnvironment.development && !releaseBuild) {
+      return AiChatDependencies._(
+        repository: TestDataAiChatRepository(
+          testDataSource: AssetAiChatTestDataSource(),
+          localDataSource: SharedPreferencesAiChatLocalDataSource(),
+          currentUserId: currentUserId,
+        ),
+        isAvailable: true,
+        usesDevelopmentTestData: true,
+      );
+    }
+
+    // Staging, Production, and every Release build fail closed. There is no
+    // Test Data fallback while the Backend security gate remains false.
+    return AiChatDependencies._(
+      repository: const UnavailableAiChatRepository(),
+      isAvailable: false,
+      usesDevelopmentTestData: false,
+    );
   }
 }

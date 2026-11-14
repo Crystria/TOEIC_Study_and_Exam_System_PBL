@@ -4,9 +4,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
-
-import '../../../core/storage/grammar_progress_storage.dart';
-import '../mock_data/grammar_catalog.dart';
 import '../models/grammar_lesson.dart';
 import '../repositories/learning_repository.dart';
 
@@ -14,20 +11,12 @@ enum GrammarListFetchStatus { idle, loading, loaded, error }
 
 class GrammarListProvider extends ChangeNotifier {
   GrammarListProvider({
-    LearningRepository? repository,
-    GrammarProgressStorage? progressStorage,
-    List<GrammarLesson>? mockLessons,
-    String? Function()? currentUserId,
+    required LearningRepository repository,
+    required String? Function() currentUserId,
   }) : _repository = repository,
-       _progressStorage = progressStorage ?? GrammarProgressStorage(),
-       _mockLessons = mockLessons ?? GrammarCatalog.lessons,
-       _currentUserId = currentUserId ?? _noUser;
+       _currentUserId = currentUserId;
 
-  static String? _noUser() => null;
-
-  final LearningRepository? _repository;
-  final GrammarProgressStorage _progressStorage;
-  final List<GrammarLesson> _mockLessons;
+  final LearningRepository _repository;
   final String? Function() _currentUserId;
 
   GrammarListFetchStatus status = GrammarListFetchStatus.idle;
@@ -68,16 +57,13 @@ class GrammarListProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final loadedLessons = _repository == null
-          ? await _loadMockLessons()
-          : await _repository.getGrammarLessons();
+      final loadedLessons = await _repository.getGrammarLessons();
       if (!_isCurrent(revision, userIdAtStart)) return;
 
-      GrammarProgressSnapshot? progress;
-      if (userIdAtStart != null && userIdAtStart.isNotEmpty) {
-        progress = await _progressStorage.load(userIdAtStart);
-        if (!_isCurrent(revision, userIdAtStart)) return;
-      }
+      final progress = userIdAtStart == null || userIdAtStart.isEmpty
+          ? null
+          : await _repository.getGrammarProgress(userIdAtStart);
+      if (!_isCurrent(revision, userIdAtStart)) return;
 
       _lessons = loadedLessons;
       _startedLessonIds
@@ -96,11 +82,6 @@ class GrammarListProvider extends ChangeNotifier {
     }
 
     if (_isCurrent(revision, userIdAtStart)) notifyListeners();
-  }
-
-  Future<List<GrammarLesson>> _loadMockLessons() async {
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    return _mockLessons;
   }
 
   bool _isCurrent(int revision, String? userId) =>
@@ -139,7 +120,7 @@ class GrammarListProvider extends ChangeNotifier {
     int revision,
   ) async {
     try {
-      await _progressStorage.markStarted(userId, lessonId);
+      await _repository.markGrammarLessonStarted(userId, lessonId);
     } catch (_) {
       if (_isCurrent(revision, userId)) {
         persistenceError = 'Không thể lưu trạng thái đang học của bài Grammar.';

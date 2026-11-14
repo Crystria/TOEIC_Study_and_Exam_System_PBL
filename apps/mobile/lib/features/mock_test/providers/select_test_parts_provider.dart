@@ -106,6 +106,19 @@ class SelectTestPartsProvider extends ChangeNotifier {
     if (requestId == _requestId) notifyListeners();
   }
 
+  void resetForUserScopeChange() {
+    _requestId++;
+    status = SelectPartsStatus.idle;
+    _mode = TestAttemptMode.full;
+    test = null;
+    parts = const [];
+    _selectedParts.clear();
+    selectedDurationSeconds = defaultPartDurationSeconds;
+    errorMessage = null;
+    createdAttemptId = null;
+    notifyListeners();
+  }
+
   void setMode(TestAttemptMode value) {
     if (_mode == value || status != SelectPartsStatus.loaded) return;
     _mode = value;

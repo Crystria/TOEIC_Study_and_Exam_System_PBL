@@ -184,9 +184,14 @@ class LearningGrammarLessonDto {
     required this.lessonId,
     required this.lessonTitle,
     required this.category,
-    required this.contentMarkdown,
-    required this.contentHtml,
-    required this.status,
+    this.contentMarkdown = '',
+    this.contentHtml = '',
+    this.status = 'AVAILABLE',
+    this.summary,
+    this.level,
+    this.durationMinutes,
+    this.sections,
+    this.keyTakeaway,
   });
 
   final String lessonId;
@@ -195,43 +200,112 @@ class LearningGrammarLessonDto {
   final String contentMarkdown;
   final String contentHtml;
   final String status;
+  final String? summary;
+  final String? level;
+  final int? durationMinutes;
+  final List<GrammarLessonSection>? sections;
+  final String? keyTakeaway;
 
   factory LearningGrammarLessonDto.fromObject(Object? value) {
     final json = learningJsonMap(value, context: 'Grammar lesson');
     final markdown = json['contentMarkdown'];
     final html = json['contentHtml'];
+    final rawSections = json['sections'];
 
-    if (markdown is! String || markdown.trim().isEmpty) {
-      throw const FormatException('contentMarkdown is missing or invalid.');
+    if (rawSections != null && rawSections is! List) {
+      throw const FormatException('Grammar lesson sections must be a list.');
+    }
+    if (markdown != null && markdown is! String) {
+      throw const FormatException('contentMarkdown has an invalid type.');
     }
     if (html != null && html is! String) {
       throw const FormatException('contentHtml has an invalid type.');
     }
 
+    List<GrammarLessonSection>? sections;
+    if (rawSections is List) {
+      sections = rawSections
+          .map((raw) {
+            final section = learningJsonMap(raw, context: 'Grammar section');
+            final rawExamples = section['examples'];
+            if (rawExamples != null && rawExamples is! List) {
+              throw const FormatException(
+                'Grammar section examples must be a list.',
+              );
+            }
+            return GrammarLessonSection(
+              title: learningRequiredString(section, 'title'),
+              explanation: learningRequiredString(section, 'explanation'),
+              examples: (rawExamples as List? ?? const [])
+                  .map((item) {
+                    if (item is! String) {
+                      throw const FormatException(
+                        'Grammar examples must be strings.',
+                      );
+                    }
+                    return item;
+                  })
+                  .toList(growable: false),
+            );
+          })
+          .toList(growable: false);
+    }
+
+    final normalizedMarkdown = markdown as String? ?? '';
+    if (normalizedMarkdown.trim().isEmpty && sections == null) {
+      throw const FormatException(
+        'Grammar lesson must contain contentMarkdown or sections.',
+      );
+    }
+    final duration = json['durationMinutes'];
+    if (duration != null && duration is! int) {
+      throw const FormatException('durationMinutes must be an integer.');
+    }
+
+    String? optionalString(String key) {
+      final value = json[key];
+      if (value == null) return null;
+      if (value is! String) {
+        throw FormatException('$key must be a string.');
+      }
+      return value;
+    }
+
     return LearningGrammarLessonDto(
-      lessonId: learningRequiredString(json, 'lessonId'),
-      lessonTitle: learningRequiredString(json, 'lessonTitle'),
+      lessonId: learningRequiredString(
+        json,
+        json.containsKey('lessonId') ? 'lessonId' : 'id',
+      ),
+      lessonTitle: learningRequiredString(
+        json,
+        json.containsKey('lessonTitle') ? 'lessonTitle' : 'title',
+      ),
       category: learningRequiredString(json, 'category'),
-      contentMarkdown: markdown,
+      contentMarkdown: normalizedMarkdown,
       contentHtml: html as String? ?? '',
-      status: learningRequiredString(json, 'status'),
+      status: json['status'] is String ? json['status'] as String : 'AVAILABLE',
+      summary: optionalString('summary'),
+      level: optionalString('level'),
+      durationMinutes: duration as int?,
+      sections: sections,
+      keyTakeaway: optionalString('keyTakeaway'),
     );
   }
 
   GrammarLesson toDomain() {
-    final sections = _markdownSections(contentMarkdown);
-    final summary = _markdownSummary(contentMarkdown);
+    final domainSections = sections ?? _markdownSections(contentMarkdown);
+    final domainSummary = summary ?? _markdownSummary(contentMarkdown);
     return GrammarLesson(
       id: lessonId,
       title: lessonTitle,
       category: category,
-      summary: summary,
-      level: null,
-      durationMinutes: null,
-      sections: sections,
-      keyTakeaway: null,
-      contentMarkdown: contentMarkdown,
-      contentHtml: contentHtml,
+      summary: domainSummary,
+      level: level,
+      durationMinutes: durationMinutes,
+      sections: domainSections,
+      keyTakeaway: keyTakeaway,
+      contentMarkdown: contentMarkdown.isEmpty ? null : contentMarkdown,
+      contentHtml: contentHtml.isEmpty ? null : contentHtml,
       serverStatus: status,
     );
   }

@@ -1,5 +1,5 @@
 {
-  "source": "EditProfileScreen + FakeAuthRepository.updateProfile",
+  "source": "EditProfileScreen + TestDataAuthRepository.updateProfile",
   "scenarios": [
     {
       "id": "PROFILE-01",

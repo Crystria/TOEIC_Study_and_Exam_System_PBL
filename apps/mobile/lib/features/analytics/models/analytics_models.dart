@@ -104,6 +104,7 @@ class AnalyticsProgress {
     this.scoreTrendNextCursor,
     this.updatedAt,
     this.dailyActivityTruncated = false,
+    this.isIllustrative = false,
   });
 
   final AnalyticsTimeRange timeRange;
@@ -121,6 +122,9 @@ class AnalyticsProgress {
   final List<AnalyticsDailyActivity> dailyActivity;
   final DateTime? updatedAt;
   final bool dailyActivityTruncated;
+
+  /// True only when the values are demonstration fixtures, not learner data.
+  final bool isIllustrative;
 }
 
 @immutable

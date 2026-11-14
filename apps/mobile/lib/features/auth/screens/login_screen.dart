@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/config/app_config.dart';
 import '../../../theme/app_colors.dart';
 import '../../home/screens/home_screen.dart';
 import '../providers/auth_session_provider.dart';
@@ -103,8 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.watch<LoginProvider>().isLoading;
-    final apiEnabled = context.watch<AppConfig>().isAuthApiEnabled;
+    final loginProvider = context.watch<LoginProvider>();
+    final isLoading = loginProvider.isLoading;
+    final supportsUsernameLogin = loginProvider.supportsUsernameLogin;
 
     return Scaffold(
       body: SafeArea(
@@ -125,7 +125,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 28),
                       FieldLabel(
-                        apiEnabled ? 'Email' : 'Email hoặc tên đăng nhập',
+                        supportsUsernameLogin
+                            ? 'Email hoặc tên đăng nhập'
+                            : 'Email',
                       ),
                       const SizedBox(height: 6),
                       TextFormField(
@@ -139,9 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return apiEnabled
-                                ? 'Vui lòng nhập email'
-                                : 'Vui lòng nhập email hoặc tên đăng nhập';
+                            return supportsUsernameLogin
+                                ? 'Vui lòng nhập email hoặc tên đăng nhập'
+                                : 'Vui lòng nhập email';
                           }
                           return null;
                         },

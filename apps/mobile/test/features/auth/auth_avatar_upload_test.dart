@@ -9,6 +9,8 @@ import 'package:toeic_mobile/core/network/api_client.dart';
 import 'package:toeic_mobile/core/storage/token_storage.dart';
 import 'package:toeic_mobile/features/auth/models/avatar_api_dtos.dart';
 import 'package:toeic_mobile/features/auth/repositories/api_auth_repository.dart';
+import 'package:toeic_mobile/features/auth/data_sources/remote/api_auth_remote_data_source.dart';
+import 'package:toeic_mobile/features/auth/data_sources/local/secure_auth_local_data_source.dart';
 import 'package:toeic_mobile/features/auth/repositories/auth_repository.dart';
 import 'package:toeic_mobile/features/auth/services/auth_api_service.dart';
 import 'package:toeic_mobile/features/auth/services/avatar_upload_transport.dart';
@@ -38,11 +40,13 @@ void main() {
       );
       uploadTransport = _RecordingAvatarTransport();
       repository = ApiAuthRepository(
-        apiService: AuthApiService(
-          client: apiClient,
-          avatarUploadTransport: uploadTransport,
+        remoteDataSource: ApiAuthRemoteDataSource(
+          service: AuthApiService(
+            client: apiClient,
+            avatarUploadTransport: uploadTransport,
+          ),
         ),
-        tokenStorage: tokenStorage,
+        localDataSource: SecureAuthLocalDataSource(tokenStorage: tokenStorage),
         deviceIdProvider: _FakeDeviceIdProvider(),
       );
       final user = await repository.restoreSession();

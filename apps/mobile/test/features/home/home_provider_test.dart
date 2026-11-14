@@ -16,7 +16,6 @@ void main() {
     expect(repository.loadCount, 1);
     expect(provider.status, HomeStatus.loaded);
     expect(provider.data?.userName, 'Learner');
-    expect(provider.data?.isDemoData, isTrue);
   });
 
   test('coalesces overlapping initial-load and refresh requests', () async {
@@ -80,7 +79,6 @@ DashboardData _dashboard() => const DashboardData(
   todayActivityCount: 5,
   dueFlashcards: 2,
   weakAreas: [WeakArea(part: 5, accuracy: 62)],
-  isDemoData: true,
 );
 
 class _FakeHomeRepository implements HomeRepository {

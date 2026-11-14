@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/navigation/full_screen_flow_scope.dart';
 
 import '../../../../shared/widgets/app_badge.dart';
-import '../../../../shared/widgets/data_source_notice.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../theme/app_colors.dart';
 import '../../providers/vocabulary_provider.dart';
@@ -94,15 +93,13 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
     if (_isGrading) return;
 
     final navigator = Navigator.of(context);
-    final isDemoData = context.read<VocabularyProvider>().isDemoData;
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Thoát phiên học?'),
-        content: Text(
-          isDemoData
-              ? 'Các từ đã đánh giá được lưu trên thiết bị. Bạn có muốn quay lại danh sách từ vựng?'
-              : 'Các từ đã đánh giá được Backend xác nhận và lưu vào tiến trình tài khoản. Bạn có muốn quay lại danh sách từ vựng?',
+        content: const Text(
+          'Các từ đã đánh giá được lưu vào tiến trình học của tài khoản. '
+          'Bạn có muốn quay lại danh sách từ vựng?',
         ),
         actions: [
           TextButton(
@@ -279,11 +276,6 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DataSourceNotice(
-                    isDemoData: provider.isDemoData,
-                    featureName: 'nội dung học từ vựng',
-                  ),
-                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

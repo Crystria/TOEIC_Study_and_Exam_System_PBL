@@ -7,48 +7,42 @@ import '../../models/mock_test_submission.dart';
 import '../../models/test_attempt.dart';
 import '../../providers/mock_test_taking_provider.dart';
 import '../../providers/test_history_detail_provider.dart';
-import '../../repositories/mock_test_attempt_repository.dart';
-import '../../repositories/mock_test_repository.dart';
 import '../test_result/answer_explanation_screen.dart';
 import '../test_taking/mock_test_taking_screen.dart';
 
-class TestHistoryDetailView extends StatelessWidget {
+class TestHistoryDetailView extends StatefulWidget {
   const TestHistoryDetailView({
     super.key,
     required this.attemptId,
     required this.expectedMode,
-    required this.attemptRepository,
-    required this.testRepository,
   });
 
   final String attemptId;
   final TestAttemptMode expectedMode;
-  final MockTestAttemptRepository attemptRepository;
-  final MockTestRepository testRepository;
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<TestHistoryDetailProvider>(
-      create: (_) => TestHistoryDetailProvider(
-        attemptRepository: attemptRepository,
-        testRepository: testRepository,
-      )..loadDetail(attemptId),
-      child: _TestHistoryDetailContent(
-        expectedMode: expectedMode,
-        attemptRepository: attemptRepository,
-      ),
-    );
+  State<TestHistoryDetailView> createState() => _TestHistoryDetailViewState();
+}
+
+class _TestHistoryDetailViewState extends State<TestHistoryDetailView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<TestHistoryDetailProvider>().loadDetail(widget.attemptId);
+    });
   }
+
+  @override
+  Widget build(BuildContext context) =>
+      _TestHistoryDetailContent(expectedMode: widget.expectedMode);
 }
 
 class _TestHistoryDetailContent extends StatelessWidget {
-  const _TestHistoryDetailContent({
-    required this.expectedMode,
-    required this.attemptRepository,
-  });
+  const _TestHistoryDetailContent({required this.expectedMode});
 
   final TestAttemptMode expectedMode;
-  final MockTestAttemptRepository attemptRepository;
 
   void _openExplanation(BuildContext context, MockTestSubmission submission) {
     Navigator.of(context).push(
@@ -78,16 +72,26 @@ class _TestHistoryDetailContent extends StatelessWidget {
       return;
     }
 
+    final takingProvider = context.read<MockTestTakingProvider>();
+    await takingProvider.loadAttempt(attemptId);
+    if (!context.mounted) return;
+    if (takingProvider.status != TakingStatus.loaded &&
+        takingProvider.status != TakingStatus.submitted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            takingProvider.errorMessage ?? 'Không thể khôi phục phiên thi.',
+          ),
+        ),
+      );
+      return;
+    }
+
     await navigator.push(
       MaterialPageRoute<void>(
-        builder: (_) => ChangeNotifierProvider<MockTestTakingProvider>(
-          create: (_) =>
-              MockTestTakingProvider(repository: attemptRepository)
-                ..loadAttempt(attemptId),
-          child: MockTestTakingScreen(
-            attemptId: attemptId,
-            returnToPreviousRoute: true,
-          ),
+        builder: (_) => MockTestTakingScreen(
+          attemptId: attemptId,
+          returnToPreviousRoute: true,
         ),
       ),
     );

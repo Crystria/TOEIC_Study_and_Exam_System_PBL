@@ -34,6 +34,16 @@ class TestHistoryDetailProvider extends ChangeNotifier {
   bool get isFinal =>
       attempt != null && attempt!.status != TestAttemptStatus.inProgress;
 
+  void resetForUserScopeChange() {
+    _requestId++;
+    status = TestHistoryDetailStatus.idle;
+    attempt = null;
+    test = null;
+    submission = null;
+    errorMessage = null;
+    notifyListeners();
+  }
+
   Future<void> loadDetail(String attemptId) async {
     final requestId = ++_requestId;
     status = TestHistoryDetailStatus.loading;

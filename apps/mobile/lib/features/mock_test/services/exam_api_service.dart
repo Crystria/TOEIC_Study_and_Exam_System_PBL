@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/network/endpoints.dart';
+import '../requests/exam_request_dtos.dart';
 
 /// Thin Exam Service transport adapter. It only sends requests and returns
 /// decoded JSON; DTO mapping and repository policy stay outside this class.
@@ -61,7 +62,10 @@ class ExamApiService {
   }) async {
     final response = await _client.post<Object?>(
       Endpoints.mockTest.createPartAttempt(testId),
-      data: {'parts': parts, 'durationSeconds': durationSeconds},
+      data: StartPartAttemptRequest(
+        parts: parts,
+        durationSeconds: durationSeconds,
+      ).toJson(),
       options: Options(headers: {'Idempotency-Key': idempotencyKey}),
     );
     return response.data;
@@ -81,7 +85,7 @@ class ExamApiService {
   }) async {
     await _client.put<Object?>(
       Endpoints.mockTest.saveAnswer(attemptId, questionId),
-      data: {'selectedOption': selectedOption},
+      data: SaveAnswerRequest(selectedOption: selectedOption).toJson(),
     );
   }
 
@@ -91,16 +95,7 @@ class ExamApiService {
   }) async {
     await _client.put<Object?>(
       Endpoints.mockTest.saveDraft(attemptId),
-      data: {
-        'answers': answers.entries
-            .map(
-              (entry) => {
-                'questionId': entry.key,
-                'selectedOption': entry.value,
-              },
-            )
-            .toList(growable: false),
-      },
+      data: SaveDraftRequest(answers: answers).toJson(),
     );
   }
 
@@ -110,16 +105,7 @@ class ExamApiService {
   }) async {
     final response = await _client.post<Object?>(
       Endpoints.mockTest.submitAttempt(attemptId),
-      data: {
-        'answers': answers.entries
-            .map(
-              (entry) => {
-                'questionId': entry.key,
-                'selectedOption': entry.value,
-              },
-            )
-            .toList(growable: false),
-      },
+      data: SubmitAttemptRequest(answers: answers).toJson(),
     );
     return response.data;
   }
@@ -130,14 +116,12 @@ class ExamApiService {
     String? testId,
     String? mode,
   }) async {
-    final queryParameters = <String, dynamic>{
-      'page': page,
-      'size': size,
-      if (testId != null && testId.trim().isNotEmpty) 'testId': testId,
-    };
-    if (mode != null) {
-      queryParameters['mode'] = mode;
-    }
+    final queryParameters = ExamHistoryQuery(
+      page: page,
+      size: size,
+      testId: testId,
+      mode: mode,
+    ).toQueryParameters();
 
     final response = await _client.get<Object?>(
       Endpoints.mockTest.listAttempts,

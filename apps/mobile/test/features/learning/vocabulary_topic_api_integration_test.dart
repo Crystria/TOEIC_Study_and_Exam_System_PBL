@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toeic_mobile/core/storage/vocabulary_progress_storage.dart';
 import 'package:toeic_mobile/features/learning/models/learning_models.dart';
 import 'package:toeic_mobile/features/learning/providers/vocabulary_provider.dart';
 import 'package:toeic_mobile/features/learning/repositories/learning_repository.dart';
@@ -17,7 +16,6 @@ void main() {
     () async {
       final repository = _TopicDetailRepository();
       final provider = VocabularyProvider(
-        storage: VocabularyProgressStorage(),
         repository: repository,
         currentUserId: () => 'qa-user',
       );
@@ -44,7 +42,6 @@ void main() {
     () async {
       final repository = _TopicDetailRepository();
       final provider = VocabularyProvider(
-        storage: VocabularyProgressStorage(),
         repository: repository,
         currentUserId: () => 'qa-user',
       );

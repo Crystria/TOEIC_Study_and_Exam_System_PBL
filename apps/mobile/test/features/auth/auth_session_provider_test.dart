@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_mobile/core/session/user_scoped_data_coordinator.dart';
 import 'package:toeic_mobile/core/storage/vocabulary_progress_storage.dart';
 import 'package:toeic_mobile/features/auth/providers/auth_session_provider.dart';
-import 'package:toeic_mobile/features/auth/repositories/fake_auth_repository.dart';
+import 'package:toeic_mobile/features/auth/repositories/test_data_auth_repository.dart';
 import 'package:toeic_mobile/shared/models/app_user.dart';
 
 void main() {
@@ -222,14 +222,14 @@ void main() {
 AppUser _user(String id) =>
     AppUser(id: id, fullName: 'TOEIC Learner', email: '$id@example.test');
 
-class _SessionAuthRepository extends FakeAuthRepository {
+class _SessionAuthRepository extends TestDataAuthRepository {
   bool logoutResult = true;
 
   @override
   Future<bool> logout() async => logoutResult;
 }
 
-class _AvatarAuthRepository extends FakeAuthRepository {
+class _AvatarAuthRepository extends TestDataAuthRepository {
   AppUser? avatarResult;
 
   @override
@@ -240,7 +240,7 @@ class _AvatarAuthRepository extends FakeAuthRepository {
   }) async => avatarResult ?? _user(userId);
 }
 
-class _DelayedAvatarAuthRepository extends FakeAuthRepository {
+class _DelayedAvatarAuthRepository extends TestDataAuthRepository {
   final Completer<AppUser> avatarCompleter = Completer<AppUser>();
 
   @override
@@ -251,7 +251,7 @@ class _DelayedAvatarAuthRepository extends FakeAuthRepository {
   }) => avatarCompleter.future;
 }
 
-class _DelayedAuthRepository extends FakeAuthRepository {
+class _DelayedAuthRepository extends TestDataAuthRepository {
   final Completer<AppUser?> restoreCompleter = Completer<AppUser?>();
   final Completer<AppUser> profileCompleter = Completer<AppUser>();
 

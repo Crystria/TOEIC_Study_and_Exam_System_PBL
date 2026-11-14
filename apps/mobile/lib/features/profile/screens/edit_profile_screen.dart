@@ -120,6 +120,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final sessionProvider = context.watch<AuthSessionProvider>();
     final currentUser = sessionProvider.currentUser;
     final isSaving = sessionProvider.isUpdatingProfile;
+    final canUpdateProfile = sessionProvider.canUpdateProfile;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -156,7 +157,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     controller: _nameController,
                     textCapitalization: TextCapitalization.words,
                     textInputAction: TextInputAction.next,
-                    enabled: !isSaving,
+                    enabled: !isSaving && canUpdateProfile,
                     decoration: const InputDecoration(labelText: 'Họ và tên'),
                     validator: _validateFullName,
                   ),
@@ -165,15 +166,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.done,
-                    enabled: !isSaving,
+                    enabled: !isSaving && canUpdateProfile,
                     decoration: const InputDecoration(
                       labelText: 'Số điện thoại',
                       hintText: 'Không bắt buộc',
                     ),
                   ),
                   const SizedBox(height: 24),
+                  if (!canUpdateProfile)
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        'Tính năng cập nhật hồ sơ hiện chưa khả dụng.',
+                        style: TextStyle(color: AppColors.slate500),
+                      ),
+                    ),
                   FilledButton(
-                    onPressed: isSaving ? null : _onSave,
+                    onPressed: isSaving || !canUpdateProfile ? null : _onSave,
                     child: isSaving
                         ? const SizedBox(
                             width: 20,

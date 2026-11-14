@@ -20,8 +20,6 @@ class AnalyticsProvider extends ChangeNotifier {
   bool isLoadingMorePractices = false;
   int _requestRevision = 0;
 
-  bool get isDemoData => _repository.isDemoData;
-
   Future<void> load({
     AnalyticsTimeRange range = AnalyticsTimeRange.last30Days,
   }) async {

@@ -145,6 +145,37 @@ class AppConfig {
   /// Returns null when API mode is disabled and no base URL is configured.
   Uri? get baseUri => baseUrl.isEmpty ? null : Uri.parse(baseUrl);
 
+  /// Validates that the dedicated Release entry point cannot start with
+  /// Development/Test Data configuration or a partially disabled API graph.
+  /// AI Chat is intentionally excluded: its independent security gate keeps it
+  /// unavailable until Backend conversation ownership is approved.
+  void validateForRelease() {
+    if (!isProduction) {
+      throw StateError(
+        'Release entry point requires APP_ENV=production. '
+        'Use lib/main.dart for Development.',
+      );
+    }
+
+    final disabledFeatures = <String>[
+      if (!isAuthApiEnabled) 'API_AUTH_ENABLED',
+      if (!isLearningApiEnabled) 'API_LEARNING_ENABLED',
+      if (!isMockTestApiEnabled) 'API_MOCK_TEST_ENABLED',
+      if (!isAnalyticsApiEnabled) 'API_ANALYTICS_ENABLED',
+    ];
+    if (disabledFeatures.isNotEmpty) {
+      throw StateError(
+        'Release cannot use Test Data. Enable all approved API features: '
+        '${disabledFeatures.join(', ')}.',
+      );
+    }
+
+    final uri = baseUri;
+    if (uri == null || uri.scheme != 'https') {
+      throw StateError('Release requires an absolute HTTPS API_BASE_URL.');
+    }
+  }
+
   void _validate() {
     final hasProtectedFeatureApi =
         isLearningApiEnabled || isMockTestApiEnabled || isAnalyticsApiEnabled;

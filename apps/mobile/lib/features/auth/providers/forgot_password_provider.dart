@@ -18,6 +18,7 @@ class ForgotPasswordProvider extends ChangeNotifier {
   EmailActionTicket? ticket;
 
   bool get isLoading => status == ForgotPasswordStatus.loading;
+  bool get supportsPasswordReset => _repository.supportsPasswordReset;
 
   Future<EmailActionTicket?> sendResetLink(String email) async {
     if (isLoading) return null;

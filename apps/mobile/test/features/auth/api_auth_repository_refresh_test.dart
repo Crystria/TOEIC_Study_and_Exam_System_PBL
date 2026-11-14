@@ -8,6 +8,8 @@ import 'package:toeic_mobile/core/config/app_config.dart';
 import 'package:toeic_mobile/core/network/api_client.dart';
 import 'package:toeic_mobile/core/storage/token_storage.dart';
 import 'package:toeic_mobile/features/auth/repositories/api_auth_repository.dart';
+import 'package:toeic_mobile/features/auth/data_sources/remote/api_auth_remote_data_source.dart';
+import 'package:toeic_mobile/features/auth/data_sources/local/secure_auth_local_data_source.dart';
 import 'package:toeic_mobile/features/auth/services/auth_api_service.dart';
 import 'package:toeic_mobile/features/auth/services/device_id_provider.dart';
 
@@ -35,8 +37,10 @@ void main() {
         adapter: adapter,
       );
       repository = ApiAuthRepository(
-        apiService: AuthApiService(client: apiClient),
-        tokenStorage: tokenStorage,
+        remoteDataSource: ApiAuthRemoteDataSource(
+          service: AuthApiService(client: apiClient),
+        ),
+        localDataSource: SecureAuthLocalDataSource(tokenStorage: tokenStorage),
         deviceIdProvider: _FakeDeviceIdProvider(),
       );
     });
@@ -144,6 +148,37 @@ void main() {
         expect(stored?.refreshToken, 'new-user-refresh');
       },
     );
+
+    test('clears the local session when Backend logout fails', () async {
+      adapter.responseFactory = (options) async {
+        if (options.path == 'auth/login') {
+          return _tokenResponse('logout-access', 'logout-refresh');
+        }
+        if (options.path == 'auth/logout') {
+          return ResponseBody.fromString(
+            jsonEncode(<String, Object?>{
+              'statusCode': 503,
+              'message': 'Service unavailable',
+            }),
+            503,
+            headers: <String, List<String>>{
+              Headers.contentTypeHeader: <String>[Headers.jsonContentType],
+            },
+          );
+        }
+        throw StateError('Unexpected request path: ${options.path}');
+      };
+
+      await repository.login(
+        identifier: 'qa-user@example.test',
+        password: 'qa-password',
+      );
+
+      final confirmed = await repository.logout();
+
+      expect(confirmed, isFalse);
+      expect(await tokenStorage.readTokens(), isNull);
+    });
 
     test('logout cannot clear credentials from a newer login', () async {
       var loginCount = 0;

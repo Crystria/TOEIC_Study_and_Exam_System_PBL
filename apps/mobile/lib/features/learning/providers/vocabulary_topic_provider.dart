@@ -1,8 +1,7 @@
 // ignore_for_file: prefer_initializing_formals
 import 'package:flutter/foundation.dart';
 
-import '../../../core/storage/vocabulary_progress_storage.dart';
-import '../models/learning_models.dart';
+import '../models/learning_progress.dart';
 import '../repositories/learning_repository.dart';
 
 class TopicSummary {
@@ -29,49 +28,27 @@ class TodayVocabularyPreview {
 enum TopicsStatus { idle, loading, loaded, error }
 
 class VocabularyTopicsProvider extends ChangeNotifier {
-  VocabularyTopicsProvider({
-    VocabularyProgressStorage? storage,
-    LearningRepository? repository,
-    List<LearningTopic>? mockTopics,
-  }) : _storage = storage ?? VocabularyProgressStorage(),
-       _repository = repository,
-       _mockTopics = mockTopics ?? _defaultMockTopics {
-    if (_repository != null) {
-      // Never show fixture counts/previews while API data is loading.
-      dueForReview = 0;
-      reviewCount = 0;
-      newCount = 0;
-      estimateMinutes = 0;
-      todayPreview = const [];
-    }
-  }
+  VocabularyTopicsProvider({required LearningRepository repository})
+    : _repository = repository;
 
-  final VocabularyProgressStorage _storage;
-  final LearningRepository? _repository;
-  final List<LearningTopic> _mockTopics;
-  static const List<LearningTopic> _defaultMockTopics = [
-    LearningTopic(id: 't1', name: 'Office & Business', vocabularyCount: 20),
-    LearningTopic(id: 't2', name: 'Travel & Transport', vocabularyCount: 24),
-  ];
+  final LearningRepository _repository;
   Future<void>? _initialization;
   int _scopeRevision = 0;
 
   TopicsStatus status = TopicsStatus.idle;
   List<TopicSummary> topics = [];
   int dailyLearned = 0;
-  int dailyGoal = VocabularyProgressSnapshot.defaultDailyGoal;
+  int dailyGoal = LearningVocabularyProgress.defaultDailyGoal;
   bool remindEnabled = true;
-  int dueForReview = 27;
+  bool hasUnassignedLegacyProgress = false;
+  bool isImportingLegacyProgress = false;
+  int dueForReview = 0;
   int totalLearnedWords = 0;
 
-  // Preview fixture data is used only in Mock/Local mode.
-  int reviewCount = 15;
-  int newCount = 5;
-  int estimateMinutes = 12;
-  List<TodayVocabularyPreview> todayPreview = const [
-    TodayVocabularyPreview(word: 'negotiate', meaning: 'thương lượng'),
-    TodayVocabularyPreview(word: 'invoice', meaning: 'hóa đơn'),
-  ];
+  int reviewCount = 0;
+  int newCount = 0;
+  int estimateMinutes = 0;
+  List<TodayVocabularyPreview> todayPreview = const [];
 
   String? errorMessage;
   String? persistenceError;
@@ -84,13 +61,13 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   bool get dailyGoalCompleted => dailyLearned >= dailyGoal;
 
   Future<void> initialize() {
-    return _initialization ??= _refreshFromStorage();
+    return _initialization ??= _refreshProgressFromRepository();
   }
 
-  Future<void> _refreshFromStorage() async {
+  Future<void> _refreshProgressFromRepository() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _storage.loadSnapshot();
+      final snapshot = await _repository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applyProgress(snapshot);
       persistenceError = null;
@@ -106,26 +83,23 @@ class VocabularyTopicsProvider extends ChangeNotifier {
     _initialization = null;
     status = TopicsStatus.idle;
     dailyLearned = 0;
-    dailyGoal = VocabularyProgressSnapshot.defaultDailyGoal;
+    dailyGoal = LearningVocabularyProgress.defaultDailyGoal;
     remindEnabled = true;
+    hasUnassignedLegacyProgress = false;
+    isImportingLegacyProgress = false;
     totalLearnedWords = 0;
     topics = [];
     errorMessage = null;
     persistenceError = null;
-    dueForReview = _repository == null ? 27 : 0;
-    reviewCount = _repository == null ? 15 : 0;
-    newCount = _repository == null ? 5 : 0;
-    estimateMinutes = _repository == null ? 12 : 0;
-    todayPreview = _repository == null
-        ? const [
-            TodayVocabularyPreview(word: 'negotiate', meaning: 'thương lượng'),
-            TodayVocabularyPreview(word: 'invoice', meaning: 'hóa đơn'),
-          ]
-        : const [];
+    dueForReview = 0;
+    reviewCount = 0;
+    newCount = 0;
+    estimateMinutes = 0;
+    todayPreview = const [];
     notifyListeners();
   }
 
-  void _applyProgress(VocabularyProgressSnapshot snapshot) {
+  void _applyProgress(LearningVocabularyProgress snapshot) {
     dailyGoal = snapshot.dailyGoal;
     remindEnabled = snapshot.remindEnabled;
     dailyLearned = snapshot.todayWords.length;
@@ -142,14 +116,12 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   Future<void> refreshProgress() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _storage.loadSnapshot();
+      final snapshot = await _repository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applyProgress(snapshot);
       persistenceError = null;
 
-      if (_repository != null) {
-        await _refreshApiSummary(revision);
-      }
+      await _refreshRepositorySummary(revision);
     } catch (_) {
       if (revision != _scopeRevision) return;
       persistenceError = 'Không thể đọc hoặc đồng bộ tiến trình học.';
@@ -157,10 +129,48 @@ class VocabularyTopicsProvider extends ChangeNotifier {
     if (revision == _scopeRevision) notifyListeners();
   }
 
+  /// Reads the quarantined pre-account progress marker through the repository.
+  /// This is a one-time migration signal, not user-owned progress itself.
+  Future<void> refreshLegacyProgressStatus() async {
+    final revision = _scopeRevision;
+    try {
+      final hasLegacyData = await _repository.hasUnassignedLegacyProgress();
+      if (revision != _scopeRevision) return;
+      hasUnassignedLegacyProgress = hasLegacyData;
+    } catch (_) {
+      if (revision != _scopeRevision) return;
+      persistenceError = 'Không thể kiểm tra dữ liệu học từ phiên bản cũ.';
+    }
+    if (revision == _scopeRevision) notifyListeners();
+  }
+
+  /// Imports quarantined progress only after the user confirms ownership.
+  /// The repository and Local Data Source enforce user scope and no-overwrite.
+  Future<void> importLegacyProgress({required bool confirmOwnership}) async {
+    if (isImportingLegacyProgress) return;
+    final revision = _scopeRevision;
+    isImportingLegacyProgress = true;
+    notifyListeners();
+    try {
+      final snapshot = await _repository.importUnassignedLegacyProgress(
+        confirmOwnership: confirmOwnership,
+      );
+      if (revision != _scopeRevision) return;
+      _applyProgress(snapshot);
+      hasUnassignedLegacyProgress = false;
+      persistenceError = null;
+    } finally {
+      if (revision == _scopeRevision) {
+        isImportingLegacyProgress = false;
+        notifyListeners();
+      }
+    }
+  }
+
   Future<void> setDailyGoal(int value) async {
     if (value < 5 || value > 100 || value % 5 != 0) return;
     final revision = _scopeRevision;
-    final snapshot = await _storage.saveDailyGoal(value);
+    final snapshot = await _repository.saveDailyGoal(value);
     if (revision != _scopeRevision) return;
     _applyProgress(snapshot);
     notifyListeners();
@@ -172,7 +182,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   }) async {
     if (dailyGoal < 5 || dailyGoal > 100 || dailyGoal % 5 != 0) return;
     final revision = _scopeRevision;
-    final snapshot = await _storage.saveReviewSettings(
+    final snapshot = await _repository.saveReviewSettings(
       dailyGoal: dailyGoal,
       remindEnabled: remindEnabled,
     );
@@ -192,7 +202,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final snapshot = await _storage.loadSnapshot();
+      final snapshot = await _repository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
 
       final learnedByTopic = <String, int>{};
@@ -204,52 +214,34 @@ class VocabularyTopicsProvider extends ChangeNotifier {
         );
       }
 
-      if (_repository != null) {
-        final serverTopics = await _repository.getTopics();
-        if (revision != _scopeRevision) return;
-        final summary = await _repository.getProgressSummary();
-        if (revision != _scopeRevision) return;
-        final preview = await _repository.getDueVocabularyPreview(limit: 2);
-        if (revision != _scopeRevision) return;
+      final repositoryTopics = await _repository.getTopics();
+      if (revision != _scopeRevision) return;
+      final summary = await _repository.getProgressSummary();
+      if (revision != _scopeRevision) return;
+      final preview = await _repository.getDueVocabularyPreview(limit: 2);
+      if (revision != _scopeRevision) return;
 
-        topics = serverTopics
-            .map(
-              (topic) => TopicSummary(
-                id: topic.id,
-                name: topic.name,
-                learned: learnedByTopic[topic.id] ?? 0,
-                total: topic.vocabularyCount,
-              ),
-            )
-            .toList(growable: false);
-        totalLearnedWords = summary.vocabulariesLearned;
-        dueForReview = summary.dueVocabularies;
-        // reviewCount/newCount remain the existing daily-plan split
-        // (75% review + 25% new). dueForReview is the authoritative Backend
-        // count and is displayed separately in the review section.
-        _updateStudyEstimate();
-        todayPreview = preview
-            .map(
-              (item) => TodayVocabularyPreview(
-                word: item.vocabulary.word,
-                meaning: item.vocabulary.definition,
-              ),
-            )
-            .toList(growable: false);
-      } else {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-        if (revision != _scopeRevision) return;
-        topics = _mockTopics
-            .map(
-              (topic) => TopicSummary(
-                id: topic.id,
-                name: topic.name,
-                learned: learnedByTopic[topic.id] ?? 0,
-                total: topic.vocabularyCount,
-              ),
-            )
-            .toList(growable: false);
-      }
+      topics = repositoryTopics
+          .map(
+            (topic) => TopicSummary(
+              id: topic.id,
+              name: topic.name,
+              learned: learnedByTopic[topic.id] ?? 0,
+              total: topic.vocabularyCount,
+            ),
+          )
+          .toList(growable: false);
+      totalLearnedWords = summary.vocabulariesLearned;
+      dueForReview = summary.dueVocabularies;
+      _updateStudyEstimate();
+      todayPreview = preview
+          .map(
+            (item) => TodayVocabularyPreview(
+              word: item.vocabulary.word,
+              meaning: item.vocabulary.definition,
+            ),
+          )
+          .toList(growable: false);
       status = TopicsStatus.loaded;
     } catch (_) {
       if (revision != _scopeRevision) return;
@@ -260,13 +252,10 @@ class VocabularyTopicsProvider extends ChangeNotifier {
     if (revision == _scopeRevision) notifyListeners();
   }
 
-  Future<void> _refreshApiSummary(int revision) async {
-    final repository = _repository;
-    if (repository == null) return;
-
-    final summary = await repository.getProgressSummary();
+  Future<void> _refreshRepositorySummary(int revision) async {
+    final summary = await _repository.getProgressSummary();
     if (revision != _scopeRevision) return;
-    final preview = await repository.getDueVocabularyPreview(limit: 2);
+    final preview = await _repository.getDueVocabularyPreview(limit: 2);
     if (revision != _scopeRevision) return;
 
     totalLearnedWords = summary.vocabulariesLearned;
