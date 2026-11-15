@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ApiCmsApplication } from '@/components/integration/api-application';
+import { cmsContentWritesEnabled } from '../../../web/src/lib/integration/cms-access';
 
 import './globals.css';
 import '@/styles/cms-workspace.css';
 import '../../../web/src/styles/integration.css';
+import '@/styles/content-management.css';
+import '@/styles/admin-login.css';
 
 export const metadata: Metadata = {
   title: {
@@ -21,8 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {process.env.NEXT_PUBLIC_DATA_MODE === 'api' ? (
           <Suspense fallback={<p role="status">Đang tải giao diện…</p>}>
             <ApiCmsApplication
-              writes={process.env.FRONTEND_TEST_WRITES === 'enabled'}
-              metadataVerified={process.env.FRONTEND_METADATA_VERIFIED === 'true'}
+              writes={cmsContentWritesEnabled(
+                process.env.FRONTEND_API_ENV,
+                process.env.FRONTEND_CONTENT_WRITES,
+              )}
+              systemWrites={process.env.FRONTEND_TEST_WRITES === 'enabled'}
             />
           </Suspense>
         ) : (

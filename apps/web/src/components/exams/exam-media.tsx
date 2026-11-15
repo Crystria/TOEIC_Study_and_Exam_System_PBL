@@ -11,11 +11,13 @@ export function ExamMedia({
   locked,
   preview,
   stopKey,
+  suppressAudio = false,
 }: {
   group: ExamGroup;
   locked: boolean;
   preview?: string;
   stopKey?: string;
+  suppressAudio?: boolean;
 }) {
   const [imageError, setImageError] = useState(false);
   const retryImage = useRef<HTMLButtonElement>(null);
@@ -37,7 +39,7 @@ export function ExamMedia({
         : group.audioUrl;
   return (
     <>
-      {group.partId <= 4 && (
+      {!suppressAudio && group.partId <= 4 && (
         <AudioPlayer
           source={audioUrl}
           label="Audio minh họa nhóm câu"

@@ -290,11 +290,7 @@ export function LessonList() {
                       {hasLessonDetail(item.id) ? (
                         <Link
                           href={lessonDetailHref(item.id, new URLSearchParams(raw))}
-                          style={{
-                            color: '#1d4ed8',
-                            textDecoration: 'underline',
-                            textUnderlineOffset: 3,
-                          }}
+                          className="text-blue-700 hover:text-blue-800"
                         >
                           {item.title ?? 'Chưa có dữ liệu'}
                         </Link>

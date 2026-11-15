@@ -268,6 +268,219 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
       7,
     );
   });
+  it('keeps personal CRUD private to each learner and cascades only their private topic words', async () => {
+    const prefix = 'Personal ' + randomUUID();
+    const key = randomUUID();
+    const created = await post('personal/vocabulary-topics', { topicName: prefix }, 'USER', key);
+    expect(created.status).toBe(201);
+    const topicId = created.body.topicId;
+    expect(created.body).toMatchObject({ topicName: prefix, vocabularyCount: 0 });
+    expect(created.body).not.toHaveProperty('userId');
+    expect(
+      (await post('personal/vocabulary-topics', { topicName: prefix }, 'USER', key)).body,
+    ).toEqual(created.body);
+    expect(
+      (await post('personal/vocabulary-topics', { topicName: prefix + ' changed' }, 'USER', key))
+        .status,
+    ).toBe(409);
+    const otherTopic = await post('personal/vocabulary-topics', { topicName: prefix }, 'OTHER');
+    expect(otherTopic.status).toBe(201);
+    expect(otherTopic.body.topicId).not.toBe(topicId);
+    const ownWord = await post('personal/vocabularies', {
+      topicId,
+      word: 'Private word',
+      definition: 'Private meaning',
+      phonetic: '/word/',
+    });
+    const otherWord = await post(
+      'personal/vocabularies',
+      { topicId: otherTopic.body.topicId, word: 'Other private word', definition: 'Other meaning' },
+      'OTHER',
+    );
+    expect(ownWord.status).toBe(201);
+    expect(otherWord.status).toBe(201);
+    expect(ownWord.body).toMatchObject({ topicId, audioUrl: null, imageUrl: null });
+    const ownLesson = await post('personal/lessons', {
+      lessonTitle: prefix,
+      category: 'Personal',
+      contentMarkdown: '# Private notes',
+    });
+    expect(ownLesson.status).toBe(201);
+    expect(ownLesson.body.status).toBe('PRIVATE');
+    const vocabularyId = ownWord.body.vocabularyId,
+      lessonId = ownLesson.body.lessonId;
+    for (const [path, body] of [
+      [`vocabulary-topics/${topicId}`, { topicName: 'Stolen' }],
+      [`vocabularies/${vocabularyId}`, { word: 'Stolen' }],
+      [`lessons/${lessonId}`, { lessonTitle: 'Stolen' }],
+    ] as const) {
+      expect((await get('personal/' + path, 'OTHER')).status).toBe(404);
+      expect(
+        (
+          await api()
+            .patch('/api/v1/learning/personal/' + path)
+            .auth(tokens.OTHER, { type: 'bearer' })
+            .send(body)
+        ).status,
+      ).toBe(404);
+      expect(
+        (
+          await api()
+            .delete('/api/v1/learning/personal/' + path)
+            .auth(tokens.OTHER, { type: 'bearer' })
+        ).status,
+      ).toBe(404);
+    }
+    expect(
+      (
+        await post(
+          'personal/vocabularies',
+          { topicId, word: 'Wrong owner', definition: 'No' },
+          'OTHER',
+        )
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await api()
+          .patch('/api/v1/learning/personal/vocabularies/' + vocabularyId)
+          .auth(tokens.USER, { type: 'bearer' })
+          .send({ topicId: otherTopic.body.topicId })
+      ).status,
+    ).toBe(404);
+    // The database also prevents a forged ownership link if a future code path bypasses the service.
+    await expect(
+      db.personalVocabulary.create({
+        data: { userId: ids.OTHER, topicId, word: 'Forged', definition: 'No' },
+      }),
+    ).rejects.toMatchObject({ code: 'P2003' });
+    expect(
+      (await get('personal/vocabulary-topics?keyword=' + encodeURIComponent(prefix))).body,
+    ).toMatchObject({ total: 1, items: [{ topicId, vocabularyCount: 1 }] });
+    expect(
+      (await get('personal/vocabularies?topicId=' + topicId + '&keyword=meaning')).body,
+    ).toMatchObject({ total: 1, items: [{ vocabularyId }] });
+    expect(
+      (await get('personal/lessons?category=Personal&keyword=' + encodeURIComponent(prefix))).body,
+    ).toMatchObject({ total: 1, items: [{ lessonId, status: 'PRIVATE' }] });
+    expect(
+      (
+        await get(
+          'personal/vocabulary-topics?keyword=' + encodeURIComponent(prefix) + '&size=1&page=2',
+        )
+      ).body,
+    ).toMatchObject({ total: 1, page: 2, size: 1, items: [] });
+    const changedWord = await api()
+      .patch('/api/v1/learning/personal/vocabularies/' + vocabularyId)
+      .auth(tokens.USER, { type: 'bearer' })
+      .send({ word: 'Renamed', phonetic: null, example: null });
+    expect(changedWord.status).toBe(200);
+    expect(changedWord.body).toMatchObject({
+      word: 'Renamed',
+      phonetic: null,
+      example: null,
+      definition: 'Private meaning',
+    });
+    expect(
+      (
+        await api()
+          .patch('/api/v1/learning/personal/lessons/' + lessonId)
+          .auth(tokens.USER, { type: 'bearer' })
+          .send({ contentMarkdown: '# Edited privately' })
+      ).body,
+    ).toMatchObject({ contentMarkdown: '# Edited privately', status: 'PRIVATE' });
+    expect(
+      (
+        await api()
+          .patch('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+          .auth(tokens.USER, { type: 'bearer' })
+          .send({ topicName: 'Renamed private topic' })
+      ).status,
+    ).toBe(200);
+    const deleted = await api()
+      .delete('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+      .auth(tokens.USER, { type: 'bearer' });
+    expect(deleted.status).toBe(200);
+    expect(deleted.body).toMatchObject({ id: topicId, deleted: true, success: true });
+    expect((await get('personal/vocabularies/' + vocabularyId)).status).toBe(404);
+    expect(
+      (await get('personal/vocabularies/' + otherWord.body.vocabularyId, 'OTHER')).status,
+    ).toBe(200);
+    expect(
+      (
+        await api()
+          .delete('/api/v1/learning/personal/vocabularies/' + otherWord.body.vocabularyId)
+          .auth(tokens.OTHER, { type: 'bearer' })
+      ).status,
+    ).toBe(200);
+    expect(
+      (
+        await api()
+          .delete('/api/v1/learning/personal/lessons/' + lessonId)
+          .auth(tokens.USER, { type: 'bearer' })
+      ).status,
+    ).toBe(200);
+    expect((await get('personal/lessons/' + lessonId)).status).toBe(404);
+    // Shared catalog lookups cannot expose private notes and retain existing content.
+    expect((await get('lessons/' + lessonId)).status).toBe(404);
+    expect((await get('vocabulary-topics/' + topic)).status).toBe(200);
+  });
+  it('rejects personal ownership injection, invalid patches and invalid queries through HTTP', async () => {
+    const created = await post('personal/vocabulary-topics', {
+      topicName: 'Validation ' + randomUUID(),
+    });
+    expect(created.status).toBe(201);
+    const topicId = created.body.topicId;
+    expect(
+      (await post('personal/vocabulary-topics', { topicName: 'Forged', userId: ids.OTHER })).status,
+    ).toBe(400);
+    expect(
+      (
+        await post('personal/lessons', {
+          lessonTitle: 'No',
+          category: 'Notes',
+          contentMarkdown: ' ',
+          status: 'PUBLISHED',
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await post('personal/vocabularies', {
+          topicId,
+          word: 'X',
+          definition: 'Y',
+          ownerId: ids.OTHER,
+        })
+      ).status,
+    ).toBe(400);
+    for (const body of [
+      {},
+      { topicName: null },
+      { topicName: ' ' },
+      { topicName: 'x'.repeat(256) },
+      { userId: ids.OTHER },
+    ]) {
+      expect(
+        (
+          await api()
+            .patch('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+            .auth(tokens.USER, { type: 'bearer' })
+            .send(body)
+        ).status,
+      ).toBe(400);
+    }
+    expect((await get('personal/vocabulary-topics?userId=' + ids.OTHER)).status).toBe(400);
+    expect((await get('personal/vocabulary-topics?size=51')).status).toBe(400);
+    expect((await get('personal/vocabulary-topics/not-a-uuid')).status).toBe(400);
+    expect((await api().get('/api/v1/learning/personal/vocabulary-topics')).status).toBe(401);
+    expect((await get('personal/vocabulary-topics/' + topicId)).body.topicName).toMatch(
+      /^Validation /,
+    );
+    await api()
+      .delete('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+      .auth(tokens.USER, { type: 'bearer' });
+  });
   it('rejects whitespace-only PATCH fields without changing content, publication status or audit', async () => {
     const created = await post(
       'admin/lessons',

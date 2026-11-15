@@ -46,12 +46,20 @@ describe('route policy', () => {
       RoleCode.CONTENT_ADMIN,
       RoleCode.SYSTEM_ADMIN,
     ]);
-    expect(requiredRoles('POST', '/api/v1/tests')).toEqual([
-      RoleCode.CONTENT_ADMIN,
-      RoleCode.SYSTEM_ADMIN,
-    ]);
+    expect(requiredRoles('POST', '/api/v1/tests')).toEqual([RoleCode.CONTENT_ADMIN]);
     expect(requiredRoles('GET', '/api/v1/tests')).toEqual([]);
     expect(requiredRoles('GET', '/api/v1/admin/users')).toEqual([RoleCode.SYSTEM_ADMIN]);
+  });
+
+  it('reserves all test mutations for content admins while keeping test reads available', () => {
+    for (const [method, path] of [
+      ['POST', '/api/v1/tests'],
+      ['PATCH', '/api/v1/tests/t1'],
+      ['DELETE', '/api/v1/tests/t1/'],
+    ])
+      expect(requiredRoles(method, path)).toEqual([RoleCode.CONTENT_ADMIN]);
+    expect(requiredRoles('GET', '/api/v1/tests/t1')).toEqual([]);
+    expect(matchRoute('/api/v1/tests')?.writeRoles).toEqual([RoleCode.CONTENT_ADMIN]);
   });
 
   it('applies ip limits to auth and anonymous traffic', () => {

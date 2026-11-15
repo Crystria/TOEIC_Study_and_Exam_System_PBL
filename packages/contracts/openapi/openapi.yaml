@@ -366,7 +366,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
     post:
       tags: [tests]
-      summary: Tạo đề hoàn chỉnh 7 Part
+      summary: Tạo đề hoàn chỉnh 7 Part (CONTENT_ADMIN)
+      x-required-roles: [CONTENT_ADMIN]
       security:
         - bearerAuth: []
       requestBody:
@@ -391,7 +392,8 @@ paths:
   /api/v1/tests/{testId}:
     patch:
       tags: [tests]
-      summary: Cập nhật đề; attempt cũ giữ nguyên snapshot (CONTENT_ADMIN/SYSTEM_ADMIN)
+      summary: Cập nhật đề; attempt cũ giữ nguyên snapshot (CONTENT_ADMIN)
+      x-required-roles: [CONTENT_ADMIN]
       security: [{ bearerAuth: [] }]
       parameters:
         - $ref: '#/components/parameters/TestId'
@@ -422,7 +424,8 @@ paths:
         '409': { $ref: '#/components/responses/Conflict' }
     delete:
       tags: [tests]
-      summary: Archive đề; không ảnh hưởng attempt cũ
+      summary: Archive đề; không ảnh hưởng attempt cũ (CONTENT_ADMIN)
+      x-required-roles: [CONTENT_ADMIN]
       security: [{ bearerAuth: [] }]
       parameters:
         - $ref: '#/components/parameters/TestId'

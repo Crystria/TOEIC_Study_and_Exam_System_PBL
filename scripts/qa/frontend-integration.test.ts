@@ -20,8 +20,13 @@ import {
   parseWord,
   segment,
 } from '../../apps/web/src/lib/integration/contracts';
-import { parseAttempt, remainingTime } from '../../apps/web/src/lib/integration/attempt-contract';
+import {
+  attemptElapsedSeconds,
+  parseAttempt,
+  remainingTime,
+} from '../../apps/web/src/lib/integration/attempt-contract';
 import { examWritesEnabled, isExamMutation } from '../../apps/web/src/lib/integration/exam-access';
+import { cmsContentWritesEnabled } from '../../apps/web/src/lib/integration/cms-access';
 import { query } from '../../apps/web/src/lib/integration/query';
 import {
   GatewayError,
@@ -35,13 +40,21 @@ import {
   analyticsApi,
 } from '../../apps/web/src/lib/integration/repositories';
 import { parseVocabularySession } from '../../apps/web/src/lib/integration/vocabulary-session';
+import { personalLearningApi } from '../../apps/web/src/lib/integration/personal-learning';
+import {
+  isPersonalLearningMutation,
+  isPersonalLearningRoute,
+} from '../../apps/web/src/lib/integration/personal-learning-access';
 import {
   contentApi,
   bankApi,
   parseContent,
+  parseGroup,
+  emptyQuestion,
 } from '../../apps/admin-cms/src/lib/integration/content-api';
 import { vocabularySessions } from '../../apps/web/src/lib/integration/vocabulary-session';
 import { cmsApi } from '../../apps/admin-cms/src/lib/integration/repositories';
+import { topicErrorMessage } from '../../apps/admin-cms/src/lib/integration/topic-errors';
 import { parseLessonMarkdown, safeMarkdownHref } from '../../apps/web/src/lib/learning/markdown';
 import {
   wireUser as user,
@@ -514,6 +527,159 @@ test('CMS content permissions follow the concrete backend role rules', async () 
   }
   assert.deepEqual(requiredRoles('learning/admin/lessons', 'POST'), ['CONTENT_ADMIN']);
 });
+
+test('CMS content CRUD works with account writes disabled', async () => {
+  const calls: { path: string; method: string }[] = [];
+  const config = cfg(
+    async (input, init) => {
+      calls.push({ path: String(input), method: init?.method ?? 'GET' });
+      return json(
+        String(input).endsWith('/users/me')
+          ? { ...user, roles: ['USER', 'CONTENT_ADMIN'] }
+          : { success: true },
+      );
+    },
+    { app: 'cms', writesEnabled: false, contentWritesEnabled: true },
+  );
+  for (const collection of [
+    'questions',
+    'question-groups',
+    'tests',
+    'learning/admin/lessons',
+    'learning/admin/vocabularies',
+    'learning/admin/vocabulary-topics',
+  ]) {
+    for (const method of ['POST', 'PATCH', 'DELETE']) {
+      const path = collection + (method === 'POST' ? '' : '/content-id');
+      assert.equal((await bridge(path, method, { title: 'Content' }, config)).status, 200);
+      assert.deepEqual(calls.at(-1), {
+        path: `http://127.0.0.1:3999/api/v1/${path}`,
+        method,
+      });
+    }
+  }
+  for (const path of [
+    'questions/content-id/media/presign',
+    'question-groups/content-id/media/presign',
+    'learning/vocabularies/content-id/media/presign',
+    'learning/vocabularies/content-id/media/confirm',
+  ])
+    assert.equal((await bridge(path, 'POST', {}, config)).status, 200);
+  const before = calls.length;
+  for (const path of ['admin/users/other/roles', 'admin/users/other/status', 'users/me'])
+    assert.equal((await bridge(path, 'PATCH', {}, config)).status, 503);
+  assert.equal(calls.length, before);
+});
+
+test('CMS content writes enforce role, session, account status and same-origin checks', async () => {
+  for (const [roles, path, expected] of [
+    [['USER'], 'questions', 403],
+    [['USER'], 'tests', 403],
+    [['USER'], 'question-groups', 403],
+    [['USER'], 'learning/admin/lessons', 403],
+    [['USER'], 'learning/admin/vocabularies', 403],
+    [['USER'], 'learning/admin/vocabulary-topics', 403],
+    [['SYSTEM_ADMIN'], 'learning/admin/lessons', 403],
+    [['SYSTEM_ADMIN'], 'learning/admin/vocabularies', 403],
+    [['SYSTEM_ADMIN'], 'learning/admin/vocabulary-topics', 403],
+    [['SYSTEM_ADMIN'], 'questions', 200],
+    [['SYSTEM_ADMIN'], 'question-groups', 200],
+    [['SYSTEM_ADMIN'], 'tests', 403],
+  ] as const) {
+    let mutations = 0;
+    const config = cfg(
+      async (input) => {
+        if (String(input).endsWith('/users/me')) return json({ ...user, roles });
+        mutations++;
+        return json({ success: true });
+      },
+      { app: 'cms', writesEnabled: false, contentWritesEnabled: true },
+    );
+    assert.equal((await bridge(path, 'POST', {}, config)).status, expected);
+    assert.equal(mutations, expected === 200 ? 1 : 0);
+  }
+  let mutations = 0;
+  const config = cfg(
+    async (input) => {
+      if (String(input).endsWith('/users/me'))
+        return json({ ...user, roles: ['CONTENT_ADMIN'], status: 'SUSPENDED' });
+      mutations++;
+      return json({ success: true });
+    },
+    { app: 'cms', contentWritesEnabled: true },
+  );
+  assert.equal((await bridge('questions', 'POST', {}, config)).status, 403);
+  assert.equal(
+    (await bridge('questions', 'POST', {}, config, { origin: 'https://other.invalid' })).status,
+    403,
+  );
+  assert.equal(
+    (await handleBridge(req('questions', 'POST', {}, ''), ['questions'], config)).status,
+    401,
+  );
+  assert.equal(mutations, 0);
+});
+
+test('CMS test writes require CONTENT_ADMIN while SYSTEM_ADMIN keeps list and detail reads', async () => {
+  for (const roles of [['SYSTEM_ADMIN'], ['CONTENT_ADMIN'], ['SYSTEM_ADMIN', 'CONTENT_ADMIN']]) {
+    const calls: Array<{ path: string; method: string }> = [];
+    const config = cfg(
+      async (input, init) => {
+        const path = new URL(String(input)).pathname.replace('/api/v1/', '');
+        if (path === 'users/me') return json({ ...user, roles });
+        calls.push({ path, method: init?.method ?? 'GET' });
+        return json({ success: true });
+      },
+      { app: 'cms', writesEnabled: false, contentWritesEnabled: true },
+    );
+    for (const path of ['tests', 'tests/content-id']) {
+      assert.equal((await bridge(path, 'GET', undefined, config)).status, 200);
+      assert.deepEqual(calls.at(-1), { path, method: 'GET' });
+    }
+    for (const [path, method] of [
+      ['tests', 'POST'],
+      ['tests/content-id', 'PATCH'],
+      ['tests/content-id', 'DELETE'],
+    ]) {
+      const before = calls.length;
+      const response = await bridge(path, method, {}, config);
+      if (roles.includes('CONTENT_ADMIN')) {
+        assert.equal(response.status, 200);
+        assert.deepEqual(calls.at(-1), { path, method });
+      } else {
+        assert.equal(response.status, 403);
+        assert.equal((await response.json()).code, 'INSUFFICIENT_PERMISSIONS');
+        assert.equal(calls.length, before, 'A rejected test write must never reach the Gateway');
+      }
+    }
+  }
+});
+
+test('CMS read-only override blocks content even when account writes are enabled', async () => {
+  assert.equal(cmsContentWritesEnabled('local'), true);
+  assert.equal(cmsContentWritesEnabled('test', 'enabled'), true);
+  assert.equal(cmsContentWritesEnabled('local', 'disabled'), false);
+  assert.equal(cmsContentWritesEnabled('production', 'enabled'), false);
+  assert.equal(cmsContentWritesEnabled(undefined, 'enabled'), false);
+  const config = cfg(
+    async () => {
+      throw Error('must not fetch');
+    },
+    {
+      app: 'cms',
+      writesEnabled: true,
+      contentWritesEnabled: false,
+    },
+  );
+  for (const [path, method] of [
+    ['questions', 'POST'],
+    ['tests/id', 'PATCH'],
+    ['learning/admin/lessons/id', 'DELETE'],
+    ['learning/admin/vocabularies', 'POST'],
+    ['questions/id/media/presign', 'POST'],
+  ])
+    assert.equal((await bridge(path, method, {}, config)).status, 503);
+});
 test('unknown paths, unsafe AI and internal endpoints stay blocked', async () => {
   for (const p of ['ai/conversations', 'internal/auth/state', 'arbitrary', 'questions/reindex'])
     assert.equal(
@@ -680,6 +846,41 @@ test('timer never resets from render, negative elapsed or deadline expiry', () =
   assert.equal(remainingTime(60, 61000), 0);
   assert.equal(remainingTime(60, -1), 60);
 });
+test('completed attempt duration uses completion timestamps rather than zero remaining time', () => {
+  const early = parseAttempt({
+    ...wireAttempt(true),
+    completedAt: '2026-11-03T03:04:05Z',
+    submittedAt: '2026-11-03T03:04:05Z',
+  });
+  assert.equal(early.completedAt, '2026-11-03T03:04:05Z');
+  assert.equal(attemptElapsedSeconds(early), 245);
+  assert.equal(
+    attemptElapsedSeconds(
+      parseAttempt({ ...wireAttempt(true), submittedAt: '2026-11-03T03:02:00Z' }),
+    ),
+    120,
+  );
+  assert.equal(attemptElapsedSeconds(parseAttempt(wireAttempt(true))), null);
+  assert.equal(
+    attemptElapsedSeconds(parseAttempt({ ...wireAttempt(true), status: 'EXPIRED' })),
+    7200,
+  );
+  assert.equal(
+    attemptElapsedSeconds(
+      parseAttempt({ ...wireAttempt(true), completedAt: '2026-11-03T06:00:00Z' }),
+    ),
+    7200,
+  );
+  assert.equal(
+    attemptElapsedSeconds(
+      parseAttempt({ ...wireAttempt(true), completedAt: '2026-11-03T02:59:59Z' }),
+    ),
+    null,
+  );
+  const active = parseAttempt({ ...wireAttempt(), completedAt: '2026-11-03T03:04:05Z' });
+  assert.equal(active.completedAt, null);
+  assert.equal(attemptElapsedSeconds(active), null);
+});
 test('quiz ignores any premature result on an active session', () => {
   const r = parseVocabularySession({
     sessionId: 's',
@@ -834,6 +1035,137 @@ test('group update sends only DTO asset fields and keeps the requested member or
   } finally {
     globalThis.fetch = old;
   }
+});
+
+test('group create assigns nested part and member positions atomically without UI asset fields', async () => {
+  const old = globalThis.fetch;
+  let sent: Record<string, unknown> = {};
+  globalThis.fetch = async (_input, init) => {
+    assert.equal(init?.method, 'POST');
+    sent = JSON.parse(String(init?.body));
+    return json({
+      groupId: 'g',
+      part: 7,
+      type: 'PASSAGE',
+      questionIds: ['a', 'b'],
+      assets: [],
+      isComplete: true,
+    });
+  };
+  try {
+    const question = {
+      ...emptyQuestion(5),
+      groupId: 'stale-group',
+      positionInGroup: 99,
+      tags: ['  grammar  ', '', 'grammar'],
+    };
+    const asset = {
+      kind: 'TEXT',
+      storageKey: null,
+      content: 'Passage',
+      orderNo: 1,
+      url: 'https://media.invalid/ui-only',
+    };
+    const result = await bankApi.saveGroup(
+      {
+        part: 7,
+        type: 'PASSAGE',
+        instruction: 'Read',
+        passageText: '',
+        transcript: '',
+        assets: [asset],
+      },
+      [question, question],
+    );
+    assert.equal(result.id, 'g');
+    const questions = sent.questions as Record<string, unknown>[];
+    assert.deepEqual(
+      questions.map((q) => [q.part, q.positionInGroup]),
+      [
+        [7, 1],
+        [7, 2],
+      ],
+    );
+    assert(questions.every((q) => !('groupId' in q)));
+    assert(questions.every((q) => JSON.stringify(q.tags) === JSON.stringify(['grammar'])));
+    assert.deepEqual(sent.assets, [
+      { kind: 'TEXT', storageKey: null, content: 'Passage', orderNo: 1 },
+    ]);
+    assert.deepEqual(
+      parseGroup({ groupId: 'g', part: 7, type: 'PASSAGE', questionIds: ['b', 'a'], assets: [] })
+        .questionIds,
+      ['b', 'a'],
+    );
+  } finally {
+    globalThis.fetch = old;
+  }
+});
+
+test('topic CRUD preserves active-word count, trims names and retains the creation key', async () => {
+  assert.equal(
+    parseContent('topics', { topicId: 't', topicName: 'Business', vocabularyCount: 3 })
+      .vocabularyCount,
+    3,
+  );
+  assert.equal(
+    parseContent('topics', { topicId: 't', topicName: 'Business' }).vocabularyCount,
+    null,
+  );
+  assert.throws(
+    () => parseContent('topics', { topicId: 't', topicName: 'Business', vocabularyCount: -1 }),
+    ContractError,
+  );
+  const old = globalThis.fetch;
+  const calls: { method: string; key: string | null; body: unknown }[] = [];
+  globalThis.fetch = async (_input, init) => {
+    calls.push({
+      method: init?.method ?? 'GET',
+      key: new Headers(init?.headers).get('Idempotency-Key'),
+      body: init?.body ? JSON.parse(String(init.body)) : null,
+    });
+    return json({ topicId: 't', topicName: 'Business', vocabularyCount: 3 });
+  };
+  try {
+    await contentApi.save(
+      'topics',
+      { topicName: '  Business  ', userId: 'untrusted' },
+      'topic-create-key',
+    );
+    await contentApi.save('topics', { topicName: 'Business' }, 'topic-create-key');
+    await contentApi.save('topics', { topicName: '  Renamed  ' }, 'unused-update-key', 't');
+    assert.deepEqual(calls, [
+      { method: 'POST', key: 'topic-create-key', body: { topicName: 'Business' } },
+      { method: 'POST', key: 'topic-create-key', body: { topicName: 'Business' } },
+      { method: 'PATCH', key: null, body: { topicName: 'Renamed' } },
+    ]);
+    globalThis.fetch = async () => json({ success: false });
+    await assert.rejects(contentApi.remove('topics', 't'), ContractError);
+    globalThis.fetch = async () => json({ success: true });
+    await contentApi.remove('topics', 't');
+  } finally {
+    globalThis.fetch = old;
+  }
+});
+
+test('topic deletion explains a nonempty topic through the real bridge error envelope', () => {
+  const message = topicErrorMessage(
+    new GatewayError(409, 'Generic conflict', {
+      code: 'GATEWAY_ERROR',
+      details: { code: 'TOPIC_NOT_EMPTY', message: 'Do not render raw backend text' },
+    }),
+  );
+  assert.match(message, /Chủ đề còn từ vựng/);
+  assert(!message.includes('Do not render'));
+  for (const details of [
+    null,
+    {},
+    { code: 'GATEWAY_ERROR', details: null },
+    { code: 'UNKNOWN', message: 'Internal text' },
+  ])
+    assert.equal(
+      topicErrorMessage(new GatewayError(409, 'Safe fallback', details)),
+      'Safe fallback',
+    );
 });
 test('lesson progress refuses incomplete projection and repeated cursors', async () => {
   const old = globalThis.fetch;
@@ -990,5 +1322,239 @@ test('completed quiz reload reads backend grading without submitting or recomput
     assert.deepEqual(methods, ['GET']);
   } finally {
     globalThis.fetch = old;
+  }
+});
+
+test('personal learner CRUD uses only owner-bound routes independently of experimental writes', async () => {
+  const calls: { path: string; key: string | null }[] = [];
+  const config = cfg(
+    async (input, init) => {
+      calls.push({ path: String(input), key: new Headers(init?.headers).get('Idempotency-Key') });
+      return json(
+        String(input).endsWith('/users/me') ? { ...user, roles: ['USER'] } : { success: true },
+      );
+    },
+    { writesEnabled: false, examWritesEnabled: false },
+  );
+  for (const resource of ['vocabulary-topics', 'vocabularies', 'lessons']) {
+    const collection = `learning/personal/${resource}`;
+    for (const [path, method] of [
+      [collection, 'GET'],
+      [`${collection}/owned-id`, 'GET'],
+      [collection, 'POST'],
+      [`${collection}/owned-id`, 'PATCH'],
+      [`${collection}/owned-id`, 'DELETE'],
+    ]) {
+      assert.equal(isPersonalLearningRoute(path, method), true);
+      assert.equal(isPersonalLearningMutation(path, method), method !== 'GET');
+      assert.deepEqual(requiredRoles(path, method), []);
+      assert.equal(
+        (
+          await bridge(path, method, method === 'GET' ? undefined : {}, config, {
+            'Idempotency-Key': 'personal-create-key',
+          })
+        ).status,
+        200,
+      );
+    }
+  }
+  assert.equal(calls.length, 30);
+  assert(calls.filter((_, index) => index % 2 === 0).every((call) => call.key === null));
+  assert(
+    calls.filter((_, index) => index % 2 === 1).every((call) => call.key === 'personal-create-key'),
+  );
+});
+
+test('personal access cannot open shared content, admin routes or unapproved methods', async () => {
+  let calls = 0;
+  const config = cfg(
+    async () => {
+      calls++;
+      return json({ ...user, roles: ['USER'] });
+    },
+    { writesEnabled: true },
+  );
+  for (const [path, method] of [
+    ['learning/personal/lessons/item', 'POST'],
+    ['learning/personal/lessons', 'PATCH'],
+    ['learning/personal/lessons', 'DELETE'],
+    ['learning/personal/lessons/item', 'PUT'],
+    ['learning/personal/lessons/item/complete', 'POST'],
+    ['learning/personal/users/other', 'DELETE'],
+    ['learning/personal/vocabularies/item/media/presign', 'POST'],
+    ['learning/vocabulary-topics', 'POST'],
+    ['learning/vocabularies/shared-id', 'PATCH'],
+    ['learning/lessons/shared-id', 'DELETE'],
+    ['learning/admin/lessons', 'POST'],
+    ['learning/admin/vocabularies/shared-id', 'PATCH'],
+    ['admin/users/other/status', 'PATCH'],
+  ]) {
+    assert.equal(isPersonalLearningRoute(path, method), false);
+    assert.equal((await bridge(path, method, {}, config)).status, 501);
+  }
+  for (const method of ['GET', 'POST', 'PATCH', 'DELETE']) {
+    const path = `learning/personal/lessons${['PATCH', 'DELETE'].includes(method) ? '/item' : ''}`;
+    assert.equal(
+      (await bridge(path, method, method === 'GET' ? undefined : {}, { ...config, app: 'cms' }))
+        .status,
+      501,
+    );
+  }
+  assert.equal(calls, 0);
+});
+
+test('personal CRUD requires an active session and same origin, preserves ownership errors without replay', async () => {
+  const path = 'learning/personal/lessons/other-owned-id';
+  let mutations = 0;
+  const config = cfg(async (input) => {
+    if (String(input).endsWith('/users/me')) return json({ ...user, roles: ['USER'] });
+    mutations++;
+    return json({ message: 'Not found' }, 404);
+  });
+  assert.equal(
+    (await handleBridge(req(path, 'PATCH', {}, ''), path.split('/'), config)).status,
+    401,
+  );
+  assert.equal(
+    (await bridge(path, 'PATCH', {}, config, { origin: 'https://foreign.invalid' })).status,
+    403,
+  );
+  assert.equal(
+    (
+      await bridge(
+        path,
+        'PATCH',
+        {},
+        {
+          ...config,
+          fetcher: async () => json({ ...user, roles: ['USER'], status: 'SUSPENDED' }),
+        },
+      )
+    ).status,
+    403,
+  );
+  assert.equal(mutations, 0);
+  assert.equal((await bridge(path, 'PATCH', {}, config)).status, 404);
+  assert.equal(mutations, 1);
+  const failed = await bridge(path, 'DELETE', undefined, {
+    ...config,
+    fetcher: async (input) => {
+      if (String(input).endsWith('/users/me')) return json({ ...user, roles: ['USER'] });
+      mutations++;
+      return json({ message: 'Expired' }, 401);
+    },
+  });
+  assert.equal(failed.status, 401);
+  assert.equal(mutations, 2);
+});
+
+test('personal repositories parse private collections, filter query keys and send only permitted input fields', async () => {
+  const original = globalThis.fetch;
+  const calls: { path: string; init?: RequestInit }[] = [];
+  globalThis.fetch = async (input, init) => {
+    const path = String(input);
+    calls.push({ path, init });
+    const value = path.includes('vocabulary-topics')
+      ? wireTopic
+      : path.includes('vocabularies')
+        ? wireWord
+        : { ...wireLesson, status: 'PRIVATE' };
+    return json(path.includes('?') ? wirePage([value]) : value);
+  };
+  try {
+    const topics = await personalLearningApi.topics.list(
+      new URLSearchParams({ keyword: ' Business ', ownerUserId: 'other', status: 'PUBLISHED' }),
+    );
+    assert.equal(topics.items[0].name, wireTopic.topicName);
+    assert.equal(
+      calls.at(-1)?.path,
+      '/api/frontend/learning/personal/vocabulary-topics?keyword=Business',
+    );
+    const words = await personalLearningApi.words.list(
+      new URLSearchParams({ topicId: wireTopic.topicId, page: '2', size: '10', userId: 'other' }),
+    );
+    assert.equal(words.items[0].meaning, wireWord.definition);
+    assert.match(calls.at(-1)!.path, new RegExp(`topicId=${wireTopic.topicId}&page=2&size=10$`));
+    const lessons = await personalLearningApi.lessons.list(
+      new URLSearchParams({ category: 'Tenses', status: 'PUBLISHED' }),
+    );
+    assert.equal(lessons.items[0].status, 'PRIVATE');
+    assert.equal(lessons.items[0].content, wireLesson.contentMarkdown);
+    assert.equal(calls.at(-1)?.path, '/api/frontend/learning/personal/lessons?category=Tenses');
+    assert.equal((await personalLearningApi.topics.get(wireTopic.topicId)).id, wireTopic.topicId);
+    assert.equal(
+      (await personalLearningApi.words.get(wireWord.vocabularyId)).id,
+      wireWord.vocabularyId,
+    );
+    assert.equal(
+      (await personalLearningApi.lessons.get(wireLesson.lessonId)).id,
+      wireLesson.lessonId,
+    );
+    await personalLearningApi.topics.create(
+      { topicName: ' Business ', ownerUserId: 'other' } as { topicName: string },
+      'personal-key',
+    );
+    assert.deepEqual(JSON.parse(String(calls.at(-1)?.init?.body)), { topicName: 'Business' });
+    assert.equal(new Headers(calls.at(-1)?.init?.headers).get('Idempotency-Key'), 'personal-key');
+    await personalLearningApi.words.create(
+      {
+        topicId: wireTopic.topicId,
+        word: ' agenda ',
+        definition: ' meeting ',
+        phonetic: '',
+        example: null,
+      },
+      'word-key',
+    );
+    assert.deepEqual(JSON.parse(String(calls.at(-1)?.init?.body)), {
+      topicId: wireTopic.topicId,
+      word: 'agenda',
+      definition: 'meeting',
+      phonetic: null,
+      example: null,
+    });
+    await personalLearningApi.lessons.update(wireLesson.lessonId, {
+      lessonTitle: ' New title ',
+      status: 'PUBLISHED',
+      ownerUserId: 'other',
+    } as { lessonTitle: string });
+    assert.deepEqual(JSON.parse(String(calls.at(-1)?.init?.body)), { lessonTitle: 'New title' });
+    assert.equal(calls.at(-1)?.init?.method, 'PATCH');
+    assert.equal(new Headers(calls.at(-1)?.init?.headers).has('Idempotency-Key'), false);
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test('personal repositories reject cross-entity acknowledgments and shared lesson responses', async () => {
+  const original = globalThis.fetch;
+  try {
+    globalThis.fetch = async () => json({ ...wireTopic, topicId: 'another-topic' });
+    await assert.rejects(personalLearningApi.topics.get(wireTopic.topicId), ContractError);
+    await assert.rejects(
+      personalLearningApi.topics.update(wireTopic.topicId, { topicName: 'New' }),
+      ContractError,
+    );
+    globalThis.fetch = async () => json(wireLesson);
+    await assert.rejects(personalLearningApi.lessons.get(wireLesson.lessonId), ContractError);
+    globalThis.fetch = async () => json(wirePage([wireLesson]));
+    await assert.rejects(personalLearningApi.lessons.list(), ContractError);
+    for (const response of [
+      { id: 'other', deleted: true },
+      { id: wireWord.vocabularyId, deleted: false },
+      { success: true },
+    ]) {
+      globalThis.fetch = async () => json(response);
+      await assert.rejects(personalLearningApi.words.remove(wireWord.vocabularyId), ContractError);
+    }
+    globalThis.fetch = async () =>
+      json({ id: wireWord.vocabularyId, deleted: true, success: true });
+    assert.deepEqual(await personalLearningApi.words.remove(wireWord.vocabularyId), {
+      id: wireWord.vocabularyId,
+      deleted: true,
+    });
+    assert.throws(() => personalLearningApi.topics.update(wireTopic.topicId, {}), ContractError);
+  } finally {
+    globalThis.fetch = original;
   }
 });

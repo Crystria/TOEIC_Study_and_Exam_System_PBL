@@ -36,10 +36,11 @@ export function CmsWorkspace({ kind }: { kind: EntityKind }) {
   const isNew = id === 'new' && kind !== 'media';
   const edit = isNew || pathname.endsWith('/edit');
   const role = parseDemoRole(params.get('demoRole'));
+  const readOnly = kind === 'tests' && role === 'SYSTEM_ADMIN';
   const record = state[kind].find((r) => r.id === id);
   const [remove, setRemove] = useState(false);
   const [failure, setFailure] = useState('');
-  if (!canManage(kind, role)) return <p>Mục này không thuộc persona demo hiện tại.</p>;
+  if (!canManage(kind, role) && !readOnly) return <p>Mục này không thuộc persona demo hiện tại.</p>;
   const href = (nextKind: EntityKind, nextId?: string, nextEdit = false) =>
     workspaceHref(
       nextKind,
@@ -47,6 +48,20 @@ export function CmsWorkspace({ kind }: { kind: EntityKind }) {
       nextKind === kind ? params : new URLSearchParams({ demoRole: role }),
       nextId,
       nextEdit,
+    );
+  if (readOnly && edit)
+    return (
+      <section className="ws-root">
+        <h1>Đề thi</h1>
+        <p role="status">
+          Quản trị hệ thống chỉ có quyền xem đề thi. Quyền tạo, chỉnh sửa và xóa thuộc Quản trị nội
+          dung.
+        </p>
+        <div className="ws-actions">
+          <Link href={href('tests')}>Danh sách đề thi</Link>
+          {!isNew && id && <Link href={href('tests', id)}>Xem nội dung đề thi</Link>}
+        </div>
+      </section>
     );
   const warnings = record && kind !== 'media' ? validateRecord(kind, record, state) : {};
   return (
@@ -56,11 +71,12 @@ export function CmsWorkspace({ kind }: { kind: EntityKind }) {
           <span className="cms-eyebrow">BIÊN TẬP NỘI DUNG DEMO</span>
           <h1>{ENTITY_LABELS[kind]}</h1>
         </div>
-        <span className="cms-badge">RAM DEMO</span>
+        <span className="cms-badge">{readOnly ? 'CHỈ XEM · RAM DEMO' : 'RAM DEMO'}</span>
       </div>
       <p className="ws-banner">
-        Mọi cập nhật chỉ có trong bộ nhớ tab hiện tại. Reload khôi phục dữ liệu mẫu. Chưa kết nối
-        API, xác thực hoặc lưu lên server.
+        {readOnly
+          ? 'Quản trị hệ thống chỉ xem nội dung đề thi. Quyền tạo, chỉnh sửa và xóa thuộc Quản trị nội dung. Dữ liệu demo chỉ có trong bộ nhớ tab.'
+          : 'Mọi cập nhật chỉ có trong bộ nhớ tab hiện tại. Reload khôi phục dữ liệu mẫu. Chưa kết nối API, xác thực hoặc lưu lên server.'}
       </p>
       {notice && (
         <p role="status" className="ws-notice">
@@ -70,15 +86,15 @@ export function CmsWorkspace({ kind }: { kind: EntityKind }) {
           </button>
         </p>
       )}
-      {kind !== 'users' && (
+      {kind !== 'users' && !readOnly && (
         <nav className="ws-tabs" aria-label="Điều hướng biên tập">
-          {(
-            ['questions', 'groups', 'media', 'tests', 'lessons', 'vocabulary', 'topics'] as const
-          ).map((k) => (
-            <Link key={k} href={href(k)} aria-current={k === kind ? 'page' : undefined}>
-              {ENTITY_LABELS[k]}
-            </Link>
-          ))}
+          {(['questions', 'groups', 'tests', 'lessons', 'vocabulary', 'topics'] as const).map(
+            (k) => (
+              <Link key={k} href={href(k)} aria-current={k === kind ? 'page' : undefined}>
+                {ENTITY_LABELS[k]}
+              </Link>
+            ),
+          )}
         </nav>
       )}
       {id && (
@@ -99,12 +115,12 @@ export function CmsWorkspace({ kind }: { kind: EntityKind }) {
           ) : (
             <Card className="ws-panel">
               <div className="ws-actions">
-                {kind !== 'media' && (
+                {kind !== 'media' && !readOnly && (
                   <Link className="cms-link-button" href={href(kind, id, true)}>
                     Chỉnh sửa demo
                   </Link>
                 )}
-                {kind !== 'users' && (
+                {kind !== 'users' && !readOnly && (
                   <Button
                     variant="danger"
                     onClick={() => {
@@ -139,7 +155,7 @@ export function CmsWorkspace({ kind }: { kind: EntityKind }) {
           </Card>
         )
       ) : (
-        <WorkspaceList key={kind} kind={kind} />
+        <WorkspaceList key={kind} kind={kind} readOnly={readOnly} />
       )}
       {failure && (
         <p role="alert" className="ws-error">
@@ -181,7 +197,7 @@ export function CmsWorkspace({ kind }: { kind: EntityKind }) {
   );
 }
 
-function WorkspaceList({ kind }: { kind: EntityKind }) {
+function WorkspaceList({ kind, readOnly = false }: { kind: EntityKind; readOnly?: boolean }) {
   const { state } = useWorkspace();
   const search = useSearchParams();
   const params = new URLSearchParams(search.toString());
@@ -212,7 +228,7 @@ function WorkspaceList({ kind }: { kind: EntityKind }) {
   return (
     <>
       <div className="ws-actions">
-        {kind !== 'users' && kind !== 'media' && (
+        {kind !== 'users' && kind !== 'media' && !readOnly && (
           <Link href={workspaceHref(kind, state, params, 'new')} className="cms-link-button">
             Tạo{' '}
             {kind === 'questions'
@@ -400,7 +416,9 @@ function WorkspaceList({ kind }: { kind: EntityKind }) {
             {!records.length && (
               <Card className="ws-panel">
                 <h2>Chưa có kết quả</h2>
-                <p>Thử thay đổi bộ lọc hoặc tạo bản ghi demo.</p>
+                <p>
+                  {readOnly ? 'Thử thay đổi bộ lọc.' : 'Thử thay đổi bộ lọc hoặc tạo bản ghi demo.'}
+                </p>
               </Card>
             )}
             <div className="ws-catalog">
@@ -474,7 +492,7 @@ function CatalogCard({ kind, record }: { kind: EntityKind; record: EntityMap[Ent
         <Link className="ws-link" href={workspaceHref(kind, state, params, record.id)}>
           Xem chi tiết
         </Link>
-        {kind !== 'media' && (
+        {kind !== 'media' && canManage(kind, parseDemoRole(params.get('demoRole'))) && (
           <Link className="ws-link" href={workspaceHref(kind, state, params, record.id, true)}>
             Chỉnh sửa demo
           </Link>

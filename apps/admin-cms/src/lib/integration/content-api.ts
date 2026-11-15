@@ -29,6 +29,8 @@ export function parseContent(kind: ContentKind, value: unknown) {
       r[kind === 'topics' ? 'topicName' : kind === 'vocabulary' ? 'word' : 'lessonTitle'],
     ),
     deleted: r.deletedAt != null,
+    vocabularyCount:
+      kind === 'topics' && r.vocabularyCount != null ? count(r.vocabularyCount) : null,
     audioUrl: kind === 'vocabulary' ? mediaUrl(r.audioUrl) : null,
     imageUrl: kind === 'vocabulary' ? mediaUrl(r.imageUrl) : null,
     fields: Object.fromEntries(fields[kind].map((key) => [key, optionalText(r[key]) ?? ''])),
@@ -144,6 +146,7 @@ export function parseGroup(value: unknown) {
     }),
     questionIds: list(r.questionIds, (v) => id(v)),
     audioKey: optionalText(r.audioKey),
+    isComplete: r.isComplete === true,
   };
 }
 export const bankApi = {
@@ -206,6 +209,7 @@ export const bankApi = {
             : {
                 questions: questions.map((q, index) => ({
                   ...q,
+                  tags: [...new Set(q.tags.map((tag) => tag.trim()).filter(Boolean))],
                   part: input.part,
                   positionInGroup: index + 1,
                   groupId: undefined,

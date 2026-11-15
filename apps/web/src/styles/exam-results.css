@@ -155,7 +155,6 @@
 }
 .history-entry h2 a:hover {
   color: var(--color-primary);
-  text-decoration: underline;
 }
 .history-entry-actions {
   display: grid;

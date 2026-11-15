@@ -20,6 +20,17 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
     : parseDemoRole(search.get('demoRole'));
   const persona = DEMO_PERSONAS[role];
   const destination = resolveCmsDestination(pathname);
+  const apiSection =
+    apiAccount && /^\/(groups|topics)(?:\/|$)/.test(pathname)
+      ? `/${pathname.split('/')[1]}`
+      : undefined;
+  const activePath = apiSection ?? destination?.href ?? pathname;
+  const sectionLabel =
+    apiSection === '/groups'
+      ? 'Nhóm câu hỏi'
+      : apiSection === '/topics'
+        ? 'Chủ đề từ vựng'
+        : (destination?.label ?? 'CMS demo');
   const drawer = useRef<HTMLDialogElement>(null);
   const account = useRef<HTMLDetailsElement>(null);
   const main = useRef<HTMLElement>(null);
@@ -76,7 +87,10 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
   }, []);
 
   function switchRole(next: DemoRole) {
-    const target = destination?.role === next ? destination.href : DEMO_PERSONAS[next].home;
+    const target =
+      destination?.role === next || destination?.href === '/tests'
+        ? destination.href
+        : DEMO_PERSONAS[next].home;
     router.push(demoHref(target, next));
   }
 
@@ -86,7 +100,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
         Đến nội dung chính
       </Link>
       <aside className="cms-desktop-sidebar">
-        <Sidebar pathname={destination?.href ?? pathname} role={role} roles={apiAccount?.roles} />
+        <Sidebar pathname={activePath} role={role} roles={apiAccount?.roles} />
       </aside>
       <dialog
         ref={drawer}
@@ -123,7 +137,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
             ×
           </button>
           <Sidebar
-            pathname={destination?.href ?? pathname}
+            pathname={activePath}
             role={role}
             roles={apiAccount?.roles}
             onNavigate={closeDrawer}
@@ -149,7 +163,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
             </button>
             <div>
               <span className="cms-eyebrow">KHÔNG GIAN QUẢN TRỊ</span>
-              <p>{destination?.label ?? 'CMS demo'}</p>
+              <p>{sectionLabel}</p>
             </div>
           </div>
           <details
@@ -218,7 +232,9 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
           </div>
         )}
         <main ref={main} id="cms-main" tabIndex={-1} className="cms-main">
-          {apiAccount || destination?.role === role ? (
+          {apiAccount ||
+          destination?.role === role ||
+          (role === 'SYSTEM_ADMIN' && destination?.href === '/tests') ? (
             children
           ) : (
             <section className="cms-route-intro">

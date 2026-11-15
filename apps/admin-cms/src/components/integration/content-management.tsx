@@ -20,8 +20,8 @@ import { cmsApi } from '../../lib/integration/repositories';
 import { MediaUpload } from '../../../../web/src/components/integration/media-upload';
 import { AudioPlayer } from '../../../../web/src/components/ui/audio-player';
 import { RelationPicker } from './relation-picker';
+import { ManagementSearch } from './management-search';
 import { SafeMarkdown } from '../demo/workspace-primitives';
-import { formatPassageBlanks } from '../../../../web/src/lib/exams/passage';
 
 export function useCmsLocation() {
   const path = usePathname(),
@@ -71,23 +71,6 @@ export function ManagementPager({
     </nav>
   );
 }
-function Search({ value, change }: { value: string; change: (v: string) => void }) {
-  return (
-    <form
-      className="api-actions"
-      onSubmit={(e) => {
-        e.preventDefault();
-        change(String(new FormData(e.currentTarget).get('keyword') ?? ''));
-      }}
-    >
-      <label className="api-field">
-        Từ khóa
-        <input name="keyword" type="search" defaultValue={value} />
-      </label>
-      <button>Tìm kiếm</button>
-    </form>
-  );
-}
 const contentFields = {
   topics: [['topicName', 'Tên chủ đề', 255]],
   vocabulary: [
@@ -112,6 +95,7 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
       : { detail: null, page: id === 'new' ? null : await contentApi.list(kind, params, signal) },
   );
   const [error, setError] = useState(''),
+    [notice, setNotice] = useState(''),
     [busy, setBusy] = useState(false),
     lock = useRef(false);
   const title =
@@ -123,8 +107,22 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
         <Link href={href()}>Danh sách</Link>
       ) : (
         <>
-          <Search value={params.get('keyword') ?? ''} change={(v) => update('keyword', v)} />
-          {writes && <Link href={href('new')}>Tạo mới</Link>}
+          <ManagementSearch
+            value={params.get('keyword') ?? ''}
+            change={(v) => update('keyword', v)}
+          />
+          {writes && (
+            <div className="api-actions">
+              <Link className="api-primary-action" href={href('new')}>
+                {kind === 'lessons'
+                  ? 'Thêm bài học ngữ pháp'
+                  : kind === 'vocabulary'
+                    ? 'Thêm từ vựng'
+                    : 'Thêm chủ đề'}
+              </Link>
+              {kind === 'vocabulary' && <Link href="/topics/new">Thêm chủ đề từ vựng</Link>}
+            </div>
+          )}
         </>
       )}
       <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
@@ -136,7 +134,21 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
                 <h2>
                   <Link href={href(v.id)}>{v.title}</Link>
                 </h2>
-                <p>{v.deleted ? 'Đã ngừng sử dụng' : (v.fields.status ?? 'Đang sử dụng')}</p>
+                <p>
+                  {v.deleted
+                    ? 'Đã xóa'
+                    : v.fields.status === 'DRAFT'
+                      ? 'Bản nháp'
+                      : v.fields.status === 'PUBLISHED'
+                        ? 'Đã công bố'
+                        : 'Đang sử dụng'}
+                </p>
+                {kind === 'lessons' && <p>{v.fields.category}</p>}
+                {kind === 'vocabulary' && <p>{v.fields.definition}</p>}
+                <div className="api-actions">
+                  <Link href={href(v.id)}>Xem chi tiết</Link>
+                  {writes && !v.deleted && <Link href={href(v.id, true)}>Chỉnh sửa</Link>}
+                </div>
               </article>
             ))}
           </div>
@@ -174,22 +186,28 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
             </div>
           ))}
           {writes && !state.data.detail.deleted && (
-            <>
+            <div className="api-actions">
               <Link href={href(id, true)}>Chỉnh sửa</Link>
               <button
+                type="button"
+                className="api-danger-action"
                 disabled={busy}
                 onClick={async () => {
                   if (
                     lock.current ||
                     !id ||
-                    !window.confirm('Ngừng sử dụng bản ghi này trên server?')
+                    !window.confirm(
+                      `Xóa “${state.data!.detail!.title}” khỏi nội dung đang sử dụng? Bản ghi được lưu trữ để giữ lịch sử học tập.`,
+                    )
                   )
                     return;
                   lock.current = true;
                   setBusy(true);
                   setError('');
+                  setNotice('');
                   try {
                     await contentApi.remove(kind, id);
+                    setNotice('Đã xóa nội dung khỏi thư viện đang sử dụng.');
                     state.reload();
                   } catch (e) {
                     setError(failureMessage(e));
@@ -199,9 +217,9 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
                   }
                 }}
               >
-                Ngừng sử dụng
+                {busy ? 'Đang xóa…' : 'Xóa'}
               </button>
-            </>
+            </div>
           )}
         </article>
       )}
@@ -227,16 +245,27 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
           </>
         )}
       {(id === 'new' || (path.endsWith('/edit') && state.data?.detail)) &&
-        (writes ? (
+        (state.data?.detail?.deleted ? (
+          <Blocked>Nội dung đã xóa không thể chỉnh sửa.</Blocked>
+        ) : writes ? (
           <ContentEditor
             key={id}
             kind={kind}
             original={state.data?.detail ?? undefined}
             saved={(v) => window.location.assign(href(v.id))}
+            cancelHref={id === 'new' ? href() : href(id)}
+            initialTopicId={
+              kind === 'vocabulary' && id === 'new' ? (params.get('topicId') ?? '') : ''
+            }
           />
         ) : (
           <Blocked>Thao tác ghi đang tắt.</Blocked>
         ))}
+      {notice && (
+        <p role="status" className="api-success">
+          {notice}
+        </p>
+      )}
       {error && (
         <p role="alert" className="api-error">
           {error}
@@ -249,13 +278,17 @@ function ContentEditor({
   kind,
   original,
   saved,
+  cancelHref,
+  initialTopicId,
 }: {
   kind: ContentKind;
   original?: Awaited<ReturnType<typeof contentApi.read>>;
   saved: (v: Awaited<ReturnType<typeof contentApi.read>>) => void;
+  cancelHref: string;
+  initialTopicId: string;
 }) {
   const [values, setValues] = useState<Record<string, string>>(
-    original?.fields ?? { status: 'DRAFT' },
+    original?.fields ?? { status: 'DRAFT', ...(initialTopicId ? { topicId: initialTopicId } : {}) },
   );
   const [busy, setBusy] = useState(false),
     [uncertain, setUncertain] = useState(false),
@@ -270,6 +303,13 @@ function ContentEditor({
         onSubmit={async (e) => {
           e.preventDefault();
           if (lock.current) return;
+          const missing = contentFields[kind].find(
+            ([name]) => !['phonetic', 'example'].includes(name) && !(values[name] ?? '').trim(),
+          );
+          if (missing) {
+            setError(`Vui lòng nhập ${missing[1].toLowerCase()}.`);
+            return;
+          }
           lock.current = true;
           setBusy(true);
           setError('');
@@ -343,9 +383,18 @@ function ContentEditor({
             Xem trước
           </button>
         </fieldset>
-        <button disabled={busy || !preview}>
-          {uncertain ? 'Thử lại cùng yêu cầu' : 'Lưu lên server'}
-        </button>
+        <div className="api-actions">
+          <button type="submit" className="api-primary-action" disabled={busy}>
+            {busy
+              ? 'Đang lưu…'
+              : uncertain
+                ? 'Thử lại cùng yêu cầu'
+                : original
+                  ? 'Lưu thay đổi'
+                  : 'Tạo mới'}
+          </button>
+          <Link href={cancelHref}>Hủy</Link>
+        </div>
       </form>
       {preview && (
         <SafeMarkdown
@@ -503,6 +552,9 @@ export function QuestionFields({
 }
 export function QuestionManagement({ writes }: { writes: boolean }) {
   const { id, path, params, href, update } = useCmsLocation();
+  const requestedPart = Number(params.get('part'));
+  const initialPart = [1, 2, 3, 4, 5, 6, 7].includes(requestedPart) ? requestedPart : 5;
+  const initialGroupId = [3, 4, 6, 7].includes(initialPart) ? params.get('groupId') : null;
   const state = useResource(`bank:${id}:${params}`, async (signal) =>
     id && id !== 'new'
       ? { detail: await bankApi.question(id, signal), page: null }
@@ -515,7 +567,10 @@ export function QuestionManagement({ writes }: { writes: boolean }) {
         <Link href={href()}>Danh sách</Link>
       ) : (
         <>
-          <Search value={params.get('keyword') ?? ''} change={(v) => update('keyword', v)} />
+          <ManagementSearch
+            value={params.get('keyword') ?? ''}
+            change={(v) => update('keyword', v)}
+          />
           <label className="api-field">
             Part
             <select
@@ -528,7 +583,13 @@ export function QuestionManagement({ writes }: { writes: boolean }) {
               ))}
             </select>
           </label>
-          {writes && <Link href={href('new')}>Tạo câu hỏi</Link>}
+          {writes && (
+            <div className="api-actions">
+              <Link className="api-primary-action" href={href('new')}>
+                Thêm câu hỏi
+              </Link>
+            </div>
+          )}
         </>
       )}
       <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
@@ -541,6 +602,10 @@ export function QuestionManagement({ writes }: { writes: boolean }) {
                 <p>
                   Part {q.part} · {q.difficulty} · {q.status}
                 </p>
+                <div className="api-actions">
+                  <Link href={href(q.id)}>Xem chi tiết</Link>
+                  {writes && <Link href={href(q.id, true)}>Chỉnh sửa</Link>}
+                </div>
               </article>
             ))}
           </div>
@@ -573,6 +638,15 @@ export function QuestionManagement({ writes }: { writes: boolean }) {
           edit={id === 'new' || path.endsWith('/edit')}
           saved={(v) => window.location.assign(href(v.id))}
           editLink={href(id, true)}
+          cancelHref={
+            id === 'new' && initialGroupId
+              ? `/groups/${encodeURIComponent(initialGroupId)}`
+              : id === 'new'
+                ? href()
+                : href(id)
+          }
+          listHref={href()}
+          initialInput={{ ...emptyQuestion(initialPart), groupId: initialGroupId }}
         />
       )}
     </>
@@ -584,14 +658,20 @@ function QuestionEditor({
   edit,
   saved,
   editLink,
+  cancelHref,
+  listHref,
+  initialInput,
 }: {
   original?: Awaited<ReturnType<typeof bankApi.question>>;
   writes: boolean;
   edit: boolean;
   saved: (v: Awaited<ReturnType<typeof bankApi.question>>) => void;
   editLink: string;
+  cancelHref: string;
+  listHref: string;
+  initialInput: QuestionInput;
 }) {
-  const [q, setQ] = useState(original?.input ?? emptyQuestion()),
+  const [q, setQ] = useState(original?.input ?? initialInput),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [uncertain, setUncertain] = useState(false),
@@ -599,6 +679,7 @@ function QuestionEditor({
     lock = useRef(false);
   return (
     <article className="api-card">
+      {edit && <h2>{original ? 'Chỉnh sửa câu hỏi' : 'Thêm câu hỏi'}</h2>}
       {edit ? (
         <form
           onSubmit={async (e) => {
@@ -629,7 +710,12 @@ function QuestionEditor({
             <button type="button" onClick={() => setPreview(true)}>
               Xem trước
             </button>
-            <button disabled={!preview}>Lưu lên server</button>
+            <div className="api-actions">
+              <button type="submit" className="api-primary-action">
+                {busy ? 'Đang lưu…' : original ? 'Lưu thay đổi' : 'Tạo câu hỏi'}
+              </button>
+              <Link href={cancelHref}>Hủy</Link>
+            </div>
           </fieldset>
           {uncertain && <p>Chưa xác định kết quả tạo. Kiểm tra danh sách trước khi tạo lại.</p>}
         </form>
@@ -658,22 +744,27 @@ function QuestionEditor({
           </ul>
           <SafeMarkdown text={q.explanation ?? ''} />
           {writes && (
-            <>
+            <div className="api-actions">
               <Link href={editLink}>Chỉnh sửa</Link>
               <button
+                type="button"
+                className="api-danger-action"
                 disabled={busy}
                 onClick={async () => {
                   if (
                     lock.current ||
                     !original ||
-                    !window.confirm('Ngừng sử dụng câu hỏi trên server?')
+                    !window.confirm(
+                      'Xóa câu hỏi khỏi ngân hàng đang sử dụng? Các lượt làm bài đã tạo vẫn giữ nội dung câu hỏi.',
+                    )
                   )
                     return;
                   lock.current = true;
                   setBusy(true);
+                  setError('');
                   try {
                     await cmsApi.archiveQuestion(original.id);
-                    window.location.assign('/questions');
+                    window.location.assign(listHref);
                   } catch (e) {
                     setError(failureMessage(e));
                   } finally {
@@ -682,361 +773,13 @@ function QuestionEditor({
                   }
                 }}
               >
-                Ngừng sử dụng
+                {busy ? 'Đang xóa…' : 'Xóa câu hỏi'}
               </button>
-            </>
+            </div>
           )}
         </>
       )}
       {preview && <SafeMarkdown text={q.questionText} />}
-      {error && (
-        <p role="alert" className="api-error">
-          {error}
-        </p>
-      )}
-    </article>
-  );
-}
-export function GroupManagement({ writes }: { writes: boolean }) {
-  const { id, path, params, href, update } = useCmsLocation();
-  const state = useResource(`groups:${id}:${params}`, async (signal) =>
-    id && id !== 'new'
-      ? { detail: await bankApi.group(id, signal), page: null }
-      : { detail: null, page: id === 'new' ? null : await bankApi.groups(params, signal) },
-  );
-  return (
-    <>
-      <h1>Nhóm câu hỏi</h1>
-      {id ? (
-        <Link href={href()}>Danh sách</Link>
-      ) : (
-        <>
-          <Search value={params.get('keyword') ?? ''} change={(v) => update('keyword', v)} />
-          {writes && <Link href={href('new')}>Tạo nhóm</Link>}
-        </>
-      )}
-      <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
-      {state.data?.page && (
-        <>
-          {state.data.page.items.map((g) => (
-            <article className="api-card" key={g.id}>
-              <Link href={href(g.id)}>
-                Part {g.part} · {g.type} · {g.questionIds.length} câu
-              </Link>
-            </article>
-          ))}
-          <ManagementPager data={state.data.page} onPage={(n) => update('page', String(n))} />
-        </>
-      )}
-      {state.data?.detail && !path.endsWith('/edit') && (
-        <>
-          <MediaUpload
-            scope="question-groups"
-            resourceId={state.data.detail.id}
-            kind="AUDIO"
-            writes={writes}
-            saved={state.reload}
-          />
-          <MediaUpload
-            scope="question-groups"
-            resourceId={state.data.detail.id}
-            kind="IMAGE"
-            writes={writes}
-            saved={state.reload}
-          />
-        </>
-      )}
-      {(id === 'new' || state.data?.detail) && (
-        <GroupEditor
-          key={id}
-          original={state.data?.detail ?? undefined}
-          writes={writes}
-          edit={id === 'new' || path.endsWith('/edit')}
-          saved={(v) => window.location.assign(href(v.id))}
-          editLink={href(id, true)}
-        />
-      )}
-    </>
-  );
-}
-function GroupEditor({
-  original,
-  writes,
-  edit,
-  saved,
-  editLink,
-}: {
-  original?: Awaited<ReturnType<typeof bankApi.group>>;
-  writes: boolean;
-  edit: boolean;
-  saved: (v: Awaited<ReturnType<typeof bankApi.group>>) => void;
-  editLink: string;
-}) {
-  const [g, setG] = useState({
-      part: original?.part ?? 7,
-      type: original?.type ?? 'SINGLE_PASSAGE',
-      instruction: original?.instruction ?? '',
-      passageText: original?.passageText ?? '',
-      transcript: original?.transcript ?? '',
-      questionOrder: original?.questionIds,
-      assets: original?.assets ?? [],
-    }),
-    [questions, setQuestions] = useState([emptyQuestion(7)]),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false),
-    [uncertain, setUncertain] = useState(false),
-    lock = useRef(false);
-  return (
-    <article className="api-card">
-      {edit ? (
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (lock.current || !writes) return;
-            lock.current = true;
-            setBusy(true);
-            setError('');
-            try {
-              saved(await bankApi.saveGroup(g, questions, original?.id));
-            } catch (e) {
-              setError(failureMessage(e));
-              if (!original && mutationOutcomeUnknown(e)) setUncertain(true);
-            } finally {
-              lock.current = false;
-              setBusy(false);
-            }
-          }}
-        >
-          <fieldset disabled={!writes || busy || uncertain}>
-            <label className="api-field">
-              Part
-              <select
-                aria-label="Part"
-                disabled={!!original}
-                value={g.part}
-                onChange={(e) => {
-                  const part = Number(e.target.value);
-                  setG((v) => ({ ...v, part }));
-                  setQuestions((v) => v.map((q) => ({ ...q, part })));
-                }}
-              >
-                {[3, 4, 6, 7].map((p) => (
-                  <option key={p}>{p}</option>
-                ))}
-              </select>
-            </label>
-            {(['type', 'instruction', 'passageText', 'transcript'] as const).map((key, i) => (
-              <label className="api-field" key={key}>
-                {
-                  [
-                    'Loại nhóm',
-                    'Hướng dẫn',
-                    'Đoạn văn (Part 6 dùng [[1]], [[2]], …)',
-                    'Transcript',
-                  ][i]
-                }
-                <textarea
-                  required={key === 'type'}
-                  value={g[key]}
-                  onChange={(e) => setG((v) => ({ ...v, [key]: e.target.value }))}
-                />
-              </label>
-            ))}
-            {original && (
-              <ol>
-                {g.questionOrder?.map((id, n) => (
-                  <li key={id}>
-                    {id}
-                    <button
-                      type="button"
-                      disabled={n === 0}
-                      onClick={() =>
-                        setG((v) => {
-                          const order = [...v.questionOrder!];
-                          [order[n - 1], order[n]] = [order[n], order[n - 1]];
-                          return { ...v, questionOrder: order };
-                        })
-                      }
-                    >
-                      Đưa câu lên
-                    </button>
-                  </li>
-                ))}
-              </ol>
-            )}
-            <fieldset>
-              <legend>Tài liệu bổ sung của nhóm</legend>
-              {g.assets.map((a, n) => (
-                <div key={n}>
-                  <p>
-                    {a.kind} · Vị trí {n + 1}
-                  </p>
-                  {a.kind === 'TEXT' ? (
-                    <textarea
-                      aria-label={'Nội dung tài liệu ' + (n + 1)}
-                      value={a.content ?? ''}
-                      onChange={(e) =>
-                        setG((v) => ({
-                          ...v,
-                          assets: v.assets.map((a, i) =>
-                            i === n ? { ...a, content: e.target.value } : a,
-                          ),
-                        }))
-                      }
-                    />
-                  ) : (
-                    <p>Tài liệu media đã gắn</p>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setG((v) => ({
-                        ...v,
-                        assets: v.assets
-                          .filter((_, i) => i !== n)
-                          .map((a, i) => ({ ...a, orderNo: i + 1 })),
-                      }))
-                    }
-                  >
-                    Gỡ tài liệu
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() =>
-                  setG((v) => ({
-                    ...v,
-                    assets: [
-                      ...v.assets,
-                      {
-                        kind: 'TEXT',
-                        content: '',
-                        storageKey: null,
-                        url: null,
-                        orderNo: v.assets.length + 1,
-                      },
-                    ],
-                  }))
-                }
-              >
-                Thêm tài liệu văn bản
-              </button>
-            </fieldset>
-            {!original && (
-              <>
-                {questions.map((q, n) => (
-                  <fieldset key={n}>
-                    <legend>Câu {n + 1}</legend>
-                    <QuestionFields
-                      fixedPart
-                      input={q}
-                      change={(v) =>
-                        setQuestions((items) => items.map((q, i) => (i === n ? v : q)))
-                      }
-                    />
-                    <button
-                      type="button"
-                      disabled={questions.length === 1}
-                      onClick={() => setQuestions((v) => v.filter((_, i) => i !== n))}
-                    >
-                      Bỏ câu
-                    </button>
-                  </fieldset>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setQuestions((v) => [...v, emptyQuestion(g.part)])}
-                >
-                  Thêm câu vào nhóm
-                </button>
-              </>
-            )}
-            <button>Lưu nhóm lên server</button>
-          </fieldset>
-          {!original && [3, 4].includes(g.part) && (
-            <p>
-              Nhóm Listening mới cần audio và transcript để hoàn chỉnh. Lưu nhóm, sau đó gắn audio ở
-              chi tiết.
-            </p>
-          )}
-          {uncertain && <p>Chưa xác định kết quả tạo. Kiểm tra danh sách trước khi tạo lại.</p>}
-        </form>
-      ) : (
-        <>
-          <h2>
-            Part {g.part} · {g.type}
-          </h2>
-          {original?.audioUrl && (
-            <AudioPlayer
-              mode="server"
-              source={original.audioUrl}
-              label="Audio nhóm"
-              missingMessage="Chưa có audio"
-            />
-          )}
-          {g.assets.map((a, i) => (
-            <div key={i}>
-              {a.content && <SafeMarkdown text={a.content} />}
-              {a.kind === 'IMAGE' && a.url && (
-                <img src={a.url} alt="Tài liệu nhóm" style={{ maxWidth: '100%' }} />
-              )}
-              {a.kind === 'AUDIO' && a.url && (
-                <AudioPlayer
-                  mode="server"
-                  source={a.url}
-                  label={`Audio tài liệu ${i + 1}`}
-                  missingMessage="Server chưa cấp audio hợp lệ."
-                />
-              )}
-            </div>
-          ))}
-          <SafeMarkdown
-            text={g.part === 6 ? formatPassageBlanks(g.passageText, g.instruction) : g.passageText}
-          />
-          <p>{g.instruction}</p>
-          <details>
-            <summary>Transcript</summary>
-            <p>{g.transcript}</p>
-          </details>
-          <ul>
-            {original?.questionIds.map((id) => (
-              <li key={id}>
-                <Link href={'/questions/' + encodeURIComponent(id)}>{id}</Link>
-              </li>
-            ))}
-          </ul>
-          {writes && (
-            <>
-              <Link href={editLink}>Chỉnh sửa nhóm</Link>
-              <button
-                disabled={busy}
-                onClick={async () => {
-                  if (
-                    lock.current ||
-                    !original ||
-                    !window.confirm('Ngừng sử dụng nhóm và các câu hỏi liên quan?')
-                  )
-                    return;
-                  lock.current = true;
-                  setBusy(true);
-                  try {
-                    await bankApi.removeGroup(original.id);
-                    window.location.assign('/groups');
-                  } catch (e) {
-                    setError(failureMessage(e));
-                  } finally {
-                    lock.current = false;
-                    setBusy(false);
-                  }
-                }}
-              >
-                Ngừng sử dụng nhóm
-              </button>
-            </>
-          )}
-        </>
-      )}
       {error && (
         <p role="alert" className="api-error">
           {error}

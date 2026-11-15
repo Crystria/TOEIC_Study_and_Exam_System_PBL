@@ -249,6 +249,48 @@ describe('API Gateway e2e', () => {
     expect(received?.url).toBe('/api/v1/auth/login');
   });
 
+  describe.each([
+    { method: 'post' as const, path: '/api/v1/tests' },
+    { method: 'patch' as const, path: '/api/v1/tests/test-1' },
+    { method: 'delete' as const, path: '/api/v1/tests/test-1' },
+  ])('test form mutation $method $path', ({ method, path }) => {
+    it('blocks a sole system admin before forwarding to Exam', async () => {
+      const app = createTestApp(upstreamUrl, fakeRedis());
+      const pending = request(app)[method](path);
+      const response = await pending
+        .set('Authorization', `Bearer ${signToken(jwt, { roles: [RoleCode.SYSTEM_ADMIN] })}`)
+        .send({ title: 'Forbidden write' });
+      expect(response.status).toBe(403);
+      expect(received).toBeUndefined();
+    });
+
+    it.each([
+      { roles: [RoleCode.CONTENT_ADMIN] },
+      { roles: [RoleCode.SYSTEM_ADMIN, RoleCode.CONTENT_ADMIN] },
+    ])('forwards for a role set containing CONTENT_ADMIN: %j', async ({ roles }) => {
+      const app = createTestApp(upstreamUrl, fakeRedis());
+      const pending = request(app)[method](path);
+      const response = await pending
+        .set('Authorization', `Bearer ${signToken(jwt, { roles })}`)
+        .send({ title: 'Allowed write' });
+      expect(response.status).toBe(200);
+      expect(received?.url).toBe(path);
+      expect(received?.method).toBe(method.toUpperCase());
+    });
+  });
+
+  it.each(['/api/v1/tests', '/api/v1/tests/test-1'])(
+    'keeps system-admin test reads available: %s',
+    async (path) => {
+      const app = createTestApp(upstreamUrl, fakeRedis());
+      const response = await request(app)
+        .get(path)
+        .set('Authorization', `Bearer ${signToken(jwt, { roles: [RoleCode.SYSTEM_ADMIN] })}`);
+      expect(response.status).toBe(200);
+      expect(received?.url).toBe(path);
+    },
+  );
+
   it('does not retain one server-close listener per proxied request', async () => {
     let connections = 0;
     const connected = () => {

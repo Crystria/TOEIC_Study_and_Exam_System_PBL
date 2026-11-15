@@ -8,6 +8,10 @@ npm.cmd run dev -w @toeic/web
 
 Open <http://localhost:3006>. Reuse an existing server when its port is occupied. The current acceptance matrix, evidence, remaining backend dependencies and isolated-stack commands are in [session 37](../../docs/frontend-integration-session37.md). Session 34 describes the initial source integration; session 36 records Auth/Learning acceptance.
 
+## UI link policy
+
+UI links and button labels, including nested text, must have no underline in normal, hover, focus or active states. The shared rule in `src/app/globals.css` applies this policy to existing and future components. Do not add `underline` utilities, inline underline styles or component overrides. Use colors, backgrounds, borders and visible focus outlines for interaction feedback; retain native link and button behavior.
+
 ## Data modes and sessions
 
 Default remains explicit DEMO: existing student UI, demo progress, draft/history and audio samples. API mode never mounts demo progress/history providers or falls back to fixtures when an API fails.
@@ -35,6 +39,14 @@ Login sends `deviceId`; registration sends `confirmPassword` and waits for email
 | `/settings`, `/ai-chat`                                                          | Clearly unavailable in API mode: settings endpoints absent; AI still accepts client user_id without sufficient JWT ownership enforcement.                                                                                        |
 
 Legacy snapshotVersion=0 attempts are read-only. UI flags are local to the current page. For ambiguous create failures, retry keeps the same key while the page remains open; after leaving/reloading, check history before starting another Part attempt. After an ambiguous exam/quiz submit, retry reads server state first and uses a completed result without another submit. Reviews retain their sent values while reconciling. Backend enforces ownership, deadline, idempotent finalization and scoring; frontend does not calculate scores or answer keys.
+
+## Personal learning libraries
+
+In API mode, the **Của tôi** tab at `/study/vocabulary` and `/study/grammar` manages the authenticated learner's own content. Learners can create, search, read, edit and delete vocabulary topics, words and private grammar lessons, flip vocabulary Flashcards, and preview lesson Markdown. Deleting a personal topic also deletes its words; the confirmation dialog states this explicitly.
+
+These authenticated operations use `/learning/personal/{vocabulary-topics,vocabularies,lessons}` and are available independently of `FRONTEND_TEST_WRITES` in configured local/test mode. The Learning service must include migration `20261113090000_personal_learning_content`. Personal content is stored in owner-scoped tables; shared content and its CMS permissions keep their existing contracts. Private Flashcards support viewing and flipping; the shared library's SM-2 review/session endpoints remain specific to shared vocabulary.
+
+Creation retries keep the same Idempotency-Key and form values after an uncertain response. Server errors retain entered data. The server derives ownership from the authenticated account and rejects foreign topic links and foreign record access.
 
 ## Verification and current limitation
 

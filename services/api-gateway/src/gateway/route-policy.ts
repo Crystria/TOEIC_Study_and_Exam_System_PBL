@@ -43,7 +43,7 @@ export const ROUTES: RouteRule[] = [
     prefix: '/api/v1/tests',
     upstream: 'EXAM_SERVICE_URL',
     auth: 'jwt',
-    writeRoles: [RoleCode.CONTENT_ADMIN, RoleCode.SYSTEM_ADMIN],
+    writeRoles: [RoleCode.CONTENT_ADMIN],
   },
   { prefix: '/api/v1/attempts', upstream: 'EXAM_SERVICE_URL', auth: 'jwt' },
   { prefix: '/api/v1/learning', upstream: 'LEARNING_SERVICE_URL', auth: 'jwt' },
@@ -146,10 +146,13 @@ export function requiredRoles(method: string, path: string): RoleCode[] {
     return [];
   }
 
+  if (matchPrefix(normalized, '/api/v1/tests')) {
+    return [RoleCode.CONTENT_ADMIN];
+  }
+
   if (
     matchPrefix(normalized, '/api/v1/questions') ||
-    matchPrefix(normalized, '/api/v1/question-groups') ||
-    matchPrefix(normalized, '/api/v1/tests')
+    matchPrefix(normalized, '/api/v1/question-groups')
   ) {
     return [RoleCode.CONTENT_ADMIN, RoleCode.SYSTEM_ADMIN];
   }

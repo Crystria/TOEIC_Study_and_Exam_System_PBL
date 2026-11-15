@@ -78,6 +78,53 @@ model GrammarLesson {
   @@map("grammar_lessons")
 }
 
+// Learner-authored content is separate from the shared, administrator-managed catalog.
+model PersonalVocabularyTopic {
+  id           String               @id @default(uuid())
+  userId       String               @map("user_id")
+  name         String
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+  vocabularies PersonalVocabulary[]
+
+  @@unique([id, userId])
+  @@index([userId, name])
+  @@map("personal_vocabulary_topics")
+}
+
+model PersonalVocabulary {
+  id         String                  @id @default(uuid())
+  userId     String                  @map("user_id")
+  topicId    String                  @map("topic_id")
+  word       String
+  phonetic   String?
+  definition String
+  example    String?
+  createdAt  DateTime                @default(now()) @map("created_at")
+  updatedAt  DateTime                @updatedAt @map("updated_at")
+  topic      PersonalVocabularyTopic @relation(fields: [topicId, userId], references: [id, userId], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([id, userId])
+  @@index([userId, topicId])
+  @@index([userId, word])
+  @@map("personal_vocabularies")
+}
+
+model PersonalGrammarLesson {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  lessonTitle     String   @map("lesson_title")
+  category        String
+  contentMarkdown String   @map("content_markdown")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([id, userId])
+  @@index([userId, lessonTitle])
+  @@index([userId, category])
+  @@map("personal_grammar_lessons")
+}
+
 // Legacy progress/sessions remain intact; never fabricate quality, quiz or firstLearned history.
 model LegacyUserProgress {
   id             String     @id @default(uuid())

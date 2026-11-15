@@ -2,7 +2,8 @@
 
 Tests are complete 7-Part forms: exactly 200 questions, 100 Listening + 100
 Reading, consecutive positions, duration 7200 seconds. Content writes require
-`CONTENT_ADMIN`/`SYSTEM_ADMIN`; reads and attempts require an access JWT. USER
+`CONTENT_ADMIN`; `SYSTEM_ADMIN` can read test lists and contents without editing
+test forms. Reads and attempts require an access JWT. USER
 may only read, save or submit their own attempts.
 
 ## API

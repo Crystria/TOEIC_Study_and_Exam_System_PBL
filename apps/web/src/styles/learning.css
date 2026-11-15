@@ -1129,7 +1129,6 @@
 }
 .lesson-toc nav a:hover {
   color: #2563eb;
-  text-decoration: underline;
 }
 .lesson-toc nav .lesson-toc-sub {
   padding-left: 12px;
@@ -1238,7 +1237,6 @@
 }
 .lesson-markdown a {
   color: #2563eb;
-  text-decoration: underline;
 }
 .lesson-markdown pre {
   white-space: pre;

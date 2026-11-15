@@ -189,9 +189,6 @@ main:focus {
   font-weight: 600;
   color: var(--color-primary);
 }
-.text-link:hover {
-  text-decoration: underline;
-}
 .brand {
   display: inline-flex;
   gap: 10px;
@@ -1352,8 +1349,11 @@ main:focus {
 }
 .auth-submit {
   width: 100%;
-  min-height: 47px;
+  min-height: 50px;
   margin-top: 3px;
+  gap: 12px;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgb(37 99 235 / 16%);
 }
 .preview-form-note {
   display: flex;
@@ -1371,7 +1371,7 @@ main:focus {
   font-size: 12px;
   text-align: center;
   color: var(--color-muted);
-  margin: 24px 0 0;
+  margin: 28px 0 0;
 }
 .auth-switch a {
   color: #2563eb;

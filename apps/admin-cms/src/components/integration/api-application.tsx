@@ -13,16 +13,31 @@ import {
 import { failureMessage, mutationOutcomeUnknown } from '../../../../web/src/lib/integration/client';
 import type { User, Page } from '../../../../web/src/lib/integration/contracts';
 import { cmsApi, userChangeMatches, type UserChange } from '../../lib/integration/repositories';
-import { ContentManagement, QuestionManagement, GroupManagement } from './content-management';
+import { ContentManagement, QuestionManagement } from './content-management';
+import { GroupManagement } from './group-management';
+import { TopicManagement } from './topic-management';
 import { TestManagement } from './test-management';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import { CmsShell } from '../layout/cms-shell';
+import { AdminLoginLayout } from '../auth/admin-login-layout';
 import { Field } from '../demo/workspace-primitives';
 
-export function ApiCmsApplication({ writes }: { writes: boolean; metadataVerified: boolean }) {
+export function ApiCmsApplication({
+  writes,
+  systemWrites,
+}: {
+  writes: boolean;
+  systemWrites: boolean;
+}) {
   const path = usePathname();
-  if (path === '/login' || path === '/') return <ApiAuth cms />;
+  const system = path.startsWith('/users') || path.startsWith('/audit-logs');
+  if (path === '/login' || path === '/')
+    return (
+      <AdminLoginLayout>
+        <ApiAuth cms embedded />
+      </AdminLoginLayout>
+    );
   return (
     <SessionGate key={path}>
       {(user) => {
@@ -37,12 +52,13 @@ export function ApiCmsApplication({ writes }: { writes: boolean; metadataVerifie
         return (
           <CmsShell apiAccount={user}>
             <div className="api-root">
-              {!writes && (
+              {!(system ? systemWrites : writes) && path !== '/audit-logs' && (
                 <Blocked>
-                  Chế độ đọc dữ liệu server. Chỉ bật ghi sau khi xác nhận dữ liệu kiểm thử cô lập.
+                  Chức năng chỉnh sửa đang tắt trong cấu hình. Bạn vẫn có thể xem và tìm kiếm dữ
+                  liệu.
                 </Blocked>
               )}
-              <CmsDomain key={path} user={user} writes={writes} />
+              <CmsDomain key={path} user={user} writes={system ? systemWrites : writes} />
             </div>
           </CmsShell>
         );
@@ -93,14 +109,24 @@ function CmsDomain({ user, writes }: { user: User; writes: boolean }) {
       </>
     );
   if (section === 'questions') return <QuestionManagement writes={writes} />;
-  if (section === 'tests') return <TestManagement writes={writes} />;
+  if (section === 'tests')
+    return (
+      <>
+        {!content && (
+          <p role="status">
+            Bạn chỉ có quyền xem nội dung đề thi. Quyền tạo, chỉnh sửa và xóa đề thi thuộc Quản trị
+            nội dung.
+          </p>
+        )}
+        <TestManagement writes={writes && content} />
+      </>
+    );
   if (section === 'groups') return <GroupManagement writes={writes} />;
+  if (section === 'topics') return <TopicManagement writes={writes} />;
   if (section === 'users') return <Users writes={writes} currentId={user.id} />;
   if (section === 'audit-logs') return <Audit />;
-  if (['lessons', 'vocabulary', 'topics'].includes(section))
-    return (
-      <ContentManagement kind={section as 'lessons' | 'vocabulary' | 'topics'} writes={writes} />
-    );
+  if (['lessons', 'vocabulary'].includes(section))
+    return <ContentManagement kind={section as 'lessons' | 'vocabulary'} writes={writes} />;
   if (section === 'media')
     return (
       <>
@@ -156,7 +182,7 @@ function Filters({
   const { params, update } = useLocation();
   return (
     <form
-      className="api-actions"
+      className="api-search-form"
       onSubmit={(event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);

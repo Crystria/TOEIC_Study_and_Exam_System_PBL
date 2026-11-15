@@ -310,7 +310,7 @@ export function VocabularyList() {
                         <Link
                           href={vocabularyDetailHref(item.id, new URLSearchParams(raw))}
                           lang="en"
-                          className="text-blue-700 underline decoration-blue-200 underline-offset-4 hover:decoration-blue-700"
+                          className="text-blue-700 hover:text-blue-800"
                         >
                           {item.word ?? 'Chưa có dữ liệu'}
                         </Link>

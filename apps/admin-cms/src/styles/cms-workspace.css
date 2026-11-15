@@ -73,9 +73,12 @@
 .ws-root article a,
 .ws-catalog-card h2 a {
   color: #1d4ed8;
-  text-decoration: underline;
-  text-underline-offset: 3px;
   overflow-wrap: anywhere;
+}
+.ws-link:hover,
+.ws-root article a:hover,
+.ws-catalog-card h2 a:hover {
+  color: #1e40af;
 }
 .ws-panel {
   padding: 24px;

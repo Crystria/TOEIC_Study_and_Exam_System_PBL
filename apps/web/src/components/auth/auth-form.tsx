@@ -16,7 +16,17 @@ import { Alert, Badge } from '../ui/feedback';
 import { Field, PasswordField } from '../ui/field';
 import { Icon } from '../ui/icon';
 
-export function AuthForm({ intent }: { intent: AuthIntent }) {
+export function AuthForm({
+  intent,
+  embedded = false,
+  onSwitch,
+  onBusyChange,
+}: {
+  intent: AuthIntent;
+  embedded?: boolean;
+  onSwitch?: (intent: AuthIntent) => void;
+  onBusyChange?: (busy: boolean) => void;
+}) {
   const registering = intent === 'register';
   const form = useRef<HTMLFormElement>(null);
   const submittedFocus = useRef<HTMLElement | null>(null);
@@ -33,6 +43,13 @@ export function AuthForm({ intent }: { intent: AuthIntent }) {
   const [message, setMessage] = useState('');
 
   useEffect(() => setReady(true), []);
+
+  useEffect(() => {
+    onBusyChange?.(loading);
+    return () => {
+      if (loading) onBusyChange?.(false);
+    };
+  }, [loading, onBusyChange]);
 
   useEffect(() => {
     if (loading || !submittedFocus.current) return;
@@ -77,8 +94,10 @@ export function AuthForm({ intent }: { intent: AuthIntent }) {
 
   return (
     <div className="auth-form-container">
-      <Badge tone="blue">Bản xem trước giao diện</Badge>
-      <h1>{registering ? 'Bắt đầu hành trình của bạn' : 'Chào mừng bạn trở lại'}</h1>
+      {!embedded && <Badge tone="blue">Bản xem trước giao diện</Badge>}
+      <h1 id={embedded ? 'student-auth-title' : undefined}>
+        {registering ? 'Bắt đầu hành trình của bạn' : 'Chào mừng bạn trở lại'}
+      </h1>
       <p className="auth-description">
         {registering
           ? 'Tạo tài khoản để xây dựng thói quen học và tiến gần hơn đến mục tiêu TOEIC.'
@@ -166,7 +185,23 @@ export function AuthForm({ intent }: { intent: AuthIntent }) {
       </form>
       <p className="auth-switch">
         {registering ? 'Bạn đã có tài khoản?' : 'Bạn chưa có tài khoản?'}{' '}
-        <Link href={registering ? '/login' : '/register'}>
+        <Link
+          href={registering ? '/login' : '/register'}
+          onClick={(event) => {
+            if (
+              !onSwitch ||
+              event.defaultPrevented ||
+              event.button !== 0 ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            )
+              return;
+            event.preventDefault();
+            if (!loading) onSwitch(registering ? 'login' : 'register');
+          }}
+        >
           {registering ? 'Đăng nhập' : 'Đăng ký miễn phí'}
         </Link>
       </p>

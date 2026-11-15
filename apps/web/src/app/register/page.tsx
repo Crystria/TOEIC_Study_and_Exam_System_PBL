@@ -1,14 +1,9 @@
 import type { Metadata } from 'next';
 
-import { AuthForm } from '@/components/auth/auth-form';
-import { AuthLayout } from '@/components/auth/auth-layout';
+import { StudentLandingPage } from '@/components/home/student-landing-page';
 
 export const metadata: Metadata = { title: 'Đăng ký' };
 
 export default function RegisterPage() {
-  return (
-    <AuthLayout>
-      <AuthForm intent="register" />
-    </AuthLayout>
-  );
+  return <StudentLandingPage initialAuth="register" />;
 }

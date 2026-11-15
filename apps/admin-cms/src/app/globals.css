@@ -36,6 +36,12 @@ a {
   text-decoration: none;
 }
 
+/* Keep UI links/buttons free of underlines from component, hover, utility or inline styles. */
+:where(a, button, [role='link']),
+:where(a, button, [role='link']) * {
+  text-decoration-line: none !important;
+}
+
 /* CMS preview shares the student app's blue/slate palette and system typography. */
 :root {
   --cms-blue: #2563eb;

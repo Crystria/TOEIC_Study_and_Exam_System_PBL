@@ -13,6 +13,9 @@ import '@/styles/exams.css';
 import '@/styles/exam-player.css';
 import '@/styles/exam-results.css';
 import '@/styles/integration.css';
+import '@/styles/exam-taking.css';
+import '@/styles/attempt-result.css';
+import '@/styles/attempt-review-dialog.css';
 
 export const metadata: Metadata = {
   title: {

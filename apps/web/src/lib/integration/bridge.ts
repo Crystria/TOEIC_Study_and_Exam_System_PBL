@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto';
 import { ContractError, parseTokens, parseUser } from './contracts';
 import { isExamMutation } from './exam-access';
+import { isCmsContentMutation } from './cms-access';
+import { isPersonalLearningMutation, isPersonalLearningRoute } from './personal-learning-access';
 
 export interface BridgeConfig {
   app: 'web' | 'cms';
@@ -9,6 +11,7 @@ export interface BridgeConfig {
   gatewayUrl?: string;
   metadataVerified?: boolean;
   writesEnabled?: boolean;
+  contentWritesEnabled?: boolean;
   examWritesEnabled?: boolean;
   fetcher?: typeof fetch;
 }
@@ -27,6 +30,7 @@ const rotating = new Map<string, { task: Promise<Tokens>; expires: number }>();
 const writeMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 function permitted(app: BridgeConfig['app'], path: string, method: string): boolean {
+  if (app === 'web' && isPersonalLearningRoute(path, method)) return true;
   if (method === 'GET') {
     if (app === 'web' && path === 'sync/users/me') return true;
     if (/^users\/me$/.test(path)) return true;
@@ -100,8 +104,8 @@ export function requiredRoles(path: string, method: string): readonly string[] {
     return ['CONTENT_ADMIN'];
   if (path.startsWith('question-groups')) return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   if (path.startsWith('tests/cms-metadata')) return ['CONTENT_ADMIN'];
-  if (path.startsWith('questions') || (/^tests(?:\/[^/]+)?$/.test(path) && method !== 'GET'))
-    return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
+  if (/^tests(?:\/[^/]+)?$/.test(path) && writeMethods.has(method)) return ['CONTENT_ADMIN'];
+  if (path.startsWith('questions')) return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   return [];
 }
 
@@ -320,9 +324,13 @@ export async function handleBridge(
     if (path.startsWith('tests/cms-metadata') && !config.metadataVerified)
       return respond({ code: 'METADATA_RUNTIME_VERIFICATION_REQUIRED' }, 503);
     const canWrite =
-      config.app === 'web' && isExamMutation(path, method)
-        ? (config.examWritesEnabled ?? config.writesEnabled)
-        : config.writesEnabled;
+      config.app === 'cms' && isCmsContentMutation(path, method)
+        ? (config.contentWritesEnabled ?? config.writesEnabled)
+        : config.app === 'web' && isPersonalLearningMutation(path, method)
+          ? true
+          : config.app === 'web' && isExamMutation(path, method)
+            ? (config.examWritesEnabled ?? config.writesEnabled)
+            : config.writesEnabled;
     if (writeMethods.has(method) && !canWrite)
       return respond({ code: 'ISOLATED_TEST_WRITES_NOT_ENABLED' }, 503);
     const user = await me();

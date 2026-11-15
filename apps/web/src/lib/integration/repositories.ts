@@ -43,6 +43,10 @@ export const learningApi = {
     gateway(`learning/vocabulary-topics?${query('topics', params)}`, { signal }).then((v) =>
       page(v, parseTopic),
     ),
+  topic: (id: string, signal?: AbortSignal) =>
+    gateway(`learning/vocabulary-topics/${segment(id)}`, { signal }).then((v) =>
+      matchingId(parseTopic(v), id),
+    ),
   words: (params: URLSearchParams, signal?: AbortSignal) =>
     gateway(`learning/vocabularies?${query('words', params)}`, { signal }).then((v) =>
       page(v, parseWord),

@@ -5,9 +5,22 @@ import { ContentService } from './content.service';
 import { ProgressService } from './progress.service';
 import { SessionService } from './session.service';
 import { LearningMediaService } from './media.service';
+import { PersonalContentController } from './personal-content.controller';
+import { PersonalContentService } from './personal-content.service';
 @Module({
-  controllers: [LearningController, ContentAdminController, ContentReadController],
-  providers: [ContentService, ProgressService, SessionService, LearningMediaService],
+  controllers: [
+    LearningController,
+    ContentAdminController,
+    ContentReadController,
+    PersonalContentController,
+  ],
+  providers: [
+    ContentService,
+    ProgressService,
+    SessionService,
+    LearningMediaService,
+    PersonalContentService,
+  ],
   exports: [ProgressService, SessionService],
 })
 export class LearningModule {}

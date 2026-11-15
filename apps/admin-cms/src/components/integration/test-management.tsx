@@ -18,18 +18,61 @@ import { ResourceState, useResource } from '../../../../web/src/components/integ
 import { cmsApi } from '../../lib/integration/repositories';
 import { bankApi } from '../../lib/integration/content-api';
 import { ManagementPager, useCmsLocation } from './content-management';
+import { ManagementSearch } from './management-search';
 
 type Ref = { questionId: string; part: number; orderNo: number };
 export function TestManagement({ writes }: { writes: boolean }) {
   const { id, path, params, href, update } = useCmsLocation();
+  const editorRoute = id === 'new' || path.endsWith('/edit');
+  const editorBlocked = editorRoute && !writes;
   const state = useResource(`tests:${id}:${params}`, async (signal) =>
-    id && id !== 'new'
-      ? { detail: await examApi.detail(id, signal), page: null }
-      : { detail: null, page: id === 'new' ? null : await examApi.list(params, signal) },
+    editorBlocked
+      ? { detail: null, page: null }
+      : id && id !== 'new'
+        ? { detail: await examApi.detail(id, signal), page: null }
+        : { detail: null, page: id === 'new' ? null : await examApi.list(params, signal) },
   );
-  const [busy, setBusy] = useState(false),
+  const [deletingId, setDeletingId] = useState<string | null>(null),
     [error, setError] = useState(''),
     lock = useRef(false);
+  const remove = async (testId: string) => {
+    if (
+      lock.current ||
+      !writes ||
+      !window.confirm(
+        'Xóa đề thi này? Đề sẽ ngừng sử dụng; các lượt làm bài đã tạo vẫn được giữ lại.',
+      )
+    )
+      return;
+    lock.current = true;
+    setDeletingId(testId);
+    setError('');
+    try {
+      if (record(await gateway(`tests/${segment(testId)}`, { method: 'DELETE' })).success !== true)
+        throw new ContractError('delete');
+      if (id) window.location.assign(href());
+      else state.reload();
+    } catch (e) {
+      setError(failureMessage(e));
+    } finally {
+      lock.current = false;
+      setDeletingId(null);
+    }
+  };
+  if (editorBlocked)
+    return (
+      <>
+        <h1>Đề thi</h1>
+        <p role="status">
+          Chức năng tạo và chỉnh sửa đề thi không khả dụng với quyền hiện tại. Bạn vẫn có thể xem
+          danh sách và nội dung đề thi.
+        </p>
+        <div className="api-actions">
+          <Link href={href()}>Danh sách đề thi</Link>
+          {id && id !== 'new' && <Link href={href(id)}>Xem nội dung đề thi</Link>}
+        </div>
+      </>
+    );
   return (
     <>
       <h1>Đề thi Full Test</h1>
@@ -37,19 +80,17 @@ export function TestManagement({ writes }: { writes: boolean }) {
         <Link href={href()}>Danh sách</Link>
       ) : (
         <>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              update('keyword', String(new FormData(e.currentTarget).get('keyword') ?? ''));
-            }}
-          >
-            <label className="api-field">
-              Từ khóa
-              <input name="keyword" defaultValue={params.get('keyword') ?? ''} />
-            </label>
-            <button>Tìm kiếm</button>
-          </form>
-          {writes && <Link href={href('new')}>Tạo đề đủ 7 Part</Link>}
+          <ManagementSearch
+            value={params.get('keyword') ?? ''}
+            change={(value) => update('keyword', value)}
+          />
+          {writes && (
+            <div className="api-actions">
+              <Link className="api-primary-action" href={href('new')}>
+                Tạo đề thi
+              </Link>
+            </div>
+          )}
         </>
       )}
       <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
@@ -63,6 +104,22 @@ export function TestManagement({ writes }: { writes: boolean }) {
               <p>
                 {t.questionCount} câu · {t.durationSeconds / 60} phút
               </p>
+              <div className="api-actions">
+                <Link href={href(t.id)}>Xem chi tiết</Link>
+                {writes && t.status !== 'ARCHIVED' && (
+                  <>
+                    <Link href={href(t.id, true)}>Chỉnh sửa</Link>
+                    <button
+                      type="button"
+                      className="api-danger-action"
+                      disabled={deletingId !== null}
+                      onClick={() => void remove(t.id)}
+                    >
+                      {deletingId === t.id ? 'Đang xóa…' : 'Xóa đề thi'}
+                    </button>
+                  </>
+                )}
+              </div>
             </article>
           ))}
           <ManagementPager data={state.data.page} onPage={(n) => update('page', String(n))} />
@@ -82,48 +139,36 @@ export function TestManagement({ writes }: { writes: boolean }) {
               </li>
             ))}
           </ol>
-          {writes && (
-            <>
+          {writes && state.data.detail.status !== 'ARCHIVED' && (
+            <div className="api-actions">
               <Link href={href(id, true)}>Chỉnh sửa đề / cấu trúc</Link>
               <button
-                disabled={busy}
-                onClick={async () => {
-                  if (
-                    lock.current ||
-                    !id ||
-                    !window.confirm('Ngừng sử dụng đề? Các lượt đã tạo giữ snapshot riêng.')
-                  )
-                    return;
-                  lock.current = true;
-                  setBusy(true);
-                  try {
-                    if (
-                      record(await gateway(`tests/${segment(id)}`, { method: 'DELETE' }))
-                        .success !== true
-                    )
-                      throw new ContractError('delete');
-                    window.location.assign('/tests');
-                  } catch (e) {
-                    setError(failureMessage(e));
-                  } finally {
-                    lock.current = false;
-                    setBusy(false);
-                  }
-                }}
+                type="button"
+                className="api-danger-action"
+                disabled={deletingId !== null}
+                onClick={() => id && void remove(id)}
               >
-                Ngừng sử dụng đề
+                {deletingId === id ? 'Đang xóa…' : 'Xóa đề thi'}
               </button>
-            </>
+            </div>
           )}
         </article>
       )}
-      {(id === 'new' || (path.endsWith('/edit') && state.data?.detail)) && (
-        <TestEditor
-          key={id}
-          writes={writes}
-          original={state.data?.detail ?? undefined}
-          saved={(v) => window.location.assign(href(v.id))}
-        />
+      {writes &&
+        (id === 'new' || (path.endsWith('/edit') && state.data?.detail?.status === 'ACTIVE')) && (
+          <TestEditor
+            key={id}
+            writes={writes}
+            original={state.data?.detail ?? undefined}
+            saved={(v) => window.location.assign(href(v.id))}
+            cancelHref={id === 'new' ? href() : href(id)}
+          />
+        )}
+      {state.data?.detail?.status === 'ARCHIVED' && (
+        <p role="status">Đề thi đã bị xóa và ngừng sử dụng. Bạn có thể xem lại thông tin đề.</p>
+      )}
+      {path.endsWith('/edit') && state.data?.detail?.status === 'ARCHIVED' && (
+        <Link href={href(id)}>Xem chi tiết đề thi</Link>
       )}
       {error && (
         <p role="alert" className="api-error">
@@ -137,10 +182,12 @@ function TestEditor({
   writes,
   original,
   saved,
+  cancelHref,
 }: {
   writes: boolean;
   original?: Awaited<ReturnType<typeof examApi.detail>>;
   saved: (v: Awaited<ReturnType<typeof examApi.detail>>) => void;
+  cancelHref: string;
 }) {
   const [title, setTitle] = useState(original?.title ?? ''),
     [refs, setRefs] = useState<Ref[]>(original?.questions ?? []),
@@ -229,6 +276,19 @@ function TestEditor({
                 </button>
                 <button
                   type="button"
+                  aria-label={`Đưa câu ${i + 1} xuống`}
+                  disabled={i === refs.length - 1}
+                  onClick={() => {
+                    const copy = [...refs];
+                    [copy[i], copy[i + 1]] = [copy[i + 1], copy[i]];
+                    replace(copy);
+                  }}
+                >
+                  Xuống
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Bỏ câu ${i + 1} khỏi đề`}
                   onClick={() => replace(refs.filter((r) => r.questionId !== q.questionId))}
                 >
                   Bỏ
@@ -242,7 +302,12 @@ function TestEditor({
           <button type="button" disabled={refs.length !== 200} onClick={() => setPreview(true)}>
             Kiểm tra và xem trước
           </button>
-          <button disabled={!preview}>Lưu đề lên server</button>
+          <div className="api-actions">
+            <button type="submit" className="api-primary-action">
+              {busy ? 'Đang lưu…' : original ? 'Lưu thay đổi' : 'Tạo đề thi'}
+            </button>
+            <Link href={cancelHref}>Hủy</Link>
+          </div>
         </fieldset>
       </form>
       {preview && (
@@ -284,9 +349,16 @@ function TestEditor({
             <p>
               Part {q.part} · {q.stem || q.id}
             </p>
+            {q.status !== 'COMPLETE' && (
+              <p>Câu hỏi chưa đủ nội dung hoặc media để đưa vào đề thi.</p>
+            )}
             <button
               type="button"
-              disabled={refs.some((r) => r.questionId === q.id) || refs.length >= 200}
+              disabled={
+                q.status !== 'COMPLETE' ||
+                refs.some((r) => r.questionId === q.id) ||
+                refs.length >= 200
+              }
               onClick={async () => {
                 if (lock.current) return;
                 lock.current = true;

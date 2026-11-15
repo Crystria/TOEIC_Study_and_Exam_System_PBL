@@ -13,11 +13,14 @@ export function Sidebar({
   onNavigate?: () => void;
   roles?: readonly string[];
 }) {
-  const destinations = CMS_DESTINATIONS.filter((item) =>
-    roles
-      ? roles.includes(item.role) ||
-        (roles.includes('SYSTEM_ADMIN') && ['/questions', '/tests', '/media'].includes(item.href))
-      : item.role === role,
+  // Temporarily hide standalone media management for every admin role.
+  const destinations = CMS_DESTINATIONS.filter(
+    (item) =>
+      item.href !== '/media' &&
+      (roles
+        ? roles.includes(item.role) ||
+          (roles.includes('SYSTEM_ADMIN') && ['/questions', '/tests'].includes(item.href))
+        : item.role === role || (role === 'SYSTEM_ADMIN' && item.href === '/tests')),
   );
   const link = (path: Parameters<typeof demoHref>[0]) => (roles ? path : demoHref(path, role));
   return (
@@ -56,6 +59,9 @@ export function Sidebar({
                   onClick={onNavigate}
                   aria-current={pathname === '/groups' ? 'page' : undefined}
                 >
+                  <span className="cms-nav-icon" aria-hidden="true">
+                    NC
+                  </span>
                   Nhóm câu hỏi
                 </Link>
               </li>
@@ -66,6 +72,9 @@ export function Sidebar({
                     onClick={onNavigate}
                     aria-current={pathname === '/topics' ? 'page' : undefined}
                   >
+                    <span className="cms-nav-icon" aria-hidden="true">
+                      CĐ
+                    </span>
                     Chủ đề từ vựng
                   </Link>
                 </li>
