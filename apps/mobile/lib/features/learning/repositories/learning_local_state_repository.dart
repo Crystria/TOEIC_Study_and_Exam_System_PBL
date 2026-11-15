@@ -156,8 +156,9 @@ class ScopedLearningLocalStateRepository
   @override
   Future<LearningGrammarProgress> getGrammarProgress(String userId) async {
     final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    final result = await _local.loadGrammarProgress(scope.userId);
+    final scopedUserId = _requireRequestedUser(scope, userId);
+
+    final result = await _local.loadGrammarProgress(scopedUserId);
     _ensureScope(scope);
     return result;
   }
@@ -165,8 +166,9 @@ class ScopedLearningLocalStateRepository
   @override
   Future<void> markGrammarLessonStarted(String userId, String lessonId) async {
     final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    await _local.markGrammarLessonStarted(scope.userId, lessonId);
+    final scopedUserId = _requireRequestedUser(scope, userId);
+
+    await _local.markGrammarLessonStarted(scopedUserId, lessonId);
     _ensureScope(scope);
   }
 
@@ -177,9 +179,10 @@ class ScopedLearningLocalStateRepository
     String? revision,
   }) async {
     final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
+    final scopedUserId = _requireRequestedUser(scope, userId);
+
     await _local.markGrammarLessonCompleted(
-      scope.userId,
+      scopedUserId,
       lessonId,
       revision: revision,
     );
@@ -192,8 +195,9 @@ class ScopedLearningLocalStateRepository
     String lessonId,
   ) async {
     final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    final result = await _local.grammarLessonRevision(scope.userId, lessonId);
+    final scopedUserId = _requireRequestedUser(scope, userId);
+
+    final result = await _local.grammarLessonRevision(scopedUserId, lessonId);
     _ensureScope(scope);
     return result;
   }
@@ -211,13 +215,20 @@ class ScopedLearningLocalStateRepository
     );
   }
 
-  void _ensureRequestedUser(_LocalLearningScope scope, String requestedUserId) {
-    if (scope.userId == null || scope.userId != requestedUserId.trim()) {
+  String _requireRequestedUser(
+    _LocalLearningScope scope,
+    String requestedUserId,
+  ) {
+    final scopedUserId = scope.userId;
+
+    if (scopedUserId == null || scopedUserId != requestedUserId.trim()) {
       throw const AppException.cancelled(
         message: 'Không thể truy cập tiến trình của tài khoản khác.',
       );
     }
+
     _ensureScope(scope);
+    return scopedUserId;
   }
 
   void _ensureScope(_LocalLearningScope scope) {

@@ -6,7 +6,6 @@ import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/progress_row.dart';
 import '../../../../shared/widgets/stat_card.dart';
 import '../../../../theme/app_colors.dart';
-import '../../models/vocabulary_session_dtos.dart';
 import '../../providers/vocabulary_topic_provider.dart';
 import '../quiz/quick_quiz_launch_dialog.dart';
 import '../quiz/quick_quiz_screen.dart';

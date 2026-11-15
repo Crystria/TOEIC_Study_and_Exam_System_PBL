@@ -577,7 +577,12 @@ class QuickQuizProvider extends ChangeNotifier {
 
   String _messageFor(Object error) {
     if (error is AppException) return error.message;
-    if (error is UnsupportedError) return error.message;
+
+    if (error is UnsupportedError) {
+      return error.message ??
+          'Chức năng này hiện không được hỗ trợ trong chế độ hiện tại.';
+    }
+
     return error.toString().isEmpty
         ? 'Không thể xử lý Vocabulary Session. Vui lòng thử lại.'
         : error.toString();
