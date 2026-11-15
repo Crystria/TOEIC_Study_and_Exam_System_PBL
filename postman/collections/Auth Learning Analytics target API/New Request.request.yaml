@@ -1,4 +1,13 @@
 $kind: http-request
-url: ""
+url: http://localhost:3000/api/v1/tests
 method: GET
+queryParams:
+  - key: page
+    value: "1"
+    disabled: true
+    description: ""
+  - key: size
+    value: "50"
+    disabled: true
+    description: ""
 order: 7000

@@ -6,6 +6,8 @@ import '../config/app_config.dart';
 import '../errors/app_exception.dart';
 import '../storage/token_storage.dart';
 
+import 'package:flutter/foundation.dart';
+
 /// Callback invoked after an authenticated request receives HTTP 401.
 /// Return the exact access token to use for one retry, or null to stop.
 typedef UnauthorizedRefreshHandler = Future<String?> Function(
@@ -37,9 +39,10 @@ class ApiClient {
       _dio.httpClientAdapter = adapter;
     }
 
-    _dio.interceptors.add(
+    _dio.interceptors.addAll([
       _BearerTokenInterceptor(tokenStorage ?? TokenStorage()),
-    );
+      _ApiLoggingInterceptor(),
+    ]);
   }
 
   /// Set this request extra to `true` for public endpoints such as login and
@@ -444,5 +447,74 @@ class _BearerTokenInterceptor extends Interceptor {
         ),
       );
     }
+  }
+}
+
+class _ApiLoggingInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (!kDebugMode) {
+      handler.next(options);
+      return;
+    }
+
+    debugPrint('========== API REQUEST ==========');
+    debugPrint('Method: ${options.method}');
+    debugPrint('URL: ${options.uri}');
+    debugPrint(
+      'Headers: Authorization: '
+      '${options.headers.keys.any((key) => key.toLowerCase() == 'authorization') ? '[PRESENT]' : '[ABSENT]'}',
+    );
+
+    if (options.queryParameters.isNotEmpty) {
+      debugPrint('Query keys: ${options.queryParameters.keys.toList()}');
+    }
+
+    if (options.data is Map) {
+      debugPrint('Body keys: ${(options.data as Map).keys.toList()}');
+    } else if (options.data != null) {
+      debugPrint('Body: [OMITTED]');
+    }
+
+    debugPrint('=================================');
+
+    handler.next(options);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    if (kDebugMode) {
+      debugPrint('========== API RESPONSE ==========');
+      debugPrint('Method: ${response.requestOptions.method}');
+      debugPrint('URL: ${response.requestOptions.uri}');
+      debugPrint('Status: ${response.statusCode}');
+      debugPrint('==================================');
+    }
+
+    handler.next(response);
+  }
+
+  @override
+  void onError(DioException error, ErrorInterceptorHandler handler) {
+    if (kDebugMode) {
+      debugPrint('========== API ERROR ==========');
+      debugPrint('Method: ${error.requestOptions.method}');
+      debugPrint('URL: ${error.requestOptions.uri.replace(query: '')}');
+      debugPrint('Status: ${error.response?.statusCode}');
+      debugPrint('Type: ${error.type}');
+
+      final responseData = error.response?.data;
+
+      if (responseData is Map) {
+        debugPrint('Error code: ${responseData['code']}');
+        debugPrint('Error message: ${responseData['message']}');
+      } else {
+        debugPrint('Response: [NOT A JSON OBJECT]');
+      }
+
+      debugPrint('================================');
+    }
+
+    handler.next(error);
   }
 }
