@@ -74,7 +74,7 @@ body:
 auth:
   type: bearer
   credentials:
-    token: "{{bearerToken}}"
+    token: "{{json_web_token_0lqa}}"
 settings: {}
 examples: ./.resources/listvocabulary_topics.resources/examples
 order: 1000

@@ -43,6 +43,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return null;
   }
 
+  String? _validatePhoneNumber(String? value) {
+    final phone = value?.trim() ?? '';
+
+    // Phone number is optional.
+    if (phone.isEmpty) return null;
+
+    // Follow the Backend ProfilePatch maximum length.
+    if (phone.length > 32) {
+      return 'Số điện thoại không được vượt quá 32 ký tự.';
+    }
+
+    // Allow common formatting characters:
+    // spaces, parentheses, dots and hyphens.
+    final normalizedPhone = phone.replaceAll(RegExp(r'[\s().-]'), '');
+
+    // Allow an optional leading "+" and 7–15 digits.
+    if (!RegExp(r'^\+?[0-9]{7,15}$').hasMatch(normalizedPhone)) {
+      return 'Số điện thoại không hợp lệ. Vui lòng nhập 7–15 chữ số.';
+    }
+
+    return null;
+  }
+
   Future<void> _onSave() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
@@ -167,6 +190,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.done,
                     enabled: !isSaving && canUpdateProfile,
+                    maxLength: 32,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: _validatePhoneNumber,
                     decoration: const InputDecoration(
                       labelText: 'Số điện thoại',
                       hintText: 'Không bắt buộc',
