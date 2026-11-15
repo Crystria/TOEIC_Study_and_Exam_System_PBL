@@ -1,5 +1,21 @@
 # Nhập nội dung TEST 1 qua Gateway
 
+## Kiểm tra runtime Docker hoặc service chạy terminal
+
+Chạy tại root repo trong PowerShell:
+
+```powershell
+.\scripts\content\inspect-test1-runtime.ps1              # auto: Gateway container đang chạy => docker, còn lại => host
+.\scripts\content\inspect-test1-runtime.ps1 -Mode host   # infra Docker, backend chạy terminal
+.\scripts\content\inspect-test1-runtime.ps1 -Mode docker # backend và infra Docker
+```
+
+Cả hai chế độ kiểm tra PostgreSQL/MinIO container cùng Compose project. Host mode kiểm tra 6 service qua readiness HTTP và cổng đang do Node lắng nghe; Gateway dùng `/ready`, backend dùng `/api/v1/ready`. Cổng host lấy từ `services/<service>/.env`, nếu thiếu dùng 3000–3005. Docker mode đọc cấu hình container đang chạy. Không bật/tắt service hoặc ghi database.
+
+Host mode chỉ đọc cấu hình `.env`, không đọc môi trường thực của process: báo cáo đánh dấu `runtimeEnvironmentVerified=false`. Nếu dùng shell override cổng/cấu hình, phải đối chiếu riêng; kết quả không tự cấp scope nhập liệu. Báo cáo chỉ chứa URL đã bỏ credentials/query và các trường được cho phép, lưu trong thư mục `tmp/` mới. Có thể chỉ định `-OutDir tmp/<thu-muc-moi>`.
+
+Việc tìm PID listener dùng `Get-NetTCPConnection`, dự phòng bằng `netstat -ano -p tcp`, gộp IPv4/IPv6 theo PID. Nếu readiness đạt nhưng không lấy được PID/quyền đọc process, script cảnh báo và lưu `listener.verified=false`; không coi đó là xác minh process thành công. Nhiều PID trên cùng cổng hoặc process xác định được không phải Node vẫn làm script dừng để xử lý xung đột.
+
 ## Trạng thái mới nhất: Full 200 đã nhập qua API ngày 10/11/2026
 
 Đã nhập **200 câu, 42 nhóm, 54 clip MP3 và 11 ảnh** vào Question Bank/MinIO, gồm cả 7 câu supplemental giữ nguyên sourceId. Đã tạo đề **ETS 2023 - Test 01**, ID `cd2e4422-1d2c-4b87-a83c-3431d89f74bb`, thời lượng 7200 giây, đúng thứ tự câu 1–200 và phân bố Part 6/25/39/30/30/16/54. Giữ nguyên 20 câu pilot, mọi mapping cũ và dữ liệu Learning.
