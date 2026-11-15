@@ -8,6 +8,7 @@ import 'package:toeic_mobile/features/learning/providers/grammar_lesson_provider
 import 'package:toeic_mobile/features/learning/providers/grammar_list_provider.dart';
 import 'package:toeic_mobile/features/learning/providers/vocabulary_provider.dart';
 import 'package:toeic_mobile/features/learning/providers/vocabulary_topic_provider.dart';
+import 'package:toeic_mobile/features/learning/repositories/learning_local_state_repository.dart';
 import 'package:toeic_mobile/features/learning/repositories/test_data_learning_repository.dart';
 
 import '../../support/fixtures/offline_fixture_loader.dart';
@@ -38,24 +39,32 @@ void main() {
       'loads fixture-backed content through the Repository into Providers',
       () async {
         const userId = 'offline-test-user';
+        final localDataSource = _createLocalDataSource(userId);
+        final localStateRepository = ScopedLearningLocalStateRepository(
+          localDataSource: localDataSource,
+          currentUserId: () => userId,
+        );
         final repository = TestDataLearningRepository(
           testDataSource: LearningTestDataSource(),
-          localDataSource: _createLocalDataSource(userId),
           currentUserId: () => userId,
         );
         final vocabularyProvider = VocabularyProvider(
           repository: repository,
+          localStateRepository: localStateRepository,
           currentUserId: () => userId,
         );
         final vocabularyTopicsProvider = VocabularyTopicsProvider(
           repository: repository,
+          localStateRepository: localStateRepository,
         );
         final grammarListProvider = GrammarListProvider(
           repository: repository,
+          localStateRepository: localStateRepository,
           currentUserId: () => userId,
         );
         final grammarLessonProvider = GrammarLessonProvider(
           repository: repository,
+          localStateRepository: localStateRepository,
           currentUserId: () => userId,
         );
         addTearDown(vocabularyProvider.dispose);

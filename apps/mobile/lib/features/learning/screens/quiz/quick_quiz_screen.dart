@@ -2,25 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/navigation/full_screen_flow_scope.dart';
-
 import '../../../../shared/widgets/answer_option_tile.dart';
+import '../../../../shared/widgets/app_card.dart';
 import '../../../../theme/app_colors.dart';
+import '../../models/vocabulary_session_dtos.dart';
 import '../../providers/quick_quiz_provider.dart';
-import '../../providers/vocabulary_provider.dart';
 import '../../providers/vocabulary_topic_provider.dart';
 import 'quick_quiz_result_screen.dart';
 
 class QuickQuizScreen extends StatefulWidget {
-  const QuickQuizScreen({super.key});
+  const QuickQuizScreen({super.key, required this.topicId, required this.mode});
+
+  final String topicId;
+  final VocabularySessionMode mode;
 
   @override
   State<QuickQuizScreen> createState() => _QuickQuizScreenState();
 }
 
 class _QuickQuizScreenState extends State<QuickQuizScreen> {
-  bool _isSubmitting = false;
   bool _isExitDialogOpen = false;
+  bool _isWorking = false;
   bool _allowExit = false;
+  bool _resultNavigationQueued = false;
 
   @override
   void initState() {
@@ -30,84 +34,87 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
 
   Future<void> _initializeQuiz() async {
     if (!mounted) return;
-    final quiz = context.read<QuickQuizProvider>();
+    final topics = context.read<VocabularyTopicsProvider>();
     try {
-      final topics = context.read<VocabularyTopicsProvider>();
       await topics.refreshProgress();
-      if (!mounted) return;
-
-      // Daily unlock is an app policy. In API mode, each word's SM-2 progress
-      // has already been committed by VocabularyProvider.grade; this quiz
-      // only checks recall and must not submit a second review/session.
-      if (!topics.dailyGoalCompleted) {
-        quiz.setUnavailable(
-          'Quiz chỉ được mở sau khi bạn hoàn thành mục tiêu từ vựng hôm nay.',
-        );
-        return;
-      }
-
-      final studiedToday = await context
-          .read<VocabularyProvider>()
-          .getWordsStudiedTodayForQuiz();
-      if (!mounted) return;
-      await quiz.loadQuestions(studiedToday);
     } catch (_) {
-      if (mounted) {
-        quiz.setError(
-          'Không thể tạo Quiz từ dữ liệu hôm nay. Vui lòng thử lại.',
-        );
-      }
+      // The local daily-goal snapshot is still the authoritative unlock source.
     }
+    if (!mounted) return;
+
+    await context.read<QuickQuizProvider>().startSession(
+      topicId: widget.topicId,
+      mode: widget.mode,
+      canCreate: topics.dailyGoalCompleted,
+    );
+    if (mounted) _openResultWhenCompleted();
+  }
+
+  void _openResultWhenCompleted() {
+    if (!mounted || _resultNavigationQueued) return;
+    if (context.read<QuickQuizProvider>().status != QuizStatus.finished) return;
+    _resultNavigationQueued = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (_) => const QuickQuizResultScreen()),
+      );
+    });
   }
 
   Future<void> _confirmExit() async {
-    if (_isSubmitting || _isExitDialogOpen) return;
+    final quiz = context.read<QuickQuizProvider>();
+    if (_isWorking || _isExitDialogOpen || !quiz.hasActiveSession) return;
 
     _isExitDialogOpen = true;
-
-    final navigator = Navigator.of(context);
-
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Thoát Quiz?'),
+        title: const Text('Thoát Quick Quiz?'),
         content: const Text(
-          'Tiến trình trả lời hiện tại sẽ không được giữ lại. '
-          'Bạn có muốn thoát?',
+          'Vocabulary Session hiện tại sẽ được hủy trên Backend. '
+          'Các câu trả lời và đánh giá chưa nộp sẽ không được giữ lại. Bạn có muốn thoát?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Tiếp tục làm bài'),
+            child: const Text('Tiếp tục'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Thoát'),
+            child: const Text('Hủy Session và thoát'),
           ),
         ],
       ),
     );
-
     _isExitDialogOpen = false;
+    if (!mounted || shouldExit != true) return;
 
-    if (!mounted || shouldExit != true || _isSubmitting) return;
-
-    context.read<QuickQuizProvider>().discardCurrentAttempt();
-
-    setState(() => _allowExit = true);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        navigator.pop();
-      }
-    });
+    setState(() => _isWorking = true);
+    try {
+      await quiz.cancelCurrentSession();
+      if (!mounted) return;
+      setState(() => _allowExit = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Không thể hủy Session trên Backend. Session được giữ lại để khôi phục. $error',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isWorking = false);
+    }
   }
 
   Future<void> _onContinue() async {
-    if (_isSubmitting) return;
     final quiz = context.read<QuickQuizProvider>();
-    if (!quiz.hasSelection) return;
-
+    if (_isWorking || !quiz.hasSelection) return;
     if (!quiz.isLastQuestion) {
       quiz.continueToNextQuestion();
       return;
@@ -116,9 +123,9 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Hoàn thành Quiz?'),
+        title: const Text('Hoàn thành phần câu hỏi?'),
         content: const Text(
-          'Bạn đã trả lời đủ 5 câu. Xác nhận nộp bài để xem kết quả?',
+          'Bạn đã trả lời đủ 5 câu. Tiếp theo, hãy tự đánh giá mức độ ghi nhớ của từng từ trước khi nộp Session.',
         ),
         actions: [
           TextButton(
@@ -127,49 +134,83 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Tiếp tục'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || confirmed != true) return;
+    quiz.beginReviewRating();
+  }
+
+  Future<void> _submit() async {
+    final quiz = context.read<QuickQuizProvider>();
+    if (_isWorking || !quiz.canSubmit) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Nộp Quick Quiz?'),
+        content: const Text(
+          'Ứng dụng sẽ gửi 5 câu trả lời và 5 mức tự đánh giá lên Backend. Backend sẽ chấm điểm và cập nhật lịch ôn tập.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Quay lại'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('Nộp bài'),
           ),
         ],
       ),
     );
+    if (!mounted || confirmed != true) return;
 
-    if (confirmed != true || !mounted) return;
-    setState(() => _isSubmitting = true);
-    try {
-      if (!quiz.submitQuiz()) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Vui lòng trả lời đủ 5 câu trước khi nộp.'),
+    setState(() => _isWorking = true);
+    final succeeded = await quiz.submitQuiz();
+    if (!mounted) return;
+    setState(() => _isWorking = false);
+    if (succeeded) {
+      _openResultWhenCompleted();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            quiz.message ?? 'Chưa thể nộp Session. Vui lòng thử lại.',
           ),
-        );
-        return;
-      }
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const QuickQuizResultScreen()),
+        ),
       );
-    } finally {
-      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
-  Future<void> _retryInitialization() async {
-    final quiz = context.read<QuickQuizProvider>();
-    quiz.setUnavailable('Đang kiểm tra điều kiện mở khóa Quiz...');
-    await _initializeQuiz();
+  Future<void> _retry() async {
+    if (_isWorking) return;
+    setState(() => _isWorking = true);
+    await context.read<QuickQuizProvider>().retry();
+    if (!mounted) return;
+    setState(() => _isWorking = false);
+    _openResultWhenCompleted();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<QuickQuizProvider>();
-    final isActiveQuiz = provider.status == QuizStatus.loaded;
+    final hasActiveSession =
+        provider.hasActiveSession && provider.status != QuizStatus.finished;
+    final isPreparingSession =
+        provider.status == QuizStatus.loading && !provider.hasActiveSession;
 
     return FullScreenFlowScope(
       child: PopScope(
-        canPop: _allowExit || (!isActiveQuiz && !_isSubmitting),
+        canPop: _allowExit || (!hasActiveSession && !isPreparingSession),
         onPopInvokedWithResult: (didPop, result) {
-          if (!didPop && isActiveQuiz && !_isSubmitting && !_allowExit) {
+          if (!didPop && hasActiveSession && !_isWorking && !_allowExit) {
             _confirmExit();
           }
+          // The create request is protected by the persisted idempotency intent.
+          // Do not pop while it is in flight and leave an orphaned route/session.
         },
         child: _buildContent(context, provider),
       ),
@@ -178,7 +219,8 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
 
   Widget _buildContent(BuildContext context, QuickQuizProvider provider) {
     if (provider.status == QuizStatus.idle ||
-        provider.status == QuizStatus.loading) {
+        provider.status == QuizStatus.loading ||
+        provider.status == QuizStatus.submitting) {
       return const Scaffold(
         backgroundColor: AppColors.bg,
         body: SafeArea(child: Center(child: CircularProgressIndicator())),
@@ -187,7 +229,6 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
 
     if (provider.status == QuizStatus.unavailable ||
         provider.status == QuizStatus.error) {
-      final canRetry = provider.status == QuizStatus.error;
       return Scaffold(
         backgroundColor: AppColors.bg,
         body: SafeArea(
@@ -198,13 +239,17 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    canRetry ? Icons.error_outline : Icons.lock_outline,
+                    provider.status == QuizStatus.error
+                        ? Icons.error_outline
+                        : Icons.lock_outline,
                     size: 56,
-                    color: canRetry ? AppColors.danger : AppColors.warning,
+                    color: provider.status == QuizStatus.error
+                        ? AppColors.danger
+                        : AppColors.warning,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    provider.message ?? 'Quiz hiện chưa khả dụng.',
+                    provider.message ?? 'Quick Quiz hiện chưa khả dụng.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 15,
@@ -212,14 +257,14 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (canRetry)
+                  if (provider.status == QuizStatus.error)
                     ElevatedButton(
-                      onPressed: _retryInitialization,
+                      onPressed: _retry,
                       child: const Text('Thử lại'),
                     ),
                   OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Quay lại từ vựng'),
+                    child: const Text('Quay lại'),
                   ),
                 ],
               ),
@@ -229,7 +274,11 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
       );
     }
 
-    if (provider.status == QuizStatus.finished || provider.questions.isEmpty) {
+    if (provider.status == QuizStatus.rating) {
+      return _buildRatingStage(provider);
+    }
+
+    if (provider.questions.isEmpty || provider.status == QuizStatus.finished) {
       return const Scaffold(
         backgroundColor: AppColors.bg,
         body: SafeArea(child: Center(child: CircularProgressIndicator())),
@@ -252,7 +301,7 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
                 children: [
                   const Expanded(
                     child: Text(
-                      'Quiz từ vựng',
+                      'Quick Quiz',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -280,35 +329,46 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Chọn nghĩa đúng của từ:',
-                style: TextStyle(fontSize: 14, color: AppColors.slate500),
+              Text(
+                question.direction == VocabularyQuizDirection.wordToMeaning
+                    ? 'Chọn nghĩa đúng của từ:'
+                    : 'Chọn từ vựng tương ứng với nghĩa:',
+                style: const TextStyle(fontSize: 14, color: AppColors.slate500),
               ),
               const SizedBox(height: 10),
               Text(
-                question.word,
+                question.prompt,
                 style: const TextStyle(
-                  fontSize: 30,
+                  fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: AppColors.brand,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                question.phonetic,
-                style: const TextStyle(fontSize: 14, color: AppColors.slate500),
-              ),
+              if (question.direction == VocabularyQuizDirection.wordToMeaning &&
+                  question.phonetic.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  question.phonetic,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.slate500,
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
               ...List.generate(question.options.length, (index) {
+                final option = question.options[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: AnswerOptionTile(
-                    letter: String.fromCharCode(65 + index),
-                    text: question.options[index],
-                    state: provider.selectedOption == index
+                    letter: option.code,
+                    text: option.text,
+                    state: provider.selectedOption == option.code
                         ? OptionState.selected
                         : OptionState.neutral,
-                    onTap: _isSubmitting ? null : () => provider.select(index),
+                    onTap: _isWorking
+                        ? null
+                        : () => provider.select(option.code),
                   ),
                 );
               }),
@@ -317,18 +377,153 @@ class _QuickQuizScreenState extends State<QuickQuizScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isSubmitting ? null : _onContinue,
+                    onPressed: _isWorking ? null : _onContinue,
                     child: Text(
-                      provider.isLastQuestion ? 'Hoàn thành' : 'Câu tiếp theo',
+                      provider.isLastQuestion
+                          ? 'Hoàn thành câu hỏi'
+                          : 'Câu tiếp theo',
                     ),
                   ),
                 ),
-              if (_isSubmitting) ...[
-                const SizedBox(height: 10),
-                const LinearProgressIndicator(minHeight: 2),
-              ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRatingStage(QuickQuizProvider provider) {
+    const labels = <String>[
+      'Không nhớ',
+      'Rất khó',
+      'Khó',
+      'Khá khó',
+      'Dễ',
+      'Rất dễ',
+    ];
+
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Tự đánh giá mức độ ghi nhớ',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.slate900,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Đã đánh giá ${provider.ratedWordCount}/${provider.reviewWords.length} từ. Chọn mức 0–5 theo khả năng nhớ thực tế của bạn.',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.slate500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Mức đánh giá độc lập với kết quả trắc nghiệm; ứng dụng không tự suy ra chất lượng ghi nhớ từ câu đúng hoặc sai.',
+                    style: TextStyle(fontSize: 12, color: AppColors.slate500),
+                  ),
+                  if (provider.reviewPersistenceMessage != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      provider.reviewPersistenceMessage!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.warning,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                itemCount: provider.reviewWords.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final word = provider.reviewWords[index];
+                  final selectedQuality = provider.qualityFor(word.id);
+                  return AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          word.word,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.slate900,
+                          ),
+                        ),
+                        if (word.phonetic.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              word.phonetic,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.slate500,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 4),
+                        Text(
+                          word.definition,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppColors.slate700,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: List<Widget>.generate(6, (quality) {
+                            return ChoiceChip(
+                              label: Text('$quality · ${labels[quality]}'),
+                              selected: selectedQuality == quality,
+                              onSelected: _isWorking
+                                  ? null
+                                  : (_) => provider.setReviewQuality(
+                                      vocabularyId: word.id,
+                                      quality: quality,
+                                    ),
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: !_isWorking && provider.canSubmit ? _submit : null,
+                  child: Text(
+                    provider.canSubmit
+                        ? 'Nộp Session'
+                        : 'Đánh giá đủ 5 từ để nộp',
+                  ),
+                ),
+              ),
+            ),
+            if (_isWorking) const LinearProgressIndicator(minHeight: 2),
+          ],
         ),
       ),
     );

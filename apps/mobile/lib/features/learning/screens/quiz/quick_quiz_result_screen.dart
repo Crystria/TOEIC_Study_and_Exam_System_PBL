@@ -2,23 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/navigation/full_screen_flow_scope.dart';
-
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../theme/app_colors.dart';
 import '../../providers/quick_quiz_provider.dart';
 import 'quick_quiz_screen.dart';
 
-class QuickQuizResultScreen extends StatelessWidget {
+class QuickQuizResultScreen extends StatefulWidget {
   const QuickQuizResultScreen({super.key});
 
-  void _returnToVocabulary(BuildContext context) {
-    Navigator.of(context).popUntil((route) => route.isFirst);
+  @override
+  State<QuickQuizResultScreen> createState() => _QuickQuizResultScreenState();
+}
+
+class _QuickQuizResultScreenState extends State<QuickQuizResultScreen> {
+  bool _isLeaving = false;
+
+  Future<void> _returnToVocabulary() async {
+    if (_isLeaving) return;
+    setState(() => _isLeaving = true);
+    try {
+      await context.read<QuickQuizProvider>().acknowledgeCompletedSession();
+      if (!mounted) return;
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isLeaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể xác nhận kết quả Session: $error')),
+      );
+    }
   }
 
-  void _retake(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const QuickQuizScreen()),
-    );
+  Future<void> _retake() async {
+    if (_isLeaving) return;
+    final quiz = context.read<QuickQuizProvider>();
+    final topicId = quiz.topicId;
+    final mode = quiz.sessionMode;
+    if (topicId == null || mode == null) return;
+
+    setState(() => _isLeaving = true);
+    try {
+      await quiz.acknowledgeCompletedSession();
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+          builder: (_) => QuickQuizScreen(topicId: topicId, mode: mode),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isLeaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể khởi tạo lượt Quiz mới: $error')),
+      );
+    }
   }
 
   @override
@@ -32,13 +69,14 @@ class QuickQuizResultScreen extends StatelessWidget {
     final total = quiz.totalQuestions;
 
     if (quiz.status != QuizStatus.finished ||
-        total != QuickQuizProvider.questionCount) {
+        total != QuickQuizProvider.questionCount ||
+        quiz.resultEntries.length != QuickQuizProvider.questionCount) {
       return Scaffold(
         backgroundColor: AppColors.bg,
         body: SafeArea(
           child: Center(
             child: ElevatedButton(
-              onPressed: () => _returnToVocabulary(context),
+              onPressed: _isLeaving ? null : _returnToVocabulary,
               child: const Text('Quay lại từ vựng'),
             ),
           ),
@@ -69,7 +107,7 @@ class QuickQuizResultScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'Kết quả Quiz',
+                      'Kết quả Quick Quiz',
                       style: TextStyle(
                         fontSize: 23,
                         fontWeight: FontWeight.w800,
@@ -98,9 +136,7 @@ class QuickQuizResultScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const AppCard(
                 child: Text(
-                  'Điểm Quiz chỉ dùng để tự kiểm tra khả năng ghi nhớ. '
-                  'Tiến trình và lịch ôn từ vựng được cập nhật khi bạn đánh giá '
-                  'từng từ ở lượt học, không thay đổi khi nộp Quiz.',
+                  'Kết quả được chấm bởi Backend. Lịch ôn từ vựng được cập nhật dựa trên 5 mức tự đánh giá bạn đã chọn, không dựa trực tiếp vào số câu đúng.',
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.slate500,
@@ -120,87 +156,93 @@ class QuickQuizResultScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              if (wrongAnswers.isEmpty)
-                const AppCard(
-                  child: Text(
-                    'Tuyệt vời! Hãy tiếp tục duy trì việc học từ vựng mỗi ngày.',
-                    style: TextStyle(fontSize: 14, color: AppColors.slate700),
-                  ),
-                )
-              else
-                ...wrongAnswers.asMap().entries.map((entry) {
-                  final index = entry.key + 1;
-                  final answer = entry.value;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: AppCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '$index. ${answer.question.word}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.slate900,
-                            ),
+              ...quiz.resultEntries.asMap().entries.map((entry) {
+                final index = entry.key + 1;
+                final answer = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$index. ${answer.question.word}',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.slate900,
                           ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Bạn đã chọn',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.slate500,
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          answer.question.prompt,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppColors.slate500,
                           ),
-                          const SizedBox(height: 3),
-                          Text(
-                            answer.selectedAnswer,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: AppColors.danger,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Bạn đã chọn',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.slate500,
                           ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Đáp án đúng',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.slate500,
-                            ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          answer.selectedAnswer,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: answer.isCorrect
+                                ? AppColors.success
+                                : AppColors.danger,
+                            fontWeight: FontWeight.w600,
                           ),
-                          const SizedBox(height: 3),
-                          Text(
-                            answer.correctAnswer,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w700,
-                            ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Đáp án đúng',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.slate500,
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          answer.correctAnswer,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColors.success,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
-                  );
-                }),
+                  ),
+                );
+              }),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () => _retake(context),
+                  onPressed: _isLeaving ? null : _retake,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Làm lại Quiz'),
+                  label: const Text('Tạo Session mới và làm lại'),
                 ),
               ),
               const SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () => _returnToVocabulary(context),
+                  onPressed: _isLeaving ? null : _returnToVocabulary,
                   child: const Text('Quay lại từ vựng'),
                 ),
               ),
+              if (_isLeaving) ...[
+                const SizedBox(height: 12),
+                const LinearProgressIndicator(minHeight: 2),
+              ],
               const SizedBox(height: 16),
             ],
           ),

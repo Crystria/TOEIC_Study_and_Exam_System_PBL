@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../models/grammar_lesson.dart';
+import '../repositories/learning_local_state_repository.dart';
 import '../repositories/learning_repository.dart';
 
 enum GrammarLessonFetchStatus { idle, loading, loaded, markingDone, error }
@@ -10,11 +11,14 @@ enum GrammarLessonFetchStatus { idle, loading, loaded, markingDone, error }
 class GrammarLessonProvider extends ChangeNotifier {
   GrammarLessonProvider({
     required LearningRepository repository,
+    required LearningLocalStateRepository localStateRepository,
     required String? Function() currentUserId,
   }) : _repository = repository,
+       _localStateRepository = localStateRepository,
        _currentUserId = currentUserId;
 
   final LearningRepository _repository;
+  final LearningLocalStateRepository _localStateRepository;
   final String? Function() _currentUserId;
 
   GrammarLessonFetchStatus status = GrammarLessonFetchStatus.idle;
@@ -90,7 +94,7 @@ class GrammarLessonProvider extends ChangeNotifier {
           message: 'Bạn cần đăng nhập để lưu tiến trình Grammar.',
         );
       }
-      final baseRevision = await _repository.getGrammarLessonRevision(
+      final baseRevision = await _localStateRepository.getGrammarLessonRevision(
         userId,
         currentLesson.id,
       );
@@ -101,7 +105,7 @@ class GrammarLessonProvider extends ChangeNotifier {
       );
       if (!_isCurrent(scopeRevision, requestToken, userId)) return false;
 
-      await _repository.markGrammarLessonCompleted(
+      await _localStateRepository.markGrammarLessonCompleted(
         userId,
         currentLesson.id,
         revision: receipt.revision,

@@ -5,10 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:toeic_mobile/core/config/app_config.dart';
 import 'package:toeic_mobile/core/network/api_client.dart';
-import 'package:toeic_mobile/core/storage/grammar_progress_storage.dart';
 import 'package:toeic_mobile/core/storage/token_storage.dart';
-import 'package:toeic_mobile/core/storage/vocabulary_progress_storage.dart';
-import 'package:toeic_mobile/features/learning/data_sources/local/learning_local_data_source.dart';
 import 'package:toeic_mobile/features/learning/data_sources/remote/api_learning_data_source.dart';
 import 'package:toeic_mobile/features/learning/repositories/learning_repository.dart';
 import 'package:toeic_mobile/features/learning/services/learning_api_service.dart';
@@ -43,7 +40,6 @@ void main() {
         remoteDataSource: ApiLearningDataSource(
           service: LearningApiService(client: client),
         ),
-        localDataSource: _createLocalDataSource(),
         currentUserId: () => 'student-user-id',
       );
 
@@ -85,7 +81,6 @@ void main() {
       remoteDataSource: ApiLearningDataSource(
         service: LearningApiService(client: client),
       ),
-      localDataSource: _createLocalDataSource(),
       currentUserId: () => 'student-user-id',
     );
 
@@ -135,11 +130,4 @@ class _MemorySecureKeyValueStore implements SecureKeyValueStore {
   Future<void> delete({required String key}) async {
     values.remove(key);
   }
-}
-
-LearningLocalDataSource _createLocalDataSource() {
-  return SharedPreferencesLearningLocalDataSource(
-    vocabularyStorage: VocabularyProgressStorage(),
-    grammarStorage: GrammarProgressStorage(),
-  );
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../models/grammar_lesson.dart';
+import '../repositories/learning_local_state_repository.dart';
 import '../repositories/learning_repository.dart';
 
 enum GrammarListFetchStatus { idle, loading, loaded, error }
@@ -12,11 +13,14 @@ enum GrammarListFetchStatus { idle, loading, loaded, error }
 class GrammarListProvider extends ChangeNotifier {
   GrammarListProvider({
     required LearningRepository repository,
+    required LearningLocalStateRepository localStateRepository,
     required String? Function() currentUserId,
   }) : _repository = repository,
+       _localStateRepository = localStateRepository,
        _currentUserId = currentUserId;
 
   final LearningRepository _repository;
+  final LearningLocalStateRepository _localStateRepository;
   final String? Function() _currentUserId;
 
   GrammarListFetchStatus status = GrammarListFetchStatus.idle;
@@ -62,7 +66,7 @@ class GrammarListProvider extends ChangeNotifier {
 
       final progress = userIdAtStart == null || userIdAtStart.isEmpty
           ? null
-          : await _repository.getGrammarProgress(userIdAtStart);
+          : await _localStateRepository.getGrammarProgress(userIdAtStart);
       if (!_isCurrent(revision, userIdAtStart)) return;
 
       _lessons = loadedLessons;
@@ -120,7 +124,7 @@ class GrammarListProvider extends ChangeNotifier {
     int revision,
   ) async {
     try {
-      await _repository.markGrammarLessonStarted(userId, lessonId);
+      await _localStateRepository.markGrammarLessonStarted(userId, lessonId);
     } catch (_) {
       if (_isCurrent(revision, userId)) {
         persistenceError = 'Không thể lưu trạng thái đang học của bài Grammar.';

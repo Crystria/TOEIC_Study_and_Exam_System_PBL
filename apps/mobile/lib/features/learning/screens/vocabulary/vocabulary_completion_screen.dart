@@ -2,15 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/navigation/full_screen_flow_scope.dart';
-
 import '../../../../theme/app_colors.dart';
 import '../../providers/vocabulary_topic_provider.dart';
+import '../quiz/quick_quiz_launch_dialog.dart';
 import '../quiz/quick_quiz_screen.dart';
 
 class VocabularyCompletionScreen extends StatelessWidget {
-  const VocabularyCompletionScreen({super.key, required this.topicName});
+  const VocabularyCompletionScreen({
+    super.key,
+    required this.topicName,
+    this.topicId,
+  });
 
   final String topicName;
+  final String? topicId;
+
+  Future<void> _startQuiz(BuildContext context) async {
+    final topics = context.read<VocabularyTopicsProvider>();
+    try {
+      await topics.refreshProgress();
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Không thể kiểm tra tiến độ hôm nay.')),
+        );
+      }
+      return;
+    }
+    if (!context.mounted || !topics.dailyGoalCompleted) return;
+    if (topics.topics.isEmpty) {
+      await topics.loadTopics();
+      if (!context.mounted) return;
+    }
+
+    final config = await QuickQuizLaunchDialog.show(
+      context,
+      topics: topics.topics,
+      initialTopicId: topicId,
+    );
+    if (!context.mounted || config == null) return;
+
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => FullScreenFlowScope(
+          child: QuickQuizScreen(topicId: config.topicId, mode: config.mode),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,18 +143,12 @@ class VocabularyCompletionScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: completedGoal
-                          ? () => Navigator.of(context).push<void>(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const FullScreenFlowScope(
-                                  child: QuickQuizScreen(),
-                                ),
-                              ),
-                            )
+                          ? () => _startQuiz(context)
                           : null,
                       icon: const Icon(Icons.quiz_outlined),
                       label: Text(
                         completedGoal
-                            ? 'Làm Quiz 5 câu'
+                            ? 'Làm Quick Quiz 5 câu'
                             : 'Hoàn thành mục tiêu để mở khóa Quiz',
                       ),
                     ),

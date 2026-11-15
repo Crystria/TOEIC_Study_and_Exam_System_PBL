@@ -6,7 +6,9 @@ import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/progress_row.dart';
 import '../../../../shared/widgets/stat_card.dart';
 import '../../../../theme/app_colors.dart';
+import '../../models/vocabulary_session_dtos.dart';
 import '../../providers/vocabulary_topic_provider.dart';
+import '../quiz/quick_quiz_launch_dialog.dart';
 import '../quiz/quick_quiz_screen.dart';
 import '../review/review_goal_settings_screen.dart';
 import '../review/review_select_words_screen.dart';
@@ -98,9 +100,22 @@ class _VocabularyTopicsScreenState extends State<VocabularyTopicsScreen> {
       return;
     }
     if (!mounted || !topics.dailyGoalCompleted) return;
+    if (topics.topics.isEmpty) {
+      await topics.loadTopics();
+      if (!mounted) return;
+    }
+
+    final config = await QuickQuizLaunchDialog.show(
+      context,
+      topics: topics.topics,
+    );
+    if (!mounted || config == null) return;
 
     await Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(builder: (_) => const QuickQuizScreen()),
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            QuickQuizScreen(topicId: config.topicId, mode: config.mode),
+      ),
     );
   }
 
@@ -273,7 +288,7 @@ class _VocabularyTopicsScreenState extends State<VocabularyTopicsScreen> {
                               ),
                               SizedBox(height: 3),
                               Text(
-                                '5 câu hỏi được tạo từ các từ đã học hôm nay',
+                                '5 câu hỏi từ Vocabulary Session do Backend chọn theo chủ đề',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.slate500,

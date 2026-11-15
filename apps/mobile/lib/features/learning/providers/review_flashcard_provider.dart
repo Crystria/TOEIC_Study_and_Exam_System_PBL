@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../repositories/learning_local_state_repository.dart';
 import '../repositories/learning_repository.dart';
 import 'review_select_words_provider.dart';
 
@@ -24,13 +25,16 @@ class ReviewResultTally {
 class ReviewFlashcardProvider extends ChangeNotifier {
   ReviewFlashcardProvider({
     required LearningRepository repository,
+    required LearningLocalStateRepository localStateRepository,
     required String? Function() currentUserId,
     Future<void> Function()? onProgressPersisted,
   }) : _repository = repository,
+       _localStateRepository = localStateRepository,
        _currentUserId = currentUserId,
        _onProgressPersisted = onProgressPersisted;
 
   final LearningRepository _repository;
+  final LearningLocalStateRepository _localStateRepository;
   final String? Function() _currentUserId;
   final Future<void> Function()? _onProgressPersisted;
 
@@ -109,7 +113,7 @@ class ReviewFlashcardProvider extends ChangeNotifier {
       );
       if (!_isCurrent(revision, userIdAtStart)) return;
 
-      await _repository.recordStudiedVocabulary(
+      await _localStateRepository.recordStudiedVocabulary(
         wordId: word.id,
         word: word.word,
         phonetic: word.phonetic,

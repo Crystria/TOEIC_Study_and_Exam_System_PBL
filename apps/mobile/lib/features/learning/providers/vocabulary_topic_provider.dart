@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../models/learning_progress.dart';
+import '../repositories/learning_local_state_repository.dart';
 import '../repositories/learning_repository.dart';
 
 class TopicSummary {
@@ -28,10 +29,14 @@ class TodayVocabularyPreview {
 enum TopicsStatus { idle, loading, loaded, error }
 
 class VocabularyTopicsProvider extends ChangeNotifier {
-  VocabularyTopicsProvider({required LearningRepository repository})
-    : _repository = repository;
+  VocabularyTopicsProvider({
+    required LearningRepository repository,
+    required LearningLocalStateRepository localStateRepository,
+  }) : _repository = repository,
+       _localStateRepository = localStateRepository;
 
   final LearningRepository _repository;
+  final LearningLocalStateRepository _localStateRepository;
   Future<void>? _initialization;
   int _scopeRevision = 0;
 
@@ -67,7 +72,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   Future<void> _refreshProgressFromRepository() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _repository.getVocabularyProgress();
+      final snapshot = await _localStateRepository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applyProgress(snapshot);
       persistenceError = null;
@@ -116,7 +121,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   Future<void> refreshProgress() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _repository.getVocabularyProgress();
+      final snapshot = await _localStateRepository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applyProgress(snapshot);
       persistenceError = null;
@@ -134,7 +139,8 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   Future<void> refreshLegacyProgressStatus() async {
     final revision = _scopeRevision;
     try {
-      final hasLegacyData = await _repository.hasUnassignedLegacyProgress();
+      final hasLegacyData = await _localStateRepository
+          .hasUnassignedLegacyProgress();
       if (revision != _scopeRevision) return;
       hasUnassignedLegacyProgress = hasLegacyData;
     } catch (_) {
@@ -152,9 +158,8 @@ class VocabularyTopicsProvider extends ChangeNotifier {
     isImportingLegacyProgress = true;
     notifyListeners();
     try {
-      final snapshot = await _repository.importUnassignedLegacyProgress(
-        confirmOwnership: confirmOwnership,
-      );
+      final snapshot = await _localStateRepository
+          .importUnassignedLegacyProgress(confirmOwnership: confirmOwnership);
       if (revision != _scopeRevision) return;
       _applyProgress(snapshot);
       hasUnassignedLegacyProgress = false;
@@ -170,7 +175,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   Future<void> setDailyGoal(int value) async {
     if (value < 5 || value > 100 || value % 5 != 0) return;
     final revision = _scopeRevision;
-    final snapshot = await _repository.saveDailyGoal(value);
+    final snapshot = await _localStateRepository.saveDailyGoal(value);
     if (revision != _scopeRevision) return;
     _applyProgress(snapshot);
     notifyListeners();
@@ -182,7 +187,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
   }) async {
     if (dailyGoal < 5 || dailyGoal > 100 || dailyGoal % 5 != 0) return;
     final revision = _scopeRevision;
-    final snapshot = await _repository.saveReviewSettings(
+    final snapshot = await _localStateRepository.saveReviewSettings(
       dailyGoal: dailyGoal,
       remindEnabled: remindEnabled,
     );
@@ -202,7 +207,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final snapshot = await _repository.getVocabularyProgress();
+      final snapshot = await _localStateRepository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
 
       final learnedByTopic = <String, int>{};
@@ -231,7 +236,7 @@ class VocabularyTopicsProvider extends ChangeNotifier {
             ),
           )
           .toList(growable: false);
-      totalLearnedWords = summary.vocabulariesLearned;
+      totalLearnedWords = snapshot.totalLearnedWords;
       dueForReview = summary.dueVocabularies;
       _updateStudyEstimate();
       todayPreview = preview
@@ -258,7 +263,8 @@ class VocabularyTopicsProvider extends ChangeNotifier {
     final preview = await _repository.getDueVocabularyPreview(limit: 2);
     if (revision != _scopeRevision) return;
 
-    totalLearnedWords = summary.vocabulariesLearned;
+    // Learned-word totals are device-local until a Backend endpoint exposes
+    // the complete per-user vocabulary progress list.
     dueForReview = summary.dueVocabularies;
     _updateStudyEstimate();
     todayPreview = preview

@@ -11,7 +11,11 @@ import '../../features/auth/services/auth_api_service.dart';
 import '../../features/auth/services/device_id_provider.dart';
 import '../../features/learning/data_sources/local/learning_local_data_source.dart';
 import '../../features/learning/data_sources/remote/api_learning_data_source.dart';
+import '../../features/learning/repositories/api_learning_session_repository.dart';
+import '../../features/learning/repositories/learning_local_state_repository.dart';
 import '../../features/learning/repositories/learning_repository.dart';
+import '../../features/learning/repositories/learning_session_journal.dart';
+import '../../features/learning/repositories/learning_session_repository.dart';
 import '../../features/learning/services/learning_api_service.dart';
 import '../../features/mock_test/data_sources/local/exam_attempt_local_data_source.dart';
 import '../../features/mock_test/data_sources/local/exam_attempt_start_journal.dart';
@@ -31,6 +35,8 @@ class ProductionFeatureDependencies implements AppFeatureGraph {
   ProductionFeatureDependencies._({
     required this.authRepository,
     required this.learningRepository,
+    required this.learningLocalStateRepository,
+    required this.learningSessionRepository,
     required this.analyticsRepository,
     required this.mockTestRepository,
     required this.mockTestAttemptRepository,
@@ -59,12 +65,21 @@ class ProductionFeatureDependencies implements AppFeatureGraph {
       onRetryRejected: apiAuthRepository.clearRejectedSessionIfCurrent,
     );
 
-    final learningRepository = ApiLearningRepository(
-      remoteDataSource: ApiLearningDataSource(
-        service: LearningApiService(client: app.apiClient),
-      ),
+    final learningLocalStateRepository = ScopedLearningLocalStateRepository(
       localDataSource: learningLocalDataSource,
       currentUserId: currentUserId,
+    );
+    final learningRemoteDataSource = ApiLearningDataSource(
+      service: LearningApiService(client: app.apiClient),
+    );
+    final learningRepository = ApiLearningRepository(
+      remoteDataSource: learningRemoteDataSource,
+      currentUserId: currentUserId,
+    );
+    final learningSessionRepository = ApiLearningSessionRepository(
+      remoteDataSource: learningRemoteDataSource,
+      currentUserId: currentUserId,
+      journal: LearningSessionJournal(),
     );
 
     final analyticsRepository = ApiAnalyticsRepository(
@@ -97,6 +112,8 @@ class ProductionFeatureDependencies implements AppFeatureGraph {
       authRepository: apiAuthRepository,
       apiAuthRepository: apiAuthRepository,
       learningRepository: learningRepository,
+      learningLocalStateRepository: learningLocalStateRepository,
+      learningSessionRepository: learningSessionRepository,
       analyticsRepository: analyticsRepository,
       mockTestRepository: mockTestRepository,
       mockTestAttemptRepository: mockTestAttemptRepository,
@@ -110,6 +127,12 @@ class ProductionFeatureDependencies implements AppFeatureGraph {
 
   @override
   final LearningRepository learningRepository;
+
+  @override
+  final LearningLocalStateRepository learningLocalStateRepository;
+
+  @override
+  final LearningSessionRepository learningSessionRepository;
 
   @override
   final AnalyticsRepository analyticsRepository;

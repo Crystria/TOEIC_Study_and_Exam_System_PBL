@@ -18,8 +18,13 @@ import '../../features/auth/services/device_id_provider.dart';
 import '../../features/learning/data_sources/local/learning_local_data_source.dart';
 import '../../features/learning/data_sources/remote/api_learning_data_source.dart';
 import '../../features/learning/data_sources/test_data/learning_test_data_source.dart';
+import '../../features/learning/repositories/api_learning_session_repository.dart';
+import '../../features/learning/repositories/learning_local_state_repository.dart';
 import '../../features/learning/repositories/learning_repository.dart';
+import '../../features/learning/repositories/learning_session_journal.dart';
+import '../../features/learning/repositories/learning_session_repository.dart';
 import '../../features/learning/repositories/test_data_learning_repository.dart';
+import '../../features/learning/repositories/unavailable_learning_session_repository.dart';
 import '../../features/learning/services/learning_api_service.dart';
 import '../../features/mock_test/data_sources/remote/api_mock_test_remote_data_source.dart';
 import '../../features/mock_test/data_sources/local/exam_attempt_local_data_source.dart';
@@ -47,6 +52,8 @@ class AppFeatureDependencies implements AppFeatureGraph {
     required this.authRepository,
     required this.apiAuthRepository,
     required this.learningRepository,
+    required this.learningLocalStateRepository,
+    required this.learningSessionRepository,
     required this.analyticsRepository,
     required this.mockTestRepository,
     required this.mockTestAttemptRepository,
@@ -94,19 +101,35 @@ class AppFeatureDependencies implements AppFeatureGraph {
       );
     }
 
-    final LearningRepository learningRepository = config.isLearningApiEnabled
-        ? ApiLearningRepository(
-            remoteDataSource: ApiLearningDataSource(
-              service: LearningApiService(client: app.apiClient),
-            ),
-            localDataSource: learningLocalDataSource,
-            currentUserId: currentUserId,
-          )
-        : TestDataLearningRepository(
-            testDataSource: LearningTestDataSource(),
-            localDataSource: learningLocalDataSource,
-            currentUserId: currentUserId,
-          );
+    final LearningLocalStateRepository learningLocalStateRepository =
+        ScopedLearningLocalStateRepository(
+          localDataSource: learningLocalDataSource,
+          currentUserId: currentUserId,
+        );
+
+    late final LearningRepository learningRepository;
+    late final LearningSessionRepository learningSessionRepository;
+
+    if (config.isLearningApiEnabled) {
+      final remoteDataSource = ApiLearningDataSource(
+        service: LearningApiService(client: app.apiClient),
+      );
+      learningRepository = ApiLearningRepository(
+        remoteDataSource: remoteDataSource,
+        currentUserId: currentUserId,
+      );
+      learningSessionRepository = ApiLearningSessionRepository(
+        remoteDataSource: remoteDataSource,
+        currentUserId: currentUserId,
+        journal: LearningSessionJournal(),
+      );
+    } else {
+      learningRepository = TestDataLearningRepository(
+        testDataSource: LearningTestDataSource(),
+        currentUserId: currentUserId,
+      );
+      learningSessionRepository = const UnavailableLearningSessionRepository();
+    }
 
     if (!config.isAnalyticsApiEnabled &&
         (!config.isDevelopment || kReleaseMode)) {
@@ -171,6 +194,8 @@ class AppFeatureDependencies implements AppFeatureGraph {
           TestDataAuthRepository(dataSource: TestDataAuthDataSource()),
       apiAuthRepository: apiAuthRepository,
       learningRepository: learningRepository,
+      learningLocalStateRepository: learningLocalStateRepository,
+      learningSessionRepository: learningSessionRepository,
       analyticsRepository: analyticsRepository,
       mockTestRepository: mockTestRepository,
       mockTestAttemptRepository: mockTestAttemptRepository,
@@ -186,6 +211,10 @@ class AppFeatureDependencies implements AppFeatureGraph {
   final ApiAuthRepository? apiAuthRepository;
   @override
   final LearningRepository learningRepository;
+  @override
+  final LearningLocalStateRepository learningLocalStateRepository;
+  @override
+  final LearningSessionRepository learningSessionRepository;
   @override
   final AnalyticsRepository analyticsRepository;
   @override

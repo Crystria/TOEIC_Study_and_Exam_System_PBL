@@ -84,7 +84,12 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
         context.read<VocabularyProvider>().currentTopicName ?? widget.topicName;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => VocabularyCompletionScreen(topicName: topicName),
+        builder: (_) => VocabularyCompletionScreen(
+          topicName: topicName,
+          topicId: widget.mode == VocabularyLearningMode.topic
+              ? widget.topicId
+              : null,
+        ),
       ),
     );
   }

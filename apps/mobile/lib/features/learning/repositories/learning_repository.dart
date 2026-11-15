@@ -1,12 +1,10 @@
 // ignore_for_file: prefer_initializing_formals
 import '../../../core/errors/app_exception.dart';
-import '../data_sources/local/learning_local_data_source.dart';
 import '../data_sources/remote/learning_remote_data_source.dart';
 import '../mappers/learning_dto_mapper.dart';
 import '../models/grammar_lesson.dart';
 import '../models/learning_dtos.dart';
 import '../models/learning_models.dart';
-import '../models/learning_progress.dart';
 import '../requests/learning_request_dtos.dart';
 import 'learning_sync_journal.dart';
 
@@ -37,36 +35,6 @@ abstract interface class LearningRepository {
     required String userId,
     required String operationId,
   });
-  Future<LearningVocabularyProgress> getVocabularyProgress();
-  Future<bool> hasUnassignedLegacyProgress();
-  Future<LearningVocabularyProgress> importUnassignedLegacyProgress({
-    required bool confirmOwnership,
-  });
-  Future<LearningVocabularyProgress> recordStudiedVocabulary({
-    required String wordId,
-    required String word,
-    required String phonetic,
-    required String definition,
-    required String example,
-    required String audioUrl,
-    required String topicId,
-    required String topicName,
-    required int grade,
-    String? serverRevision,
-  });
-  Future<LearningVocabularyProgress> saveDailyGoal(int goal);
-  Future<LearningVocabularyProgress> saveReviewSettings({
-    required int dailyGoal,
-    required bool remindEnabled,
-  });
-  Future<LearningGrammarProgress> getGrammarProgress(String userId);
-  Future<void> markGrammarLessonStarted(String userId, String lessonId);
-  Future<void> markGrammarLessonCompleted(
-    String userId,
-    String lessonId, {
-    String? revision,
-  });
-  Future<String> getGrammarLessonRevision(String userId, String lessonId);
   void resetForUserScopeChange();
 }
 
@@ -82,11 +50,9 @@ abstract interface class LearningRepository {
 class ApiLearningRepository implements LearningRepository {
   ApiLearningRepository({
     required LearningRemoteDataSource remoteDataSource,
-    required LearningLocalDataSource localDataSource,
     required String? Function() currentUserId,
     LearningSyncJournal? syncJournal,
   }) : _remote = remoteDataSource,
-       _local = localDataSource,
        _currentUserId = currentUserId,
        _syncJournal = syncJournal ?? LearningSyncJournal();
 
@@ -94,7 +60,6 @@ class ApiLearningRepository implements LearningRepository {
   static const int _maximumPages = 500;
 
   final LearningRemoteDataSource _remote;
-  final LearningLocalDataSource _local;
   final String? Function() _currentUserId;
   final LearningSyncJournal _syncJournal;
 
@@ -113,113 +78,6 @@ class ApiLearningRepository implements LearningRepository {
     _vocabularyByIdCache.clear();
     _allVocabularyCache = null;
     _grammarCache = null;
-  }
-
-  @override
-  Future<LearningVocabularyProgress> getVocabularyProgress() =>
-      _local.loadVocabularyProgress();
-
-  @override
-  Future<bool> hasUnassignedLegacyProgress() async {
-    final scope = _captureScope();
-    final hasLegacyData = await _local.hasUnassignedLegacyProgress();
-    _ensureScope(scope);
-    return hasLegacyData;
-  }
-
-  @override
-  Future<LearningVocabularyProgress> importUnassignedLegacyProgress({
-    required bool confirmOwnership,
-  }) async {
-    final scope = _captureScope();
-    final progress = await _local.importUnassignedLegacyProgress(
-      confirmOwnership: confirmOwnership,
-    );
-    _ensureScope(scope);
-    return progress;
-  }
-
-  @override
-  Future<LearningVocabularyProgress> recordStudiedVocabulary({
-    required String wordId,
-    required String word,
-    required String phonetic,
-    required String definition,
-    required String example,
-    required String audioUrl,
-    required String topicId,
-    required String topicName,
-    required int grade,
-    String? serverRevision,
-  }) => _local.recordStudiedWord(
-    wordId: wordId,
-    word: word,
-    phonetic: phonetic,
-    definition: definition,
-    example: example,
-    audioUrl: audioUrl,
-    topicId: topicId,
-    topicName: topicName,
-    grade: grade,
-    serverRevision: serverRevision,
-  );
-
-  @override
-  Future<LearningVocabularyProgress> saveDailyGoal(int goal) =>
-      _local.saveDailyGoal(goal);
-
-  @override
-  Future<LearningVocabularyProgress> saveReviewSettings({
-    required int dailyGoal,
-    required bool remindEnabled,
-  }) => _local.saveReviewSettings(
-    dailyGoal: dailyGoal,
-    remindEnabled: remindEnabled,
-  );
-
-  @override
-  Future<LearningGrammarProgress> getGrammarProgress(String userId) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    final progress = await _local.loadGrammarProgress(userId);
-    _ensureScope(scope);
-    return progress;
-  }
-
-  @override
-  Future<void> markGrammarLessonStarted(String userId, String lessonId) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    await _local.markGrammarLessonStarted(userId, lessonId);
-    _ensureScope(scope);
-  }
-
-  @override
-  Future<void> markGrammarLessonCompleted(
-    String userId,
-    String lessonId, {
-    String? revision,
-  }) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    await _local.markGrammarLessonCompleted(
-      userId,
-      lessonId,
-      revision: revision,
-    );
-    _ensureScope(scope);
-  }
-
-  @override
-  Future<String> getGrammarLessonRevision(
-    String userId,
-    String lessonId,
-  ) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    final revision = await _local.grammarLessonRevision(userId, lessonId);
-    _ensureScope(scope);
-    return revision;
   }
 
   @override
@@ -719,15 +577,6 @@ class ApiLearningRepository implements LearningRepository {
       );
     }
     return _LearningScope(userId: userId, revision: _scopeRevision);
-  }
-
-  void _ensureRequestedUser(_LearningScope scope, String userId) {
-    if (scope.userId != userId.trim()) {
-      throw const AppException.cancelled(
-        message: 'Không thể truy cập tiến trình Grammar của tài khoản khác.',
-      );
-    }
-    _ensureScope(scope);
   }
 
   void _ensureScope(_LearningScope scope) {

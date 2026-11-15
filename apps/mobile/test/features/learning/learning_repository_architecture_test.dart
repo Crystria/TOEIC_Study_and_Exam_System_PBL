@@ -13,11 +13,15 @@ import '../../../lib/features/learning/models/grammar_lesson.dart';
 import '../../../lib/features/learning/models/learning_dtos.dart';
 import '../../../lib/features/learning/models/learning_models.dart';
 import '../../../lib/features/learning/models/learning_progress.dart';
+import '../../../lib/features/learning/repositories/learning_local_state_repository.dart';
 import '../../../lib/features/learning/repositories/learning_repository.dart';
 import '../../../lib/features/learning/repositories/learning_sync_journal.dart';
 import '../../../lib/features/learning/repositories/test_data_learning_repository.dart';
+import '../../../lib/features/learning/providers/review_select_words_provider.dart';
 import '../../../lib/features/learning/providers/vocabulary_topic_provider.dart';
 import '../../../lib/features/learning/requests/learning_request_dtos.dart';
+import '../../../lib/features/learning/models/vocabulary_session_dtos.dart';
+import '../../../lib/features/learning/requests/learning_session_requests.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -240,12 +244,10 @@ void main() {
       () async {
         final LearningRepository testRepository = TestDataLearningRepository(
           testDataSource: fixtureSource(),
-          localDataSource: localDataSource,
           currentUserId: () => activeUserId,
         );
         final LearningRepository apiRepository = ApiLearningRepository(
           remoteDataSource: _FixtureLikeApiDataSource(),
-          localDataSource: localDataSource,
           currentUserId: () => activeUserId,
           syncJournal: LearningSyncJournal(),
         );
@@ -311,67 +313,73 @@ void main() {
       },
     );
 
+    test('Legacy progress is accessed through Local State Repository and Provider contracts', () async {
+      localDataSource.hasLegacyProgressForTesting = true;
+      final localStateRepository = ScopedLearningLocalStateRepository(
+        localDataSource: localDataSource,
+        currentUserId: () => activeUserId,
+      );
+      final repository = TestDataLearningRepository(
+        testDataSource: fixtureSource(),
+        currentUserId: () => activeUserId,
+      );
+      final provider = VocabularyTopicsProvider(
+        repository: repository,
+        localStateRepository: localStateRepository,
+      );
+      addTearDown(provider.dispose);
+
+      await provider.refreshLegacyProgressStatus();
+      expect(provider.hasUnassignedLegacyProgress, isTrue);
+
+      await expectLater(
+        provider.importLegacyProgress(confirmOwnership: false),
+        throwsA(isA<StateError>()),
+      );
+      expect(provider.hasUnassignedLegacyProgress, isTrue);
+
+      await provider.importLegacyProgress(confirmOwnership: true);
+      expect(provider.hasUnassignedLegacyProgress, isFalse);
+      expect(provider.dailyGoal, 20);
+      expect(await localStateRepository.hasUnassignedLegacyProgress(), isFalse);
+    });
+
     test(
-      'Legacy progress is accessed through Repository and Provider contracts',
+      'Local State owns legacy migration in both API and Test Data modes',
       () async {
         localDataSource.hasLegacyProgressForTesting = true;
-        final repository = TestDataLearningRepository(
-          testDataSource: fixtureSource(),
+        final localStateRepository = ScopedLearningLocalStateRepository(
           localDataSource: localDataSource,
           currentUserId: () => activeUserId,
         );
-        final provider = VocabularyTopicsProvider(repository: repository);
-        addTearDown(provider.dispose);
 
-        await provider.refreshLegacyProgressStatus();
-        expect(provider.hasUnassignedLegacyProgress, isTrue);
-
-        await expectLater(
-          provider.importLegacyProgress(confirmOwnership: false),
-          throwsA(isA<StateError>()),
+        expect(
+          await localStateRepository.hasUnassignedLegacyProgress(),
+          isTrue,
         );
-        expect(provider.hasUnassignedLegacyProgress, isTrue);
-
-        await provider.importLegacyProgress(confirmOwnership: true);
-        expect(provider.hasUnassignedLegacyProgress, isFalse);
-        expect(provider.dailyGoal, 20);
-        expect(await repository.hasUnassignedLegacyProgress(), isFalse);
+        final imported = await localStateRepository
+            .importUnassignedLegacyProgress(confirmOwnership: true);
+        expect(imported, isA<LearningVocabularyProgress>());
+        expect(
+          await localStateRepository.hasUnassignedLegacyProgress(),
+          isFalse,
+        );
       },
     );
-
-    test('API and Test Data repositories expose the same legacy migration contract', () async {
-      localDataSource.hasLegacyProgressForTesting = true;
-      final testRepository = TestDataLearningRepository(
-        testDataSource: fixtureSource(),
-        localDataSource: localDataSource,
-        currentUserId: () => activeUserId,
-      );
-      final apiRepository = ApiLearningRepository(
-        remoteDataSource: _FixtureLikeApiDataSource(),
-        localDataSource: localDataSource,
-        currentUserId: () => activeUserId,
-        syncJournal: LearningSyncJournal(),
-      );
-
-      expect(await testRepository.hasUnassignedLegacyProgress(), isTrue);
-      expect(await apiRepository.hasUnassignedLegacyProgress(), isTrue);
-      final imported = await apiRepository.importUnassignedLegacyProgress(
-        confirmOwnership: true,
-      );
-      expect(imported, isA<LearningVocabularyProgress>());
-      expect(await testRepository.hasUnassignedLegacyProgress(), isFalse);
-    });
 
     test(
       'Test Data mutations persist progress outside immutable fixture assets',
       () async {
-        final repository = TestDataLearningRepository(
-          testDataSource: fixtureSource(),
+        final localStateRepository = ScopedLearningLocalStateRepository(
           localDataSource: localDataSource,
           currentUserId: () => activeUserId,
         );
+        final repository = TestDataLearningRepository(
+          testDataSource: fixtureSource(),
+          currentUserId: () => activeUserId,
+        );
         await expectLater(
-          repository.getGrammarProgress('user-b'),
+          localStateRepository.getGrammarProgress('user-b'),
           throwsA(isA<AppException>()),
         );
 
@@ -381,7 +389,7 @@ void main() {
           baseEntityRevision: '1',
         );
         expect(vocabularyReceipt.revision, '2');
-        await repository.recordStudiedVocabulary(
+        await localStateRepository.recordStudiedVocabulary(
           wordId: 't1-v1',
           word: 'negotiate',
           phonetic: '/nɪˈɡoʊʃieɪt/',
@@ -398,17 +406,18 @@ void main() {
           operationId: vocabularyReceipt.operationId,
         );
 
-        final vocabularyProgress = await repository.getVocabularyProgress();
+        final vocabularyProgress = await localStateRepository
+            .getVocabularyProgress();
         expect(vocabularyProgress.words.keys, contains('t1-v1'));
         expect(vocabularyProgress.words['t1-v1']!.serverRevision, '2');
 
-        await repository.markGrammarLessonStarted(activeUserId, 'g1');
+        await localStateRepository.markGrammarLessonStarted(activeUserId, 'g1');
         final grammarReceipt = await repository.completeGrammarLesson(
           lessonId: 'g1',
           baseEntityRevision: '3',
         );
         expect(grammarReceipt.revision, '4');
-        await repository.markGrammarLessonCompleted(
+        await localStateRepository.markGrammarLessonCompleted(
           activeUserId,
           'g1',
           revision: grammarReceipt.revision,
@@ -418,7 +427,7 @@ void main() {
           operationId: grammarReceipt.operationId,
         );
 
-        final grammarProgress = await repository.getGrammarProgress(
+        final grammarProgress = await localStateRepository.getGrammarProgress(
           activeUserId,
         );
         expect(grammarProgress.startedLessonIds, isEmpty);
@@ -427,50 +436,49 @@ void main() {
       },
     );
 
-    test(
-      'local flashcard grades override fixture mastery on subsequent reads',
-      () async {
-        final repository = TestDataLearningRepository(
-          testDataSource: fixtureSource(),
-          localDataSource: localDataSource,
-          currentUserId: () => activeUserId,
-        );
+    test('Review Provider merges fixture due queue with Local State grade and revision', () async {
+      final localStateRepository = ScopedLearningLocalStateRepository(
+        localDataSource: localDataSource,
+        currentUserId: () => activeUserId,
+      );
+      final repository = TestDataLearningRepository(
+        testDataSource: fixtureSource(),
+        currentUserId: () => activeUserId,
+      );
+      await localStateRepository.recordStudiedVocabulary(
+        wordId: 't1-v2',
+        word: 'invoice',
+        phonetic: '/ˈɪnvɔɪs/',
+        definition: 'hóa đơn',
+        example: 'The invoice is due next Monday.',
+        audioUrl: '',
+        topicId: 't1',
+        topicName: 'Office & Business',
+        grade: 5,
+        serverRevision: '2',
+      );
 
-        final initial = await repository.getDueProgress();
-        expect(
-          initial.firstWhere((item) => item.entityId == 't1-v2').quality,
-          3,
-        );
+      final provider = ReviewSelectWordsProvider(
+        repository: repository,
+        localStateRepository: localStateRepository,
+        currentUserId: () => activeUserId,
+      );
+      addTearDown(provider.dispose);
+      await provider.loadDueWords('t1');
 
-        await repository.recordStudiedVocabulary(
-          wordId: 't1-v2',
-          word: 'invoice',
-          phonetic: '/ˈɪnvɔɪs/',
-          definition: 'hóa đơn',
-          example: 'The invoice is due next Monday.',
-          audioUrl: '',
-          topicId: 't1',
-          topicName: 'Office & Business',
-          grade: 5,
-          serverRevision: '2',
-        );
-
-        final updated = await repository.getDueProgress();
-        final invoice = updated.firstWhere((item) => item.entityId == 't1-v2');
-        expect(invoice.quality, 5);
-        expect(invoice.revision, '2');
-      },
-    );
+      final invoice = provider.words.firstWhere((item) => item.id == 't1-v2');
+      expect(invoice.mastery, WordMastery.daThuoc);
+      expect(invoice.baseEntityRevision, '2');
+    });
 
     test(
       'local progress remains isolated when the active user changes',
       () async {
-        final repository = TestDataLearningRepository(
-          testDataSource: fixtureSource(),
+        final localStateRepository = ScopedLearningLocalStateRepository(
           localDataSource: localDataSource,
           currentUserId: () => activeUserId,
         );
-        await repository.recordStudiedVocabulary(
+        await localStateRepository.recordStudiedVocabulary(
           wordId: 't1-v1',
           word: 'negotiate',
           phonetic: '',
@@ -484,14 +492,17 @@ void main() {
 
         activeUserId = 'user-b';
         localDataSource.switchUser();
-        repository.resetForUserScopeChange();
-        expect((await repository.getVocabularyProgress()).words, isEmpty);
+        localStateRepository.resetForUserScopeChange();
+        expect(
+          (await localStateRepository.getVocabularyProgress()).words,
+          isEmpty,
+        );
 
         activeUserId = 'user-a';
         localDataSource.switchUser();
-        repository.resetForUserScopeChange();
+        localStateRepository.resetForUserScopeChange();
         expect(
-          (await repository.getVocabularyProgress()).words.keys,
+          (await localStateRepository.getVocabularyProgress()).words.keys,
           contains('t1-v1'),
         );
       },
@@ -504,7 +515,6 @@ void main() {
         final remote = _FixtureLikeApiDataSource(failure: apiFailure);
         final repository = ApiLearningRepository(
           remoteDataSource: remote,
-          localDataSource: localDataSource,
           currentUserId: () => activeUserId,
           syncJournal: LearningSyncJournal(),
         );
@@ -824,4 +834,38 @@ class _FixtureLikeApiDataSource implements LearningRemoteDataSource {
     entityId: lessonId,
     revision: '1',
   );
+
+  @override
+  Future<VocabularySessionDto> createVocabularySession({
+    required CreateVocabularySessionRequestDto request,
+    required String idempotencyKey,
+  }) {
+    throw UnsupportedError('Session is not used by this test double.');
+  }
+
+  @override
+  Future<VocabularySessionDto> getVocabularySession(String sessionId) {
+    throw UnsupportedError('Session is not used by this test double.');
+  }
+
+  @override
+  Future<void> saveVocabularySessionReviews({
+    required String sessionId,
+    required SaveVocabularySessionReviewsRequestDto request,
+  }) {
+    throw UnsupportedError('Session is not used by this test double.');
+  }
+
+  @override
+  Future<VocabularySessionResultDto> submitVocabularySession({
+    required String sessionId,
+    required SubmitVocabularySessionRequestDto request,
+  }) {
+    throw UnsupportedError('Session is not used by this test double.');
+  }
+
+  @override
+  Future<void> cancelVocabularySession(String sessionId) {
+    throw UnsupportedError('Session is not used by this test double.');
+  }
 }

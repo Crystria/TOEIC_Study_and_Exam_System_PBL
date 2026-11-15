@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/app_exception.dart';
 
+import '../repositories/learning_local_state_repository.dart';
 import '../repositories/learning_repository.dart';
 
 enum WordMastery { chuaThuoc, moHo, daThuoc }
@@ -40,11 +41,14 @@ enum ReviewSelectStatus { idle, loading, loaded, error }
 class ReviewSelectWordsProvider extends ChangeNotifier {
   ReviewSelectWordsProvider({
     required LearningRepository repository,
+    required LearningLocalStateRepository localStateRepository,
     required String? Function() currentUserId,
   }) : _repository = repository,
+       _localStateRepository = localStateRepository,
        _currentUserId = currentUserId;
 
   final LearningRepository _repository;
+  final LearningLocalStateRepository _localStateRepository;
   final String? Function() _currentUserId;
   int _scopeRevision = 0;
   ReviewSelectStatus status = ReviewSelectStatus.idle;
@@ -79,6 +83,8 @@ class ReviewSelectWordsProvider extends ChangeNotifier {
       if (!_isCurrent(revision, userIdAtStart)) return;
       final dueWords = await _repository.getDueVocabulary(topicId: topicId);
       if (!_isCurrent(revision, userIdAtStart)) return;
+      final localProgress = await _localStateRepository.getVocabularyProgress();
+      if (!_isCurrent(revision, userIdAtStart)) return;
 
       _topicNames
         ..clear()
@@ -92,7 +98,11 @@ class ReviewSelectWordsProvider extends ChangeNotifier {
           item.topicId,
           () => <ReviewWord>[],
         );
-        final quality = due.quality ?? 0;
+        final saved = localProgress.words[item.id];
+        // Local grade/revision is the device cache for history not fully
+        // exposed by the current Learning Backend read contract.
+        final quality = saved?.grade ?? due.quality ?? 0;
+        final revision = saved?.serverRevision ?? due.revision;
         words.add(
           ReviewWord(
             id: item.id,
@@ -109,7 +119,7 @@ class ReviewSelectWordsProvider extends ChangeNotifier {
             selected: false,
             topicId: item.topicId,
             topicName: item.topicName,
-            baseEntityRevision: due.revision,
+            baseEntityRevision: revision,
           ),
         );
       }

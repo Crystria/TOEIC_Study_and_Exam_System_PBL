@@ -63,6 +63,9 @@ Future<void> startToeicApp({
 
   final authRepository = featureGraph.authRepository;
   final learningRepository = featureGraph.learningRepository;
+  final learningLocalStateRepository =
+      featureGraph.learningLocalStateRepository;
+  final learningSessionRepository = featureGraph.learningSessionRepository;
   final analyticsRepository = featureGraph.analyticsRepository;
   final mockTestRepository = featureGraph.mockTestRepository;
   final mockTestAttemptRepository = featureGraph.mockTestAttemptRepository;
@@ -97,26 +100,34 @@ Future<void> startToeicApp({
 
   final vocabularyTopicsProvider = VocabularyTopicsProvider(
     repository: learningRepository,
+    localStateRepository: learningLocalStateRepository,
   );
   final vocabularyProvider = VocabularyProvider(
     repository: learningRepository,
+    localStateRepository: learningLocalStateRepository,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
   final grammarListProvider = GrammarListProvider(
     repository: learningRepository,
+    localStateRepository: learningLocalStateRepository,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
   final grammarLessonProvider = GrammarLessonProvider(
     repository: learningRepository,
+    localStateRepository: learningLocalStateRepository,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
-  final quickQuizProvider = QuickQuizProvider();
+  final quickQuizProvider = QuickQuizProvider(
+    sessionRepository: learningSessionRepository,
+  );
   final reviewSelectWordsProvider = ReviewSelectWordsProvider(
     repository: learningRepository,
+    localStateRepository: learningLocalStateRepository,
     currentUserId: () => userDataCoordinator.currentUserId,
   );
   final reviewFlashcardProvider = ReviewFlashcardProvider(
     repository: learningRepository,
+    localStateRepository: learningLocalStateRepository,
     currentUserId: () => userDataCoordinator.currentUserId,
     onProgressPersisted: vocabularyTopicsProvider.refreshProgress,
   );
@@ -144,6 +155,8 @@ Future<void> startToeicApp({
   userDataCoordinator = UserScopedDataCoordinator(
     vocabularyStorage: vocabularyStorage,
     resetCallbacks: [
+      learningLocalStateRepository.resetForUserScopeChange,
+      learningSessionRepository.resetForUserScopeChange,
       learningRepository.resetForUserScopeChange,
       analyticsRepository.resetForUserScopeChange,
       analyticsProvider.resetForUserScopeChange,

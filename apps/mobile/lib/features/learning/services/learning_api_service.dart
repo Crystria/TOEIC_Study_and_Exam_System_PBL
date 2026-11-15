@@ -4,6 +4,11 @@ import '../../../core/network/endpoints.dart';
 import '../models/learning_dtos.dart';
 import '../requests/learning_request_dtos.dart';
 
+import 'package:dio/dio.dart';
+
+import '../models/vocabulary_session_dtos.dart';
+import '../requests/learning_session_requests.dart';
+
 /// Thin transport adapter for the existing Learning API.
 /// It performs HTTP + JSON-to-DTO mapping only; persistence and retry policy
 /// belong to LearningRepository.
@@ -120,5 +125,87 @@ class LearningApiService {
       expectedOperationId: request.operationId,
       expectedEntityType: 'LESSON',
     );
+  }
+
+  Future<VocabularySessionDto> createVocabularySession({
+    required CreateVocabularySessionRequestDto request,
+    required String idempotencyKey,
+  }) async {
+    final key = idempotencyKey.trim();
+
+    if (key.isEmpty) {
+      throw ArgumentError.value(
+        idempotencyKey,
+        'idempotencyKey',
+        'Idempotency key must not be empty.',
+      );
+    }
+
+    final response = await _client.post<Object?>(
+      Endpoints.learning.createVocabularySession,
+      data: request.toJson(),
+      options: Options(headers: <String, Object>{'Idempotency-Key': key}),
+    );
+
+    final session = VocabularySessionDto.fromObject(response.data);
+
+    if (session.topicId != request.topicId || session.mode != request.mode) {
+      throw const FormatException(
+        'Created session does not match the requested topic and mode.',
+      );
+    }
+
+    return session;
+  }
+
+  Future<VocabularySessionDto> getVocabularySession(String sessionId) async {
+    final response = await _client.get<Object?>(
+      Endpoints.learning.vocabularySession(sessionId),
+    );
+
+    final session = VocabularySessionDto.fromObject(response.data);
+
+    if (session.sessionId != sessionId) {
+      throw const FormatException(
+        'Session response ID does not match the requested ID.',
+      );
+    }
+
+    return session;
+  }
+
+  Future<void> saveVocabularySessionReviews({
+    required String sessionId,
+    required SaveVocabularySessionReviewsRequestDto request,
+  }) async {
+    final response = await _client.post<Object?>(
+      Endpoints.learning.reviewVocabularySession(sessionId),
+      data: request.toJson(),
+    );
+
+    LearningSessionActionReceiptDto.fromObject(response.data);
+  }
+
+  Future<VocabularySessionResultDto> submitVocabularySession({
+    required String sessionId,
+    required SubmitVocabularySessionRequestDto request,
+  }) async {
+    final response = await _client.post<Object?>(
+      Endpoints.learning.submitVocabularySession(sessionId),
+      data: request.toJson(),
+    );
+
+    return VocabularySessionResultDto.fromObject(
+      response.data,
+      expectedSessionId: sessionId,
+    );
+  }
+
+  Future<void> cancelVocabularySession(String sessionId) async {
+    final response = await _client.post<Object?>(
+      Endpoints.learning.cancelVocabularySession(sessionId),
+    );
+
+    LearningSessionActionReceiptDto.fromObject(response.data);
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../../../core/errors/app_exception.dart';
 import '../models/learning_models.dart';
 import '../models/learning_progress.dart';
+import '../repositories/learning_local_state_repository.dart';
 import '../repositories/learning_repository.dart';
 
 class FlashcardItem {
@@ -49,11 +50,14 @@ enum VocabularyLearningMode { topic, random }
 class VocabularyProvider extends ChangeNotifier {
   VocabularyProvider({
     required LearningRepository repository,
+    required LearningLocalStateRepository localStateRepository,
     required String? Function() currentUserId,
   }) : _repository = repository,
+       _localStateRepository = localStateRepository,
        _currentUserId = currentUserId;
 
   final LearningRepository _repository;
+  final LearningLocalStateRepository _localStateRepository;
   final String? Function() _currentUserId;
   Future<void>? _initialization;
   int _scopeRevision = 0;
@@ -105,7 +109,7 @@ class VocabularyProvider extends ChangeNotifier {
   Future<void> _loadPersistedProgress() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _repository.getVocabularyProgress();
+      final snapshot = await _localStateRepository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applySnapshot(snapshot);
       persistenceError = null;
@@ -120,7 +124,7 @@ class VocabularyProvider extends ChangeNotifier {
   Future<void> refreshPersistedProgress() async {
     final revision = _scopeRevision;
     try {
-      final snapshot = await _repository.getVocabularyProgress();
+      final snapshot = await _localStateRepository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applySnapshot(snapshot);
       persistenceError = null;
@@ -341,7 +345,7 @@ class VocabularyProvider extends ChangeNotifier {
       );
       if (!_isCurrentAccount(revision, userIdAtStart)) return;
 
-      final snapshot = await _repository.recordStudiedVocabulary(
+      final snapshot = await _localStateRepository.recordStudiedVocabulary(
         wordId: item.id,
         word: item.word,
         phonetic: item.phonetic,
@@ -386,15 +390,6 @@ class VocabularyProvider extends ChangeNotifier {
 
   bool _isCurrentAccount(int revision, String? userId) =>
       revision == _scopeRevision && _currentUserId()?.trim() == userId;
-
-  /// Quiz phase can read this persisted list to build today's question set.
-  /// The list contains each unique word last studied on the device's local day.
-  Future<List<FlashcardItem>> getWordsStudiedTodayForQuiz() async {
-    final revision = _scopeRevision;
-    await initialize();
-    if (revision != _scopeRevision) return const <FlashcardItem>[];
-    return todayStudiedWords;
-  }
 
   /// Clears only the active in-memory queue; persisted study history is kept.
   void reset() {

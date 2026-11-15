@@ -1,6 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toeic_mobile/core/storage/grammar_progress_storage.dart';
+import 'package:toeic_mobile/core/storage/vocabulary_progress_storage.dart';
+import 'package:toeic_mobile/features/learning/data_sources/local/learning_local_data_source.dart';
 import 'package:toeic_mobile/features/learning/models/learning_models.dart';
+import 'package:toeic_mobile/features/learning/repositories/learning_local_state_repository.dart';
 import 'package:toeic_mobile/features/learning/providers/vocabulary_provider.dart';
 import 'package:toeic_mobile/features/learning/repositories/learning_repository.dart';
 
@@ -17,6 +21,7 @@ void main() {
       final repository = _TopicDetailRepository();
       final provider = VocabularyProvider(
         repository: repository,
+        localStateRepository: _createLocalStateRepository(),
         currentUserId: () => 'qa-user',
       );
       addTearDown(provider.dispose);
@@ -43,6 +48,7 @@ void main() {
       final repository = _TopicDetailRepository();
       final provider = VocabularyProvider(
         repository: repository,
+        localStateRepository: _createLocalStateRepository(),
         currentUserId: () => 'qa-user',
       );
       addTearDown(provider.dispose);
@@ -88,4 +94,16 @@ class _TopicDetailRepository implements LearningRepository {
 
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+LearningLocalStateRepository _createLocalStateRepository() {
+  const userId = 'qa-user';
+  final localDataSource = SharedPreferencesLearningLocalDataSource(
+    vocabularyStorage: VocabularyProgressStorage()..bindUser(userId),
+    grammarStorage: GrammarProgressStorage(),
+  );
+  return ScopedLearningLocalStateRepository(
+    localDataSource: localDataSource,
+    currentUserId: () => userId,
+  );
 }

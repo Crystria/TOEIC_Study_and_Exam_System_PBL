@@ -1,29 +1,25 @@
 import '../../../core/errors/app_exception.dart';
-import '../data_sources/local/learning_local_data_source.dart';
 import '../data_sources/learning_content_data_source.dart';
 import '../models/grammar_lesson.dart';
 import '../models/learning_dtos.dart';
 import '../models/learning_models.dart';
-import '../models/learning_progress.dart';
 import '../mappers/learning_dto_mapper.dart';
 import '../requests/learning_request_dtos.dart';
 import 'learning_repository.dart';
 
-/// Development implementation of [LearningRepository]. Catalog content is
-/// read from fixtures; mutable progress is always persisted by Local Data
-/// Source and is never written back into the bundled JSON assets.
+/// Development implementation of [LearningRepository]. It serves content and
+/// simulated Backend mutation receipts from approved fixtures. User-owned
+/// progress and preferences are handled separately by
+/// LearningLocalStateRepository.
 class TestDataLearningRepository implements LearningRepository {
   TestDataLearningRepository({
     required LearningContentDataSource testDataSource,
-    required LearningLocalDataSource localDataSource,
     required String? Function() currentUserId,
   }) : _testData = testDataSource,
-       _local = localDataSource,
        _currentUserId = currentUserId;
 
   static const int _pageSize = 50;
   final LearningContentDataSource _testData;
-  final LearningLocalDataSource _local;
   final String? Function() _currentUserId;
   int _scopeRevision = 0;
   int _operationSequence = 0;
@@ -175,23 +171,9 @@ class TestDataLearningRepository implements LearningRepository {
       ),
       scope,
     );
-    final localProgress = await _local.loadVocabularyProgress();
     _ensureScope(scope);
-
-    // A fixture defines the initial review queue. Once a learner grades a
-    // flashcard, the user-owned local record overrides fixture mastery and
-    // revision so subsequent reads reflect the mutation.
     return List.unmodifiable(
-      dtos.map((dto) {
-        final saved = localProgress.words[dto.entityId];
-        final fixtureProgress = LearningDtoMapper.reviewProgress(dto);
-        return LearningReviewProgress(
-          entityId: fixtureProgress.entityId,
-          revision: saved?.serverRevision ?? fixtureProgress.revision,
-          quality: saved?.grade ?? fixtureProgress.quality,
-          nextReviewDate: fixtureProgress.nextReviewDate,
-        );
-      }),
+      dtos.map(LearningDtoMapper.reviewProgress).toList(growable: false),
     );
   }
 
@@ -234,20 +216,8 @@ class TestDataLearningRepository implements LearningRepository {
   Future<LearningProgressSummary> getProgressSummary() async {
     final scope = _captureScope();
     final fixtureSummary = await _testData.getProgressSummary();
-    final vocabularyProgress = await _local.loadVocabularyProgress();
-    final grammarProgress = scope.userId == null
-        ? LearningGrammarProgress.empty()
-        : await _local.loadGrammarProgress(scope.userId!);
-    final due = await getDueProgress();
     _ensureScope(scope);
-    return LearningProgressSummary(
-      reviewedVocabularies: vocabularyProgress.totalLearnedWords,
-      vocabulariesLearned: vocabularyProgress.totalLearnedWords,
-      dueVocabularies: due.length,
-      grammarLessonsCompleted: grammarProgress.completedLessonIds.length,
-      sessionsCompleted: fixtureSummary.sessionsCompleted,
-      updatedAt: fixtureSummary.updatedAt,
-    );
+    return LearningDtoMapper.progressSummary(fixtureSummary);
   }
 
   @override
@@ -323,113 +293,6 @@ class TestDataLearningRepository implements LearningRepository {
     _ensureScope(scope);
   }
 
-  @override
-  Future<LearningVocabularyProgress> getVocabularyProgress() =>
-      _local.loadVocabularyProgress();
-
-  @override
-  Future<bool> hasUnassignedLegacyProgress() async {
-    final scope = _captureScope();
-    final hasLegacyData = await _local.hasUnassignedLegacyProgress();
-    _ensureScope(scope);
-    return hasLegacyData;
-  }
-
-  @override
-  Future<LearningVocabularyProgress> importUnassignedLegacyProgress({
-    required bool confirmOwnership,
-  }) async {
-    final scope = _captureScope();
-    final progress = await _local.importUnassignedLegacyProgress(
-      confirmOwnership: confirmOwnership,
-    );
-    _ensureScope(scope);
-    return progress;
-  }
-
-  @override
-  Future<LearningVocabularyProgress> recordStudiedVocabulary({
-    required String wordId,
-    required String word,
-    required String phonetic,
-    required String definition,
-    required String example,
-    required String audioUrl,
-    required String topicId,
-    required String topicName,
-    required int grade,
-    String? serverRevision,
-  }) => _local.recordStudiedWord(
-    wordId: wordId,
-    word: word,
-    phonetic: phonetic,
-    definition: definition,
-    example: example,
-    audioUrl: audioUrl,
-    topicId: topicId,
-    topicName: topicName,
-    grade: grade,
-    serverRevision: serverRevision,
-  );
-
-  @override
-  Future<LearningVocabularyProgress> saveDailyGoal(int goal) =>
-      _local.saveDailyGoal(goal);
-
-  @override
-  Future<LearningVocabularyProgress> saveReviewSettings({
-    required int dailyGoal,
-    required bool remindEnabled,
-  }) => _local.saveReviewSettings(
-    dailyGoal: dailyGoal,
-    remindEnabled: remindEnabled,
-  );
-
-  @override
-  Future<LearningGrammarProgress> getGrammarProgress(String userId) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    final progress = await _local.loadGrammarProgress(userId);
-    _ensureScope(scope);
-    return progress;
-  }
-
-  @override
-  Future<void> markGrammarLessonStarted(String userId, String lessonId) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    await _local.markGrammarLessonStarted(userId, lessonId);
-    _ensureScope(scope);
-  }
-
-  @override
-  Future<void> markGrammarLessonCompleted(
-    String userId,
-    String lessonId, {
-    String? revision,
-  }) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    await _local.markGrammarLessonCompleted(
-      userId,
-      lessonId,
-      revision: revision,
-    );
-    _ensureScope(scope);
-  }
-
-  @override
-  Future<String> getGrammarLessonRevision(
-    String userId,
-    String lessonId,
-  ) async {
-    final scope = _captureScope();
-    _ensureRequestedUser(scope, userId);
-    final revision = await _local.grammarLessonRevision(userId, lessonId);
-    _ensureScope(scope);
-    return revision;
-  }
-
   Future<List<T>> _collectPages<T>(
     Future<LearningPageDto<T>> Function(int page) loadPage,
     _TestDataScope scope,
@@ -462,21 +325,6 @@ class TestDataLearningRepository implements LearningRepository {
     userId: _currentUserId()?.trim(),
     revision: _scopeRevision,
   );
-
-  void _ensureRequestedUser(_TestDataScope scope, String userId) {
-    final activeUserId = scope.userId;
-    if (activeUserId == null || activeUserId.isEmpty) {
-      throw const AppException.unauthorized(
-        message: 'Bạn cần đăng nhập để truy cập tiến trình Grammar.',
-      );
-    }
-    if (activeUserId != userId.trim()) {
-      throw const AppException.cancelled(
-        message: 'Không thể truy cập tiến trình Grammar của tài khoản khác.',
-      );
-    }
-    _ensureScope(scope);
-  }
 
   void _ensureScope(_TestDataScope scope) {
     if (scope.revision != _scopeRevision ||

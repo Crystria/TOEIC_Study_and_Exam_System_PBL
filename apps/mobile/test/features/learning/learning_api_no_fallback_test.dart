@@ -1,6 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toeic_mobile/features/learning/models/learning_progress.dart';
+import 'package:toeic_mobile/core/storage/grammar_progress_storage.dart';
+import 'package:toeic_mobile/core/storage/vocabulary_progress_storage.dart';
+import 'package:toeic_mobile/features/learning/data_sources/local/learning_local_data_source.dart';
+import 'package:toeic_mobile/features/learning/repositories/learning_local_state_repository.dart';
 import 'package:toeic_mobile/features/learning/providers/grammar_lesson_provider.dart';
 import 'package:toeic_mobile/features/learning/providers/grammar_list_provider.dart';
 import 'package:toeic_mobile/features/learning/providers/vocabulary_provider.dart';
@@ -20,6 +23,7 @@ void main() {
       () async {
         final provider = VocabularyProvider(
           repository: _UnavailableLearningRepository(),
+          localStateRepository: _createLocalStateRepository('test-user-001'),
           currentUserId: () => 'test-user-001',
         );
         addTearDown(provider.dispose);
@@ -35,6 +39,7 @@ void main() {
     test('Vocabulary topics expose the remote failure instead of showing fixture topics', () async {
       final provider = VocabularyTopicsProvider(
         repository: _UnavailableLearningRepository(),
+        localStateRepository: _createLocalStateRepository('test-user-001'),
       );
       addTearDown(provider.dispose);
 
@@ -48,6 +53,7 @@ void main() {
     test('Grammar list exposes the remote failure instead of showing fixture lessons', () async {
       final provider = GrammarListProvider(
         repository: _UnavailableLearningRepository(),
+        localStateRepository: _createLocalStateRepository('test-user-001'),
         currentUserId: () => 'test-user-001',
       );
       addTearDown(provider.dispose);
@@ -62,6 +68,7 @@ void main() {
     test('Grammar detail exposes the remote failure instead of showing a fixture lesson', () async {
       final provider = GrammarLessonProvider(
         repository: _UnavailableLearningRepository(),
+        localStateRepository: _createLocalStateRepository('test-user-001'),
         currentUserId: () => 'test-user-001',
       );
       addTearDown(provider.dispose);
@@ -79,18 +86,21 @@ void main() {
 /// Local user progress remains readable so each test reaches a remote operation.
 class _UnavailableLearningRepository implements LearningRepository {
   @override
-  Future<LearningVocabularyProgress> getVocabularyProgress() async =>
-      LearningVocabularyProgress.empty();
-
-  @override
-  Future<LearningGrammarProgress> getGrammarProgress(String userId) async =>
-      LearningGrammarProgress.empty();
-
-  @override
   void resetForUserScopeChange() {}
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
     throw StateError('Simulated Backend API unavailable.');
   }
+}
+
+LearningLocalStateRepository _createLocalStateRepository(String userId) {
+  final localDataSource = SharedPreferencesLearningLocalDataSource(
+    vocabularyStorage: VocabularyProgressStorage()..bindUser(userId),
+    grammarStorage: GrammarProgressStorage(),
+  );
+  return ScopedLearningLocalStateRepository(
+    localDataSource: localDataSource,
+    currentUserId: () => userId,
+  );
 }
