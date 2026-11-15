@@ -179,7 +179,8 @@ export function ipRateLimitPolicy(
 
 export function userRateLimitPolicy(method: string, path: string): RateLimitPolicy {
   if (isPresignPath(method, path)) {
-    return { bucket: 'presign', scope: 'user', capacity: 30, refillPerSecond: 30 / 3600 };
+    // Increased for the current content import phase: 200 burst, 200 refilled/hour.
+    return { bucket: 'presign', scope: 'user', capacity: 200, refillPerSecond: 200 / 3600 };
   }
   if (isSubmitPath(method, path)) {
     return { bucket: 'submit', scope: 'user', capacity: 30, refillPerSecond: 0.5 };
