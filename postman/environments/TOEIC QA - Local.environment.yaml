@@ -1,4 +1,4 @@
-name: New Environment
+name: TOEIC QA - Local
 values:
   - key: baseUrl
     value: ''

@@ -1,0 +1,13 @@
+$kind: collection
+name: API-010 - POST /tests/{testId}/attempts
+description: |-
+  POST /tests/{testId}/attempts
+  Procedure: 1. Start Full Test.
+  2. Kiểm tra schema/snapshot/deadline và owner.
+  Expected: 201; attempt IN_PROGRESS, đúng user/test, 200 câu/7 Part; deadline phù hợp duration; không lộ đáp án/lời giải.
+  Preconditions: Đề đầy đủ; user được phép; ID mới.
+  Execution note: Ưu tiên: High.
+  Risk: R-01,R-03,R-05.
+  Nguồn: Software Test Documentation.docx §1.1.b–c.
+  Fixture: testId từ QA seed; dùng qa-demo-3 làm User A hoặc qa-demo-4 nếu cần một owner mới. QA seed chỉ tạo đề/câu hỏi, không tạo sẵn attempt. Gọi POST start Full với Idempotency-Key duy nhất cho lượt test; lưu attemptId, mode/status, question count, serverTime/deadlineAt/remainingSeconds. Kỳ vọng IN_PROGRESS, 200 câu/7 Part, không lộ answer key.
+order: 11000

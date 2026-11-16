@@ -1,0 +1,15 @@
+$kind: collection
+name: API-036 - Lỗi dịch vụ lưu/nộp không làm hỏng dữ liệu
+description: |-
+  Lỗi dịch vụ lưu/nộp không làm hỏng dữ liệu
+  Procedure: 1. Fault injection có kiểm soát khi lưu/nộp.
+  2. Ghi response, phục hồi rồi GET/retry.
+  3. Đối soát draft/result/count.
+  Expected: Không thành công giả; đáp án đã xác nhận trước sự cố không mất; retry không tạo trùng. Status/error theo hợp đồng lỗi đã chốt.
+  Preconditions: QA riêng, kế hoạch phục hồi; không làm hỏng môi trường dùng chung.
+  Execution note: Ưu tiên: High.
+  Risk: R-02,R-04.
+  Nguồn: Software Test Documentation.docx §1.3; 2.1; 2.4 R-02/R-04.
+  qa:seed chỉ tạo dữ liệu, không mô phỏng lỗi DB/network/service. Chỉ chạy trên QA overlay riêng với kế hoạch fault injection được Backend owner phê duyệt: lưu draft thành công trước lỗi, gây lỗi có kiểm soát, phục hồi, GET/retry và đối soát draft/result/outbox. Không ngắt dịch vụ hoặc làm hỏng dữ liệu trên môi trường dev dùng chung
+  Do not stop shared services, alter DB rows, or inject faults into development/production. Requires an approved proxy/chaos fixture.
+order: 37000

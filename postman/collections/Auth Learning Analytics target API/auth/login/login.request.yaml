@@ -26,14 +26,32 @@ body:
   type: json
   content: "{\r
 
-    \  \"email\": \"test@example.com\",\r
+    \  \"email\": \"{{qaUserAEmail}}\",\r
 
-    \  \"password\": \"Crystal-0407\",\r
+    \  \"password\": \"{{qaUserAPassword}}\",\r
 
-    \  \"deviceId\": \"api-test-windows\"\r
+    \  \"deviceId\": \"{{deviceId}}\"\r
 
     }"
 auth:
   type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      const response = pm.response.json();
+
+      if (pm.response.code === 200) {
+          const data = response.data ?? response;
+
+          if (data.accessToken) {
+              pm.environment.set("accessToken", data.accessToken);
+          }
+
+          if (data.refreshToken) {
+              pm.environment.set("refreshToken", data.refreshToken);
+          }
+      }
+    language: text/javascript
 settings: {}
+examples: .resources/login.resources/examples
 order: 1000

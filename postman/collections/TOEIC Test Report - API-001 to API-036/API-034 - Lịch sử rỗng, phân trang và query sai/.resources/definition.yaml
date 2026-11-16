@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  Lịch sử rỗng, phân trang và query sai
+  Procedure: 1. User rỗng gọi history.
+  2. User nhiều bài gọi page/size hợp lệ.
+  3. Gửi page=0, size=0/51, testId sai UUID.
+  Expected: 200 với items rỗng khi đúng; phân trang đúng tổng và không lặp trên dataset ổn định; query sai trả 400 theo DTO.
+  Preconditions: HistoryQueryDto hiện hành; fixture đủ nhiều bản ghi.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.c; 2.1.
+  Chạy trường hợp history rỗng trước trên User B (qa-demo-4) khi chưa tạo attempt cho B. Sau đó dùng User A tạo đủ lượt để kiểm tra page/size, không lặp/mất item trên dataset ổn định. Kiểm tra riêng page=0, size=0, size=51 và testId sai UUID; kỳ vọng 400 theo DTO.
+  Run the empty-history assertion before any testcase creates an attempt for User B. If B already has history, use a fresh QA account.
+order: 35000

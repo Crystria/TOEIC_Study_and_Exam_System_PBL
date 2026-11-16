@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  Lưu đè đáp án
+  Procedure: 1. Lưu A rồi B cho cùng câu.
+  2. Đọc lại draft; nộp không gửi đè để kiểm tra.
+  Expected: Lựa chọn cuối là B; không tạo hai đáp án hiệu lực hoặc chấm theo A.
+  Preconditions: Câu có A/B; cùng attempt, còn hạn.
+  Execution note: Ưu tiên: High.
+  Risk: R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-02.
+  Dùng attempt riêng. Với cùng một questionId, PUT lần lượt A rồi B; GET draft để xác nhận giá trị cuối là B. Khi submit không gửi payload ghi đè, đối chiếu kết quả chấm theo B. Không dùng lại attempt đã submit từ testcase khác.
+order: 14000

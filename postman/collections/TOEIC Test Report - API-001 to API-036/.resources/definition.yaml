@@ -1,0 +1,72 @@
+$kind: collection
+description: Automated API regression suite generated from Test Report.xlsx / Test API. Live write requests are fail-closed behind QA /ready preflight. Import and run sequentially; never use production.
+variables:
+  - key: invalidRefreshToken
+    value: ""
+    disabled: false
+  - key: nonExistingEmail
+    value: ""
+    disabled: false
+  - key: revokedRefreshTokenA
+    value: ""
+    disabled: false
+  - key: gatewayOrigin
+    value: ""
+    disabled: false
+  - key: baseUrl
+    value: ""
+    disabled: false
+  - key: qaUserAEmail
+    value: ""
+    disabled: false
+  - key: qaUserAId
+    value: ""
+    disabled: false
+  - key: qaUserAPassword
+    value: ""
+    disabled: false
+  - key: qaUserBEmail
+    value: ""
+    disabled: false
+  - key: qaUserBId
+    value: ""
+    disabled: false
+  - key: qaUserBPassword
+    value: ""
+    disabled: false
+  - key: accessToken
+    secret: true
+    disabled: false
+  - key: refreshToken
+    value: ""
+    disabled: false
+  - key: accessTokenB
+    secret: true
+    disabled: false
+  - key: refreshTokenB
+    value: ""
+    disabled: false
+  - key: deviceId
+    value: ""
+    disabled: false
+  - key: deviceIdB
+    value: ""
+    disabled: false
+  - key: qaTestId
+    value: ""
+    disabled: false
+  - key: examTitle
+    value: ""
+    disabled: false
+  - key: qaReadyConfirmed
+    value: ""
+    disabled: false
+  - key: accessTokenA
+    secret: true
+    disabled: false
+  - key: refreshTokenA
+    value: ""
+    disabled: false
+  - key: targetEnvironment
+    value: ""
+    disabled: false

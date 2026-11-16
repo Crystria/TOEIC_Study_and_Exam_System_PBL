@@ -1,0 +1,31 @@
+$kind: http-request
+url: "{{baseUrl}}/attempts/{{attemptId}}"
+method: GET
+headers:
+  Authorization: Bearer {{accessTokenA}}
+  X-Correlation-ID: "{{$guid}}"
+scripts:
+  - type: beforeRequest
+    code: 'if (pm.environment.get("qaReadyConfirmed") !== "true") { console.warn("Skipped: QA preflight not passed."); pm.execution.skipRequest(); }'
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      const attemptId = pm.environment.get("attemptId");
+      const baseUrl = (pm.environment.get("baseUrl") || "").replace(/\/+$/, "");
+      const token = pm.environment.get("accessTokenA") || "";
+      pm.test("Attempt and owner token exist", () => { pm.expect(attemptId).to.be.a("string").and.not.empty; pm.expect(token).to.be.a("string").and.not.empty; });
+      const request = { url: baseUrl + "/attempts/" + attemptId + "/submit", method: "POST", header: [{ key: "Authorization", value: "Bearer " + token }, { key: "Content-Type", value: "application/json" }], body: { mode: "raw", raw: "{}" } };
+      (async () => {
+        try {
+          const responses = await Promise.all([pm.sendRequest(request), pm.sendRequest(request)]);
+          const codes = responses.map(r => r.code);
+          pm.test("Two concurrent submit requests both returned HTTP responses", () => pm.expect(codes).to.have.length(2));
+          pm.test("Concurrent submit responses are non-server-error", () => pm.expect(codes.every(code => code >= 200 && code < 500)).to.eql(true));
+          pm.test("At least one concurrent submission finalized successfully", () => pm.expect(codes.some(code => code === 200 || code === 201)).to.eql(true));
+          pm.environment.set("concurrentSubmitStatuses", JSON.stringify(codes));
+        } catch (error) {
+          pm.test("Concurrent submit requests completed without transport exception", () => { throw error; });
+        }
+      })();
+    language: text/javascript
+order: 2000

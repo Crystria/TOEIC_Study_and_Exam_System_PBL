@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/attempts/{{attemptId}}"
+method: GET
+headers:
+  Authorization: Bearer {{accessTokenA}}
+  X-Correlation-ID: "{{$guid}}"
+scripts:
+  - type: beforeRequest
+    code: 'console.warn("SKIP: no generic fault injection route is defined. Backend owner must provide an isolated proxy/failure protocol."); pm.execution.skipRequest();'
+    language: text/javascript
+order: 1000

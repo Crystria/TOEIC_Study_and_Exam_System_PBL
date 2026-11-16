@@ -1,0 +1,14 @@
+$kind: collection
+description: |-
+  Submit sau deadline không nhận sửa muộn
+  Procedure: 1. Lưu draft trước hạn.
+  2. Qua deadline, submit kèm đáp án khác.
+  3. Đọc kết quả.
+  Expected: Kết thúc theo quy tắc hết giờ; đáp án muộn không thay draft hợp lệ; thời điểm và điểm khớp expected.
+  Preconditions: Timeout QA; EN-01 đã chốt; biết draft trước hạn.
+  Execution note: Ưu tiên: High.
+  Risk: R-02,R-05.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-05; 3.4 EX-06.
+  Tạo PART attempt duration 300 giây (mức tối thiểu trong contract), lưu draft trước deadline, ghi deadlineAt từ server. Chờ qua deadline rồi submit payload có lựa chọn khác; đối chiếu kết quả không nhận đáp án đến muộn. Ghi chính xác thời gian server và response. Không dùng FULL 120 phút cho lần kiểm tra nhanh.
+  After start, wait until the server-reported deadlineAt is past. Then run the specific follow-up request manually; do not use arbitrary clock mutation.
+order: 29000

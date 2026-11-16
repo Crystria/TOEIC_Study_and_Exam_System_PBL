@@ -1,0 +1,107 @@
+$kind: http-request
+url: "{{baseUrl}}/attempts/{{attemptId}}/draft"
+method: PUT
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{accessTokenA}}
+  X-Correlation-ID: "{{$guid}}"
+body:
+  type: json
+  content: |-
+    {
+      "answers": {{mixedAnswersJson}}
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      if (pm.collectionVariables.get("qaReadyConfirmed") !== "true") { console.warn("Skipped: QA preflight not passed."); pm.execution.skipRequest(); }
+      const q=JSON.parse(pm.collectionVariables.get("questionIdsJson")||"[]"); if(q.length!==200) pm.execution.skipRequest(); else pm.collectionVariables.set("mixedAnswersJson",JSON.stringify(q.map((questionId,i)=>({questionId,selectedOption:i<100?"A":"B"}))));
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      
+      function bodyJson() {
+        try { return pm.response.json(); } catch (_) { return {}; }
+      }
+      function findValue(obj, keys) {
+        if (!obj || typeof obj !== "object") return undefined;
+        if (Array.isArray(obj)) {
+          for (const item of obj) { const v = findValue(item, keys); if (v !== undefined) return v; }
+          return undefined;
+        }
+        for (const [k, v] of Object.entries(obj)) {
+          if (keys.includes(k) && v !== undefined && v !== null) return v;
+        }
+        for (const v of Object.values(obj)) {
+          const found = findValue(v, keys);
+          if (found !== undefined) return found;
+        }
+        return undefined;
+      }
+      function allObjects(obj, out = []) {
+        if (!obj || typeof obj !== "object") return out;
+        if (Array.isArray(obj)) obj.forEach(x => allObjects(x, out));
+        else { out.push(obj); Object.values(obj).forEach(x => allObjects(x, out)); }
+        return out;
+      }
+      function questionIds(obj) {
+        const ids = new Set();
+        for (const o of allObjects(obj)) {
+          const id = o.questionId || o.id;
+          if (typeof o.questionId === "string" && /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(o.questionId)) ids.add(o.questionId);
+        }
+        return [...ids];
+      }
+      function assertNoKeys(obj, blocked) {
+        const seen = [];
+        for (const o of allObjects(obj)) {
+          for (const k of Object.keys(o)) if (blocked.includes(k.toLowerCase())) seen.push(k);
+        }
+        pm.expect(seen, "Sensitive answer fields must not be exposed before submit").to.eql([]);
+      }
+      function saveToken(body, prefix) {
+        const access = findValue(body, ["accessToken", "access_token"]);
+        const refresh = findValue(body, ["refreshToken", "refresh_token"]);
+        const userId = findValue(body, ["userId", "id"]);
+        if (access) pm.collectionVariables.set("accessToken" + prefix, access);
+        if (refresh) pm.collectionVariables.set("refreshToken" + prefix, refresh);
+        if (userId) pm.collectionVariables.set("user" + prefix + "Id", userId);
+      }
+      function saveAttempt(body) {
+        const id = findValue(body, ["attemptId"]);
+        if (id) pm.collectionVariables.set("attemptId", id);
+        const ids = questionIds(body);
+        if (ids.length) {
+          pm.collectionVariables.set("questionIdsJson", JSON.stringify(ids));
+          pm.collectionVariables.set("firstQuestionId", ids[0]);
+          if (ids[1]) pm.collectionVariables.set("secondQuestionId", ids[1]);
+          if (ids[2]) pm.collectionVariables.set("thirdQuestionId", ids[2]);
+        }
+        for (const o of allObjects(body)) {
+          const part = Number(o.part || o.partNumber || o.sectionPart);
+          if (part === 2 && typeof o.questionId === "string") {
+            pm.collectionVariables.set("part2QuestionId", o.questionId);
+            break;
+          }
+        }
+      }
+      function expectStatus(code) { pm.test("HTTP " + code, () => pm.response.to.have.status(code)); }
+      function assertJson() { pm.test("Response is valid JSON", () => pm.expect(bodyJson()).to.be.an("object")); }
+      function getAnswers(body) {
+        const arr = findValue(body, ["answers", "draftAnswers"]);
+        return Array.isArray(arr) ? arr : [];
+      }
+      function answerFor(body, qid) {
+        return getAnswers(body).find(x => x.questionId === qid);
+      }
+      function authHeader(prefix = "A") { return "Bearer " + (pm.collectionVariables.get("accessToken" + prefix) || ""); }
+      function makeIdempotencyKey() {
+        const key = pm.variables.replaceIn("{{$guid}}");
+        pm.collectionVariables.set("lastIdempotencyKey", key);
+        return key;
+      }
+
+      const b = bodyJson();
+      expectStatus(200);
+    language: text/javascript
+order: 10000

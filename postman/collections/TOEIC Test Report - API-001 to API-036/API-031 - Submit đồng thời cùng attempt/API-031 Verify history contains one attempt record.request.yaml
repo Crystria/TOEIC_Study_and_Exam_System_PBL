@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{baseUrl}}/attempts?page=1&size=50"
+method: GET
+headers:
+  Authorization: Bearer {{accessTokenA}}
+  X-Correlation-ID: "{{$guid}}"
+queryParams:
+  page: "1"
+  size: "50"
+scripts:
+  - type: beforeRequest
+    code: 'if (pm.environment.get("qaReadyConfirmed") !== "true") { console.warn("Skipped: QA preflight not passed."); pm.execution.skipRequest(); }'
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      const b = bodyJson();
+      expectStatus(200);
+      const attemptId = pm.environment.get("attemptId");
+      const rows = findValue(b,["items","attempts","results"]) || [];
+      pm.test("History response contains a record array", () => pm.expect(rows).to.be.an("array"));
+      const matches = rows.filter(x => String(x.attemptId || x.id || "") === String(attemptId));
+      pm.test("Concurrent submit created exactly one history record", () => pm.expect(matches.length).to.eql(1));
+    language: text/javascript
+order: 4000

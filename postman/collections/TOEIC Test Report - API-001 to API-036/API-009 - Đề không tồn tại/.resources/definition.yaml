@@ -1,0 +1,11 @@
+$kind: collection
+description: |-
+  Đề không tồn tại
+  Procedure: 1. GET chi tiết và POST start với UUID không tồn tại.
+  2. Kiểm tra dữ liệu trước/sau.
+  Expected: 404 theo contract; không tạo attempt mồ côi hoặc rò dữ liệu đề khác.
+  Preconditions: UUID hợp lệ về định dạng nhưng không tồn tại.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.1.
+  Dùng một UUID đúng định dạng nhưng chắc chắn không bằng testId trong artifacts/qa/seed.json. Gọi GET detail và POST start ở hai request độc lập. Ghi nhận 404 theo contract; đối chiếu history/count trước-sau để bảo đảm không tạo attempt mồ côi. Không dùng UUID sai định dạng cho ca này.
+order: 10000

@@ -1,0 +1,13 @@
+$kind: collection
+name: API-012 - PUT /attempts/{id}/answers/{qid} lưu mới
+description: |-
+  PUT /attempts/{id}/answers/{qid} lưu mới
+  Procedure: 1. Gửi selectedOption=A hợp lệ.
+  2. GET attempt để đối soát.
+  Expected: 200; đúng IDs/option, answeredAt hợp lệ; đọc lại thấy đáp án đã xác nhận lưu.
+  Preconditions: Đúng owner, câu thuộc snapshot, trước hạn.
+  Execution note: Ưu tiên: High.
+  Risk: R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b.
+  Fixture: attempt IN_PROGRESS của User A và một questionId thuộc chính snapshot đó. PUT selectedOption=A; đợi acknowledgement; GET attempt/draft để xác nhận questionId/option đã lưu và answeredAt hợp lệ. Không coi thao tác gửi request là đã lưu nếu chưa nhận response xác nhận.
+order: 13000

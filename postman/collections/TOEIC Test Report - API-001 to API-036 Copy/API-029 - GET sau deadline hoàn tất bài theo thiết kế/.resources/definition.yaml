@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  GET sau deadline hoàn tất bài theo thiết kế
+  Procedure: 1. Lưu draft rồi để quá deadline.
+  2. GET attempt, GET lại và xem lịch sử.
+  Expected: Không còn quyền sửa; trả kết quả hoàn tất nhất quán, không tạo trùng; draft đã lưu được giữ.
+  Preconditions: Fixture timeout có kiểm soát; cơ chế auto-finalize đã chốt.
+  Execution note: Ưu tiên: High.
+  Risk: R-02,R-05.
+  Nguồn: Software Test Documentation.docx §1.1.b–c; 3.4 EX-06.
+  Tạo PART attempt 300 giây, lưu draft, đợi qua deadline. GET attempt hai lần và GET history; đối chiếu status/result/draft có nhất quán, không tạo kết quả trùng. Nếu hệ thống dùng background finalizer, ghi cả thời điểm deadline và thời điểm trạng thái hoàn tất thực tế.
+  After start, wait until the server-reported deadlineAt is past. Then run the specific follow-up request manually; do not use arbitrary clock mutation.
+order: 30000

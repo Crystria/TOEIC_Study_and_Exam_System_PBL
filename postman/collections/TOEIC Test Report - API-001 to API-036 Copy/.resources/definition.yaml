@@ -1,0 +1,177 @@
+$kind: collection
+description: Automated API regression suite generated from Test Report.xlsx / Test API. Live write requests are fail-closed behind QA /ready preflight. Import and run sequentially; never use production.
+variables:
+  - key: gatewayOrigin
+    value: http://localhost:3000
+    disabled: false
+  - key: baseUrl
+    value: http://localhost:3000/api/v1
+    disabled: false
+  - key: deviceId
+    value: postman-qa-user-a
+    disabled: false
+  - key: deviceIdB
+    value: postman-qa-user-b
+    disabled: false
+  - key: logoutDeviceId
+    value: postman-qa-logout
+    disabled: false
+  - key: qaUserAEmail
+    value: qa-demo-3@example.test
+    disabled: false
+  - key: qaUserAPassword
+    value: ""
+    disabled: false
+  - key: qaUserBEmail
+    value: qa-demo-4@example.test
+    disabled: false
+  - key: qaUserBPassword
+    value: ""
+    disabled: false
+  - key: wrongPassword
+    value: ""
+    disabled: false
+  - key: nonExistingEmail
+    value: no-such-user-qa@example.test
+    disabled: false
+  - key: invalidRefreshToken
+    value: ""
+    disabled: false
+  - key: invalidAccessToken
+    value: ""
+    disabled: false
+  - key: nonexistentTestId
+    value: ""
+    disabled: false
+  - key: nonexistentAttemptId
+    value: ""
+    disabled: false
+  - key: otherTestQuestionId
+    value: ""
+    disabled: false
+  - key: qaClockControlApproved
+    value: "false"
+    disabled: false
+  - key: enableSlowTimeoutCases
+    value: "false"
+    disabled: false
+  - key: qaFaultInjectionApproved
+    value: "false"
+    disabled: false
+  - key: qaFaultProxyOrigin
+    value: ""
+    disabled: false
+  - key: expectedAllCorrectTotalScore
+    value: ""
+    disabled: false
+  - key: expectedAllWrongTotalScore
+    value: ""
+    disabled: false
+  - key: expectedAllBlankTotalScore
+    value: ""
+    disabled: false
+  - key: expectedMixedTotalScore
+    value: ""
+    disabled: false
+  - key: qaReadyConfirmed
+    value: "false"
+    disabled: false
+  - key: thirdQuestionId
+    value: ""
+    disabled: false
+  - key: part2QuestionId
+    value: ""
+    disabled: false
+  - key: qaDeadlinePassed
+    value: "false"
+    disabled: false
+  - key: attemptDeadlineAt
+    value: ""
+    disabled: false
+  - key: allCorrectAnswersJson
+    value: "[]"
+    disabled: false
+  - key: allWrongAnswersJson
+    value: "[]"
+    disabled: false
+  - key: mixedAnswersJson
+    value: "[]"
+    disabled: false
+  - key: oversizedAnswersJson
+    value: "[]"
+    disabled: false
+  - key: api033FirstAttemptId
+    value: ""
+    disabled: false
+  - key: accessToken
+    value: ""
+    disabled: false
+  - key: accessTokenA
+    secret: true
+    disabled: false
+  - key: attemptId
+    value: ""
+    disabled: false
+  - key: firstQuestionId
+    value: ""
+    disabled: false
+  - key: historyAIds
+    value: ""
+    disabled: false
+  - key: questionIdsJson
+    value: ""
+    disabled: false
+  - key: refreshTokenA
+    value: ""
+    disabled: false
+  - key: secondQuestionId
+    value: ""
+    disabled: false
+  - key: accessTokenB
+    secret: true
+    disabled: false
+  - key: refreshTokenB
+    value: ""
+    disabled: false
+  - key: revokedRefreshTokenA
+    value: ""
+    disabled: false
+  - key: userAId
+    value: ""
+    disabled: false
+  - key: userBId
+    value: ""
+    disabled: false
+  - key: testId
+    value: ""
+    disabled: false
+  - key: concurrentSubmitStatuses
+    value: ""
+    disabled: false
+  - key: expectedAllCorrectListeningScore
+    value: ""
+    disabled: false
+  - key: expectedAllCorrectReadingScore
+    value: ""
+    disabled: false
+  - key: expectedAllWrongListeningScore
+    value: ""
+    disabled: false
+  - key: expectedAllWrongReadingScore
+    value: ""
+    disabled: false
+  - key: expectedAllBlankListeningScore
+    value: ""
+    disabled: false
+  - key: expectedAllBlankReadingScore
+    value: ""
+    disabled: false
+  - key: expectedMixedListeningScore
+    value: ""
+    disabled: false
+  - key: expectedMixedReadingScore
+    value: ""
+    disabled: false
+  - key: scoreTableVersion
+    value: ""
+    disabled: false

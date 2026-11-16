@@ -1,0 +1,12 @@
+$kind: collection
+name: API-008 - GET /tests và /tests/{testId}
+description: |-
+  GET /tests và /tests/{testId}
+  Procedure: 1. Đọc danh sách và chi tiết fixture.
+  2. So schema, ID và totalQuestions.
+  Expected: 200; đúng đề Full Test 200 câu, duration/cấu trúc đúng; không lộ answer key trái chính sách.
+  Preconditions: Token hợp lệ; fixture đã rà soát.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.b; 1.1.c.
+  Gọi list với keyword QA Demo 200 Questions, lưu testId, gọi detail và đối chiếu 200 câu, durationSeconds=7200, phân bổ Part [6,25,39,30,30,16,54]. Fixture hiện dùng group synthetic QA_STIMULUS; không kết luận đã đạt taxonomy Part 7 single/double/triple passage nếu chưa có fixture tương ứng. Detail/list không được lộ answer key/explanation.
+order: 9000

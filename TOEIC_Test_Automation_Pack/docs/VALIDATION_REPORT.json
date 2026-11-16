@@ -1,0 +1,24 @@
+{
+  "sourceWorkbook": "Test Report.xlsx",
+  "postman": {
+    "apiCaseFolders": 36,
+    "apiIdsContinuous": true,
+    "requestCount": 172,
+    "javascriptScriptsChecked": 348,
+    "javascriptSyntaxFailures": 0,
+    "environmentVariableKeys": 58,
+    "missingReferencedEnvironmentVariables": [],
+    "duplicateEnvironmentVariableKeys": []
+  },
+  "appium": {
+    "testFunctions": 26,
+    "caseIdsContinuous": true,
+    "pythonCompileExitCode": 0
+  },
+  "traceability": {
+    "apiCases": 36,
+    "mobileCases": 26,
+    "malformedSourceIdMapped": true
+  },
+  "liveExecution": "NOT_RUN; requires user QA Gateway, QA seed, Postman/Newman, Appium server and emulator."
+}

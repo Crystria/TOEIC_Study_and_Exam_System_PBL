@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  API bảo vệ thiếu hoặc sai token
+  Procedure: 1. Gọi đọc/start/save/submit/history không token.
+  2. Lặp với token hỏng/hết hạn.
+  Expected: 401 cho mọi entry bảo vệ; không lộ dữ liệu hoặc tạo/sửa attempt.
+  Preconditions: Danh sách endpoint và chính sách xác thực hiện hành.
+  Execution note: Ưu tiên: High.
+  Risk: R-03.
+  Nguồn: Software Test Documentation.docx §1.1.a; 1.1.b–c.
+  Đã quan sát POST /auth/logout không có Bearer trả 401 UNAUTHORIZED – Missing access token. Sau khi seed, chạy với token thiếu và token sai trên GET /tests, GET /tests/{testId}, start attempt, save answer/draft, submit và history; lặp với access token hết hạn khi có fixture phù hợp. Xác nhận không rò response riêng tư và không tạo/sửa attempt.
+order: 8000
