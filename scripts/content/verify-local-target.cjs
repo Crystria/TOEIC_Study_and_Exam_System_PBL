@@ -4,6 +4,7 @@ const fs = require('node:fs'),
   dotenv = require('dotenv');
 const { saveAtomic, hash } = require('./import-toeic.cjs');
 const out = process.argv[2];
+const includeExam = process.argv.includes('--exam');
 if (!out)
   throw Error('Usage: node scripts/content/verify-local-target.cjs <new-evidence-directory>');
 async function main() {
@@ -90,6 +91,16 @@ async function main() {
       verification:
         'Compared existing local Compose/service config and all Learning resource IDs through PostgreSQL read-only Prisma and Gateway; media upload bucket must also match presign response',
     };
+    let examVerification;
+    if (includeExam) {
+      examVerification = await require('./verify-exam-target.cjs').verifyExamTarget(gateway, identity.accessToken);
+      if (examVerification.storage.bucket !== target.questionBucket ||
+          examVerification.storage.endpoint !== target.storagePublicOrigin)
+        throw Error('Exam storage differs from the target bucket/origin');
+      target.verifiedScopes.push('exam');
+      target.examVerification = examVerification;
+      target.verification += '; Exam DB/API catalogs and existing local media bucket checked';
+    }
     const safeProgress = JSON.parse(
       JSON.stringify(progress, (_k, v) => (typeof v === 'bigint' ? v.toString() : v)),
     );
@@ -104,6 +115,8 @@ async function main() {
       JSON.stringify(
         {
           target: path.join(out, 'target.json'),
+          verifiedScopes: target.verifiedScopes,
+          ...(examVerification ? { exam: examVerification } : {}),
           catalog: summaries,
           progressHash: hash(safeProgress),
         },

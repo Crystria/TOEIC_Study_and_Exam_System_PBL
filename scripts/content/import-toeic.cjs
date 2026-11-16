@@ -738,6 +738,9 @@ async function main() {
       state: { type: 'string' },
       out: { type: 'string' },
       'api-only': { type: 'boolean', default: false },
+      'learning-api-db-evidence': { type: 'string' },
+      'learning-reimport-report': { type: 'string' },
+      'exam-pilot-reimport-report': { type: 'string' },
       'wait-rate-limits': { type: 'boolean', default: false },
     },
   });
@@ -747,6 +750,12 @@ async function main() {
     !['all', 'learning', 'exam'].includes(o.scope)
   )
     throw Error('Invalid mode, batch or scope');
+  const learningApiDb = Boolean(o['learning-api-db-evidence']);
+  const examApiDb = Boolean(o['exam-pilot-reimport-report']);
+  if (examApiDb && (o.scope !== 'exam' || o.batch !== 'all' || o['api-only'] || learningApiDb || o.mode === 'validate'))
+    throw Error('Exam API/DB acceptance supports online --batch all --scope exam only');
+  if (learningApiDb && (o.scope !== 'learning' || o.batch !== 'all' || o['api-only'] || o.mode === 'validate'))
+    throw Error('Learning API/DB evidence supports online --batch all --scope learning only');
   const dataset = read(o.dataset),
     validation = validateDataset(dataset, o.batch, o.scope);
   const report = {
@@ -816,7 +825,17 @@ async function main() {
     lockFd = fs.openSync(lock, 'wx');
     fs.writeSync(lockFd, JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() }));
     const state = fs.existsSync(o.state) ? read(o.state) : undefined;
-    if (o.batch === 'all' && (o.mode === 'apply' || o['api-only']))
+    let learningPilot;
+    if (learningApiDb) {
+      const pilotValidation = validateDataset(dataset, 'pilot', 'learning');
+      if (!pilotValidation.valid) throw Error('Learning pilot dataset is invalid');
+      learningPilot = pilotValidation.records;
+      report.learningAcceptance = require('./learning-api-db-acceptance.cjs').verifyLearningEvidence({
+        state, dataset, target, pilot: learningPilot, hash, targetIdentity,
+        evidenceDir: o['learning-api-db-evidence'], reimportReport: o['learning-reimport-report'],
+      });
+      report.acceptancePath = report.learningAcceptance.acceptancePath;
+    } else if (!examApiDb && o.batch === 'all' && (o.mode === 'apply' || o['api-only']))
       report.acceptancePath = expansionAcceptance(state, o.scope, o['api-only']);
     importer = new Importer({
       dataset,
@@ -832,6 +851,18 @@ async function main() {
         ? { email: process.env.TOEIC_IMPORT_EMAIL, password: process.env.TOEIC_IMPORT_PASSWORD }
         : read(o.credentials);
     await importer.login(credentials.accounts?.content_admin || credentials);
+    if (examApiDb) {
+      report.examAcceptance = await require('./exam-api-db-acceptance.cjs').acceptExamPilot(importer, o['exam-pilot-reimport-report']);
+      report.acceptancePath = report.examAcceptance.acceptancePath;
+    }
+    if (learningApiDb) {
+      // Fresh GET comparison with the same actor/checkpoint before any expansion write.
+      for (const record of learningPilot) {
+        if (await importer.record(record, false) !== 'same')
+          throw Error('Live Learning pilot differs from dataset; expansion blocked');
+      }
+      report.learningAcceptance.livePilotReadback = 'passed';
+    }
     const ready = await fetch(new URL('/ready', target.gateway), {
       signal: AbortSignal.timeout(5000),
     });
@@ -843,6 +874,14 @@ async function main() {
     );
     const summary = { add: 0, update: 0, same: 0 };
     for (const r of ordered) {
+      if (o.mode === 'plan' && r.kind === 'test' &&
+          r.questionSourceIds.some(id => !importer.state.records[id]?.id)) {
+        if (await importer.discover(r))
+          throw Error('Existing test requires resolved question mappings before comparison');
+        summary.add++;
+        importer.log({ sourceId: r.sourceId, action: 'add', dependency: 'question mappings resolved during apply' });
+        continue;
+      }
       // Online planning cannot resolve new parent IDs without writing. Count children explicitly.
       if (o.mode === 'plan' && r.kind === 'word' && !importer.state.records[r.topicSourceId]?.id) {
         summary.add++;

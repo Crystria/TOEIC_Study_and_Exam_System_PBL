@@ -1,5 +1,19 @@
 # Nhập nội dung TEST 1 qua Gateway
 
+## Luồng local Exam API/DB (16/11/2026)
+
+`verify-local-target.cjs <new-output> --exam` bổ sung đối chiếu catalog Question Bank/Exam DB/API và kiểm tra bucket MinIO tồn tại trước khi cấp scope Exam. Giữ chế độ mặc định chỉ Learning. Verifier đọc `.env` trên host; catalog trống không xác định duy nhất DB và không thay thế đối chiếu process/runtime.
+
+Sau pilot apply/reimport thực tế, Full online hỗ trợ `--exam-pilot-reimport-report <report.json>` với `--batch all --scope exam`. Luồng này kiểm tra report reimport 0 add/0 update, đăng nhập cùng actor/checkpoint, đọc lại pilot/câu con và kiểm tra public MIME/SHA-256 media pilot. Report ghi `acceptancePath=exam-api-db`, không sửa cờ UI/pilot. Không dùng chung `--api-only`. Kiểm thử: `node --test scripts/content/import-toeic.test.cjs scripts/content/exam-api-db-acceptance.test.cjs`.
+
+## Mở rộng Learning bằng nghiệm thu API/DB
+
+Khi không yêu cầu nghiệm thu UI, online `--batch all --scope learning` hỗ trợ `--learning-api-db-evidence <directory>` và `--learning-reimport-report <report.json>`. Thư mục evidence cần có `api-readback/report.json` (pilot plan đạt 0 add/0 update), `db-api/target.json` và `db-api/baseline.json` từ verifier. Reimport report phải là pilot apply đạt 0 add/0 update. Cả hai report phải khớp dataset/version/count; danh sách ID DB/API phải khớp mapping pilot đã verified trong checkpoint và target phải khớp môi trường. Các file này do công cụ tạo từ kiểm tra thực tế, không tự soạn cờ nghiệm thu.
+
+Importer đăng nhập cùng actor, đọc lại pilot qua API và yêu cầu tất cả `same` trước khi mở rộng. Report ghi `acceptancePath=learning-api-db`; không sửa `learningPilot`, `pilot` hoặc `ui` trong checkpoint. Chạy `plan` trước `apply`, giữ cùng target/checkpoint, dùng thư mục output mới mỗi lần. Không dùng chung với `--api-only` (cờ đó dành cho Exam). Bằng chứng DB là snapshot tại thời điểm verifier chạy; nếu đổi DB/runtime, phải xác minh lại.
+
+Quota hiện tại (16/11/2026): giai đoạn nhập liệu dùng presign capacity 200 và refill 200 lượt/giờ theo tài khoản (1 lượt/18 giây). Các mô tả 30 lượt/giờ bên dưới là lịch sử. Sau khi đổi code cần Gateway nạp lại; token đã dùng trong Redis không tự reset. Tiếp tục dùng `--wait-rate-limits` khi cần.
+
 ## Kiểm tra runtime Docker hoặc service chạy terminal
 
 Chạy tại root repo trong PowerShell:
