@@ -401,7 +401,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Backend chưa sẵn sàng; kiểm tra logs' }
 | Đăng ký xong chưa đăng nhập được         | Kích hoạt trong Mailpit cổng 8025; kiểm tra trạng thái ACTIVE                                                    |
 | Cổng đã dùng                             | Dừng đúng tiến trình/stack đang chiếm cổng trước khi khởi động bản mới; không chạy song song hai cách            |
 | Không có từ đến hạn/không mở được REVIEW | Lịch ôn do backend quyết định; học NEW trước và chờ ngày đến hạn                                                 |
-| Upload trả 429                           | Đợi đúng Retry-After; quota presign hiện là 30 lượt/giờ/actor, không đổi tài khoản để bỏ qua                     |
+| Upload trả 429                           | Đợi đúng Retry-After; quota presign giai đoạn nhập liệu là 200 lượt tích lũy, hồi 200 lượt/giờ/actor (1 lượt/18 giây), không đổi tài khoản để bỏ qua |
 | Restore báo object/table đã tồn tại      | Dừng restore; DB đích không còn trống hoặc đang dùng nhầm môi trường, không thêm `--clean` tùy tiện              |
 
 Lệnh xem trạng thái/log:
