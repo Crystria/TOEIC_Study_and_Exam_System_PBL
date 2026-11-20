@@ -1,0 +1,4 @@
+/local/
+/artifacts/
+*.local.environment.json
+*.private.environment.json

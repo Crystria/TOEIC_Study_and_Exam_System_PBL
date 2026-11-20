@@ -7,15 +7,12 @@ localResources:
     - ../packages/contracts/openapi/auth-learning-analytics.v1.json
     - ../packages/contracts/openapi/openapi.yaml
     - ../packages/contracts/proto/question_bank.proto
-    - ../postman/specs/Auth Learning Analytics target
+    - ../qa/api/postman/workspace/specs/Auth Learning Analytics target
       API/auth-learning-analytics.v1.json
-    - ../F:/bip/TOEIC_Study_and_Exam_System_PBL/packages/contracts/openapi/auth-learning-analytics.internal.v1.json
-    - ../F:/bip/TOEIC_Study_and_Exam_System_PBL/packages/contracts/proto/question_bank.proto
-    - ../F:/bip/TOEIC_Study_and_Exam_System_PBL/postman/specs/Auth Learning
-      Analytics target API/auth-learning-analytics.v1.json
+
 resourceNameMappings:
   specs:
-    - ../postman/specs/Auth Learning Analytics target API/auth-learning-analytics.v1.json: Auth Learning Analytics target API
+    - ../qa/api/postman/workspace/specs/Auth Learning Analytics target API/auth-learning-analytics.v1.json: Auth Learning Analytics target API
     - ../packages/contracts/openapi/auth-learning-analytics.internal.v1.json: auth-learning-analytics.internal.v1.json
     - ../packages/contracts/proto/question_bank.proto: question_bank.proto
 
@@ -23,5 +20,5 @@ resourceNameMappings:
 
 cloudResources:
   collections:
-    ../postman/collections/TOEIC Test Report - API-001 to API-036: 8ce9a446-bd46-4082-ba01-60eba5954480
-    ../postman/collections/TOEIC Test Report - API-001 to API-036 Copy: 03ff329f-e526-44d9-921b-788fdbe48173
+    ../qa/api/postman/workspace/collections/TOEIC Test Report - API-001 to API-036: 03ff329f-e526-44d9-921b-788fdbe48173
+    ../postman/collections/TOEIC Test Report - API-001 to API-036: 17eaa2e6-9697-4f7d-b08e-a2c167e4b273

@@ -1,72 +1,61 @@
 $kind: collection
 description: Automated API regression suite generated from Test Report.xlsx / Test API. Live write requests are fail-closed behind QA /ready preflight. Import and run sequentially; never use production.
 variables:
-  - key: invalidRefreshToken
-    value: ""
-    disabled: false
-  - key: nonExistingEmail
-    value: ""
-    disabled: false
-  - key: revokedRefreshTokenA
-    value: ""
-    disabled: false
-  - key: gatewayOrigin
-    value: ""
-    disabled: false
-  - key: baseUrl
-    value: ""
-    disabled: false
-  - key: qaUserAEmail
-    value: ""
-    disabled: false
-  - key: qaUserAId
-    value: ""
-    disabled: false
-  - key: qaUserAPassword
-    value: ""
-    disabled: false
-  - key: qaUserBEmail
-    value: ""
-    disabled: false
-  - key: qaUserBId
-    value: ""
-    disabled: false
-  - key: qaUserBPassword
-    value: ""
-    disabled: false
-  - key: accessToken
-    secret: true
-    disabled: false
-  - key: refreshToken
-    value: ""
-    disabled: false
-  - key: accessTokenB
-    secret: true
-    disabled: false
-  - key: refreshTokenB
-    value: ""
-    disabled: false
-  - key: deviceId
-    value: ""
-    disabled: false
-  - key: deviceIdB
-    value: ""
-    disabled: false
-  - key: qaTestId
-    value: ""
-    disabled: false
-  - key: examTitle
-    value: ""
-    disabled: false
-  - key: qaReadyConfirmed
-    value: ""
-    disabled: false
-  - key: accessTokenA
-    secret: true
-    disabled: false
-  - key: refreshTokenA
-    value: ""
-    disabled: false
-  - key: targetEnvironment
-    value: ""
-    disabled: false
+  gatewayOrigin: http://localhost:3000
+  baseUrl: http://localhost:3000/api/v1
+  deviceId: postman-qa-user-a
+  deviceIdB: postman-qa-user-b
+  logoutDeviceId: postman-qa-logout
+  qaUserAEmail: qa-demo-3@example.test
+  qaUserAPassword: ""
+  qaUserBEmail: qa-demo-4@example.test
+  qaUserBPassword: ""
+  wrongPassword: ""
+  nonExistingEmail: no-such-user-qa@example.test
+  invalidRefreshToken: ""
+  invalidAccessToken: ""
+  nonexistentTestId: ""
+  nonexistentAttemptId: ""
+  otherTestQuestionId: ""
+  qaClockControlApproved: "false"
+  enableSlowTimeoutCases: "false"
+  qaFaultInjectionApproved: "false"
+  qaFaultProxyOrigin: ""
+  expectedAllCorrectTotalScore: ""
+  expectedAllWrongTotalScore: ""
+  expectedAllBlankTotalScore: ""
+  expectedMixedTotalScore: ""
+  qaReadyConfirmed: "false"
+  thirdQuestionId: ""
+  part2QuestionId: ""
+  qaDeadlinePassed: "false"
+  attemptDeadlineAt: ""
+  allCorrectAnswersJson: "[]"
+  allWrongAnswersJson: "[]"
+  mixedAnswersJson: "[]"
+  oversizedAnswersJson: "[]"
+  api033FirstAttemptId: ""
+  accessToken: ""
+  accessTokenA: ""
+  attemptId: ""
+  firstQuestionId: ""
+  historyAIds: ""
+  questionIdsJson: ""
+  refreshTokenA: ""
+  secondQuestionId: ""
+  accessTokenB: ""
+  refreshTokenB: ""
+  revokedRefreshTokenA: ""
+  userAId: ""
+  userBId: ""
+  testId: ""
+  concurrentSubmitStatuses: ""
+  expectedAllCorrectListeningScore: ""
+  expectedAllCorrectReadingScore: ""
+  expectedAllWrongListeningScore: ""
+  expectedAllWrongReadingScore: ""
+  expectedAllBlankListeningScore: ""
+  expectedAllBlankReadingScore: ""
+  expectedMixedListeningScore: ""
+  expectedMixedReadingScore: ""
+  scoreTableVersion: ""
