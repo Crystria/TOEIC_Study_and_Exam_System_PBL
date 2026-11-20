@@ -6,6 +6,7 @@ import '../../../shared/widgets/app_card.dart';
 import '../../../theme/app_colors.dart';
 import '../models/test_attempt_group.dart';
 import '../models/test_attempt_question.dart';
+import 'audio_player_widget.dart';
 
 class TestTakingQuestionContent extends StatelessWidget {
   const TestTakingQuestionContent({
@@ -209,64 +210,56 @@ class _AudioPromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasSource = sourceUrl != null && sourceUrl!.isNotEmpty;
     return AppCard(
       color: AppColors.purpleChipBg.withValues(alpha: 0.35),
       borderColor: AppColors.purpleChipFg.withValues(alpha: 0.18),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.purpleChipBg,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.headphones, color: AppColors.purpleChipFg),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.slate900,
-                  ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.purpleChipBg,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    height: 1.4,
-                    color: AppColors.slate700,
-                  ),
+                child: const Icon(
+                  Icons.headphones,
+                  color: AppColors.purpleChipFg,
                 ),
-                const SizedBox(height: 7),
-                Text(
-                  hasSource
-                      ? 'Đã nhận nguồn audio nhưng trình phát hiện chưa khả dụng.'
-                      : 'Chưa có tệp audio cho câu hỏi này.',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: AppColors.slate500,
-                    fontStyle: FontStyle.italic,
-                  ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.slate900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        height: 1.4,
+                        color: AppColors.slate700,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(width: 6),
-          const Icon(
-            Icons.play_circle_outline,
-            color: AppColors.slate400,
-            size: 28,
-          ),
+          const SizedBox(height: 10),
+          AudioPlayerWidget(sourceUrl: sourceUrl),
         ],
       ),
     );

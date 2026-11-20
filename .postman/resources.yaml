@@ -21,4 +21,4 @@ resourceNameMappings:
 cloudResources:
   collections:
     ../qa/api/postman/workspace/collections/TOEIC Test Report - API-001 to API-036: 03ff329f-e526-44d9-921b-788fdbe48173
-    ../postman/collections/TOEIC Test Report - API-001 to API-036: 17eaa2e6-9697-4f7d-b08e-a2c167e4b273
+    ../postman/collections/TOEIC Test Report - API-001 to API-036: 58fd8cef-6107-4881-b9c3-4b0637f860c2
