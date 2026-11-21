@@ -5,11 +5,14 @@ import '../../../../core/navigation/full_screen_flow_scope.dart';
 import '../../../../shared/widgets/app_badge.dart';
 import '../../../../theme/app_colors.dart';
 import '../../providers/review_flashcard_provider.dart';
+import '../../providers/review_select_words_provider.dart';
 import '../../widgets/grade_button.dart';
 import 'review_result_screen.dart';
 
 class ReviewFlashcardScreen extends StatefulWidget {
-  const ReviewFlashcardScreen({super.key});
+  const ReviewFlashcardScreen({super.key, required this.source});
+
+  final ReviewWordsSource source;
 
   @override
   State<ReviewFlashcardScreen> createState() => _ReviewFlashcardScreenState();
@@ -26,7 +29,9 @@ class _ReviewFlashcardScreenState extends State<ReviewFlashcardScreen> {
     if (!mounted) return;
     if (provider.status == ReviewFlashcardStatus.finished) {
       await Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ReviewResultScreen()),
+        MaterialPageRoute(
+          builder: (_) => ReviewResultScreen(source: widget.source),
+        ),
       );
     }
   }

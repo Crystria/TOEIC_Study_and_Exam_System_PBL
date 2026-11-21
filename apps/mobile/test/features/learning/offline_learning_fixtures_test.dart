@@ -78,8 +78,19 @@ void main() {
         await grammarLessonProvider.loadLesson('g1');
 
         expect(vocabularyProvider.status, VocabularyStatus.loaded);
-        expect(vocabularyProvider.queue, hasLength(1));
-        expect(vocabularyProvider.queue.single.id, 't1-v1');
+
+        expect(vocabularyProvider.queue, hasLength(3));
+
+        expect(vocabularyProvider.queue.map((item) => item.id).toList(), [
+          't1-v1',
+          't1-v2',
+          't1-v3',
+        ]);
+
+        expect(
+          vocabularyProvider.queue.map((item) => item.masteryGrade).toList(),
+          [5, 3, 1],
+        );
         expect(vocabularyTopicsProvider.status, TopicsStatus.loaded);
         expect(vocabularyTopicsProvider.topics, hasLength(2));
         expect(vocabularyTopicsProvider.topics.first.total, 20);

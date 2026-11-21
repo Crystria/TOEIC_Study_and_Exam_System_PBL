@@ -62,9 +62,43 @@ void main() {
       expect(provider.currentTopicId, isNull);
     },
   );
+  test('loads new vocabulary in topic even when mastery grade is 1', () async {
+    final repository = _TopicDetailRepository(
+      vocabularies: const [
+        LearningVocabulary(
+          id: 'word-new-1',
+          topicId: 'topic-uuid',
+          topicName: 'Backend Topic Name',
+          word: 'allocate',
+          phonetic: '/ˈæləkeɪt/',
+          definition: 'phân bổ',
+          example: 'The manager will allocate resources.',
+          audioUrl: '',
+          imageUrl: '',
+        ),
+      ],
+    );
+
+    final provider = VocabularyProvider(
+      repository: repository,
+      localStateRepository: _createLocalStateRepository(),
+      currentUserId: () => 'qa-user',
+    );
+    addTearDown(provider.dispose);
+
+    await provider.loadTopic('topic-uuid');
+
+    expect(provider.status, VocabularyStatus.loaded);
+    expect(provider.queue, hasLength(1));
+    expect(provider.current?.id, 'word-new-1');
+    expect(provider.current?.masteryGrade, 1);
+  });
 }
 
 class _TopicDetailRepository implements LearningRepository {
+  _TopicDetailRepository({this.vocabularies = const []});
+
+  final List<LearningVocabulary> vocabularies;
   final List<String> calls = [];
 
   @override
@@ -80,7 +114,10 @@ class _TopicDetailRepository implements LearningRepository {
   @override
   Future<List<LearningVocabulary>> getVocabularies({String? topicId}) async {
     calls.add('vocabularies:$topicId');
-    return const [];
+
+    return vocabularies
+        .where((item) => topicId == null || item.topicId == topicId)
+        .toList(growable: false);
   }
 
   @override

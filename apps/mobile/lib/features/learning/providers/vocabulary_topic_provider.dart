@@ -124,6 +124,26 @@ class VocabularyTopicsProvider extends ChangeNotifier {
       final snapshot = await _localStateRepository.getVocabularyProgress();
       if (revision != _scopeRevision) return;
       _applyProgress(snapshot);
+      // Recalculate learned counts for each topic.
+      // Every saved word counts, regardless of Grade 1, 3 or 5.
+      final learnedByTopic = <String, int>{};
+      for (final word in snapshot.words.values) {
+        learnedByTopic.update(
+          word.topicId,
+          (count) => count + 1,
+          ifAbsent: () => 1,
+        );
+      }
+      topics = topics
+          .map(
+            (topic) => TopicSummary(
+              id: topic.id,
+              name: topic.name,
+              learned: learnedByTopic[topic.id] ?? 0,
+              total: topic.total,
+            ),
+          )
+          .toList(growable: false);
       persistenceError = null;
 
       await _refreshRepositorySummary(revision);

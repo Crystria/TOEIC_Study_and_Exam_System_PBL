@@ -232,8 +232,7 @@ class VocabularyProvider extends ChangeNotifier {
               topicName: currentTopicName ?? item.topicName,
             ),
           )
-          // The topic flow intentionally shows words already mastered.
-          .where((item) => _effectiveGrade(item) == 5)
+          // Topic flow shows all words that have not been studied today.
           .where((item) => !_wasStudiedToday(item.id))
           .toList();
       if (!_isCurrentRequest(revision, requestToken)) return;

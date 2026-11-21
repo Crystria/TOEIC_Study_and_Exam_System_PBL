@@ -7,6 +7,7 @@ import '../../../../shared/widgets/progress_row.dart';
 import '../../../../shared/widgets/stat_card.dart';
 import '../../../../theme/app_colors.dart';
 import '../../providers/vocabulary_topic_provider.dart';
+import '../../providers/review_select_words_provider.dart';
 import '../quiz/quick_quiz_launch_dialog.dart';
 import '../quiz/quick_quiz_screen.dart';
 import '../review/review_goal_settings_screen.dart';
@@ -60,10 +61,12 @@ class _VocabularyTopicsScreenState extends State<VocabularyTopicsScreen> {
     }
   }
 
-  void _onReviewLearned() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const ReviewSelectWordsScreen()));
+  void _openReview(ReviewWordsSource source) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ReviewSelectWordsScreen(source: source),
+      ),
+    );
   }
 
   void _onOpenTopic(TopicSummary topic) {
@@ -463,39 +466,45 @@ class _VocabularyTopicsScreenState extends State<VocabularyTopicsScreen> {
               ),
               const SizedBox(height: 12),
               AppCard(
-                child: InkWell(
-                  onTap: _onReviewLearned,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Ôn lại từ đã học',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.slate900,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Chọn từ muốn ôn lại · ${provider.dueForReview} từ',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.slate500,
-                              ),
-                            ),
-                          ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Ôn lại từ vựng',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.slate900,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _openReview(ReviewWordsSource.due),
+                        icon: const Icon(Icons.calendar_month_outlined),
+                        label: Text(
+                          'Ôn từ đến hạn · ${provider.dueForReview} từ',
                         ),
                       ),
-                      const Icon(
-                        Icons.chevron_right,
-                        color: AppColors.slate400,
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () =>
+                            _openReview(ReviewWordsSource.allLearned),
+                        icon: const Icon(Icons.menu_book_outlined),
+                        label: Text(
+                          'Ôn tất cả từ đã học · '
+                          '${provider.totalLearnedWords} từ',
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 20),

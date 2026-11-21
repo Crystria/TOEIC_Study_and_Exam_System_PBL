@@ -10,7 +10,9 @@ import '../../providers/review_select_words_provider.dart';
 import 'review_flashcard_screen.dart';
 
 class ReviewSelectWordsScreen extends StatefulWidget {
-  const ReviewSelectWordsScreen({super.key});
+  const ReviewSelectWordsScreen({super.key, required this.source});
+
+  final ReviewWordsSource source;
 
   @override
   State<ReviewSelectWordsScreen> createState() =>
@@ -21,13 +23,13 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final provider = context.read<ReviewSelectWordsProvider>();
-      if (provider.status == ReviewSelectStatus.idle ||
-          provider.status == ReviewSelectStatus.error) {
-        provider.loadDueWords();
-      }
+
+      context.read<ReviewSelectWordsProvider>().loadSource(
+        source: widget.source,
+      );
     });
   }
 
@@ -47,14 +49,14 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
       expectedUserId: selectProvider.loadedUserId,
     );
     if (!mounted || !loaded) return;
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(builder: (_) => const ReviewFlashcardScreen()),
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ReviewFlashcardScreen(source: selectProvider.source),
+      ),
     );
 
     if (!mounted) return;
-    // The reviewed words may no longer be due. Refresh the server queue so
-    // returning from the flashcards does not show stale items/revisions.
-    await selectProvider.loadDueWords(selectProvider.selectedTopicId);
+    await selectProvider.reload();
   }
 
   void _onSkip() {
@@ -111,7 +113,7 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
               Text(provider.errorMessage ?? 'Không thể tải từ cần ôn.'),
               const SizedBox(height: 12),
               ElevatedButton(
-                onPressed: () => provider.loadDueWords(),
+                onPressed: provider.reload,
                 child: const Text('Thử lại'),
               ),
             ],
@@ -131,17 +133,20 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Ôn lại từ đã học',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.slate900,
+                  Text(
+                    provider.source == ReviewWordsSource.due
+                        ? 'Hiện chưa có từ nào đến hạn ôn trong chủ đề này.'
+                        : 'Bạn chưa có từ vựng nào được lưu trong tiến trình học.',
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.slate500,
                     ),
                   ),
+                  const SizedBox(height: 6),
                   Text(
                     '$topicName · ${words.length} từ',
                     style: const TextStyle(
@@ -152,7 +157,8 @@ class _ReviewSelectWordsScreenState extends State<ReviewSelectWordsScreen> {
                 ],
               ),
             ),
-            Padding(
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Row(
                 children: provider.topicOptions.entries.map((topic) {

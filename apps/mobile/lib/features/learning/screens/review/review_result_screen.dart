@@ -6,10 +6,13 @@ import '../../../../shared/widgets/stat_card.dart';
 import '../../../../shared/widgets/success_check.dart';
 import '../../../../theme/app_colors.dart';
 import '../../providers/review_flashcard_provider.dart';
+import '../../providers/review_select_words_provider.dart';
 import 'review_select_words_screen.dart';
 
 class ReviewResultScreen extends StatelessWidget {
-  const ReviewResultScreen({super.key});
+  const ReviewResultScreen({super.key, required this.source});
+
+  final ReviewWordsSource source;
 
   void _onBackHome(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -19,7 +22,9 @@ class ReviewResultScreen extends StatelessWidget {
     context.read<ReviewFlashcardProvider>().reset();
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const ReviewSelectWordsScreen()),
+      MaterialPageRoute(
+        builder: (_) => ReviewSelectWordsScreen(source: source),
+      ),
       (route) => route.isFirst,
     );
   }
