@@ -1,7 +1,0 @@
-# Local secrets and generated test evidence
-**/.env
-**/*.local.environment.json
-**/*environment.local*.json
-**/artifacts/
-**/__pycache__/
-*.py[cod]

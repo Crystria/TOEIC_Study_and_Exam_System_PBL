@@ -41,7 +41,7 @@
     },
     {
       "key": "qaUserAPassword",
-      "value": "",
+      "value": "QA-Local-2026!",
       "type": "string"
     },
     {
@@ -51,12 +51,12 @@
     },
     {
       "key": "qaUserBPassword",
-      "value": "",
+      "value": "QA-Local-2026!",
       "type": "string"
     },
     {
       "key": "wrongPassword",
-      "value": "",
+      "value": "wrong-password",
       "type": "string"
     },
     {
