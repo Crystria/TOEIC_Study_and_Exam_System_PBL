@@ -20,6 +20,7 @@ Chi tiết quyết định kiến trúc: xem `docs/` (tài liệu thiết kế).
 ```
 apps/
   web/                     Next.js (end-user)
+  mobile/                  Flutter (mobile app)
   admin-cms/               Next.js (admin)
 services/
   api-gateway/             NestJS (edge)
@@ -108,6 +109,29 @@ npm run qa:stop
 Xem [hướng dẫn QA](scripts/qa/README.md) về namespace, tài khoản demo, healthcheck,
 migration và cách đọc báo cáo `artifacts/qa/latest.json`. Overlay QA dùng cùng
 cổng với dev; dừng backend đang chạy trước khi chuyển chế độ.
+
+## Mobile App (Flutter)
+
+Ứng dụng Flutter nằm tại `apps/mobile/`.
+
+```powershell
+cd apps/mobile
+flutter pub get
+flutter run
+```
+
+Kiểm tra mã nguồn:
+
+```powershell
+flutter analyze
+flutter test
+```
+
+Build APK debug:
+
+```powershell
+flutter build apk --debug
+```
 
 ## Script gốc
 
