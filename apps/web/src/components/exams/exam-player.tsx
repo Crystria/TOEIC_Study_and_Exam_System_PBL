@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { demoExamTests } from '@/lib/exams/mock-data';
 import { loadDemoQuestions } from '@/lib/exams/question-fixtures';
 import { remainingSeconds } from '@/lib/exams/session';
-import { selectionQuery } from '@/lib/exams/selection';
 import { localResultHref } from '@/lib/exams/results';
+import { buildListeningAudioTracks } from '@/lib/exams/listening-audio';
 import type { ExamQuestionSet, LocalExamSession } from '@/lib/exams/session-types';
 import type { ExamQuery, ExamTest } from '@/lib/exams/types';
 import { Button, buttonStyles } from '../ui/button';
@@ -20,6 +20,8 @@ import { useExamSession } from './exam-session-provider';
 import { HistoryNotice } from './exam-result-shared';
 import { ExamToolbar } from './exam-toolbar';
 import { ExamMobileBar } from './exam-mobile-bar';
+import { useExamNavigationGuard } from './use-exam-navigation-guard';
+import { ExamRetake } from './exam-retake';
 
 function Player({
   test,
@@ -35,18 +37,16 @@ function Player({
   const router = useRouter();
   const { dirty, issue, dispatch, retrySave, reloadDraft } = useExamSession();
   const [now, setNow] = useState(Date.now());
-  const [dialog, setDialog] = useState<'end' | 'exit' | 'back' | 'reload' | null>(null);
+  const [dialog, setDialog] = useState<'end' | 'exit' | 'reload' | null>(null);
   const [mapKey, setMapKey] = useState(0);
   const [highlightEnabled, setHighlightEnabled] = useState(true);
   const content = useRef<HTMLDivElement>(null);
-  const dirtyRef = useRef(dirty);
-  dirtyRef.current = dirty;
-  const leaving = useRef(false);
   const pendingHref = useRef(`/exam/${test.id}`);
   const endHeading = useRef<HTMLHeadingElement>(null);
   const remaining = remainingSeconds(session, now);
   const closed = session.status !== 'in-progress' || remaining === 0;
   const locked = closed || issue === 'conflict';
+  useExamNavigationGuard(!closed && issue !== 'conflict', session.localId, () => setDialog('end'));
   const currentIndex = set.questions.findIndex((q) => q.id === session.currentQuestionId);
   const question = set.questions[currentIndex];
   const group = set.groups.find((item) => item.id === question.groupId)!;
@@ -54,6 +54,22 @@ function Player({
   const partIds = [...new Set(set.questions.map((item) => item.partId))];
   const partIndex = partIds.indexOf(group.partId);
   const partGroups = set.groups.filter((item) => item.partId === group.partId);
+  const audioTracks = useMemo(
+    () =>
+      buildListeningAudioTracks(
+        set.questions.map((item) => ({ ...item, part: item.partId, orderNo: item.number })),
+        set.groups.map((item) => ({
+          ...item,
+          audioUrl:
+            preview === 'media-error'
+              ? '/demo/exam/missing-audio.wav'
+              : preview === 'media-missing'
+                ? null
+                : item.audioUrl,
+        })),
+      ),
+    [set, preview],
+  );
   const navigate = (questionId: string, top = false) => {
     dispatch({ type: 'navigate', questionId });
     window.requestAnimationFrame(() => {
@@ -88,29 +104,6 @@ function Player({
       endHeading.current?.focus();
     }
   }, [closed]);
-  // A same-URL guard entry lets Back be cancelled before Next unmounts this page.
-  // Native unload/reload is handled by the provider only when a write has failed.
-  useEffect(() => {
-    const id = session.localId;
-    if (window.history.state?.toeicExamGuard !== id)
-      window.history.pushState(
-        { ...window.history.state, toeicExamGuard: id },
-        '',
-        window.location.href,
-      );
-    const onPop = (event: PopStateEvent) => {
-      if (leaving.current || event.state?.toeicExamGuard === id) return;
-      if (dirtyRef.current) {
-        window.history.forward();
-        setDialog('back');
-      } else {
-        leaving.current = true;
-        window.history.back();
-      }
-    };
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
-  }, [session.localId]);
   const requestExit = (href: string) => {
     pendingHref.current = href;
     if (dirty) setDialog('exit');
@@ -124,11 +117,7 @@ function Player({
     else if (action === 'reload') {
       reloadDraft();
       setMapKey((value) => value + 1);
-    } else if (action === 'back') {
-      leaving.current = true;
-      window.history.go(-2);
     } else if (action === 'exit') {
-      leaving.current = true;
       router.push(pendingHref.current);
     }
   };
@@ -136,9 +125,6 @@ function Player({
     <div className="reference-exam">
       <header className="reference-exam-header">
         <h1 className="reference-exam-title">{test.title}</h1>
-        <button type="button" className="reference-exam-exit" onClick={exit}>
-          Thoát
-        </button>
       </header>
       <div className="reference-exam-status">
         <p>Demo cục bộ · Câu hỏi minh họa, chưa chấm điểm hoặc gửi đáp án lên server.</p>
@@ -204,14 +190,7 @@ function Player({
             <Button variant="ghost" onClick={exit}>
               Về chi tiết đề
             </Button>
-            <Button
-              variant="secondary"
-              onClick={() =>
-                requestExit(`/exam/${test.id}/prepare?${selectionQuery(session.selection)}`)
-              }
-            >
-              Chuẩn bị phiên mới
-            </Button>
+            <ExamRetake test={test} previous={session} />
           </div>
         </Panel>
       ) : (
@@ -222,14 +201,9 @@ function Player({
             aria-label={`Nội dung Part ${group.partId}`}
           >
             <ExamToolbar
-              audioSource={
-                preview === 'media-error'
-                  ? '/demo/exam/missing-audio.wav'
-                  : preview === 'media-missing'
-                    ? null
-                    : group.audioUrl
-              }
-              audioLabel={`Audio minh họa · ${group.title}`}
+              audioTracks={audioTracks}
+              audioLabel="Audio minh họa toàn bộ phần nghe"
+              showAudio={group.partId <= 4}
               highlightEnabled={highlightEnabled}
               onHighlightChange={() => setHighlightEnabled((value) => !value)}
               locked={locked}

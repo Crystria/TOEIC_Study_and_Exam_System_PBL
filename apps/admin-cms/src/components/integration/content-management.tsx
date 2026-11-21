@@ -2,26 +2,34 @@
 /* eslint-disable @next/next/no-img-element -- URLs are supplied and validated by the backend adapter. */
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Blocked,
   ResourceState,
   useResource,
 } from '../../../../web/src/components/integration/shared';
 import { failureMessage, mutationOutcomeUnknown } from '../../../../web/src/lib/integration/client';
+import type { Page } from '../../../../web/src/lib/integration/contracts';
 import {
   contentApi,
   bankApi,
   emptyQuestion,
+  optionalVocabularyFields,
   type ContentKind,
   type QuestionInput,
 } from '../../lib/integration/content-api';
 import { cmsApi } from '../../lib/integration/repositories';
 import { MediaUpload } from '../../../../web/src/components/integration/media-upload';
-import { AudioPlayer } from '../../../../web/src/components/ui/audio-player';
 import { RelationPicker } from './relation-picker';
 import { ManagementSearch } from './management-search';
 import { SafeMarkdown } from '../demo/workspace-primitives';
+import { QuestionDetailContent } from './question-content';
+import { NumberedPagination } from '../ui/numbered-pagination';
+import { VocabularyActions } from './vocabulary-actions';
+import { VocabularyBatchEditor, vocabularyFields } from './vocabulary-batch-editor';
+import { VocabularyWorkbookImport } from './vocabulary-workbook-import';
+
+const MANAGEMENT_PAGE_SIZE = 10;
 
 export function useCmsLocation() {
   const path = usePathname(),
@@ -50,6 +58,45 @@ export function useCmsLocation() {
     },
   };
 }
+
+export function useNumberedManagementResource<T>(
+  { id, path, params, router }: ReturnType<typeof useCmsLocation>,
+  key: string,
+  list: (params: URLSearchParams, signal: AbortSignal) => Promise<Page<T>>,
+  read?: (id: string, signal: AbortSignal) => Promise<T>,
+) {
+  const search = params.toString();
+  const requestParams = new URLSearchParams(search);
+  if (!id) {
+    const requestedPage = Number(params.get('page') ?? 1);
+    const validPage =
+      Number.isSafeInteger(requestedPage) && requestedPage >= 1 && requestedPage <= 2_147_483_647;
+    requestParams.set('page', String(validPage ? requestedPage : 1));
+    requestParams.set('size', String(MANAGEMENT_PAGE_SIZE));
+  }
+  const state = useResource(`${key}:${id}:${requestParams}`, async (signal) => {
+    if (!id) return { detail: null, page: await list(requestParams, signal) };
+    if (id === 'new' || !read) return { detail: null, page: null };
+    return { detail: await read(id, signal), page: null };
+  });
+  const page = state.data?.page;
+  const totalPages = Math.max(1, Math.ceil((page?.total ?? 0) / MANAGEMENT_PAGE_SIZE));
+  const pageOutOfRange = !!page && page.page > totalPages;
+  useEffect(() => {
+    if (!pageOutOfRange) return;
+    const next = new URLSearchParams(search);
+    next.set('page', String(totalPages));
+    router.replace(`${path}?${next}`, { scroll: false });
+  }, [pageOutOfRange, path, router, search, totalPages]);
+
+  return {
+    ...state,
+    loading: state.loading || pageOutOfRange,
+    page: pageOutOfRange ? null : page,
+    totalPages,
+  };
+}
+
 export function ManagementPager({
   data,
   onPage,
@@ -73,33 +120,69 @@ export function ManagementPager({
 }
 const contentFields = {
   topics: [['topicName', 'Tên chủ đề', 255]],
-  vocabulary: [
-    ['topicId', 'ID chủ đề', 36],
-    ['word', 'Từ vựng', 255],
-    ['phonetic', 'Phiên âm', 255],
-    ['definition', 'Định nghĩa', 10000],
-    ['example', 'Ví dụ', 10000],
-  ],
+  vocabulary: [['topicId', 'ID chủ đề', 36], ...vocabularyFields],
   lessons: [
     ['lessonTitle', 'Tiêu đề', 255],
     ['category', 'Danh mục', 255],
     ['contentMarkdown', 'Nội dung Markdown', 100000],
     ['status', 'Trạng thái', 20],
   ],
-} satisfies Record<ContentKind, [string, string, number][]>;
-export function ContentManagement({ kind, writes }: { kind: ContentKind; writes: boolean }) {
-  const { id, path, params, href, update } = useCmsLocation();
-  const state = useResource(`content:${kind}:${id}:${params}`, async (signal) =>
-    id && id !== 'new'
-      ? { detail: await contentApi.read(kind, id, signal), page: null }
-      : { detail: null, page: id === 'new' ? null : await contentApi.list(kind, params, signal) },
+} satisfies Record<ContentKind, ReadonlyArray<readonly [string, string, number]>>;
+export function ContentManagement({
+  kind,
+  writes,
+}: {
+  kind: 'vocabulary' | 'lessons';
+  writes: boolean;
+}) {
+  const location = useCmsLocation();
+  const { id, path, section, params, href, update, router } = location;
+  const state = useNumberedManagementResource(
+    location,
+    `content:${kind}`,
+    (params, signal) => contentApi.list(kind, params, signal),
+    (id, signal) => contentApi.read(kind, id, signal),
   );
+  const noticeKey = kind === 'vocabulary' ? 'vocabularyNotice' : 'lessonNotice';
+  const deleted = params.get(noticeKey) === 'deleted';
+  params.delete(noticeKey);
   const [error, setError] = useState(''),
-    [notice, setNotice] = useState(''),
-    [busy, setBusy] = useState(false),
+    [deletingId, setDeletingId] = useState(''),
+    [listDeleted, setListDeleted] = useState(false),
     lock = useRef(false);
-  const title =
-    kind === 'topics' ? 'Chủ đề từ vựng' : kind === 'vocabulary' ? 'Từ vựng' : 'Bài học ngữ pháp';
+  const title = kind === 'vocabulary' ? 'Từ vựng' : 'Bài học ngữ pháp';
+  const detail = state.data?.detail;
+  const remove = async (item: { id: string; title: string }) => {
+    if (
+      !writes ||
+      lock.current ||
+      !window.confirm(
+        `Xóa “${item.title}” khỏi nội dung đang sử dụng? Bản ghi được lưu trữ để giữ lịch sử học tập.`,
+      )
+    )
+      return;
+    lock.current = true;
+    setDeletingId(item.id);
+    setError('');
+    setListDeleted(false);
+    try {
+      await contentApi.remove(kind, item.id);
+      if (id) {
+        const next = new URLSearchParams(params);
+        next.set(noticeKey, 'deleted');
+        router.replace(`/${section}?${next}`);
+      } else {
+        setListDeleted(true);
+        state.reload();
+      }
+    } catch (failure) {
+      setError(failureMessage(failure));
+      if (!id) state.reload();
+    } finally {
+      lock.current = false;
+      setDeletingId('');
+    }
+  };
   return (
     <>
       <h1>{title}</h1>
@@ -114,22 +197,26 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
           {writes && (
             <div className="api-actions">
               <Link className="api-primary-action" href={href('new')}>
-                {kind === 'lessons'
-                  ? 'Thêm bài học ngữ pháp'
-                  : kind === 'vocabulary'
-                    ? 'Thêm từ vựng'
-                    : 'Thêm chủ đề'}
+                {kind === 'vocabulary' ? 'Thêm từ vựng' : 'Thêm bài học ngữ pháp'}
               </Link>
               {kind === 'vocabulary' && <Link href="/topics/new">Thêm chủ đề từ vựng</Link>}
             </div>
           )}
+          {writes && kind === 'vocabulary' && <VocabularyWorkbookImport onImported={state.reload} />}
         </>
       )}
-      <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
-      {state.data?.page && (
+      {!id && (deleted || listDeleted) && (
+        <p role="status" className="api-success">
+          {kind === 'vocabulary'
+            ? 'Đã xóa từ vựng khỏi thư viện đang sử dụng.'
+            : 'Đã xóa bài học ngữ pháp khỏi thư viện đang sử dụng.'}
+        </p>
+      )}
+      <ResourceState {...state} retry={state.reload} empty={state.page?.items.length === 0} />
+      {state.page && (
         <>
           <div className="api-grid">
-            {state.data.page.items.map((v) => (
+            {state.page.items.map((v) => (
               <article className="api-card" key={v.id}>
                 <h2>
                   <Link href={href(v.id)}>{v.title}</Link>
@@ -147,125 +234,81 @@ export function ContentManagement({ kind, writes }: { kind: ContentKind; writes:
                 {kind === 'vocabulary' && <p>{v.fields.definition}</p>}
                 <div className="api-actions">
                   <Link href={href(v.id)}>Xem chi tiết</Link>
-                  {writes && !v.deleted && <Link href={href(v.id, true)}>Chỉnh sửa</Link>}
+                  {writes &&
+                    !v.deleted &&
+                    (kind === 'vocabulary' ? (
+                      <VocabularyActions
+                        editHref={href(v.id, true)}
+                        onDelete={() => void remove(v)}
+                        busy={!!deletingId}
+                        deleting={deletingId === v.id}
+                      />
+                    ) : (
+                      <Link href={href(v.id, true)}>Chỉnh sửa</Link>
+                    ))}
                 </div>
               </article>
             ))}
           </div>
-          <ManagementPager data={state.data.page} onPage={(n) => update('page', String(n))} />
+          <NumberedPagination
+            page={state.page.page}
+            totalPages={state.totalPages}
+            onPage={(page) => update('page', String(page))}
+          />
         </>
       )}
-      {state.data?.detail && !path.endsWith('/edit') && (
-        <article className="api-card">
-          <h2>{state.data.detail.title}</h2>
-          {kind === 'vocabulary' && (
-            <>
-              <AudioPlayer
-                mode="server"
-                source={state.data.detail.audioUrl}
-                label={`Phát âm ${state.data.detail.title}`}
-                missingMessage="Server chưa cấp audio hợp lệ."
-              />
-              {state.data.detail.imageUrl && (
-                <img
-                  src={state.data.detail.imageUrl}
-                  alt={`Minh họa ${state.data.detail.title}`}
-                  style={{ maxWidth: '100%' }}
-                />
-              )}
-            </>
-          )}
+      {detail && !path.endsWith('/edit') && (
+        <article className={kind === 'vocabulary' ? 'api-card cms-vocabulary-content' : 'api-card'}>
+          <h2>{detail.title}</h2>
           {contentFields[kind].map(([key, label]) => (
             <div key={key}>
               <strong>{label}</strong>
               {key === 'contentMarkdown' ? (
-                <SafeMarkdown text={state.data!.detail!.fields[key]} />
+                <SafeMarkdown text={detail.fields[key]} />
               ) : (
-                <p>{state.data!.detail!.fields[key] || 'Chưa có'}</p>
+                <p lang={key === 'englishDefinition' && detail.fields[key] ? 'en' : undefined}>
+                  {detail.fields[key] || 'Chưa có'}
+                </p>
               )}
             </div>
           ))}
-          {writes && !state.data.detail.deleted && (
+          {writes && !detail.deleted && (
             <div className="api-actions">
               <Link href={href(id, true)}>Chỉnh sửa</Link>
               <button
                 type="button"
                 className="api-danger-action"
-                disabled={busy}
-                onClick={async () => {
-                  if (
-                    lock.current ||
-                    !id ||
-                    !window.confirm(
-                      `Xóa “${state.data!.detail!.title}” khỏi nội dung đang sử dụng? Bản ghi được lưu trữ để giữ lịch sử học tập.`,
-                    )
-                  )
-                    return;
-                  lock.current = true;
-                  setBusy(true);
-                  setError('');
-                  setNotice('');
-                  try {
-                    await contentApi.remove(kind, id);
-                    setNotice('Đã xóa nội dung khỏi thư viện đang sử dụng.');
-                    state.reload();
-                  } catch (e) {
-                    setError(failureMessage(e));
-                  } finally {
-                    lock.current = false;
-                    setBusy(false);
-                  }
-                }}
+                disabled={!!deletingId}
+                onClick={() => void remove(detail)}
               >
-                {busy ? 'Đang xóa…' : 'Xóa'}
+                {deletingId ? 'Đang xóa…' : 'Xóa'}
               </button>
             </div>
           )}
         </article>
       )}
-      {kind === 'vocabulary' &&
-        state.data?.detail &&
-        !state.data.detail.deleted &&
-        !path.endsWith('/edit') && (
-          <>
-            <MediaUpload
-              scope="vocabulary"
-              resourceId={state.data.detail.id}
-              kind="AUDIO"
-              writes={writes}
-              saved={state.reload}
-            />
-            <MediaUpload
-              scope="vocabulary"
-              resourceId={state.data.detail.id}
-              kind="IMAGE"
-              writes={writes}
-              saved={state.reload}
-            />
-          </>
-        )}
       {(id === 'new' || (path.endsWith('/edit') && state.data?.detail)) &&
         (state.data?.detail?.deleted ? (
           <Blocked>Nội dung đã xóa không thể chỉnh sửa.</Blocked>
         ) : writes ? (
-          <ContentEditor
-            key={id}
-            kind={kind}
-            original={state.data?.detail ?? undefined}
-            saved={(v) => window.location.assign(href(v.id))}
-            cancelHref={id === 'new' ? href() : href(id)}
-            initialTopicId={
-              kind === 'vocabulary' && id === 'new' ? (params.get('topicId') ?? '') : ''
-            }
-          />
+          kind === 'vocabulary' && id === 'new' ? (
+            <VocabularyBatchEditor
+              initialTopicId={params.get('topicId') ?? ''}
+              cancelHref={href()}
+              saved={(topicId) => router.replace(`/topics/${encodeURIComponent(topicId)}`)}
+            />
+          ) : (
+            <ContentEditor
+              key={id}
+              kind={kind}
+              original={state.data?.detail ?? undefined}
+              saved={(item) => window.location.assign(href(item.id))}
+              cancelHref={id === 'new' ? href() : href(id)}
+            />
+          )
         ) : (
           <Blocked>Thao tác ghi đang tắt.</Blocked>
         ))}
-      {notice && (
-        <p role="status" className="api-success">
-          {notice}
-        </p>
-      )}
       {error && (
         <p role="alert" className="api-error">
           {error}
@@ -279,16 +322,14 @@ function ContentEditor({
   original,
   saved,
   cancelHref,
-  initialTopicId,
 }: {
   kind: ContentKind;
   original?: Awaited<ReturnType<typeof contentApi.read>>;
   saved: (v: Awaited<ReturnType<typeof contentApi.read>>) => void;
   cancelHref: string;
-  initialTopicId: string;
 }) {
   const [values, setValues] = useState<Record<string, string>>(
-    original?.fields ?? { status: 'DRAFT', ...(initialTopicId ? { topicId: initialTopicId } : {}) },
+    original?.fields ?? { status: 'DRAFT' },
   );
   const [busy, setBusy] = useState(false),
     [uncertain, setUncertain] = useState(false),
@@ -304,7 +345,7 @@ function ContentEditor({
           e.preventDefault();
           if (lock.current) return;
           const missing = contentFields[kind].find(
-            ([name]) => !['phonetic', 'example'].includes(name) && !(values[name] ?? '').trim(),
+            ([name]) => !optionalVocabularyFields.includes(name) && !(values[name] ?? '').trim(),
           );
           if (missing) {
             setError(`Vui lòng nhập ${missing[1].toLowerCase()}.`);
@@ -352,10 +393,10 @@ function ContentEditor({
                     <option value="DRAFT">Nháp</option>
                     <option value="PUBLISHED">Công bố</option>
                   </select>
-                ) : ['contentMarkdown', 'definition', 'example'].includes(name) ? (
+                ) : ['contentMarkdown', 'definition', 'example', 'englishDefinition'].includes(name) ? (
                   <textarea
                     aria-label={label}
-                    required={!['example'].includes(name)}
+                    required={!optionalVocabularyFields.includes(name)}
                     maxLength={max}
                     rows={name === 'contentMarkdown' ? 14 : 4}
                     value={values[name] ?? ''}
@@ -367,7 +408,7 @@ function ContentEditor({
                 ) : (
                   <input
                     aria-label={label}
-                    required={!['phonetic'].includes(name)}
+                    required={!optionalVocabularyFields.includes(name)}
                     maxLength={max}
                     value={values[name] ?? ''}
                     onChange={(e) => {
@@ -397,9 +438,14 @@ function ContentEditor({
         </div>
       </form>
       {preview && (
-        <SafeMarkdown
-          text={values.contentMarkdown ?? values.definition ?? values.topicName ?? ''}
-        />
+        <>
+          <SafeMarkdown
+            text={values.contentMarkdown ?? values.definition ?? values.topicName ?? ''}
+          />
+          {kind === 'vocabulary' && values.englishDefinition?.trim() && (
+            <p lang="en">{values.englishDefinition}</p>
+          )}
+        </>
       )}
       {error && (
         <p role="alert" className="api-error">
@@ -552,19 +598,49 @@ export function QuestionFields({
 }
 export function QuestionManagement({ writes }: { writes: boolean }) {
   const { id, path, params, href, update } = useCmsLocation();
+  const edit = id === 'new' || path.endsWith('/edit');
+  const editorBlocked = edit && !writes;
+  const fromTest = params.get('fromTest')?.trim();
+  const returnToTest =
+    fromTest && id && id !== 'new'
+      ? `/tests/${encodeURIComponent(fromTest)}#question-${encodeURIComponent(id)}`
+      : undefined;
+  const title = returnToTest ? 'Câu hỏi' : 'Ngân hàng câu hỏi';
   const requestedPart = Number(params.get('part'));
   const initialPart = [1, 2, 3, 4, 5, 6, 7].includes(requestedPart) ? requestedPart : 5;
   const initialGroupId = [3, 4, 6, 7].includes(initialPart) ? params.get('groupId') : null;
-  const state = useResource(`bank:${id}:${params}`, async (signal) =>
-    id && id !== 'new'
-      ? { detail: await bankApi.question(id, signal), page: null }
-      : { detail: null, page: id === 'new' ? null : await cmsApi.questions(params, signal) },
+  const state = useResource(`bank:${path}:${params}:${editorBlocked}`, async (signal) =>
+    editorBlocked || id === 'new'
+      ? { detail: null, page: null }
+      : id
+        ? { detail: await bankApi.question(id, signal), page: null }
+        : { detail: null, page: await cmsApi.questions(params, signal) },
   );
+  if (editorBlocked)
+    return (
+      <>
+        <h1>{title}</h1>
+        <p role="status">Bạn chỉ có quyền xem câu hỏi.</p>
+        <div className="api-actions">
+          {returnToTest ? (
+            <Link href={returnToTest}>Quay lại đề thi</Link>
+          ) : (
+            <Link href={href()}>Danh sách câu hỏi</Link>
+          )}
+          {id && id !== 'new' && <Link href={href(id)}>Xem chi tiết câu hỏi</Link>}
+        </div>
+      </>
+    );
   return (
     <>
-      <h1>Ngân hàng câu hỏi</h1>
+      <h1>{title}</h1>
+      {returnToTest && (
+        <div className="api-actions">
+          <Link href={returnToTest}>← Quay lại đề thi</Link>
+        </div>
+      )}
       {id ? (
-        <Link href={href()}>Danh sách</Link>
+        !returnToTest && <Link href={href()}>Danh sách</Link>
       ) : (
         <>
           <ManagementSearch
@@ -612,7 +688,7 @@ export function QuestionManagement({ writes }: { writes: boolean }) {
           <ManagementPager data={state.data.page} onPage={(n) => update('page', String(n))} />
         </>
       )}
-      {state.data?.detail && !path.endsWith('/edit') && (
+      {state.data?.detail && !edit && writes && (
         <>
           <MediaUpload
             scope="questions"
@@ -635,17 +711,18 @@ export function QuestionManagement({ writes }: { writes: boolean }) {
           key={id}
           original={state.data?.detail ?? undefined}
           writes={writes}
-          edit={id === 'new' || path.endsWith('/edit')}
-          saved={(v) => window.location.assign(href(v.id))}
+          edit={edit}
+          saved={(v) => window.location.assign(returnToTest ?? href(v.id))}
           editLink={href(id, true)}
           cancelHref={
-            id === 'new' && initialGroupId
+            returnToTest ??
+            (id === 'new' && initialGroupId
               ? `/groups/${encodeURIComponent(initialGroupId)}`
               : id === 'new'
                 ? href()
-                : href(id)
+                : href(id))
           }
-          listHref={href()}
+          listHref={returnToTest ?? href()}
           initialInput={{ ...emptyQuestion(initialPart), groupId: initialGroupId }}
         />
       )}
@@ -722,27 +799,7 @@ function QuestionEditor({
       ) : (
         <>
           <h2>Part {q.part}</h2>
-          <SafeMarkdown text={q.questionText} />
-          {original?.audioUrl && (
-            <AudioPlayer
-              mode="server"
-              source={original.audioUrl}
-              label="Audio câu hỏi"
-              missingMessage="Chưa có audio"
-            />
-          )}
-          {original?.imageUrl && (
-            <img src={original.imageUrl} alt="Minh họa câu hỏi" style={{ maxWidth: '100%' }} />
-          )}
-          <ul>
-            {q.options.map((o) => (
-              <li key={o.optionCode}>
-                {o.optionCode}. {o.optionText}
-                {o.optionCode === q.correctOption && ' · Đáp án đúng'}
-              </li>
-            ))}
-          </ul>
-          <SafeMarkdown text={q.explanation ?? ''} />
+          {original && <QuestionDetailContent question={original} />}
           {writes && (
             <div className="api-actions">
               <Link href={editLink}>Chỉnh sửa</Link>
@@ -779,7 +836,16 @@ function QuestionEditor({
           )}
         </>
       )}
-      {preview && <SafeMarkdown text={q.questionText} />}
+      {preview && (
+        <QuestionDetailContent
+          question={{
+            id: original?.id ?? 'preview',
+            audioUrl: original?.audioUrl ?? null,
+            imageUrl: original?.imageUrl ?? null,
+            input: q,
+          }}
+        />
+      )}
       {error && (
         <p role="alert" className="api-error">
           {error}

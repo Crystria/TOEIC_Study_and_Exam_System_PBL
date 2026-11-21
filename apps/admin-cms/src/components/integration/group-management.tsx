@@ -28,10 +28,14 @@ function groupTitle(group: Group) {
 
 export function GroupManagement({ writes }: { writes: boolean }) {
   const { id, path, params, href, update } = useCmsLocation();
-  const state = useResource(`groups:${id}:${params}`, async (signal) =>
-    id && id !== 'new'
-      ? { detail: await bankApi.group(id, signal), page: null }
-      : { detail: null, page: id === 'new' ? null : await bankApi.groups(params, signal) },
+  const edit = id === 'new' || path.endsWith('/edit');
+  const editorBlocked = edit && !writes;
+  const state = useResource(`groups:${path}:${params}:${editorBlocked}`, async (signal) =>
+    editorBlocked || id === 'new'
+      ? { detail: null, page: null }
+      : id
+        ? { detail: await bankApi.group(id, signal), page: null }
+        : { detail: null, page: await bankApi.groups(params, signal) },
   );
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -59,7 +63,17 @@ export function GroupManagement({ writes }: { writes: boolean }) {
       setDeletingId(null);
     }
   };
-  const edit = id === 'new' || path.endsWith('/edit');
+  if (editorBlocked)
+    return (
+      <>
+        <h1>Nhóm câu hỏi</h1>
+        <p role="status">Bạn chỉ có quyền xem nhóm câu hỏi.</p>
+        <div className="api-actions">
+          <Link href={href()}>Danh sách nhóm</Link>
+          {id && id !== 'new' && <Link href={href(id)}>Xem chi tiết nhóm</Link>}
+        </div>
+      </>
+    );
   return (
     <>
       <h1>Nhóm câu hỏi</h1>
@@ -149,34 +163,36 @@ export function GroupManagement({ writes }: { writes: boolean }) {
         <>
           <GroupDetail group={state.data.detail} />
           {writes && (
-            <div className="api-actions">
-              <Link className="api-primary-action" href={href(id, true)}>
-                Chỉnh sửa nhóm
-              </Link>
-              <button
-                type="button"
-                className="api-danger-action"
-                disabled={deletingId !== null}
-                onClick={() => id && void remove(id)}
-              >
-                {deletingId ? 'Đang xóa…' : 'Xóa nhóm'}
-              </button>
-            </div>
+            <>
+              <div className="api-actions">
+                <Link className="api-primary-action" href={href(id, true)}>
+                  Chỉnh sửa nhóm
+                </Link>
+                <button
+                  type="button"
+                  className="api-danger-action"
+                  disabled={deletingId !== null}
+                  onClick={() => id && void remove(id)}
+                >
+                  {deletingId ? 'Đang xóa…' : 'Xóa nhóm'}
+                </button>
+              </div>
+              <MediaUpload
+                scope="question-groups"
+                resourceId={state.data.detail.id}
+                kind="AUDIO"
+                writes={writes}
+                saved={state.reload}
+              />
+              <MediaUpload
+                scope="question-groups"
+                resourceId={state.data.detail.id}
+                kind="IMAGE"
+                writes={writes}
+                saved={state.reload}
+              />
+            </>
           )}
-          <MediaUpload
-            scope="question-groups"
-            resourceId={state.data.detail.id}
-            kind="AUDIO"
-            writes={writes}
-            saved={state.reload}
-          />
-          <MediaUpload
-            scope="question-groups"
-            resourceId={state.data.detail.id}
-            kind="IMAGE"
-            writes={writes}
-            saved={state.reload}
-          />
         </>
       )}
     </>

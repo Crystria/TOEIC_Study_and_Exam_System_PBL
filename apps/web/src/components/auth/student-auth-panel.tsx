@@ -18,6 +18,7 @@ import '@/styles/student-auth-panel.css';
 
 import { ApiAuth } from '../integration/shared';
 import { Icon } from '../ui/icon';
+import { useDialogBackdropDismiss } from '../ui/use-dialog-backdrop-dismiss';
 import { AuthForm } from './auth-form';
 
 const StudentAuthContext = createContext<{
@@ -118,6 +119,7 @@ export function StudentAuthProvider({
       window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220,
     );
   }, [finishClose]);
+  const backdropDismiss = useDialogBackdropDismiss(requestClose);
 
   const open = useCallback((next: AuthIntent, source: HTMLElement) => {
     if (busyRef.current) return;
@@ -182,9 +184,7 @@ export function StudentAuthProvider({
           event.preventDefault();
           requestClose();
         }}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) requestClose();
-        }}
+        {...backdropDismiss}
       >
         {intent && (
           <div className="student-auth-card" data-intent={intent} data-mode={api ? 'api' : 'demo'}>

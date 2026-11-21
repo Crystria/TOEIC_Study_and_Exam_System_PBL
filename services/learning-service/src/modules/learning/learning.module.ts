@@ -7,12 +7,15 @@ import { SessionService } from './session.service';
 import { LearningMediaService } from './media.service';
 import { PersonalContentController } from './personal-content.controller';
 import { PersonalContentService } from './personal-content.service';
+import { FlashcardSessionController } from './flashcard-session.controller';
+import { FlashcardSessionService } from './flashcard-session.service';
 @Module({
   controllers: [
     LearningController,
     ContentAdminController,
     ContentReadController,
     PersonalContentController,
+    FlashcardSessionController,
   ],
   providers: [
     ContentService,
@@ -20,6 +23,7 @@ import { PersonalContentService } from './personal-content.service';
     SessionService,
     LearningMediaService,
     PersonalContentService,
+    FlashcardSessionService,
   ],
   exports: [ProgressService, SessionService],
 })

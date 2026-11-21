@@ -259,7 +259,7 @@ export function ApiAuth({
             router.push(
               cms
                 ? user.roles.includes('CONTENT_ADMIN')
-                  ? '/questions'
+                  ? '/tests'
                   : user.roles.includes('SYSTEM_ADMIN')
                     ? '/users'
                     : '/login?denied=1'

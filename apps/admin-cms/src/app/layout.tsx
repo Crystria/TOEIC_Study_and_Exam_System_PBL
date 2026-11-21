@@ -2,12 +2,18 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ApiCmsApplication } from '@/components/integration/api-application';
 import { cmsContentWritesEnabled } from '../../../web/src/lib/integration/cms-access';
+import { sidebarInitializationScript } from '../../../web/src/lib/sidebar';
+import { themeInitializationScript } from '../../../web/src/lib/theme';
 
 import './globals.css';
 import '@/styles/cms-workspace.css';
 import '../../../web/src/styles/integration.css';
+import '@/styles/theme.css';
 import '@/styles/content-management.css';
+import '@/styles/user-management.css';
 import '@/styles/admin-login.css';
+import '../../../web/src/styles/theme-toggle.css';
+import '../../../web/src/styles/sidebar-toggle.css';
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +25,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
+        <script dangerouslySetInnerHTML={{ __html: sidebarInitializationScript }} />
+      </head>
       <body>
         {process.env.NEXT_PUBLIC_DATA_MODE === 'api' ? (
           <Suspense fallback={<p role="status">Đang tải giao diện…</p>}>

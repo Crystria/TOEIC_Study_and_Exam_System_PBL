@@ -1,31 +1,39 @@
 'use client';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { VocabularyActions } from '@/components/integration/vocabulary-actions';
+import { Button } from '@/components/ui/button';
+import { AccountRoles } from '@/components/users/account-controls';
 import { effectiveQuestion, validateRecord } from '@/lib/demo/workspace-validation';
 import {
+  canManage,
   OPTION_KEYS,
   type EntityKind,
   type EntityMap,
   type WorkspaceState,
 } from '@/lib/demo/workspace-model';
-import { entityTitle, workspaceHref } from '@/lib/demo/workspace-query';
-import { USER_STATUS_LABELS, USER_ROLE_LABELS } from '@/lib/users/types';
+import { workspaceHref } from '@/lib/demo/workspace-query';
+import { USER_STATUS_LABELS } from '@/lib/users/types';
 import { parseDemoRole } from '@/lib/demo/cms-fixtures';
 import { SafeMarkdown } from './workspace-primitives';
 import { MediaPreview } from './media-controls';
 import { useWorkspace } from './workspace-provider';
 
 const missing = (value?: string) => value || 'Chưa có dữ liệu';
+export type VocabularyRemoval = { word: EntityMap['vocabulary'] } | { topic: EntityMap['topics'] };
+
 export function EntityPreview({
   kind,
   record,
   state: override,
   nested = false,
+  removeVocabulary,
 }: {
   kind: EntityKind;
   record: EntityMap[EntityKind];
   state?: WorkspaceState;
   nested?: boolean;
+  removeVocabulary?: (removal: VocabularyRemoval) => void;
 }) {
   const { state: current } = useWorkspace();
   const state = override ?? current;
@@ -45,14 +53,41 @@ export function EntityPreview({
   if (kind === 'topics') {
     const r = record as EntityMap['topics'];
     const words = state.vocabulary.filter((v) => v.topicId === r.id);
+    const vocabularyParams = new URLSearchParams(params);
+    vocabularyParams.set('fromTopic', r.id);
     return (
       <>
         <h2>{missing(r.name)}</h2>
         <p>{words.length} từ trong chủ đề.</p>
+        {removeVocabulary && (
+          <div className="ws-actions">
+            <Link
+              className="cms-link-button"
+              href={workspaceHref('vocabulary', state, vocabularyParams, 'new')}
+            >
+              Thêm từ vựng vào chủ đề
+            </Link>
+            <Button
+              variant="danger"
+              disabled={!words.length}
+              onClick={() => removeVocabulary({ topic: r })}
+            >
+              Xóa tất cả từ
+            </Button>
+          </div>
+        )}
         <ul>
-          {words.map((v) => (
-            <li key={v.id}>
-              <Link href={workspaceHref('vocabulary', state, params, v.id)}>{missing(v.word)}</Link>
+          {words.map((word) => (
+            <li key={word.id} className="ws-topic-word">
+              <Link className="ws-link" href={workspaceHref('vocabulary', state, params, word.id)}>
+                {missing(word.word)}
+              </Link>
+              {removeVocabulary && (
+                <VocabularyActions
+                  editHref={workspaceHref('vocabulary', state, vocabularyParams, word.id, true)}
+                  onDelete={() => removeVocabulary({ word })}
+                />
+              )}
             </li>
           ))}
         </ul>
@@ -67,6 +102,8 @@ export function EntityPreview({
         <h2 lang="en">{missing(r.word)}</h2>
         <p lang="en">{missing(r.pronunciation)}</p>
         <p>{missing(r.meaning)}</p>
+        <h3>English definition</h3>
+        <p lang={r.englishDefinition ? 'en' : undefined}>{missing(r.englishDefinition)}</p>
         <p>
           Chủ đề:{' '}
           {topic ? (
@@ -81,8 +118,6 @@ export function EntityPreview({
         </p>
         <h3>Ví dụ</h3>
         <p lang="en">{missing(r.example)}</p>
-        <MediaPreview media={state.media.find((m) => m.id === r.audioId)} />
-        <MediaPreview media={state.media.find((m) => m.id === r.imageId)} />
       </article>
     );
   }
@@ -166,6 +201,9 @@ export function EntityPreview({
   if (kind === 'tests') {
     const r = record as EntityMap['tests'];
     const errors = validateRecord('tests', r, state);
+    const canEditQuestions = canManage('questions', parseDemoRole(params.get('demoRole')));
+    const questionParams = new URLSearchParams(params);
+    questionParams.set('fromTest', r.id);
     return (
       <article>
         <h2>{missing(r.title)}</h2>
@@ -178,32 +216,37 @@ export function EntityPreview({
             ? 'Cấu trúc chưa đủ điều kiện demo: ' + Object.values(errors).join(' ')
             : 'Đã đạt các kiểm tra cấu trúc demo. Chưa được backend xác nhận hoặc xuất bản.'}
         </p>
-        {[1, 2, 3, 4, 5, 6, 7].map((part) => {
-          const ids = r.questionIds.filter(
-            (id) => state.questions.find((q) => q.id === id)?.part === part,
-          );
-          return ids.length ? (
-            <section key={part}>
+        {r.questionIds.map((id, index) => {
+          const question = state.questions.find((q) => q.id === id);
+          return (
+            <section className="ws-structure" key={`${index}:${id}`}>
               <h3>
-                Part {part} · {ids.length} câu
+                Câu {index + 1}
+                {question ? ` · Part ${question.part}` : ''}
               </h3>
-              {ids.map((id) => {
-                const q = state.questions.find((q) => q.id === id)!;
-                return (
-                  <details key={id}>
-                    <summary>
-                      Câu {r.questionIds.indexOf(id) + 1} · {entityTitle(q)}
-                    </summary>
-                    <EntityPreview kind="questions" record={q} state={state} nested />
-                  </details>
-                );
-              })}
+              {question ? (
+                <>
+                  <div className="ws-actions">
+                    <Link href={workspaceHref('questions', state, questionParams, id)}>
+                      Xem chi tiết câu {index + 1}
+                    </Link>
+                    {canEditQuestions && (
+                      <Link
+                        className="cms-link-button"
+                        href={workspaceHref('questions', state, questionParams, id, true)}
+                      >
+                        Chỉnh sửa câu {index + 1}
+                      </Link>
+                    )}
+                  </div>
+                  <EntityPreview kind="questions" record={question} state={state} nested />
+                </>
+              ) : (
+                <p className="ws-error">Không tìm thấy câu hỏi {id} trong cấu trúc đề thi.</p>
+              )}
             </section>
-          ) : null;
+          );
         })}
-        {r.questionIds.some((id) => !state.questions.some((q) => q.id === id)) && (
-          <p className="ws-error">Cấu trúc có tham chiếu câu hỏi bị thiếu.</p>
-        )}
         {!r.questionIds.length && (
           <p>
             Chưa có cấu trúc được lắp ghép. Số câu từ metadata lịch sử không được dùng thay cấu
@@ -219,16 +262,14 @@ export function EntityPreview({
       <article>
         <h2>{missing(r.fullName)}</h2>
         <dl>
-          <dt>ID</dt>
-          <dd>{r.id}</dd>
           <dt>Email</dt>
           <dd>{missing(r.email)}</dd>
-          <dt>Vai trò demo</dt>
-          <dd>{r.roles.map((role) => USER_ROLE_LABELS[role]).join(', ') || 'Chưa có vai trò'}</dd>
-          <dt>Trạng thái source</dt>
+          <dt>Vai trò</dt>
           <dd>
-            {r.status ? USER_STATUS_LABELS[r.status] : 'Chưa có dữ liệu'} ({r.status || '—'})
+            <AccountRoles roles={r.roles} />
           </dd>
+          <dt>Trạng thái tài khoản</dt>
+          <dd>{r.status ? USER_STATUS_LABELS[r.status] : 'Chưa có trạng thái'}</dd>
         </dl>
         <p>
           Thay đổi ở đây chỉ cập nhật bản ghi demo. Persona trên thanh công cụ không phụ thuộc bản

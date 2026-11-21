@@ -154,19 +154,21 @@ async function revoke(session, label) {
 function mutationAck() {
   return page.getByRole('status').filter({ hasText: 'Server đã xác nhận thay đổi.' });
 }
-async function saveRoles() {
-  await page.getByRole('button', { name: 'Lưu vai trò', exact: true }).click();
-}
+const applyButton = () => page.getByRole('button', { name: 'Áp dụng', exact: true });
+const roleSelect = () => page.getByRole('combobox', { name: 'Vai trò tài khoản', exact: true });
+const statusSelect = () =>
+  page.getByRole('combobox', { name: 'Trạng thái tài khoản', exact: true });
+
 async function inspect() {
   await check(
     'I-ack-invalidated-on-new-draft',
     'Editing roles after an acknowledged save clears the previous success notice',
     async () => {
-      await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).check();
-      await saveRoles();
+      await roleSelect().selectOption('CONTENT_ADMIN');
+      await applyButton().click();
       await mutationAck().waitFor();
-      assert((await target()).roles.includes('CONTENT_ADMIN'));
-      await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).uncheck();
+      assert.deepEqual((await target()).roles, ['CONTENT_ADMIN']);
+      await roleSelect().selectOption('USER');
       const stale = await mutationAck().isVisible();
       report.observedStaleSuccess = stale;
       assert.equal(stale, false, 'stale successful mutation notice remains on unsaved roles');
@@ -175,29 +177,41 @@ async function inspect() {
   );
   await check(
     'I-ambiguous-role-change-reconcile',
-    'Lost committed response keeps pending payload frozen and exposes server reconciliation',
+    'Losing both the committed response and initial readback freezes the draft until manual readback',
     async () => {
       let committed = false;
+      let lostReadback = false;
       const pattern = '**/api/frontend/admin/users/' + own.target.userId + '/roles';
       await context.route(pattern, async (r) => {
         const response = await r.fetch();
         committed = response.status() === 200;
         await r.abort('failed');
       });
-      await saveRoles();
+      await context.route('**/api/frontend/admin/users?*', async (route) => {
+        const url = new URL(route.request().url());
+        if (committed && !lostReadback && url.searchParams.get('keyword') === own.target.email) {
+          lostReadback = true;
+          return route.abort('failed');
+        }
+        return route.fallback();
+      });
+      await applyButton().click();
       await page.locator('p.api-error').waitFor();
       assert(committed);
+      assert(lostReadback);
       const server = await target();
       assert.deepEqual(server.roles, ['USER']);
       report.lostAckCommitted = { roles: server.roles, status: server.status };
-      assert(
-        await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).isDisabled(),
-        'role inputs remain editable after uncertain commit',
-      );
+      assert(await roleSelect().isDisabled(), 'role input remains editable after uncertain commit');
       await page
         .getByRole('button', { name: 'Kiểm tra trạng thái từ server', exact: true })
+        .click();
+      await page
+        .getByRole('status')
+        .filter({ hasText: 'Đã kiểm tra dữ liệu từ server.' })
         .waitFor();
-      return { committed: true, frozen: true };
+      assert(!(await roleSelect().isDisabled()));
+      return { committed: true, frozen: true, manualReadback: true };
     },
   );
 }
@@ -225,20 +239,26 @@ async function keyboardReadback() {
   });
   await check(
     'B-keyboard-final-readback',
-    'Keyboard checkbox/select/menu/metadata work without sending a mutation; final target remains USER ACTIVE',
+    'Keyboard role/status selectors, menu and metadata work without mutation; target remains USER ACTIVE',
     async () => {
-      const checkbox = page.getByRole('checkbox', { name: 'USER', exact: true });
-      await checkbox.focus();
-      await page.keyboard.press('Space');
-      assert(await page.getByRole('button', { name: 'Lưu vai trò', exact: true }).isDisabled());
-      await page.keyboard.press('Space');
-      assert(await checkbox.isChecked());
-      const select = page.getByLabel('Trạng thái tài khoản', { exact: true });
-      await select.focus();
-      await page.keyboard.press('Home');
+      await roleSelect().focus();
       await page.keyboard.press('ArrowDown');
-      await page.keyboard.press('Home');
-      assert.equal(await select.inputValue(), 'ACTIVE');
+      assert.equal(await roleSelect().inputValue(), 'CONTENT_ADMIN');
+      assert(!(await applyButton().isDisabled()));
+      await page.keyboard.press('ArrowUp');
+      assert.equal(await roleSelect().inputValue(), 'USER');
+      assert(await applyButton().isDisabled());
+      await statusSelect().focus();
+      await page.keyboard.press('ArrowDown');
+      assert.equal(await statusSelect().inputValue(), 'SUSPENDED');
+      await applyButton().focus();
+      page.removeAllListeners('dialog');
+      page.once('dialog', (d) => d.dismiss());
+      await page.keyboard.press('Space');
+      page.on('dialog', (d) => d.accept());
+      await statusSelect().focus();
+      await page.keyboard.press('ArrowUp');
+      assert.equal(await statusSelect().inputValue(), 'ACTIVE');
       await page.setViewportSize({ width: 390, height: 844 });
       const menu = page.getByRole('button', { name: 'Mở menu quản trị', exact: true });
       await menu.click();
@@ -266,8 +286,8 @@ async function keyboardReadback() {
         roles: current.roles,
         status: current.status,
         patches: 0,
-        checkboxKeyboard: true,
-        selectKeyboard: true,
+        roleSelectKeyboard: true,
+        statusSelectKeyboard: true,
         menuEscapeFocus: true,
         metadataKeyboard: true,
         loadingObserved: true,
@@ -296,7 +316,7 @@ async function acceptance(resume = false) {
   if (!resume) {
     await check(
       'B-role-validation-confirmation',
-      'Empty roles cannot save; canceled confirmation sends no PATCH; target USER cannot call admin APIs',
+      'An unchanged role cannot save; canceled confirmation sends no PATCH; target USER cannot call admin APIs',
       async () => {
         userSession = await nativeLogin();
         assert.deepEqual(userSession.user.roles, ['USER']);
@@ -312,19 +332,24 @@ async function acceptance(resume = false) {
         targetContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
         targetPage = await targetContext.newPage();
         await login(targetPage, 'http://localhost:3006', own.target);
-        await page.getByRole('checkbox', { name: 'USER', exact: true }).uncheck();
-        assert(await page.getByRole('button', { name: 'Lưu vai trò', exact: true }).isDisabled());
-        await page.getByRole('checkbox', { name: 'USER', exact: true }).check();
-        await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).check();
+        assert.equal(await roleSelect().inputValue(), 'USER');
+        assert.deepEqual(
+          await roleSelect()
+            .locator('option')
+            .evaluateAll((options) => options.map((option) => option.value)),
+          ['USER', 'CONTENT_ADMIN'],
+        );
+        assert(await applyButton().isDisabled());
+        await roleSelect().selectOption('CONTENT_ADMIN');
         const before = mutationCount;
         page.removeAllListeners('dialog');
         page.once('dialog', (d) => d.dismiss());
-        await saveRoles();
+        await applyButton().click();
         page.on('dialog', (d) => d.accept());
         assert.equal(mutationCount, before);
         assert.deepEqual((await target()).roles, ['USER']);
         return {
-          emptyRolesDisabled: true,
+          unchangedRoleDisabled: true,
           confirmationCanceled: true,
           patches: 0,
           permissions: [403, 403],
@@ -333,7 +358,7 @@ async function acceptance(resume = false) {
     );
     await check(
       'B-grant-role-lost-ack-reconcile-revocation',
-      'Committed role change with lost response freezes inputs; GET reconciliation confirms without another PATCH; old sessions revoked',
+      'The app reads back a lost role response without another PATCH; the prior session is revoked',
       async () => {
         assert(userSession);
         let committed = false;
@@ -344,25 +369,19 @@ async function acceptance(resume = false) {
           await route.abort('failed');
         });
         const before = mutationCount;
-        await saveRoles();
-        await page
-          .getByRole('button', { name: 'Kiểm tra trạng thái từ server', exact: true })
-          .waitFor();
+        const start = timeline.length;
+        await applyButton().click();
+        await mutationAck().waitFor();
         assert(committed);
-        assert.equal(await mutationAck().count(), 0);
-        assert(
-          await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).isDisabled(),
+        assert.deepEqual(
+          timeline.slice(start).map(({ method }) => method),
+          ['GET', 'PATCH', 'GET'],
         );
         const granted = await target();
-        assert.deepEqual([...granted.roles].sort(), ['CONTENT_ADMIN', 'USER']);
-        const pendingViews = await responsive('roles-uncertain');
+        assert.deepEqual(granted.roles, ['CONTENT_ADMIN']);
+        assert.equal(await roleSelect().inputValue(), 'CONTENT_ADMIN');
+        const reconciledViews = await responsive('roles-confirmed');
         await context.unroute(pattern);
-        const patchBeforeRead = mutationCount;
-        await page
-          .getByRole('button', { name: 'Kiểm tra trạng thái từ server', exact: true })
-          .click();
-        await mutationAck().waitFor();
-        assert.equal(mutationCount, patchBeforeRead);
         assert.equal(mutationCount - before, 1);
         const revoked = await revoke(userSession, 'role grant');
         const expiredCookie = await targetContext.request.get(
@@ -371,9 +390,9 @@ async function acceptance(resume = false) {
         assert.equal(expiredCookie.status(), 401);
         await targetPage.reload();
         await targetPage.getByRole('heading', { name: 'Tài khoản của bạn', exact: true }).waitFor();
-        await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).uncheck();
+        await roleSelect().selectOption('USER');
         assert.equal(await mutationAck().count(), 0, 'notice cleared on role edit');
-        await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).check();
+        await roleSelect().selectOption('CONTENT_ADMIN');
         return {
           roles: granted.roles,
           patches: 1,
@@ -381,7 +400,7 @@ async function acceptance(resume = false) {
           revoked,
           expiredBrowserCookie: 401,
           noticeCleared: true,
-          viewports: pendingViews,
+          viewports: reconciledViews,
         };
       },
     );
@@ -410,21 +429,22 @@ async function acceptance(resume = false) {
       targetContext = await browser.newContext();
       targetPage = await targetContext.newPage();
       await login(targetPage, 'http://localhost:3007', own.target);
-      await page.getByLabel('Trạng thái tài khoản', { exact: true }).selectOption('SUSPENDED');
+      assert.equal(await statusSelect().inputValue(), 'ACTIVE');
       const pattern = '**/api/frontend/admin/users/' + own.target.userId + '/status';
       await context.route(pattern, (r) => r.abort('internetdisconnected'));
-      await page.getByRole('button', { name: 'Lưu trạng thái', exact: true }).click();
+      await statusSelect().selectOption('SUSPENDED');
+      await applyButton().click();
       await page
         .getByRole('button', { name: 'Kiểm tra trạng thái từ server', exact: true })
         .waitFor();
       assert.equal(await mutationAck().count(), 0);
       assert.equal((await target()).status, 'ACTIVE');
-      assert(await page.getByLabel('Trạng thái tài khoản', { exact: true }).isDisabled());
+      assert(await statusSelect().isDisabled());
       await page
         .getByRole('button', { name: 'Kiểm tra trạng thái từ server', exact: true })
         .click();
       await page
-        .getByText('Trạng thái server chưa khớp yêu cầu đã gửi. Có thể thử lại cùng thay đổi.', {
+        .getByText('Dữ liệu server chưa khớp yêu cầu đã gửi. Có thể thử lại.', {
           exact: true,
         })
         .waitFor();
@@ -465,11 +485,10 @@ async function acceptance(resume = false) {
   );
   await check(
     'B-restore-status-lost-ack-no-duplicate',
-    'ACTIVE restoration with lost response is confirmed by read-first retry; no duplicate PATCH or old-session revival',
+    'Readback confirms ACTIVE after a lost response with one PATCH and no old-session revival',
     async () => {
       assert.equal((await target()).status, 'SUSPENDED');
-      await page.getByLabel('Trạng thái tài khoản', { exact: true }).selectOption('ACTIVE');
-      assert.equal(await mutationAck().count(), 0, 'notice cleared on status edit');
+      assert.equal(await statusSelect().inputValue(), 'SUSPENDED');
       const pattern = '**/api/frontend/admin/users/' + own.target.userId + '/status';
       let committed = false;
       await context.route(pattern, async (r) => {
@@ -478,18 +497,17 @@ async function acceptance(resume = false) {
         await r.abort('failed');
       });
       const before = mutationCount;
-      await page.getByRole('button', { name: 'Lưu trạng thái', exact: true }).click();
-      await page
-        .getByRole('button', { name: 'Kiểm tra trạng thái từ server', exact: true })
-        .waitFor();
+      const start = timeline.length;
+      await statusSelect().selectOption('ACTIVE');
+      await applyButton().click();
+      await mutationAck().waitFor();
       assert(committed);
-      assert.equal(await mutationAck().count(), 0);
+      assert.deepEqual(
+        timeline.slice(start).map(({ method }) => method),
+        ['PATCH', 'GET'],
+      );
       assert.equal((await target()).status, 'ACTIVE');
       await context.unroute(pattern);
-      const afterCommit = mutationCount;
-      await page.getByRole('button', { name: 'Thử lại cùng thay đổi', exact: true }).click();
-      await mutationAck().waitFor();
-      assert.equal(mutationCount, afterCommit);
       assert.equal(mutationCount - before, 1);
       const revoked = await revoke(contentSession, 'old session after ACTIVE restoration');
       recoveredContent = await nativeLogin();
@@ -500,15 +518,12 @@ async function acceptance(resume = false) {
       );
       await page.reload();
       await page.getByRole('heading', { name: own.target.fullName, exact: true }).waitFor();
-      assert.equal(
-        await page.getByLabel('Trạng thái tài khoản', { exact: true }).inputValue(),
-        'ACTIVE',
-      );
-      assert(await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).isChecked());
+      assert.equal(await statusSelect().inputValue(), 'ACTIVE');
+      assert.equal(await roleSelect().inputValue(), 'CONTENT_ADMIN');
       return {
         status: 'ACTIVE',
         patches: 1,
-        extraPatchOnRetry: 0,
+        extraPatchOnReadback: 0,
         revoked,
         loginRecovery: 200,
         reload: true,
@@ -521,7 +536,7 @@ async function acceptance(resume = false) {
     'Doubleclick emits one mutation; removing CONTENT_ADMIN revokes old access; fresh USER has no admin permission; reload shows final state',
     async () => {
       assert(recoveredContent);
-      await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).uncheck();
+      await roleSelect().selectOption('USER');
       const pattern = '**/api/frontend/admin/users/' + own.target.userId + '/roles';
       await context.route(pattern, async (route) => {
         const response = await route.fetch();
@@ -529,7 +544,7 @@ async function acceptance(resume = false) {
         await route.fulfill({ response });
       });
       const before = mutationCount;
-      await page.getByRole('button', { name: 'Lưu vai trò', exact: true }).dblclick();
+      await applyButton().dblclick();
       await mutationAck().waitFor();
       assert.equal(mutationCount - before, 1);
       await context.unroute(pattern);
@@ -545,10 +560,7 @@ async function acceptance(resume = false) {
       assert.deepEqual(denied, [403, 403, 403]);
       await page.reload();
       await page.getByRole('heading', { name: own.target.fullName, exact: true }).waitFor();
-      assert.equal(
-        await page.getByRole('checkbox', { name: 'CONTENT_ADMIN', exact: true }).isChecked(),
-        false,
-      );
+      assert.equal(await roleSelect().inputValue(), 'USER');
       return {
         roles: current.roles,
         status: current.status,
@@ -561,7 +573,7 @@ async function acceptance(resume = false) {
   );
   await check(
     'B-self-account-read-only',
-    'Actor cannot edit own roles/status; canceled inspection sends no mutation',
+    'Actor can view their account and sends no mutation',
     async () => {
       const me = await actorRead('users/me');
       const before = mutationCount;
@@ -572,8 +584,9 @@ async function acceptance(resume = false) {
           encodeURIComponent(actors.system_admin.email),
       );
       await page.getByRole('heading', { name: me.fullName, exact: true }).waitFor();
-      assert(await page.getByRole('button', { name: 'Lưu vai trò', exact: true }).isDisabled());
-      assert(await page.getByRole('button', { name: 'Lưu trạng thái', exact: true }).isDisabled());
+      assert.equal(await applyButton().count(), 0);
+      assert.equal(await roleSelect().count(), 0);
+      assert.equal(await statusSelect().count(), 0);
       assert.equal(mutationCount, before);
       return { actorId: actors.system_admin.userId, readOnly: true, patches: 0 };
     },
@@ -596,21 +609,21 @@ async function acceptance(resume = false) {
         {
           action: 'USER_ROLES_CHANGED',
           beforeData: { roles: ['USER'], status: 'ACTIVE' },
-          afterData: { roles: ['CONTENT_ADMIN', 'USER'], status: 'ACTIVE' },
+          afterData: { roles: ['CONTENT_ADMIN'], status: 'ACTIVE' },
         },
         {
           action: 'USER_STATUS_CHANGED',
-          beforeData: { roles: ['CONTENT_ADMIN', 'USER'], status: 'ACTIVE' },
-          afterData: { roles: ['CONTENT_ADMIN', 'USER'], status: 'SUSPENDED' },
+          beforeData: { roles: ['CONTENT_ADMIN'], status: 'ACTIVE' },
+          afterData: { roles: ['CONTENT_ADMIN'], status: 'SUSPENDED' },
         },
         {
           action: 'USER_STATUS_CHANGED',
-          beforeData: { roles: ['CONTENT_ADMIN', 'USER'], status: 'SUSPENDED' },
-          afterData: { roles: ['CONTENT_ADMIN', 'USER'], status: 'ACTIVE' },
+          beforeData: { roles: ['CONTENT_ADMIN'], status: 'SUSPENDED' },
+          afterData: { roles: ['CONTENT_ADMIN'], status: 'ACTIVE' },
         },
         {
           action: 'USER_ROLES_CHANGED',
-          beforeData: { roles: ['CONTENT_ADMIN', 'USER'], status: 'ACTIVE' },
+          beforeData: { roles: ['CONTENT_ADMIN'], status: 'ACTIVE' },
           afterData: { roles: ['USER'], status: 'ACTIVE' },
         },
       ];
@@ -695,7 +708,7 @@ async function main() {
   const initial = await target();
   assert.deepEqual(
     initial.roles,
-    values.suite === 'resume' ? ['CONTENT_ADMIN', 'USER'] : ['USER'],
+    values.suite === 'resume' ? ['CONTENT_ADMIN'] : ['USER'],
     'Reconcile prior run before mutations',
   );
   assert.equal(initial.status, 'ACTIVE');
@@ -714,7 +727,7 @@ async function main() {
     await acceptance(values.suite === 'resume');
     return;
   }
-  throw Error('Select --suite inspect/all or explicit resume from CONTENT_ADMIN+USER ACTIVE');
+  throw Error('Select --suite inspect/all or explicit resume from CONTENT_ADMIN ACTIVE');
 }
 main()
   .catch((e) => {

@@ -60,19 +60,6 @@
   text-align: center;
 }
 
-.reference-exam .reference-exam-exit {
-  flex-shrink: 0;
-  min-height: 40px;
-  padding: 4px 12px;
-  border: 1px solid var(--exam-blue);
-  border-radius: 4px;
-  background: #eff4fc;
-  color: #252525;
-  text-decoration: none;
-  font-size: 17px;
-  font-weight: 400;
-}
-
 .reference-exam-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
@@ -205,8 +192,10 @@
 }
 
 .reference-exam-audio-time {
+  flex-shrink: 0;
   font-size: 15px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .reference-exam-muted-line {
@@ -407,7 +396,7 @@
 }
 
 .reference-exam-group-media {
-  width: min(100%, 750px);
+  width: min(100%, 480px);
   margin-bottom: 12px;
 }
 
@@ -466,6 +455,59 @@
 .reference-exam-question > .reference-exam-image {
   width: min(100%, 750px);
   margin-bottom: 12px;
+}
+
+/* Leave room for all answer choices alongside listening pictures. */
+.reference-exam-group:is([data-part='1'], [data-part='3'], [data-part='4'])
+  :is(.reference-exam-image, .reference-exam-group-media img) {
+  width: auto;
+  max-width: min(100%, 480px);
+  height: auto;
+  max-height: min(32vh, 280px);
+  max-height: min(32svh, 280px);
+  object-fit: contain;
+  object-position: left top;
+}
+
+@media (min-width: 360px) {
+  .reference-exam-group[data-part='1']:has(
+      > .reference-exam-group-media,
+      > .reference-exam-passage
+    ),
+  .reference-exam-group[data-part='1'] .reference-exam-question:has(> .reference-exam-image) {
+    display: grid;
+    grid-template-columns: minmax(0, 480px) 110px;
+    align-items: start;
+    gap: 12px;
+  }
+
+  .reference-exam-group[data-part='1'] > :is(.reference-exam-group-media, .reference-exam-passage) {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .reference-exam-group[data-part='1']
+    .reference-exam-question:has(> .reference-exam-image)
+    > .reference-exam-image {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    margin-bottom: 0;
+  }
+
+  .reference-exam-group[data-part='1']
+    .reference-exam-question:has(> .reference-exam-image)
+    > :is(.reference-exam-question-heading, .reference-exam-options) {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+  }
+
+  .reference-exam-group[data-part='1']
+    .reference-exam-question:has(> .reference-exam-image)
+    > .reference-exam-clear {
+    grid-column: 2;
+    grid-row: 2;
+  }
 }
 
 .reference-exam .reference-exam-number {
@@ -831,9 +873,6 @@
     min-height: 35px;
     font-size: 18px;
   }
-  .reference-exam-group-media {
-    width: min(100%, 900px);
-  }
 }
 
 @media (max-width: 1100px) {
@@ -930,6 +969,11 @@
   .reference-exam-options label {
     min-height: 35px;
   }
+  .reference-exam-group:is([data-part='1'], [data-part='3'], [data-part='4'])
+    :is(.reference-exam-image, .reference-exam-group-media img) {
+    max-height: min(24vh, 200px);
+    max-height: min(24svh, 200px);
+  }
   .reference-exam-clear {
     margin-left: 46px;
   }
@@ -985,6 +1029,32 @@
     border-color: var(--exam-blue);
     background: var(--exam-blue);
     color: white;
+  }
+}
+
+@media (min-width: 360px) and (max-width: 760px) {
+  .reference-exam-group[data-part='1']:has(
+      > .reference-exam-group-media,
+      > .reference-exam-passage
+    ),
+  .reference-exam-group[data-part='1'] .reference-exam-question:has(> .reference-exam-image) {
+    grid-template-columns: minmax(0, 1fr) 90px;
+  }
+
+  .reference-exam-group[data-part='1'] :is(.reference-exam-image, .reference-exam-group-media img) {
+    max-height: min(30vh, 200px);
+    max-height: min(30svh, 200px);
+  }
+}
+
+@media (max-width: 359px) {
+  .reference-exam-group[data-part='1'] .reference-exam-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 8px 0 0;
+  }
+
+  .reference-exam-group[data-part='1'] .reference-exam-options label {
+    min-height: 44px;
   }
 }
 

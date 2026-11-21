@@ -1,7 +1,12 @@
 import { createHash } from 'node:crypto';
 import { ContractError, parseTokens, parseUser } from './contracts';
 import { isExamMutation } from './exam-access';
-import { isCmsContentMutation } from './cms-access';
+import {
+  isCmsContentMutation,
+  isTopicVocabularyDeletion,
+  MAX_VOCABULARY_IMPORT_BYTES,
+  vocabularyWorkbookImportPath,
+} from './cms-access';
 import { isPersonalLearningMutation, isPersonalLearningRoute } from './personal-learning-access';
 
 export interface BridgeConfig {
@@ -29,8 +34,25 @@ class HttpFailure extends Error {
 const rotating = new Map<string, { task: Promise<Tokens>; expires: number }>();
 const writeMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
+function isFlashcardReview(path: string, method: string) {
+  return method === 'POST' && /^learning\/flashcards\/[^/]+\/review$/.test(path);
+}
+
+function isFlashcardSession(path: string, method: string) {
+  if (method === 'GET') return /^learning\/flashcard-sessions\/[^/]+$/.test(path);
+  return (
+    method === 'POST' &&
+    /^learning\/flashcard-sessions(?:\/[^/]+\/(?:reviews|submit|cancel))?$/.test(path)
+  );
+}
+
 function permitted(app: BridgeConfig['app'], path: string, method: string): boolean {
+  if (path === 'learning/admin/vocabularies/bulk' || path === vocabularyWorkbookImportPath)
+    return app === 'cms' && method === 'POST';
+  if (isTopicVocabularyDeletion(path, method)) return app === 'cms';
   if (app === 'web' && isPersonalLearningRoute(path, method)) return true;
+  if (app === 'web' && (isFlashcardReview(path, method) || isFlashcardSession(path, method)))
+    return true;
   if (method === 'GET') {
     if (app === 'web' && path === 'sync/users/me') return true;
     if (/^users\/me$/.test(path)) return true;
@@ -80,7 +102,7 @@ function permitted(app: BridgeConfig['app'], path: string, method: string): bool
   if (
     app === 'web' &&
     method === 'POST' &&
-    /^learning\/(flashcards\/[^/]+\/review|lessons\/[^/]+\/complete)$/.test(path)
+    /^learning\/lessons\/[^/]+\/complete$/.test(path)
   )
     return true;
   if (app !== 'cms') return false;
@@ -102,10 +124,10 @@ export function requiredRoles(path: string, method: string): readonly string[] {
   if (path.startsWith('admin/')) return ['SYSTEM_ADMIN'];
   if (path.startsWith('learning/admin/') || /^learning\/vocabularies\/[^/]+\/media\//.test(path))
     return ['CONTENT_ADMIN'];
-  if (path.startsWith('question-groups')) return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
+  if (/^(questions|question-groups)(?:\/|$)/.test(path))
+    return writeMethods.has(method) ? ['CONTENT_ADMIN'] : ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   if (path.startsWith('tests/cms-metadata')) return ['CONTENT_ADMIN'];
   if (/^tests(?:\/[^/]+)?$/.test(path) && writeMethods.has(method)) return ['CONTENT_ADMIN'];
-  if (path.startsWith('questions')) return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   return [];
 }
 
@@ -196,11 +218,15 @@ export async function handleBridge(
     body?: unknown,
     access = tokens.accessToken,
   ): Promise<unknown> {
+    const longContentOperation =
+      target === `${path}${url.search}` &&
+      ((path === vocabularyWorkbookImportPath && verb === 'POST') ||
+        isTopicVocabularyDeletion(path, verb));
     const response = await fetcher(`${upstream.href.replace(/\/$/, '')}/${target}`, {
       method: verb,
       redirect: 'error',
       cache: 'no-store',
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(longContentOperation ? 35_000 : 20_000),
       headers: {
         Accept: 'application/json',
         ...(request.headers.has('idempotency-key') && target === `${path}${url.search}`
@@ -254,10 +280,14 @@ export async function handleBridge(
   try {
     let body: unknown;
     if (writeMethods.has(method)) {
-      if (Number(request.headers.get('content-length') ?? 0) > 1_048_576)
+      const bodyLimit =
+        config.app === 'cms' && path === vocabularyWorkbookImportPath && method === 'POST'
+          ? MAX_VOCABULARY_IMPORT_BYTES
+          : 1_048_576;
+      if (Number(request.headers.get('content-length') ?? 0) > bodyLimit)
         return respond({ code: 'BODY_TOO_LARGE' }, 413);
       const source = await request.text();
-      if (source.length > 1_048_576) return respond({ code: 'BODY_TOO_LARGE' }, 413);
+      if (Buffer.byteLength(source) > bodyLimit) return respond({ code: 'BODY_TOO_LARGE' }, 413);
       try {
         body = source ? JSON.parse(source) : undefined;
       } catch {
@@ -326,7 +356,10 @@ export async function handleBridge(
     const canWrite =
       config.app === 'cms' && isCmsContentMutation(path, method)
         ? (config.contentWritesEnabled ?? config.writesEnabled)
-        : config.app === 'web' && isPersonalLearningMutation(path, method)
+        : config.app === 'web' &&
+            (isPersonalLearningMutation(path, method) ||
+              isFlashcardReview(path, method) ||
+              isFlashcardSession(path, method))
           ? true
           : config.app === 'web' && isExamMutation(path, method)
             ? (config.examWritesEnabled ?? config.writesEnabled)

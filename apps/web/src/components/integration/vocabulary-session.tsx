@@ -1,85 +1,156 @@
 'use client';
-import { useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { vocabularySessions } from '../../lib/integration/vocabulary-session';
-import { failureMessage, mutationOutcomeUnknown } from '../../lib/integration/client';
-import { AudioPlayer } from '../ui/audio-player';
-import { ResourceState, useResource } from './shared';
 
-export function VocabularySessionStart({ topicId, writes }: { topicId: string; writes: boolean }) {
-  const [mode, setMode] = useState<'NEW' | 'REVIEW'>('NEW'),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false),
-    [uncertain, setUncertain] = useState(false);
-  const pending = useRef<{ key: string; mode: 'NEW' | 'REVIEW' }>(),
-    lock = useRef(false),
-    router = useRouter();
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { failureMessage, GatewayError, mutationOutcomeUnknown } from '../../lib/integration/client';
+import {
+  flashcardSessions,
+  vocabularySessions,
+  type FlashcardMode,
+  type FlashcardScope,
+} from '../../lib/integration/vocabulary-session';
+import type { MemoryQuality } from '../../lib/learning/types';
+import { Button } from '../ui/button';
+import { Progress } from '../ui/feedback';
+import { VocabularyQuizQuestions } from '../ui/vocabulary-quiz-questions';
+import { ResourceState, useResource } from './shared';
+import { VocabularyWordCard } from './vocabulary-word-card';
+
+type Review = { vocabularyId: string; quality: number };
+type SessionData = Awaited<ReturnType<typeof flashcardSessions.read>>;
+
+const ratings: { quality: MemoryQuality; label: string }[] = [
+  { quality: 1, label: 'Chưa thuộc' },
+  { quality: 3, label: 'Mơ hồ' },
+  { quality: 5, label: 'Đã thuộc' },
+];
+
+export function flashcardTopicHref(topicId: string, scope: FlashcardScope) {
+  return scope === 'PERSONAL'
+    ? '/study/vocabulary?' + new URLSearchParams({ library: 'personal', topic: topicId })
+    : '/study/vocabulary/' + encodeURIComponent(topicId);
+}
+
+function noEligibleFlashcards(error: unknown) {
+  if (!(error instanceof GatewayError) || error.status !== 409) return false;
+  const envelope = error.details;
+  if (!envelope || typeof envelope !== 'object') return false;
+  const detail = 'details' in envelope ? envelope.details : envelope;
   return (
-    <article className="api-card">
-      <h2>Phiên 5 Flashcard và quiz</h2>
-      <p>
-        Cần đủ 5 từ phù hợp và 4 định nghĩa khác nhau trong chủ đề. Lịch SM-2 chỉ cập nhật sau khi
-        backend chấm quiz.
-      </p>
+    detail &&
+    typeof detail === 'object' &&
+    'code' in detail &&
+    detail.code === 'NO_ELIGIBLE_FLASHCARDS'
+  );
+}
+
+export function VocabularySessionStart({
+  topicId,
+  scope,
+  limit,
+  initialMode = 'NEW',
+}: {
+  topicId: string;
+  scope: FlashcardScope;
+  limit: number;
+  initialMode?: FlashcardMode;
+}) {
+  const [mode, setMode] = useState<FlashcardMode>(initialMode);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [uncertain, setUncertain] = useState(false);
+  const pending = useRef<{ key: string; mode: FlashcardMode; limit: number }>();
+  const lock = useRef(false);
+  const router = useRouter();
+
+  async function start() {
+    if (lock.current) return;
+    lock.current = true;
+    setBusy(true);
+    setError('');
+    const request = (pending.current ??= { key: crypto.randomUUID(), mode, limit });
+    try {
+      const session = await flashcardSessions.start(topicId, request.mode, request.key, {
+        scope,
+        limit: request.limit,
+      });
+      const href = flashcardTopicHref(topicId, scope);
+      router.push(
+        href +
+          (scope === 'PERSONAL' ? '&' : '?') +
+          'flashcardSession=' +
+          encodeURIComponent(session.id),
+      );
+    } catch (cause) {
+      const unknown = mutationOutcomeUnknown(cause);
+      setUncertain(unknown);
+      if (!unknown) pending.current = undefined;
+      setError(
+        noEligibleFlashcards(cause)
+          ? request.mode === 'NEW'
+            ? 'Danh sách này không còn từ mới để học.'
+            : 'Danh sách này chưa có từ đến hạn ôn.'
+          : failureMessage(cause),
+      );
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="api-card">
+      <h2>Luyện tập bằng flashcard</h2>
+      <p>Lịch ôn được cập nhật sau mỗi lần đánh giá thẻ.</p>
       <label className="api-field">
         Loại phiên
         <select
           disabled={busy || uncertain}
           value={mode}
-          onChange={(e) => setMode(e.target.value as 'NEW' | 'REVIEW')}
+          onChange={(event) => {
+            setMode(event.target.value as FlashcardMode);
+            setError('');
+          }}
         >
           <option value="NEW">Học từ mới</option>
           <option value="REVIEW">Ôn từ đến hạn</option>
         </select>
       </label>
-      <button
-        disabled={!writes || busy}
-        onClick={async () => {
-          if (lock.current) return;
-          lock.current = true;
-          setBusy(true);
-          setError('');
-          pending.current ??= { key: crypto.randomUUID(), mode };
-          try {
-            const s = await vocabularySessions.start(
-              topicId,
-              pending.current.mode,
-              pending.current.key,
-            );
-            router.push(
-              `/study/vocabulary/${encodeURIComponent(topicId)}?session=${encodeURIComponent(s.id)}`,
-            );
-          } catch (e) {
-            setError(failureMessage(e));
-            if (mutationOutcomeUnknown(e)) setUncertain(true);
-            else {
-              pending.current = undefined;
-              setUncertain(false);
-            }
-          } finally {
-            lock.current = false;
-            setBusy(false);
-          }
-        }}
-      >
-        {busy ? 'Đang tạo phiên…' : uncertain ? 'Thử lại cùng yêu cầu' : 'Bắt đầu Flashcard → quiz'}
+      <button type="button" className="api-primary" disabled={busy} onClick={() => void start()}>
+        {busy ? 'Đang tạo phiên…' : uncertain ? 'Thử bắt đầu lại' : 'Bắt đầu flashcard → quiz'}
       </button>
-      {error && <p role="alert">{error}</p>}
-    </article>
+      {error && (
+        <p role="alert" className="api-error">
+          {error}
+        </p>
+      )}
+    </section>
   );
 }
-export function VocabularySession({ writes }: { writes: boolean }) {
-  const id = useSearchParams().get('session');
-  const state = useResource(`vocabulary-session:${id}`, (s) =>
-    id ? vocabularySessions.read(id, s) : Promise.resolve(null),
-  );
+
+export function VocabularySession({
+  id,
+  legacy = false,
+  writes = true,
+  backHref,
+}: {
+  id: string;
+  legacy?: boolean;
+  writes?: boolean;
+  backHref: string;
+}) {
+  const api = legacy ? vocabularySessions : flashcardSessions;
+  const state = useResource(`vocabulary-session:${legacy}:${id}`, (signal) => api.read(id, signal));
   return (
     <>
+      <Link href={backHref}>← Quay lại danh sách từ vựng</Link>
       <ResourceState {...state} retry={state.reload} />
       {state.data && (
         <Session
-          key={state.data.id + state.data.status}
+          key={state.data.id}
           initial={state.data}
+          api={api}
           writes={writes}
           reload={state.reload}
         />
@@ -87,259 +158,268 @@ export function VocabularySession({ writes }: { writes: boolean }) {
     </>
   );
 }
+
 function Session({
-  initial: s,
+  initial,
+  api,
   writes,
   reload,
 }: {
-  initial: Awaited<ReturnType<typeof vocabularySessions.read>>;
+  initial: SessionData;
+  api: typeof flashcardSessions;
   writes: boolean;
   reload: () => void;
 }) {
+  const { id, words, quiz, status } = initial;
   const [reviews, setReviews] = useState<Record<string, number>>(() =>
-      Object.fromEntries(s.reviews.map((v) => [v.vocabularyId, v.quality])),
-    ),
-    [answers, setAnswers] = useState<Record<string, string>>({});
-  const [stage, setStage] = useState<'cards' | 'quiz'>('cards'),
-    [flipped, setFlipped] = useState<string[]>([]),
-    [result, setResult] = useState(s.result),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false),
-    [uncertain, setUncertain] = useState(false),
-    [reviewUncertain, setReviewUncertain] = useState(false);
-  const operation = useRef<string>(),
-    lock = useRef(false),
-    pendingReviews = useRef<{ vocabularyId: string; quality: number }[]>();
-  const done = !!result,
-    active = s.status === 'IN_PROGRESS' && !done;
+    Object.fromEntries(initial.reviews.map((review) => [review.vocabularyId, review.quality])),
+  );
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [revealed, setRevealed] = useState(false);
+  const [result, setResult] = useState(initial.result);
+  const [error, setError] = useState('');
+  const [pendingAction, setPendingAction] = useState<'rate' | 'submit' | 'cancel' | null>(null);
+  const [reviewUncertain, setReviewUncertain] = useState(false);
+  const [submitUncertain, setSubmitUncertain] = useState(false);
+  const pendingReview = useRef<Review>();
+  const operationId = useRef<string>();
+  const lock = useRef(false);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const position = words.findIndex((word) => !Object.hasOwn(reviews, word.id));
+  const card = words[position];
+  const active = status === 'IN_PROGRESS' && !result;
+  const busy = pendingAction !== null;
+
+  useEffect(() => {
+    heading.current?.focus();
+  }, [card?.id, result]);
+
+  async function rate(quality: number) {
+    if (!card || !writes || lock.current) return;
+    lock.current = true;
+    setPendingAction('rate');
+    setError('');
+    const review = (pendingReview.current ??= { vocabularyId: card.id, quality });
+    try {
+      if (reviewUncertain) {
+        const current = await api.read(id);
+        if (current.result) {
+          setResult(current.result);
+          setReviewUncertain(false);
+          return;
+        }
+        if (current.status !== 'IN_PROGRESS') {
+          reload();
+          return;
+        }
+        const saved = current.reviews.find((item) => item.vocabularyId === review.vocabularyId);
+        if (!saved) await api.reviews(id, [review]);
+        setReviews(
+          Object.fromEntries(
+            [...current.reviews, saved ?? review].map((item) => [item.vocabularyId, item.quality]),
+          ),
+        );
+      } else {
+        await api.reviews(id, [review]);
+        setReviews((previous) => ({ ...previous, [review.vocabularyId]: review.quality }));
+      }
+      pendingReview.current = undefined;
+      setReviewUncertain(false);
+      setRevealed(false);
+    } catch (cause) {
+      setError(failureMessage(cause));
+      const unknown = mutationOutcomeUnknown(cause);
+      setReviewUncertain(unknown);
+      if (!unknown) pendingReview.current = undefined;
+    } finally {
+      lock.current = false;
+      setPendingAction(null);
+    }
+  }
+
+  async function submit() {
+    if (!writes || lock.current || Object.keys(answers).length !== quiz.length) return;
+    lock.current = true;
+    setPendingAction('submit');
+    setError('');
+    operationId.current ??= crypto.randomUUID();
+    try {
+      if (submitUncertain) {
+        const current = await api.read(id);
+        if (current.result) {
+          setResult(current.result);
+          setSubmitUncertain(false);
+          return;
+        }
+        if (current.status !== 'IN_PROGRESS') {
+          reload();
+          return;
+        }
+      }
+      setResult(
+        await api.submit(id, {
+          operationId: operationId.current,
+          reviews: Object.entries(reviews).map(([vocabularyId, quality]) => ({
+            vocabularyId,
+            quality,
+          })),
+          answers: Object.entries(answers).map(([questionId, selectedOption]) => ({
+            questionId,
+            selectedOption,
+          })),
+        }),
+      );
+      setSubmitUncertain(false);
+    } catch (cause) {
+      setError(failureMessage(cause));
+      const unknown = mutationOutcomeUnknown(cause);
+      setSubmitUncertain(unknown);
+      if (!unknown) operationId.current = undefined;
+    } finally {
+      lock.current = false;
+      setPendingAction(null);
+    }
+  }
+
+  async function cancel() {
+    if (lock.current || !window.confirm('Hủy phiên học hiện tại?')) return;
+    lock.current = true;
+    setPendingAction('cancel');
+    setError('');
+    try {
+      await api.cancel(id);
+      reload();
+    } catch (cause) {
+      setError(failureMessage(cause));
+    } finally {
+      lock.current = false;
+      setPendingAction(null);
+    }
+  }
+
   return (
-    <article className="api-card">
-      <h2>Phiên Flashcard / quiz</h2>
-      <p>
-        {done ? 'COMPLETED' : s.status} · ID {s.id}
-      </p>
-      {done ? (
+    <article className={`flashcard-practice-round${active && !card ? '' : ' api-card'}`}>
+      {result ? (
         <>
-          <h3>
-            Backend chấm: {result.correct} / {result.total}
-          </h3>
+          <h2 ref={heading} tabIndex={-1}>
+            Kết quả quiz
+          </h2>
+          <p>
+            {result.correct} / {result.total} câu đúng
+          </p>
           <ul>
-            {result.answers.map((a) => (
-              <li key={a.id}>
-                Câu {s.quiz.find((q) => q.id === a.id)?.prompt}: bạn chọn {a.selected}, đáp án{' '}
-                {a.correct} · {a.isCorrect ? 'Đúng' : 'Sai'}
-              </li>
-            ))}
+            {result.answers.map((answer) => {
+              const question = quiz.find((item) => item.id === answer.id);
+              const correct = question?.options.find((option) => option.code === answer.correct);
+              return (
+                <li key={answer.id}>
+                  {question?.prompt} ·{' '}
+                  {answer.isCorrect
+                    ? 'Đúng'
+                    : `Sai. Đáp án đúng là ${correct?.text ?? answer.correct}.`}
+                </li>
+              );
+            })}
           </ul>
         </>
-      ) : active ? (
+      ) : !active ? (
+        <p>{status === 'CANCELED' ? 'Phiên học đã hủy.' : 'Phiên học đã hết hạn.'}</p>
+      ) : card ? (
         <>
-          {stage === 'cards' ? (
-            <>
-              {s.words.map((w) => (
-                <article className="api-card" key={w.id}>
-                  <h3>{w.word}</h3>
-                  <p>{w.pronunciation}</p>
-                  <AudioPlayer
-                    mode="server"
-                    missingMessage="Server chưa cấp audio hợp lệ."
-                    source={w.audioUrl}
-                    label={`Phát âm ${w.word}`}
-                  />
-                  <button
-                    onClick={() =>
-                      setFlipped((v) =>
-                        v.includes(w.id) ? v.filter((id) => id !== w.id) : [...v, w.id],
-                      )
-                    }
-                  >
-                    Lật thẻ
-                  </button>
-                  {flipped.includes(w.id) && (
-                    <p>
-                      {w.meaning} · {w.example}
-                    </p>
-                  )}
-                  <label className="api-field">
-                    Mức độ nhớ (0–5)
-                    <select
-                      disabled={!writes || busy || uncertain || reviewUncertain}
-                      value={reviews[w.id] ?? ''}
-                      onChange={(e) =>
-                        setReviews((v) => ({ ...v, [w.id]: Number(e.target.value) }))
-                      }
-                    >
-                      <option value="" disabled>
-                        Chọn đánh giá
-                      </option>
-                      {[0, 1, 2, 3, 4, 5].map((q) => (
-                        <option key={q} value={q}>
-                          {q}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </article>
+          <h2 ref={heading} tabIndex={-1}>
+            Thẻ {position + 1} / {words.length}
+          </h2>
+          <Progress
+            value={Object.keys(reviews).length}
+            max={words.length}
+            label="Tiến độ luyện tập flashcard"
+          />
+          <VocabularyWordCard key={card.id} word={card} flipped={revealed} onFlip={setRevealed} />
+          <div className="flashcard-rating">
+            <h3>Bạn nhớ từ này đến mức nào?</h3>
+            {!revealed && <p>Bấm vào thẻ để xem nghĩa.</p>}
+            <div className="rating-grid">
+              {ratings.map(({ quality, label }) => (
+                <Button
+                  key={quality}
+                  className={`rating-button rating-button--${quality}`}
+                  variant="secondary"
+                  disabled={!writes || !revealed || busy || reviewUncertain}
+                  onClick={() => void rate(quality)}
+                >
+                  <strong>{label}</strong>
+                </Button>
               ))}
-              <button
-                disabled={!writes || busy || Object.keys(reviews).length !== s.words.length}
-                onClick={async () => {
-                  if (lock.current) return;
-                  lock.current = true;
-                  setBusy(true);
-                  setError('');
-                  pendingReviews.current ??= Object.entries(reviews).map(
-                    ([vocabularyId, quality]) => ({ vocabularyId, quality }),
-                  );
-                  try {
-                    // A lost response may follow a committed draft. Read before retrying it.
-                    const current = reviewUncertain ? await vocabularySessions.read(s.id) : null;
-                    if (current?.result) {
-                      setResult(current.result);
-                    } else if (
-                      !current ||
-                      !pendingReviews.current.every((review) =>
-                        current.reviews.some(
-                          (saved) =>
-                            saved.vocabularyId === review.vocabularyId &&
-                            saved.quality === review.quality,
-                        ),
-                      )
-                    ) {
-                      if (current && current.status !== 'IN_PROGRESS')
-                        throw new Error('Phiên không còn hoạt động. Đọc lại trạng thái server.');
-                      await vocabularySessions.reviews(s.id, pendingReviews.current);
-                    }
-                    pendingReviews.current = undefined;
-                    setReviewUncertain(false);
-                    setStage('quiz');
-                  } catch (e) {
-                    setError(failureMessage(e));
-                    if (mutationOutcomeUnknown(e)) setReviewUncertain(true);
-                    else if (!reviewUncertain) pendingReviews.current = undefined;
-                  } finally {
-                    lock.current = false;
-                    setBusy(false);
-                  }
-                }}
-              >
-                {reviewUncertain
-                  ? 'Kiểm tra và thử lại đánh giá đã gửi'
-                  : 'Lưu đánh giá và chuyển quiz'}
-              </button>
-            </>
-          ) : (
-            <>
-              <p>Đánh giá Flashcard đã lưu. Đáp án quiz chưa nộp sẽ mất khi tải lại trang.</p>
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (lock.current) return;
-                  lock.current = true;
-                  setBusy(true);
-                  setError('');
-                  operation.current ??= crypto.randomUUID();
-                  try {
-                    if (uncertain) {
-                      const current = await vocabularySessions.read(s.id);
-                      if (current.result) {
-                        setResult(current.result);
-                        setUncertain(false);
-                        return;
-                      }
-                      if (current.status !== 'IN_PROGRESS')
-                        throw new Error('Phiên không còn hoạt động. Đọc lại trạng thái server.');
-                    }
-                    setResult(
-                      await vocabularySessions.submit(s.id, {
-                        operationId: operation.current,
-                        reviews: Object.entries(reviews).map(([vocabularyId, quality]) => ({
-                          vocabularyId,
-                          quality,
-                        })),
-                        answers: Object.entries(answers).map(([questionId, selectedOption]) => ({
-                          questionId,
-                          selectedOption,
-                        })),
-                      }),
-                    );
-                  } catch (e) {
-                    setError(failureMessage(e));
-                    if (mutationOutcomeUnknown(e)) setUncertain(true);
-                    else {
-                      operation.current = undefined;
-                      setUncertain(false);
-                    }
-                  } finally {
-                    lock.current = false;
-                    setBusy(false);
-                  }
-                }}
-              >
-                <fieldset disabled={!writes || busy || uncertain}>
-                  {s.quiz.map((q) => (
-                    <fieldset key={q.id}>
-                      <legend>Nghĩa của “{q.prompt}”</legend>
-                      {q.options.map((o) => (
-                        <label className="api-actions" key={o.code}>
-                          <input
-                            type="radio"
-                            required
-                            style={{ width: 'auto' }}
-                            name={q.id}
-                            checked={answers[q.id] === o.code}
-                            onChange={() => setAnswers((v) => ({ ...v, [q.id]: o.code }))}
-                          />
-                          {o.code}. {o.text}
-                        </label>
-                      ))}
-                    </fieldset>
-                  ))}
-                </fieldset>
-                <button disabled={!writes || busy || Object.keys(answers).length !== s.quiz.length}>
-                  {uncertain ? 'Thử nộp lại cùng operationId' : 'Nộp quiz'}
-                </button>
-              </form>
-            </>
+            </div>
+          </div>
+          {pendingAction === 'rate' && <p role="status">Đang lưu đánh giá…</p>}
+          {reviewUncertain && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                if (pendingReview.current) void rate(pendingReview.current.quality);
+              }}
+            >
+              Kiểm tra và thử lưu lại
+            </button>
           )}
         </>
       ) : (
-        <p>Phiên đã hết hạn hoặc bị hủy; không thể gửi thay đổi.</p>
+        <>
+          <h2>Quiz từ vựng</h2>
+          <VocabularyQuizQuestions
+            questions={quiz.map((question) => {
+              const word = words.find((item) => item.id === question.wordId);
+              return {
+                id: question.id,
+                prompt: question.prompt,
+                confirmation: question.confirmsMeaning,
+                pronunciation: word?.pronunciation,
+                partOfSpeech: word?.partOfSpeech,
+                options: question.options.map((option) => ({ id: option.code, label: option.text })),
+              };
+            })}
+            answers={answers}
+            onAnswer={(questionId, optionId) => {
+              setAnswers((previous) => ({ ...previous, [questionId]: optionId }));
+              setError('');
+            }}
+            onSubmit={() => void submit()}
+            disabled={!writes || pendingAction === 'cancel'}
+            busy={pendingAction === 'submit'}
+            answersLocked={submitUncertain}
+            submitLabel={
+              pendingAction === 'submit'
+                ? 'Đang nộp quiz…'
+                : submitUncertain
+                  ? 'Thử nộp lại'
+                  : 'Nộp quiz'
+            }
+          />
+        </>
       )}
       {error && (
         <p role="alert" className="api-error">
           {error}
         </p>
       )}
-      {uncertain && <p>Giữ nguyên dữ liệu khi thử lại để tránh cập nhật SM-2 hai lần.</p>}
-      {reviewUncertain && (
-        <p>Chưa xác nhận lưu đánh giá. Giữ nguyên lựa chọn; kiểm tra server trước khi gửi lại.</p>
-      )}
       {active && (
-        <button
-          disabled={busy || !writes || uncertain || reviewUncertain}
-          onClick={async () => {
-            if (lock.current || !window.confirm('Hủy phiên học hiện tại?')) return;
-            lock.current = true;
-            setBusy(true);
-            setError('');
-            try {
-              await vocabularySessions.cancel(s.id);
-              reload();
-            } catch (e) {
-              setError(failureMessage(e));
-            } finally {
-              lock.current = false;
-              setBusy(false);
-            }
-          }}
-        >
-          Hủy phiên
-        </button>
+        <div className="api-actions">
+          <button
+            type="button"
+            disabled={busy || !writes || submitUncertain || reviewUncertain}
+            onClick={() => void cancel()}
+          >
+            Hủy phiên
+          </button>
+          {error && (
+            <button type="button" disabled={busy} onClick={reload}>
+              Tải lại phiên
+            </button>
+          )}
+        </div>
       )}
-      <button disabled={busy} onClick={reload}>
-        Đọc lại phiên từ server
-      </button>
     </article>
   );
 }

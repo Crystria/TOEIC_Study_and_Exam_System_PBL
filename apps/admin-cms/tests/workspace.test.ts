@@ -19,6 +19,7 @@ import { workspaceHref, workspacePage } from '../src/lib/demo/workspace-query';
 import { LESSON_FIXTURES } from '../src/lib/lessons/fixtures';
 import { QUESTION_FIXTURES } from '../src/lib/questions/fixtures';
 import { resolveCmsDestination } from '../src/lib/demo/cms-destination';
+import { canViewDemoDestination } from '../src/lib/demo/cms-fixtures';
 
 const content = 'CONTENT_ADMIN' as const;
 const admin = 'SYSTEM_ADMIN' as const;
@@ -92,6 +93,56 @@ test('fresh store restores sample data and drops demo additions', () => {
   a.save('lessons', lesson(), content);
   assert.deepEqual(b.getSnapshot(), createWorkspaceSeed());
 });
+test('demo test deletions stay out of the list and search after reloading', () => {
+  const seed = createWorkspaceSeed();
+  seed.questions = [question()];
+  const saved = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => saved.get(key) ?? null,
+    setItem: (key: string, value: string) => saved.set(key, value),
+  };
+  const [sample, otherSample] = seed.tests;
+  const archivedSample = seed.tests.find((test) => test.status === 'ARCHIVED')!;
+  const search = new URLSearchParams({ keyword: sample.title });
+  const first = createWorkspaceStore(seed);
+  const second = createWorkspaceStore(seed);
+  first.restoreTestDeletions(storage);
+  second.restoreTestDeletions(storage);
+  assert.ok(
+    workspacePage('tests', first.getSnapshot(), search).items.some((r) => r.id === sample.id),
+  );
+
+  const newTest = { ...blankRecord('tests'), title: 'Mini mới', questionIds: ['q'] };
+  const newId = first.save('tests', newTest, content);
+  first.remove('tests', newId, content);
+  first.remove('tests', sample.id, content);
+  first.remove('lessons', seed.lessons[0].id, content);
+  second.remove('tests', otherSample.id, content);
+
+  const reloaded = createWorkspaceStore(seed);
+  reloaded.restoreTestDeletions(storage);
+  const snapshot = reloaded.getSnapshot();
+  const list = workspacePage('tests', snapshot, new URLSearchParams({ size: '50' }));
+  assert.equal(list.total, seed.tests.length - 2);
+  assert.ok(list.items.every((r) => r.id !== sample.id && r.id !== otherSample.id));
+  assert.ok(list.items.some((r) => r.id === archivedSample.id));
+  assert.equal(workspacePage('tests', snapshot, search).total, 0);
+  assert.deepEqual(snapshot.lessons, seed.lessons);
+  assert.equal(saved.size, 2);
+  assert.equal(reloaded.save('tests', newTest, content), newId);
+});
+test('demo does not remove a sample test when its deletion cannot be saved', () => {
+  const store = createWorkspaceStore();
+  const before = store.getSnapshot();
+  store.restoreTestDeletions({
+    getItem: () => null,
+    setItem: () => {
+      throw new Error('Storage unavailable');
+    },
+  });
+  assert.throws(() => store.remove('tests', before.tests[0].id, content), /không lưu được/);
+  assert.equal(store.getSnapshot(), before);
+});
 test('invalid saves are atomic and do not publish', () => {
   const store = createWorkspaceStore();
   const before = store.getSnapshot();
@@ -105,6 +156,14 @@ test('persona checks cover all entity commands without implying authentication',
   assert.throws(() => store.save('lessons', lesson(), admin));
   assert.throws(() => store.remove('lessons', store.getSnapshot().lessons[0].id, admin));
   assert.throws(() => store.save('users', store.getSnapshot().users[0], content));
+  for (const kind of ['questions', 'groups', 'tests'] as const) {
+    const destination = resolveCmsDestination(`/${kind}/demo-id`);
+    assert.ok(destination);
+    assert.ok(canViewDemoDestination(destination, admin));
+    assert.ok(canViewDemoDestination(destination, content));
+    assert.equal(canManage(kind, admin), false);
+    assert.equal(canManage(kind, content), true);
+  }
 });
 test('lesson title/category/Markdown are required without arbitrary length rules', () => {
   const s = createWorkspaceSeed();
@@ -123,7 +182,10 @@ test('vocabulary requires existing topic, word and meaning, permits optional fie
   const r = { ...blankRecord('vocabulary'), word: 'a', meaning: 'b', topicId: s.topics[0].id };
   assert.deepEqual(validateRecord('vocabulary', r, s), {});
   assert.ok(validateRecord('vocabulary', { ...r, topicId: 'missing' }, s).topicId);
-  assert.ok(validateRecord('vocabulary', { ...r, audioId: 'missing' }, s).audioId);
+  assert.deepEqual(
+    validateRecord('vocabulary', { ...r, audioId: 'missing', imageId: 'missing' }, s),
+    {},
+  );
 });
 test('topic rename joins immediately; linked topic deletion blocks without mutation', () => {
   const store = createWorkspaceStore();
@@ -137,6 +199,25 @@ test('topic rename joins immediately; linked topic deletion blocks without mutat
   const before = store.getSnapshot();
   assert.throws(() => store.remove('topics', topic.id, content));
   assert.equal(store.getSnapshot(), before);
+});
+test('clearing a demo topic removes only its words and makes the topic deletable', () => {
+  const store = createWorkspaceStore();
+  const before = store.getSnapshot();
+  const topic = before.topics[0];
+  const remaining = before.vocabulary.filter((word) => word.topicId !== topic.id);
+  assert.throws(() => store.removeTopicVocabulary(topic.id, admin));
+  assert.equal(store.getSnapshot(), before);
+
+  assert.equal(
+    store.removeTopicVocabulary(topic.id, content),
+    before.vocabulary.length - remaining.length,
+  );
+  assert.deepEqual(store.getSnapshot().vocabulary, remaining);
+  assert.equal(store.removeTopicVocabulary(topic.id, content), 0);
+  assert.ok(store.getSnapshot().topics.some((item) => item.id === topic.id));
+
+  store.remove('topics', topic.id, content);
+  assert.ok(!store.getSnapshot().topics.some((item) => item.id === topic.id));
 });
 test('all Parts enforce four options and one explicit answer, retaining Part 5 rules', () => {
   const s = withMedia();
@@ -358,6 +439,27 @@ test('RAM lists retain filtering and clamp page after deletion', () => {
   assert.ok(r.canonical.includes('page=' + r.totalPages));
   const v = workspacePage('vocabulary', s, new URLSearchParams('topicId=unknown'));
   assert.equal(v.total, 0);
+});
+test('the demo accounts table always paginates by nine', () => {
+  const seed = createWorkspaceSeed();
+  const state = { ...seed, users: seed.users.slice(0, 10) };
+  const params = new URLSearchParams('demoRole=SYSTEM_ADMIN&size=1');
+  const first = workspacePage('users', state, params);
+  assert.equal(first.totalPages, 2);
+  assert.deepEqual(
+    first.items.map(({ id }) => id),
+    state.users.slice(0, 9).map(({ id }) => id),
+  );
+  assert.equal(first.canonical, '/users?demoRole=SYSTEM_ADMIN');
+
+  params.set('page', '2');
+  const second = workspacePage('users', state, params);
+  assert.equal(second.page, 2);
+  assert.deepEqual(
+    second.items.map(({ id }) => id),
+    [state.users[9].id],
+  );
+  assert.equal(second.canonical, '/users?demoRole=SYSTEM_ADMIN&page=2');
 });
 test('all new nested routes resolve to the existing persona destinations', () => {
   for (const kind of [

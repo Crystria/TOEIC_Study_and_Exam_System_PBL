@@ -1,60 +1,107 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Blocked,
   ResourceState,
   useResource,
 } from '../../../../web/src/components/integration/shared';
-import { mutationOutcomeUnknown } from '../../../../web/src/lib/integration/client';
+import { GatewayError, mutationOutcomeUnknown } from '../../../../web/src/lib/integration/client';
 import { contentApi } from '../../lib/integration/content-api';
 import { topicErrorMessage } from '../../lib/integration/topic-errors';
-import { ManagementPager, useCmsLocation } from './content-management';
+import { NumberedPagination } from '../ui/numbered-pagination';
+import {
+  ManagementPager,
+  useCmsLocation,
+  useNumberedManagementResource,
+} from './content-management';
 import { ManagementSearch } from './management-search';
+import { VocabularyActions } from './vocabulary-actions';
 
 type Topic = Awaited<ReturnType<typeof contentApi.read>>;
+type Vocabulary = Awaited<ReturnType<typeof contentApi.list>>['items'][number];
+type TopicWordSearch = { keyword: string; page: number };
+type Deletion = { kind: 'topic' | 'word'; id: string } | { kind: 'words' };
+const topicNotices = new Map([
+  ['created', 'Đã tạo chủ đề từ vựng.'],
+  ['updated', 'Đã lưu thay đổi chủ đề.'],
+  ['deleted', 'Đã xóa chủ đề từ vựng.'],
+]);
 
 export function TopicManagement({ writes }: { writes: boolean }) {
-  const { id, path, params, href, update, router } = useCmsLocation();
+  const location = useCmsLocation();
+  const { id, path, params, href, update, router } = location;
   const savedNotice = params.get('topicNotice');
-  params.delete('topicNotice');
-  const state = useResource(`topics:${id}:${params}`, async (signal) =>
-    id && id !== 'new'
-      ? { detail: await contentApi.read('topics', id, signal), page: null }
-      : {
-          detail: null,
-          page: id === 'new' ? null : await contentApi.list('topics', params, signal),
-        },
+  const state = useNumberedManagementResource(
+    location,
+    'topics',
+    (params, signal) => contentApi.list('topics', params, signal),
+    (id, signal) => contentApi.read('topics', id, signal),
   );
-  const [deletingId, setDeletingId] = useState(''),
+  params.delete('topicNotice');
+  const [search, setSearch] = useState<TopicWordSearch>({ keyword: '', page: 1 }),
+    [deleting, setDeleting] = useState<Deletion | null>(null),
     [error, setError] = useState(''),
     [notice, setNotice] = useState(''),
     deleteLock = useRef(false);
   const edit = id === 'new' || path.endsWith('/edit');
-  const remove = async (topic: Topic) => {
-    if (!writes || topic.deleted || deleteLock.current) return;
-    if (
-      !window.confirm(
-        `Xóa chủ đề “${topic.title}”? Chỉ xóa được chủ đề không còn từ vựng đang sử dụng.`,
-      )
-    )
-      return;
+  const runDeletion = async (deletion: Deletion, action: () => Promise<void>) => {
+    if (deleteLock.current) return;
     deleteLock.current = true;
-    setDeletingId(topic.id);
+    setDeleting(deletion);
     setError('');
     setNotice('');
     try {
-      await contentApi.remove('topics', topic.id);
-      setNotice(`Đã xóa chủ đề “${topic.title}”.`);
-      state.reload();
+      await action();
     } catch (failure) {
       setError(topicErrorMessage(failure));
-      if (mutationOutcomeUnknown(failure)) state.reload();
+      if (
+        mutationOutcomeUnknown(failure) ||
+        (failure instanceof GatewayError && failure.status === 409)
+      )
+        state.reload();
     } finally {
       deleteLock.current = false;
-      setDeletingId('');
+      setDeleting(null);
     }
+  };
+  const remove = async (topic: Topic) => {
+    if (!writes || topic.deleted || !!topic.vocabularyCount || deleteLock.current) return;
+    if (!window.confirm(`Xóa chủ đề “${topic.title}”?`)) return;
+    await runDeletion({ kind: 'topic', id: topic.id }, async () => {
+      await contentApi.remove('topics', topic.id);
+      if (id) {
+        const next = new URLSearchParams(params);
+        next.set('topicNotice', 'deleted');
+        router.replace(`/topics?${next}`);
+      } else {
+        setNotice(`Đã xóa chủ đề “${topic.title}”.`);
+        state.reload();
+      }
+    });
+  };
+  const removeWords = async (topic: Topic, word?: Vocabulary) => {
+    if (!writes || topic.deleted || deleteLock.current || word?.deleted) return;
+    const confirmation = word
+      ? `Xóa từ vựng “${word.title}” khỏi chủ đề “${topic.title}”?`
+      : `Xóa tất cả từ vựng trong chủ đề “${topic.title}”, kể cả các từ ngoài kết quả tìm kiếm hiện tại?`;
+    if (!window.confirm(confirmation)) return;
+    await runDeletion(word ? { kind: 'word', id: word.id } : { kind: 'words' }, async () => {
+      if (word) {
+        await contentApi.remove('vocabulary', word.id);
+        setNotice(`Đã xóa từ vựng “${word.title}”.`);
+      } else {
+        const deletedCount = await contentApi.removeTopicVocabulary(topic.id);
+        setSearch((current) => ({ ...current, page: 1 }));
+        setNotice(
+          deletedCount
+            ? `Đã xóa ${deletedCount} từ vựng trong chủ đề.`
+            : 'Chủ đề không còn từ vựng để xóa.',
+        );
+      }
+      state.reload();
+    });
   };
   const actions = (topic: Topic) => (
     <div className="api-actions">
@@ -65,23 +112,16 @@ export function TopicManagement({ writes }: { writes: boolean }) {
           <button
             type="button"
             className="api-danger-action"
-            disabled={!!deletingId}
+            disabled={!!deleting || !!topic.vocabularyCount}
             onClick={() => void remove(topic)}
           >
-            {deletingId === topic.id ? 'Đang xóa…' : 'Xóa chủ đề'}
+            {deleting?.kind === 'topic' && deleting.id === topic.id ? 'Đang xóa…' : 'Xóa chủ đề'}
           </button>
         </>
       )}
     </div>
   );
-  const flash =
-    !edit &&
-    (notice ||
-      (savedNotice === 'created'
-        ? 'Đã tạo chủ đề từ vựng.'
-        : savedNotice === 'updated'
-          ? 'Đã lưu thay đổi chủ đề.'
-          : ''));
+  const flash = !edit && (notice || topicNotices.get(savedNotice ?? ''));
 
   return (
     <>
@@ -116,11 +156,11 @@ export function TopicManagement({ writes }: { writes: boolean }) {
           {error}
         </p>
       )}
-      <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
-      {state.data?.page && (
+      <ResourceState {...state} retry={state.reload} empty={state.page?.items.length === 0} />
+      {state.page && (
         <>
           <div className="api-grid">
-            {state.data.page.items.map((topic) => (
+            {state.page.items.map((topic) => (
               <article className="api-card" key={topic.id}>
                 <h2>
                   <Link href={href(topic.id)}>{topic.title}</Link>
@@ -135,7 +175,11 @@ export function TopicManagement({ writes }: { writes: boolean }) {
               </article>
             ))}
           </div>
-          <ManagementPager data={state.data.page} onPage={(page) => update('page', String(page))} />
+          <NumberedPagination
+            page={state.page.page}
+            totalPages={state.totalPages}
+            onPage={(nextPage) => update('page', String(nextPage))}
+          />
         </>
       )}
       {state.data?.detail && !edit && (
@@ -162,15 +206,25 @@ export function TopicManagement({ writes }: { writes: boolean }) {
                 <button
                   type="button"
                   className="api-danger-action"
-                  disabled={!!deletingId}
+                  disabled={!!deleting || !!state.data.detail.vocabularyCount}
                   onClick={() => void remove(state.data!.detail!)}
                 >
-                  {deletingId ? 'Đang xóa…' : 'Xóa chủ đề'}
+                  {deleting?.kind === 'topic' ? 'Đang xóa…' : 'Xóa chủ đề'}
                 </button>
               </div>
             )}
+            {writes && !state.data.detail.deleted && !!state.data.detail.vocabularyCount && (
+              <p>Xóa hoặc chuyển hết từ vựng trước khi xóa chủ đề.</p>
+            )}
           </article>
-          <TopicWords topic={state.data.detail} writes={writes} />
+          <TopicWords
+            topic={state.data.detail}
+            writes={writes}
+            deleting={deleting}
+            search={search}
+            setSearch={setSearch}
+            remove={removeWords}
+          />
         </>
       )}
       {edit &&
@@ -289,9 +343,21 @@ function TopicEditor({
   );
 }
 
-function TopicWords({ topic, writes }: { topic: Topic; writes: boolean }) {
-  const [keyword, setKeyword] = useState(''),
-    [page, setPage] = useState(1);
+function TopicWords({
+  topic,
+  writes,
+  deleting,
+  search: { keyword, page },
+  setSearch,
+  remove,
+}: {
+  topic: Topic;
+  writes: boolean;
+  deleting: Deletion | null;
+  search: TopicWordSearch;
+  setSearch: (search: TopicWordSearch) => void;
+  remove: (topic: Topic, word?: Vocabulary) => Promise<void>;
+}) {
   const params = new URLSearchParams({
     topicId: topic.id,
     keyword,
@@ -301,6 +367,12 @@ function TopicWords({ topic, writes }: { topic: Topic; writes: boolean }) {
   const state = useResource(`topic-words:${params}`, (signal) =>
     contentApi.list('vocabulary', params, signal),
   );
+  const lastPage = state.data ? Math.max(1, Math.ceil(state.data.total / state.data.size)) : page;
+  const pageOutOfRange = page > lastPage;
+  const result = pageOutOfRange ? undefined : state.data;
+  useEffect(() => {
+    if (pageOutOfRange) setSearch({ keyword, page: lastPage });
+  }, [keyword, lastPage, pageOutOfRange, setSearch]);
   const vocabularyHref = `/vocabulary?${new URLSearchParams({ topicId: topic.id })}`;
   return (
     <section className="api-card" aria-labelledby="topic-words-heading">
@@ -308,26 +380,38 @@ function TopicWords({ topic, writes }: { topic: Topic; writes: boolean }) {
       <div className="api-actions">
         <Link href={vocabularyHref}>Quản lý từ vựng của chủ đề</Link>
         {writes && !topic.deleted && (
-          <Link
-            className="api-primary-action"
-            href={`/vocabulary/new?${new URLSearchParams({ topicId: topic.id })}`}
-          >
-            Thêm từ vựng vào chủ đề
-          </Link>
+          <>
+            <Link
+              className="api-primary-action"
+              href={`/vocabulary/new?${new URLSearchParams({ topicId: topic.id })}`}
+            >
+              Thêm từ vựng vào chủ đề
+            </Link>
+            <button
+              type="button"
+              className="api-danger-action"
+              disabled={!!deleting || topic.vocabularyCount === 0}
+              onClick={() => void remove(topic)}
+            >
+              {deleting?.kind === 'words' ? 'Đang xóa từ…' : 'Xóa tất cả từ'}
+            </button>
+          </>
         )}
       </div>
       <ManagementSearch
         value={keyword}
-        change={(value) => {
-          setKeyword(value);
-          setPage(1);
-        }}
+        change={(value) => setSearch({ keyword: value, page: 1 })}
       />
-      <ResourceState {...state} retry={state.reload} empty={state.data?.items.length === 0} />
-      {state.data && (
+      <ResourceState
+        {...state}
+        loading={state.loading || pageOutOfRange}
+        retry={state.reload}
+        empty={result?.items.length === 0}
+      />
+      {result && (
         <>
           <div className="api-grid">
-            {state.data.items.map((word) => (
+            {result.items.map((word) => (
               <article className="api-card" key={word.id}>
                 <h3>
                   <Link href={`/vocabulary/${encodeURIComponent(word.id)}?${params}`}>
@@ -338,15 +422,21 @@ function TopicWords({ topic, writes }: { topic: Topic; writes: boolean }) {
                 {word.deleted && <p>Đã xóa</p>}
                 {writes && !word.deleted && !topic.deleted && (
                   <div className="api-actions">
-                    <Link href={`/vocabulary/${encodeURIComponent(word.id)}/edit?${params}`}>
-                      Chỉnh sửa từ vựng
-                    </Link>
+                    <VocabularyActions
+                      editHref={`/vocabulary/${encodeURIComponent(word.id)}/edit?${params}`}
+                      onDelete={() => void remove(topic, word)}
+                      busy={!!deleting}
+                      deleting={deleting?.kind === 'word' && deleting.id === word.id}
+                    />
                   </div>
                 )}
               </article>
             ))}
           </div>
-          <ManagementPager data={state.data} onPage={setPage} />
+          <ManagementPager
+            data={result}
+            onPage={(nextPage) => setSearch({ keyword, page: nextPage })}
+          />
         </>
       )}
     </section>

@@ -12,6 +12,8 @@ import {
 import { Blocked, ResourceState, useResource } from './shared';
 import { ServerExamTaking } from './exam-taking';
 import { ServerAttemptResult } from './attempt-result';
+import { ServerPagination } from './server-pagination';
+import { useExamNavigationGuard } from '../exams/use-exam-navigation-guard';
 
 const attemptUrl = (a: { attemptId: string; status: string }) =>
   `/exam/server/${a.status === 'IN_PROGRESS' ? 'take' : 'result'}?attempt=${encodeURIComponent(a.attemptId)}`;
@@ -21,36 +23,19 @@ const statusLabel: Record<string, string> = {
   EXPIRED: 'Đã hết giờ',
 };
 const modeLabel = (mode: string) => (mode === 'FULL' ? 'Thi thử Full Test' : 'Luyện theo Part');
-function Pager({
-  page,
-  size,
-  total,
-  change,
+export function ServerExamDetail({
+  id,
+  writes,
+  practiceEntry,
 }: {
-  page: number;
-  size: number;
-  total: number;
-  change: (n: number) => void;
+  id: string;
+  writes: boolean;
+  practiceEntry: boolean;
 }) {
-  return (
-    <nav className="api-actions" aria-label="Phân trang">
-      <button disabled={page <= 1} onClick={() => change(page - 1)}>
-        Trang trước
-      </button>
-      <span>
-        Trang {page} · {total} lượt
-      </span>
-      <button disabled={page * size >= total} onClick={() => change(page + 1)}>
-        Trang sau
-      </button>
-    </nav>
-  );
-}
-export function ServerExamDetail({ id, writes }: { id: string; writes: boolean }) {
   const state = useResource(`test:${id}`, (s) => examApi.detail(id, s));
   const available = useResource(`parts:${id}`, (s) => examApi.parts(id, s));
   const router = useRouter();
-  const [mode, setMode] = useState('FULL'),
+  const [mode, setMode] = useState(practiceEntry ? 'PART' : 'FULL'),
     [parts, setParts] = useState<number[]>([]),
     [duration, setDuration] = useState(1800);
   const [busy, setBusy] = useState(false),
@@ -61,7 +46,7 @@ export function ServerExamDetail({ id, writes }: { id: string; writes: boolean }
   const fullAvailable = available.data?.length === 7 && available.data.every((p) => p.available);
   return (
     <>
-      <Link href="/exam">Danh sách đề</Link>
+      <Link href={practiceEntry ? '/practice' : '/exam'}>Danh sách đề</Link>
       <ResourceState {...state} retry={state.reload} />
       {state.data && (
         <article className="api-card">
@@ -192,10 +177,11 @@ export function ServerHistory() {
   const state = useResource(`attempt-history:${search}`, (s) =>
     examApi.history(new URLSearchParams(search.toString()), s),
   );
-  const change = (key: string, value: string) => {
+  const changeMode = (mode: string) => {
     const p = new URLSearchParams(search.toString());
-    p.set(key, value);
-    if (key !== 'page') p.set('page', '1');
+    if (mode) p.set('mode', mode);
+    else p.delete('mode');
+    p.set('page', '1');
     router.push(`/history?${p}`);
   };
   return (
@@ -203,7 +189,7 @@ export function ServerHistory() {
       <h1>Lịch sử làm bài</h1>
       <label className="api-field">
         Chế độ
-        <select value={search.get('mode') ?? ''} onChange={(e) => change('mode', e.target.value)}>
+        <select value={search.get('mode') ?? ''} onChange={(e) => changeMode(e.target.value)}>
           <option value="">Tất cả</option>
           <option value="FULL">Full Test</option>
           <option value="PART">Luyện Part</option>
@@ -211,19 +197,26 @@ export function ServerHistory() {
       </label>
       <ResourceState {...state} retry={state.reload} empty={state.data?.items.length === 0} />
       {state.data?.items.map((a) => (
-        <article className="api-card" key={a.attemptId}>
+        <Link
+          className="api-card api-exam-card"
+          key={a.attemptId}
+          href={attemptUrl(a)}
+          aria-label={`${a.status === 'IN_PROGRESS' && !a.readOnly ? 'Tiếp tục làm bài' : 'Xem chi tiết bài làm'}: ${a.title}, Part ${a.parts.join(', ')}, ${new Date(a.startedAt).toLocaleString('vi-VN')}`}
+        >
           <h2>{a.title}</h2>
           <p>
             {modeLabel(a.mode)} · Part {a.parts.join(', ')} · {statusLabel[a.status]} ·{' '}
             {new Date(a.startedAt).toLocaleString('vi-VN')}
           </p>
           {a.score !== null && <p>Điểm TOEIC tham khảo: {a.score}</p>}
-          <Link href={attemptUrl(a)}>
-            {a.status === 'IN_PROGRESS' && !a.readOnly ? 'Tiếp tục làm bài' : 'Xem lượt làm bài'}
-          </Link>
-        </article>
+          <span className="history-entry-cta">
+            {a.status === 'IN_PROGRESS' && !a.readOnly
+              ? 'Tiếp tục làm bài →'
+              : 'Xem chi tiết bài làm →'}
+          </span>
+        </Link>
       ))}
-      {state.data && <Pager {...state.data} change={(n) => change('page', String(n))} />}
+      {state.data && <ServerPagination result={state.data} />}
     </>
   );
 }
@@ -239,9 +232,24 @@ export function ServerAttemptScreen({
   const state = useResource(`attempt:${id}`, (s) =>
     id ? examApi.result(id, s) : Promise.resolve(null),
   );
+  const lastActive = useRef<{ id: string; active: boolean } | null>(null);
+  if (id && state.data) {
+    lastActive.current = {
+      id,
+      active: state.data.status === 'IN_PROGRESS' && !state.data.readOnly,
+    };
+  }
+  const active = state.data
+    ? state.data.status === 'IN_PROGRESS' && !state.data.readOnly
+    : lastActive.current?.id === id && lastActive.current.active;
+  const [navigationBlocked, setNavigationBlocked] = useState(false);
+  useEffect(() => setNavigationBlocked(false), [id]);
+  const allowNavigation = useExamNavigationGuard(Boolean(active && writes), id ?? '', () =>
+    setNavigationBlocked(true),
+  );
   return (
     <>
-      {state.data?.status !== 'IN_PROGRESS' && (
+      {state.data && state.data.status !== 'IN_PROGRESS' && (
         <Link className="attempt-result-back" href="/history">
           ← Lịch sử làm bài
         </Link>
@@ -251,6 +259,11 @@ export function ServerAttemptScreen({
       ) : (
         <ResourceState {...state} retry={state.reload} />
       )}
+      {navigationBlocked && !state.data && (
+        <p role="status">
+          Bạn cần nộp bài trước khi rời bài thi. Hãy tải lại dữ liệu để tiếp tục bài đang làm.
+        </p>
+      )}
       {state.data && (
         <Attempt
           key={`${state.data.attemptId}:${state.data.serverTime}`}
@@ -258,6 +271,8 @@ export function ServerAttemptScreen({
           writes={writes}
           review={review}
           reload={state.reload}
+          allowNavigation={allowNavigation}
+          navigationBlocked={navigationBlocked}
         />
       )}
     </>
@@ -268,11 +283,15 @@ function Attempt({
   writes,
   review,
   reload,
+  allowNavigation,
+  navigationBlocked,
 }: {
   initial: ServerAttempt;
   writes: boolean;
   review: boolean;
   reload: () => void;
+  allowNavigation: () => void;
+  navigationBlocked: boolean;
 }) {
   const [choices, setChoices] = useState<AttemptChoices>(() =>
     Object.fromEntries(a.answers.map((v) => [v.questionId, v.selectedOption])),
@@ -306,7 +325,7 @@ function Attempt({
       setMessage('Đã lưu đáp án. Bạn có thể tiếp tục bài từ lịch sử.');
     } catch (e) {
       setError(failureMessage(e));
-      setMessage('Đáp án chưa được xác nhận lưu. Bấm Lưu nháp để thử lại trước khi rời trang.');
+      setMessage('Đáp án chưa được xác nhận lưu. Bấm Lưu nháp để thử lại.');
     } finally {
       lock.current = false;
       setBusy(false);
@@ -329,16 +348,6 @@ function Attempt({
     return () => clearInterval(t);
   }, [a.remainingSeconds, active]);
   useEffect(() => {
-    const before = (e: BeforeUnloadEvent) => {
-      if (dirty) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-    window.addEventListener('beforeunload', before);
-    return () => window.removeEventListener('beforeunload', before);
-  }, [dirty]);
-  useEffect(() => {
     if (active && seconds === 0 && !busy && !expiredRequested.current) {
       expiredRequested.current = true;
       if (!writes) {
@@ -353,6 +362,7 @@ function Attempt({
         .submit(a.attemptId, [])
         .then((result) => {
           setDirty(false);
+          allowNavigation();
           router.replace(attemptUrl(result));
           reload();
         })
@@ -366,7 +376,7 @@ function Attempt({
           setBusy(false);
         });
     }
-  }, [active, seconds, busy, reload, writes, a.attemptId, router]);
+  }, [active, seconds, busy, reload, writes, a.attemptId, router, allowNavigation]);
   const submit = async () => {
     if (
       lock.current ||
@@ -387,7 +397,8 @@ function Attempt({
           ? current
           : await examApi.submit(a.attemptId, answers());
       setDirty(false);
-      router.push(attemptUrl(result));
+      allowNavigation();
+      router.replace(attemptUrl(result));
       reload();
     } catch (e) {
       setError(failureMessage(e));
@@ -411,6 +422,7 @@ function Attempt({
         uncertain={uncertain}
         message={message}
         error={error}
+        navigationBlocked={navigationBlocked}
         onAnswer={(questionId, option) => {
           setChoices((v) => ({ ...v, [questionId]: option }));
           setDirty(true);
@@ -424,11 +436,7 @@ function Attempt({
         onSave={() => void saveDraft()}
         onReload={reload}
         onSubmit={() => void submit()}
-        onExit={() => {
-          if (!dirty || window.confirm('Các lựa chọn mới nhất chưa được lưu. Bạn có muốn rời bài?'))
-            router.push(`/exam/${encodeURIComponent(a.testId)}`);
-        }}
       />
     );
-  return <ServerAttemptResult attempt={a} review={review} />;
+  return <ServerAttemptResult attempt={a} review={review} writes={writes} />;
 }

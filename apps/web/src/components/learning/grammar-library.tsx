@@ -10,9 +10,13 @@ import { Button } from '../ui/button';
 import { Badge, EmptyState, Progress } from '../ui/feedback';
 import { Field } from '../ui/field';
 import { Icon } from '../ui/icon';
+import { NumberedPagination } from '../ui/numbered-pagination';
 import { Panel } from '../ui/panel';
+import { useLocalPagination } from '../ui/use-local-pagination';
 import { useLearning } from './learning-provider';
 import { LearningHeading, ResumeLearning } from './learning-shared';
+
+const PAGE_SIZE = 6;
 
 export function GrammarLibrary() {
   const { catalog, progress } = useLearning();
@@ -32,6 +36,7 @@ export function GrammarLibrary() {
         normalizeSearch(search),
       ),
   );
+  const { page, totalPages, setPage, items, start } = useLocalPagination(visible, PAGE_SIZE);
   return (
     <div className="learning-page">
       <LearningHeading
@@ -68,14 +73,20 @@ export function GrammarLibrary() {
           type="search"
           placeholder="Ví dụ: hiện tại hoàn thành…"
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={(event) => {
+            setSearch(event.target.value);
+            setPage(1);
+          }}
         />
         <div className="learning-select-field">
           <label htmlFor="lesson-category">Chủ điểm</label>
           <select
             id="lesson-category"
             value={category}
-            onChange={(event) => setCategory(event.target.value)}
+            onChange={(event) => {
+              setCategory(event.target.value);
+              setPage(1);
+            }}
           >
             <option value="all">Tất cả chủ điểm</option>
             {categories.map((item) => (
@@ -88,7 +99,10 @@ export function GrammarLibrary() {
           <select
             id="lesson-status"
             value={status}
-            onChange={(event) => setStatus(event.target.value)}
+            onChange={(event) => {
+              setStatus(event.target.value);
+              setPage(1);
+            }}
           >
             <option value="all">Tất cả bài học</option>
             <option value="unread">Chưa hoàn thành</option>
@@ -102,10 +116,12 @@ export function GrammarLibrary() {
       </div>
       {visible.length ? (
         <div className="grammar-lesson-grid">
-          {visible.map((lesson, index) => (
+          {items.map((lesson, index) => (
             <Panel className="grammar-lesson-card" key={lesson.id}>
               <div className="grammar-card-top">
-                <span className="grammar-lesson-number">{String(index + 1).padStart(2, '0')}</span>
+                <span className="grammar-lesson-number">
+                  {String(start + index + 1).padStart(2, '0')}
+                </span>
                 <Badge tone={progress.lessons[lesson.id] ? 'green' : 'neutral'}>
                   {progress.lessons[lesson.id] ? 'Đã hoàn thành' : lesson.level}
                 </Badge>
@@ -153,6 +169,7 @@ export function GrammarLibrary() {
                   setSearch('');
                   setCategory('all');
                   setStatus('all');
+                  setPage(1);
                 }}
               >
                 Xóa bộ lọc
@@ -161,6 +178,7 @@ export function GrammarLibrary() {
           </EmptyState>
         </Panel>
       )}
+      <NumberedPagination page={page} totalPages={totalPages} onPage={setPage} />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Button } from '../ui/button';
+import { useDialogBackdropDismiss } from '../ui/use-dialog-backdrop-dismiss';
+
 export function ExamDialog({
   open,
   title,
@@ -21,6 +23,9 @@ export function ExamDialog({
   const dialog = useRef<HTMLDialogElement>(null);
   const cancel = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  const backdropDismiss = useDialogBackdropDismiss(() => {
+    if (!busy) onCancel();
+  });
   useEffect(() => {
     const node = dialog.current;
     if (open && node && !node.open) {
@@ -42,6 +47,7 @@ export function ExamDialog({
         event.preventDefault();
         if (!busy) onCancel();
       }}
+      {...backdropDismiss}
     >
       <h2 id="exam-dialog-title">{title}</h2>
       <div className="exam-dialog-body">{children}</div>

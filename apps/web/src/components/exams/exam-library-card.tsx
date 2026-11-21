@@ -8,10 +8,10 @@ interface LibraryTest {
   durationSeconds: number;
 }
 
-export function ExamLibraryCard({ test }: { test: LibraryTest }) {
+export function ExamLibraryCard({ test, practice }: { test: LibraryTest; practice: boolean }) {
   return (
     <Link
-      href={`/exam/${encodeURIComponent(test.id)}`}
+      href={`/exam/${encodeURIComponent(test.id)}${practice ? '?entry=practice' : ''}`}
       className="api-card api-exam-card"
       aria-label={`Mở đề thi: ${test.title}`}
     >

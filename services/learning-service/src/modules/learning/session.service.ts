@@ -2,18 +2,14 @@ import { randomInt, randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '../../generated/prisma';
-import {
-  Tx,
-  contentLock,
-  fail,
-  hash,
-  idempotent,
-  inputJson,
-  normalized,
-  userLock,
-} from '../../core';
+import { Tx, contentLock, fail, hash, idempotent, inputJson, userLock } from '../../core';
 import { ContentService } from './content.service';
 import { ProgressService, Snapshot } from './progress.service';
+import {
+  createDistractorPicker,
+  quizDefinitionLimit,
+  sharedQuizDefinitions,
+} from './quiz-distractors';
 import { vietnamDate } from './sm2';
 export interface SessionReview {
   vocabularyId: string;
@@ -24,7 +20,7 @@ export interface QuizAnswer {
   selectedOption: string;
 }
 type SessionRow = Prisma.VocabularySessionGetPayload<{ include: { items: true } }>;
-function shuffle<T>(values: T[]): T[] {
+export function shuffle<T>(values: T[]): T[] {
   const a = [...values];
   for (let i = a.length - 1; i > 0; i--) {
     const j = randomInt(i + 1);
@@ -93,10 +89,15 @@ export class SessionService {
           orderBy: { id: 'asc' },
           take: 5,
         });
-        const pool = await tx.$queryRaw<
-          Array<{ definition: string }>
-        >`SELECT DISTINCT ON (normalized_definition) definition FROM vocabularies WHERE topic_id=${body.topicId} AND deleted_at IS NULL ORDER BY normalized_definition,id LIMIT 4`;
-        if (cards.length !== 5 || pool.length < 4) fail(409, 'INSUFFICIENT_QUIZ_DATA');
+        if (cards.length !== 5) fail(409, 'INSUFFICIENT_QUIZ_DATA');
+        const definitions = await sharedQuizDefinitions(
+          tx,
+          body.topicId,
+          quizDefinitionLimit(cards.length),
+          'TOPIC',
+        );
+        if (definitions.length < 4) fail(409, 'INSUFFICIENT_QUIZ_DATA');
+        const pickDistractors = createDistractorPicker(definitions);
         const now = new Date();
         const row = await tx.vocabularySession.create({
           data: {
@@ -108,21 +109,11 @@ export class SessionService {
           },
         });
         for (const [position, card] of cards.entries()) {
-          const correct = normalized(card.definition),
-            seen = new Set<string>([correct]);
-          const distractors = pool
-            .filter((p) => {
-              const k = normalized(p.definition);
-              if (seen.has(k)) return false;
-              seen.add(k);
-              return true;
-            })
-            .slice(0, 3)
-            .map((p) => p.definition);
+          const distractors = pickDistractors(card);
           if (distractors.length !== 3) fail(409, 'INSUFFICIENT_QUIZ_DATA');
           const choices = shuffle([
             { text: card.definition, correct: true },
-            ...distractors.map((text) => ({ text, correct: false })),
+            ...distractors.map(({ definition: text }) => ({ text, correct: false })),
           ]);
           const state = await tx.userVocabularyProgress.findUnique({
             where: { userId_vocabularyId: { userId, vocabularyId: card.id } },

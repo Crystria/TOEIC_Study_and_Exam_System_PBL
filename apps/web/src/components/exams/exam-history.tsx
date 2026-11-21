@@ -6,7 +6,9 @@ import { formatDuration } from '@/lib/exams/selection';
 import { Button, buttonStyles } from '../ui/button';
 import { Field } from '../ui/field';
 import { Alert, Badge, EmptyState } from '../ui/feedback';
+import { NumberedPagination } from '../ui/numbered-pagination';
 import { Panel } from '../ui/panel';
+import { useLocalPagination } from '../ui/use-local-pagination';
 import { useExamHistory } from './exam-history-provider';
 import { formatLocalDate } from './exam-result';
 import { HistoryNotice, ResultHeading, ResultLoading } from './exam-result-shared';
@@ -19,13 +21,11 @@ export function ExamHistory({ query }: { query: ExamQuery }) {
   const [mode, setMode] = useState('all');
   const [scope, setScope] = useState('all');
   const [status, setStatus] = useState('all');
-  const [page, setPage] = useState(1);
   const [retry, setRetry] = useState(false);
   const preview = retry ? undefined : query.preview;
   const displayedSessions = preview === 'empty' ? [] : history.sessions;
   const results = filterDemoHistory(displayedSessions, search, mode, scope, status);
-  const pages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
-  const currentPage = Math.min(page, pages);
+  const { page, totalPages, setPage, items } = useLocalPagination(results, PAGE_SIZE);
   const clear = () => {
     setSearch('');
     setMode('all');
@@ -163,78 +163,49 @@ export function ExamHistory({ query }: { query: ExamQuery }) {
           ) : (
             <>
               <ol className="history-list">
-                {results
-                  .slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
-                  .map((session) => {
-                    const { test, answered, unanswered, elapsedSeconds } = localSummary(session);
-                    return (
-                      <li key={session.localId}>
-                        <Panel className="result-panel history-entry">
-                          <div>
-                            <div className="history-badges">
-                              <Badge tone="amber">Demo cục bộ · chưa chấm</Badge>
-                              <Badge tone="neutral">
-                                {session.status === 'expired' ? 'Hết giờ' : 'Kết thúc thủ công'}
-                              </Badge>
-                            </div>
-                            <h2>
-                              <Link href={localResultHref(session)}>{test.title}</Link>
-                            </h2>
-                            <p>
-                              {session.selection.mode === 'PRACTICE' ? 'Luyện tập' : 'Thi thử'} ·{' '}
-                              {session.selection.scope === 'full' ? 'Toàn bộ đề' : 'Chọn Part'} ·{' '}
-                              {session.selection.partIds.map((id) => `Part ${id}`).join(', ')}
-                            </p>
-                            <p className="result-muted">
-                              {formatLocalDate(session.endedAt!)} (giờ Việt Nam) · Đã dùng{' '}
-                              {formatDuration(elapsedSeconds)} /{' '}
-                              {formatDuration(session.durationSeconds)}
-                              {session.qa === 'short-timer' && ' · QA 15 giây'}
-                            </p>
-                            <p>
-                              {answered}/{session.questionIds.length} câu có lựa chọn · {unanswered}{' '}
-                              bỏ trống
-                            </p>
-                            <p className="result-local-id">{session.localId}</p>
+                {items.map((session) => {
+                  const { test, answered, unanswered, elapsedSeconds } = localSummary(session);
+                  return (
+                    <li key={session.localId}>
+                      <Link
+                        href={localResultHref(session)}
+                        className="panel result-panel history-entry history-entry-link"
+                        aria-label={`Xem chi tiết bài làm: ${test.title}, ${formatLocalDate(session.endedAt!)}`}
+                      >
+                        <div>
+                          <div className="history-badges">
+                            <Badge tone="amber">Demo cục bộ · chưa chấm</Badge>
+                            <Badge tone="neutral">
+                              {session.status === 'expired' ? 'Hết giờ' : 'Kết thúc thủ công'}
+                            </Badge>
                           </div>
-                          <div className="history-entry-actions">
-                            <Link
-                              href={localResultHref(session)}
-                              className={buttonStyles('primary')}
-                            >
-                              Thông tin phiên
-                            </Link>
-                            <Link
-                              href={localResultHref(session, 'review')}
-                              className={buttonStyles('secondary')}
-                            >
-                              Xem lại lựa chọn
-                            </Link>
-                          </div>
-                        </Panel>
-                      </li>
-                    );
-                  })}
+                          <h2>{test.title}</h2>
+                          <p>
+                            {session.selection.mode === 'PRACTICE' ? 'Luyện tập' : 'Thi thử'} ·{' '}
+                            {session.selection.scope === 'full' ? 'Toàn bộ đề' : 'Chọn Part'} ·{' '}
+                            {session.selection.partIds.map((id) => `Part ${id}`).join(', ')}
+                          </p>
+                          <p className="result-muted">
+                            {formatLocalDate(session.endedAt!)} (giờ Việt Nam) · Đã dùng{' '}
+                            {formatDuration(elapsedSeconds)} /{' '}
+                            {formatDuration(session.durationSeconds)}
+                            {session.qa === 'short-timer' && ' · QA 15 giây'}
+                          </p>
+                          <p>
+                            {answered}/{session.questionIds.length} câu có lựa chọn · {unanswered}{' '}
+                            bỏ trống
+                          </p>
+                          <p className="result-local-id">{session.localId}</p>
+                        </div>
+                        <div className="history-entry-actions">
+                          <span className={buttonStyles('primary')}>Xem chi tiết bài làm</span>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ol>
-              <nav className="result-pagination" aria-label="Phân trang lịch sử demo cục bộ">
-                <Button
-                  variant="secondary"
-                  disabled={currentPage === 1}
-                  onClick={() => setPage(currentPage - 1)}
-                >
-                  Trang trước
-                </Button>
-                <span role="status">
-                  Trang {currentPage} / {pages}
-                </span>
-                <Button
-                  variant="secondary"
-                  disabled={currentPage === pages}
-                  onClick={() => setPage(currentPage + 1)}
-                >
-                  Trang sau
-                </Button>
-              </nav>
+              <NumberedPagination page={page} totalPages={totalPages} onPage={setPage} />
             </>
           )}
         </>

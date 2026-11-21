@@ -5,19 +5,23 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useRef, useState, type ReactNode } from 'react';
 import { learningApi, examApi, analyticsApi, profileApi } from '../../lib/integration/repositories';
 import { failureMessage, validationFields } from '../../lib/integration/client';
-import { matchingId, type User, type Page, type parseWord } from '../../lib/integration/contracts';
+import { matchingId, type User } from '../../lib/integration/contracts';
 import { StudentShell } from '../layout/student-shell';
+import { FlashcardPracticeSettings } from '../learning/flashcard-practice-settings';
 import { LessonMarkdown } from '../learning/lesson-markdown';
-import { AudioPlayer } from '../ui/audio-player';
+import { useFlashcardPracticeLimit } from '../learning/use-flashcard-practice-limit';
+import { VocabularyEntryCard } from '../learning/vocabulary-entry-card';
+import { VocabularyListCard } from '../learning/vocabulary-list-card';
 import { ServerExamDetail, ServerHistory, ServerAttemptScreen } from './exam-flow';
 import { ExamLibraryCard } from '../exams/exam-library-card';
-import { VocabularySession, VocabularySessionStart } from './vocabulary-session';
+import { flashcardTopicHref, VocabularySession, VocabularySessionStart } from './vocabulary-session';
 import { MediaUpload } from './media-upload';
 import { EmailActivation } from './email-activation';
 import { Blocked, ResourceState, SessionGate, useResource } from './shared';
 import { SearchForm } from './search-form';
 import { LearningLibraryNav, PersonalLearningLibrary } from './personal-learning';
 import { LearningLibraryCard } from './learning-library-card';
+import { ServerPagination } from './server-pagination';
 
 export function ApiStudentApplication({
   children,
@@ -56,26 +60,35 @@ function AuthenticatedStudent({
   const [user, setUser] = useState(initial),
     path = usePathname(),
     search = useSearchParams();
+  const viewParams = new URLSearchParams(search.toString());
+  viewParams.delete('page');
+  const practiceEntry = /^\/exam\/[^/]+$/.test(path) && search.get('entry') === 'practice';
+  const hideReadOnlyNotice = ['/dashboard', '/study/vocabulary', '/study/grammar', '/history'].some(
+    (section) => path === section || path.startsWith(`${section}/`),
+  );
   return (
-    <StudentShell apiAccount={user}>
+    <StudentShell apiAccount={user} activeSection={practiceEntry ? '/practice' : undefined}>
       <div
         className={`api-root${/^\/exam\/[^/]+\/take$/.test(path) ? ' api-root-exam' : ''}`}
-        key={`${path}?${search}`}
+        key={`${path}?${viewParams}`}
       >
-        {!/^\/exam\/[^/]+\/(take|result|review)$/.test(path) && (
-          <span className="api-label">API · Dữ liệu server · Local / test</span>
-        )}
         {!writes &&
+          !hideReadOnlyNotice &&
           !path.startsWith('/exam') &&
-          path !== '/history' &&
           path !== '/practice' &&
           search.get('library') !== 'personal' && (
             <Blocked>
-              Chế độ chỉ đọc. Chưa bật cập nhật hồ sơ, đánh giá Flashcard hoặc hoàn thành bài học
+              Chưa bật cập nhật hồ sơ, phiên học kèm quiz hoặc hoàn thành bài học
               cho tài khoản.
             </Blocked>
           )}
-        <StudentDomain user={user} onProfile={setUser} writes={writes} examWrites={examWrites} />
+        <StudentDomain
+          user={user}
+          onProfile={setUser}
+          writes={writes}
+          examWrites={examWrites}
+          practiceEntry={practiceEntry}
+        />
       </div>
     </StudentShell>
   );
@@ -85,11 +98,13 @@ function StudentDomain({
   onProfile,
   writes,
   examWrites,
+  practiceEntry,
 }: {
   user: User;
   onProfile: (user: User) => void;
   writes: boolean;
   examWrites: boolean;
+  practiceEntry: boolean;
 }) {
   const path = usePathname(),
     search = useSearchParams(),
@@ -103,20 +118,35 @@ function StudentDomain({
   }
   if (path === '/dashboard') return <ApiDashboard />;
   if (path.startsWith('/study/vocabulary')) {
-    if (search.get('library') === 'personal')
+    const personal = search.get('library') === 'personal';
+    const topicId = personal ? search.get('topic') : parts[2];
+    const flashcardSession = search.get('flashcardSession');
+    const legacySession = search.get('session');
+    const session = flashcardSession || legacySession;
+    if (session && topicId)
+      return (
+        <VocabularySession
+          id={session}
+          legacy={!flashcardSession}
+          writes={Boolean(flashcardSession) || writes}
+          backHref={flashcardTopicHref(topicId, personal ? 'PERSONAL' : 'SHARED')}
+        />
+      );
+    if (personal)
       return <PersonalLearningLibrary kind="vocabulary" ownerId={user.id} />;
-    return <Vocabulary key={parts[2] ?? 'topics'} topicId={parts[2]} writes={writes} />;
+    return <Vocabulary key={parts[2] ?? 'topics'} topicId={parts[2]} ownerId={user.id} />;
   }
   if (path.startsWith('/study/grammar')) {
     if (search.get('library') === 'personal')
       return <PersonalLearningLibrary kind="grammar" ownerId={user.id} />;
     return parts[2] ? <GrammarLesson id={parts[2]} writes={writes} /> : <GrammarLibrary />;
   }
-  if (path === '/exam' || path === '/practice') return <ExamLibrary />;
+  if (path === '/exam' || path === '/practice')
+    return <ExamLibrary practice={path === '/practice'} />;
   if (parts[0] === 'exam' && parts[1]) {
     if (['result', 'review', 'take'].includes(parts[2]))
       return <ServerAttemptScreen writes={examWrites} review={parts[2] === 'review'} />;
-    return <ServerExamDetail id={parts[1]} writes={examWrites} />;
+    return <ServerExamDetail id={parts[1]} writes={examWrites} practiceEntry={practiceEntry} />;
   }
   if (path === '/history') return <ServerHistory />;
   if (path.startsWith('/history/example'))
@@ -158,30 +188,6 @@ function StudentDomain({
     </>
   );
 }
-export function Pagination({
-  result,
-  onPage,
-}: {
-  result: Pick<Page<unknown>, 'page' | 'size' | 'total'>;
-  onPage: (page: number) => void;
-}) {
-  return (
-    <nav aria-label="Phân trang dữ liệu server" className="api-actions">
-      <button disabled={result.page <= 1} onClick={() => onPage(result.page - 1)}>
-        Trang trước
-      </button>
-      <span>
-        Trang {result.page} · {result.total} bản ghi
-      </span>
-      <button
-        disabled={result.page * result.size >= result.total}
-        onClick={() => onPage(result.page + 1)}
-      >
-        Trang sau
-      </button>
-    </nav>
-  );
-}
 function usePageQuery() {
   const search = useSearchParams(),
     router = useRouter(),
@@ -205,7 +211,7 @@ function ProgressCards() {
             <h2>Từ vựng</h2>
             <p>{state.data.vocabulary.reviewed} từ đã ôn</p>
             <p>{state.data.vocabulary.dueToday} từ đến lịch ôn</p>
-            <Link href="/study/vocabulary?review=today">Ôn hôm nay</Link>
+            <Link href="/study/vocabulary?review=today">Luyện tập bằng flashcard</Link>
           </article>
           <article className="api-card">
             <h2>Ngữ pháp</h2>
@@ -240,40 +246,38 @@ function ApiDashboard() {
     </>
   );
 }
-function Vocabulary({ topicId, writes }: { topicId?: string; writes: boolean }) {
+function Vocabulary({ topicId, ownerId }: { topicId?: string; ownerId: string }) {
   const { params, update } = usePageQuery(),
     review = params.get('review') === 'today';
-  const topics = useResource('topics:' + params, (signal) => learningApi.topics(signal, params));
+  const [limit, setLimit] = useFlashcardPracticeLimit(ownerId);
+  const topics = useResource('topics:' + params, (signal) =>
+    !topicId ? learningApi.topics(signal, params) : Promise.resolve(null),
+  );
+  const topic = useResource('topic:' + topicId, (signal) =>
+    topicId ? learningApi.topic(topicId, signal) : Promise.resolve(null),
+  );
   const words = useResource('words:' + topicId + params, (signal) =>
-    topicId
+    topicId && !review
       ? learningApi.words(new URLSearchParams({ ...Object.fromEntries(params), topicId }), signal)
       : Promise.resolve(null),
   );
-  const due = useResource('due:' + params, (signal) =>
-    review ? learningApi.due(signal, params) : Promise.resolve(null),
-  );
-  const reviewGroups = new Map<string, VocabularyReviewItem[]>();
-  for (const item of due.data?.items ?? []) {
-    const group = reviewGroups.get(item.word.topicId) ?? [];
-    group.push(item);
-    reviewGroups.set(item.word.topicId, group);
-  }
-  if (params.has('session')) return <VocabularySession writes={writes} />;
   return (
     <>
-      <h1>Từ vựng & Flashcard</h1>
+      <h1>{topic.data?.name ?? 'Từ vựng & Flashcard'}</h1>
       <LearningLibraryNav kind="vocabulary" />
       <nav className="vocabulary-nav" aria-label="Điều hướng từ vựng">
         <Link href="/study/vocabulary" aria-current={!topicId && !review ? 'page' : undefined}>
-          Chủ đề
+          Danh sách từ vựng
         </Link>
         <span aria-hidden="true">·</span>
         <Link href="/study/vocabulary?review=today" aria-current={review ? 'page' : undefined}>
-          Ôn hôm nay
+          Luyện tập bằng flashcard
         </Link>
       </nav>
-      {!topicId && !review && (
+      <FlashcardPracticeSettings limit={limit} onSave={setLimit} />
+      {!topicId && (
         <>
+          {review && <h2>Chọn danh sách để luyện tập</h2>}
           <SearchForm
             value={params.get('keyword') ?? ''}
             onSearch={(keyword) => update({ keyword, page: '1' })}
@@ -283,130 +287,49 @@ function Vocabulary({ topicId, writes }: { topicId?: string; writes: boolean }) 
             retry={topics.reload}
             empty={topics.data?.items.length === 0}
           />
-          <div className="api-grid">
+          <div className="vocabulary-list-grid">
             {topics.data?.items.map((t) => (
-              <LearningLibraryCard
+              <VocabularyListCard
                 key={t.id}
                 title={t.name}
-                openLabel={`Mở chủ đề: ${t.name}`}
-                href={'/study/vocabulary/' + encodeURIComponent(t.id)}
-              >
-                <p>{t.wordCount} từ</p>
-              </LearningLibraryCard>
+                wordCount={t.wordCount}
+                href={`/study/vocabulary/${encodeURIComponent(t.id)}${review ? '?review=today' : ''}`}
+                actionLabel={review ? 'Luyện tập' : undefined}
+              />
             ))}
           </div>
-          {topics.data && (
-            <Pagination result={topics.data} onPage={(page) => update({ page: String(page) })} />
-          )}
+          {topics.data && <ServerPagination result={topics.data} />}
         </>
       )}
       {topicId && (
+        <VocabularySessionStart
+          topicId={topicId}
+          scope="SHARED"
+          limit={limit}
+          initialMode={review ? 'REVIEW' : 'NEW'}
+        />
+      )}
+      {topicId && !review && (
         <>
-          <VocabularySessionStart topicId={topicId} writes={writes} />
+          <h2>Danh sách từ vựng</h2>
           <SearchForm
             value={params.get('keyword') ?? ''}
             onSearch={(keyword) => update({ keyword, page: '1' })}
           />
           <ResourceState {...words} retry={words.reload} empty={words.data?.items.length === 0} />
-          {words.data?.items.map((word) => (
-            <Word key={word.id} value={word} />
-          ))}
-          {words.data && (
-            <Pagination result={words.data} onPage={(page) => update({ page: String(page) })} />
-          )}
-        </>
-      )}
-      {review && (
-        <>
-          <ResourceState {...due} retry={due.reload} empty={due.data?.items.length === 0} />
-          {[...reviewGroups].map(([id, items]) => (
-            <VocabularyReviewTopic
-              key={id}
-              topicId={id}
-              items={items}
-              topicName={topics.data?.items.find((item) => item.id === id)?.name}
-            />
-          ))}
-          {due.data && (
-            <Pagination result={due.data} onPage={(page) => update({ page: String(page) })} />
-          )}
+          <div className="vocabulary-entry-list">
+            {words.data?.items.map((word) => (
+              <VocabularyEntryCard
+                key={word.id}
+                entry={word}
+                image={word.imageUrl && <ServerImage source={word.imageUrl} label={word.word} />}
+              />
+            ))}
+          </div>
+          {words.data && <ServerPagination result={words.data} />}
         </>
       )}
     </>
-  );
-}
-type VocabularyReviewItem = Awaited<ReturnType<typeof learningApi.due>>['items'][number];
-
-function VocabularyReviewTopic({
-  topicId,
-  items,
-  topicName,
-}: {
-  topicId: string;
-  items: VocabularyReviewItem[];
-  topicName?: string;
-}) {
-  const topic = useResource(`review-topic:${topicId}:${topicName ?? ''}`, (signal) =>
-    topicName ? Promise.resolve({ name: topicName }) : learningApi.topic(topicId, signal),
-  );
-  const dates = [
-    ...new Set(
-      items.flatMap((item) => {
-        if (!item.nextReviewAt) return [];
-        const timestamp = Date.parse(item.nextReviewAt);
-        return Number.isFinite(timestamp) ? [timestamp] : [];
-      }),
-    ),
-  ].sort((a, b) => a - b);
-  const formatDate = (timestamp: number) =>
-    new Date(timestamp).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
-  const first = dates.length ? formatDate(dates[0]) : null;
-  const last = dates.length ? formatDate(dates[dates.length - 1]) : null;
-  const headingId = `review-topic-${topicId}`;
-  return (
-    <section className="vocabulary-review-group" aria-labelledby={headingId}>
-      <header className="vocabulary-review-heading">
-        <div>
-          <h2 id={headingId}>{topic.data?.name ?? 'Từ vựng cần ôn'}</h2>
-          <p className="vocabulary-review-schedule">
-            {first ? `Lịch ôn: ${first}${last !== first ? ` – ${last}` : ''}` : 'Chưa có lịch ôn'}
-          </p>
-        </div>
-        <Link
-          className="vocabulary-review-open"
-          href={'/study/vocabulary/' + encodeURIComponent(topicId)}
-        >
-          Mở chủ đề để bắt đầu phiên ôn
-        </Link>
-      </header>
-      {items.map((item) => (
-        <Word key={item.vocabularyId} value={item.word} />
-      ))}
-    </section>
-  );
-}
-function Word({ value: word }: { value: ReturnType<typeof parseWord> }) {
-  const [flipped, setFlipped] = useState(false);
-  return (
-    <article className="api-card">
-      <h2>{word.word}</h2>
-      <p>{word.pronunciation ?? 'Chưa có phiên âm'}</p>
-      <button aria-expanded={flipped} onClick={() => setFlipped((v) => !v)}>
-        Lật thẻ
-      </button>
-      {flipped && (
-        <p>
-          {word.meaning} · {word.example}
-        </p>
-      )}
-      {word.imageUrl && <ServerImage source={word.imageUrl} label={word.word} />}
-      <AudioPlayer
-        mode="server"
-        missingMessage="Server chưa cấp audio hợp lệ."
-        source={word.audioUrl}
-        label={'Phát âm ' + word.word}
-      />
-    </article>
   );
 }
 function ServerImage({ source, label }: { source: string; label: string }) {
@@ -468,9 +391,7 @@ function GrammarLibrary() {
           </LearningLibraryCard>
         ))}
       </div>
-      {state.data && (
-        <Pagination result={state.data} onPage={(page) => update({ page: String(page) })} />
-      )}
+      {state.data && <ServerPagination result={state.data} />}
     </>
   );
 }
@@ -560,7 +481,7 @@ function GrammarLesson({ id, writes }: { id: string; writes: boolean }) {
     </>
   );
 }
-function ExamLibrary() {
+function ExamLibrary({ practice }: { practice: boolean }) {
   const { params, update } = usePageQuery();
   const state = useResource(`tests:${params}`, (signal) =>
     examApi.list(
@@ -578,12 +499,10 @@ function ExamLibrary() {
       <ResourceState {...state} retry={state.reload} empty={state.data?.items.length === 0} />
       <div className="api-grid">
         {state.data?.items.map((test) => (
-          <ExamLibraryCard test={test} key={test.id} />
+          <ExamLibraryCard test={test} key={test.id} practice={practice} />
         ))}
       </div>
-      {state.data && (
-        <Pagination result={state.data} onPage={(page) => update({ page: String(page) })} />
-      )}
+      {state.data && <ServerPagination result={state.data} />}
     </>
   );
 }
