@@ -87,6 +87,8 @@ function prisma(db, args) {
       sql(r, "SELECT payload_hash IS NULL FROM processed_events WHERE event_id='old-event'"),
       't',
     );
+    for (const name of fs.readdirSync(dir).filter(name=>name>'20261101050000_p5_analytics' && fs.existsSync(path.join(dir,name,'migration.sql'))).sort())
+      sql(r,fs.readFileSync(path.join(dir,name,'migration.sql'),'utf8'));
     prisma(r, [
       'migrate',
       'diff',

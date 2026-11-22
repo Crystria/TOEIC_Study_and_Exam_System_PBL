@@ -22,7 +22,13 @@ export class ProjectionService {
     const asOf = this.clock.now();
     await tx.firstLearnedEntity.deleteMany({ where: { userId } });
     await tx.completedLessonEntity.deleteMany({ where: { userId } });
-    await tx.$executeRaw`INSERT INTO first_learned_entities(user_id,vocabulary_id,first_at) SELECT user_id,entity_id,min((payload->>'firstLearnedAt')::timestamptz AT TIME ZONE 'UTC') FROM learning_activity_facts WHERE user_id=${userId} AND kind='REVIEW' AND payload->>'firstLearnedAt' IS NOT NULL GROUP BY user_id,entity_id`;
+    await tx.$executeRaw`INSERT INTO first_learned_entities(user_id,scope,vocabulary_id,first_at)
+      SELECT user_id, scope, vocabulary_id, min(first_at) FROM (
+        SELECT user_id, CASE kind WHEN 'REVIEW' THEN 'SHARED' ELSE 'PERSONAL' END AS scope,
+          entity_id AS vocabulary_id, (payload->>'firstLearnedAt')::timestamptz AT TIME ZONE 'UTC' AS first_at
+        FROM learning_activity_facts WHERE user_id=${userId} AND kind IN ('REVIEW','PERSONAL_REVIEW') AND payload->>'firstLearnedAt' IS NOT NULL
+        UNION ALL SELECT user_id,scope,vocabulary_id,first_at FROM historical_learned_words WHERE user_id=${userId}
+      ) words GROUP BY user_id,scope,vocabulary_id`;
     await tx.$executeRaw`INSERT INTO completed_lesson_entities(user_id,lesson_id,first_at) SELECT user_id,entity_id,min(activity_at) FROM learning_activity_facts WHERE user_id=${userId} AND kind='LESSON' GROUP BY user_id,entity_id`;
     const days = await this.queries.days(tx, userId, asOf);
     await tx.userActivityDay.deleteMany({ where: { userId } });

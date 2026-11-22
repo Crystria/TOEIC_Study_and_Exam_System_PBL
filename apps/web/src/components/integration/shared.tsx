@@ -11,7 +11,11 @@ import {
 import { parseSessionUser, record, type User } from '../../lib/integration/contracts';
 import { Icon } from '../ui/icon';
 
-export function useResource<T>(key: string, loader: (signal: AbortSignal) => Promise<T>) {
+export function useResource<T>(
+  key: string,
+  loader: (signal: AbortSignal) => Promise<T>,
+  refreshVersion = 0,
+) {
   const ref = useRef(loader);
   ref.current = loader;
   const [revision, setRevision] = useState(0);
@@ -21,7 +25,9 @@ export function useResource<T>(key: string, loader: (signal: AbortSignal) => Pro
   });
   useEffect(() => {
     const abort = new AbortController();
-    setState({ key, loading: true });
+    setState((previous) =>
+      previous.key === key && previous.data !== undefined ? previous : { key, loading: true },
+    );
     Promise.resolve()
       .then(() => ref.current(abort.signal))
       .then((data) => {
@@ -31,7 +37,7 @@ export function useResource<T>(key: string, loader: (signal: AbortSignal) => Pro
         if (!abort.signal.aborted) setState({ key, error: failureMessage(error), loading: false });
       });
     return () => abort.abort();
-  }, [key, revision]);
+  }, [key, revision, refreshVersion]);
   const reload = useCallback(() => {
     setState({ key, loading: true });
     setRevision((n) => n + 1);

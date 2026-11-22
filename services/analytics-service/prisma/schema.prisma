@@ -160,11 +160,12 @@ model LearningActivityFact {
 }
 
 model FirstLearnedEntity {
+  scope String @default("SHARED")
   userId       String   @map("user_id")
   vocabularyId String   @map("vocabulary_id")
   firstAt      DateTime @map("first_at")
 
-  @@id([userId, vocabularyId])
+  @@id([userId, scope, vocabularyId])
   @@index([userId, firstAt])
   @@map("first_learned_entities")
 }
@@ -223,4 +224,19 @@ model AnalyticsQuarantine {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("analytics_quarantine")
+}
+
+model AnalyticsHistoryCoverage {
+  key String @id
+  liveFrom DateTime @default(now()) @map("live_from")
+  @@map("analytics_history_coverage")
+}
+
+model HistoricalLearnedWord {
+  userId String @map("user_id")
+  scope String
+  vocabularyId String @map("vocabulary_id")
+  firstAt DateTime @map("first_at")
+  @@id([userId, scope, vocabularyId])
+  @@map("historical_learned_words")
 }

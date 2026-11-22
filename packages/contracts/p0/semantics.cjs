@@ -27,6 +27,8 @@ function semantic(value, definition) {
       return;
     }
     if (Array.isArray(node)) return node.forEach((item) => visit(item));
+    if ('quizTotal' in node && 'quizScore' in node)
+      assert.ok(node.quizScore <= node.quizTotal, 'Quiz score exceeds total');
     if (Array.isArray(node.partStats)) {
       const totals = [6, 25, 39, 30, 30, 16, 54];
       unique(node.partStats, (part) => part.part, 'Duplicate Part');

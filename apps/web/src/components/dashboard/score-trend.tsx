@@ -3,12 +3,19 @@ import type { ScoreAttempt } from '@/lib/dashboard/types';
 export function ScoreTrend({
   attempts,
   target,
+  showSkills = false,
 }: {
-  attempts: ScoreAttempt[];
+  attempts: Pick<
+    ScoreAttempt,
+    'attemptId' | 'completedAt' | 'totalScore' | 'scoreReading' | 'scoreListening'
+  >[];
   target: number | null;
+  showSkills?: boolean;
 }) {
   const scores = attempts.map((attempt) => attempt.totalScore ?? 0);
-  const min = Math.max(0, Math.floor((Math.min(...scores, target ?? 990) - 100) / 100) * 100);
+  const min = showSkills
+    ? 0
+    : Math.max(0, Math.floor((Math.min(...scores, target ?? 990) - 100) / 100) * 100);
   const max = Math.min(990, Math.ceil((Math.max(...scores, target ?? 0) + 50) / 100) * 100);
   const y = (value: number) => 180 - ((value - min) / (max - min || 1)) * 150;
   const x = (index: number) =>
@@ -74,6 +81,19 @@ export function ScoreTrend({
           strokeLinejoin="round"
           strokeLinecap="round"
         />
+        {showSkills &&
+          (['scoreListening', 'scoreReading'] as const).map((key, i) => (
+            <polyline
+              key={key}
+              fill="none"
+              stroke={i ? '#a855f7' : '#059669'}
+              strokeWidth="2.5"
+              strokeDasharray={i ? '5 3' : undefined}
+              points={attempts
+                .flatMap((a, index) => (a[key] === null ? [] : [x(index) + ',' + y(a[key]!)]))
+                .join(' ')}
+            />
+          ))}
         {attempts.map((attempt, index) => (
           <g key={attempt.attemptId}>
             <circle
@@ -98,6 +118,7 @@ export function ScoreTrend({
           </g>
         ))}
       </svg>
+      {showSkills && <p>Tổng điểm (xanh dương) · Listening (xanh lá) · Reading (nét đứt)</p>}
       <table className="sr-only">
         <caption>Điểm thi thử toàn bộ đề theo thời gian</caption>
         <thead>

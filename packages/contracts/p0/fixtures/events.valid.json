@@ -389,5 +389,47 @@
       },
       "correlationId": "p0-synthetic-fixture"
     }
+  },
+  {
+    "name": "personal.vocabulary.reviewed.v2",
+    "data": {
+      "eventId": "00000091-0000-4000-8000-000000000000",
+      "eventType": "PersonalVocabularyReviewedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "vocabularyId": "0000000a-0000-4000-8000-000000000000",
+        "operationId": "0000001e-0000-4000-8000-000000000000",
+        "sessionId": null,
+        "quality": 3,
+        "revision": "1",
+        "firstLearned": true,
+        "firstLearnedAt": "2026-10-31T05:00:00.000Z",
+        "activityAt": "2026-10-31T05:00:00.000Z"
+      },
+      "correlationId": "p0-synthetic-fixture"
+    }
+  },
+  {
+    "name": "flashcard.session.completed.v2",
+    "data": {
+      "eventId": "00000092-0000-4000-8000-000000000000",
+      "eventType": "FlashcardSessionCompletedEvent.v2",
+      "occurredAt": "2026-10-31T05:00:00.000Z",
+      "producer": "learning-service",
+      "version": 2,
+      "payload": {
+        "userId": "00000001-0000-4000-8000-000000000000",
+        "sessionId": "0000001e-0000-4000-8000-000000000000",
+        "scope": "PERSONAL",
+        "source": "FLASHCARD",
+        "completedAt": "2026-10-31T05:00:00.000Z",
+        "quizScore": 2,
+        "quizTotal": 3
+      },
+      "correlationId": "p0-synthetic-fixture"
+    }
   }
 ]

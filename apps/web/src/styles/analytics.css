@@ -332,3 +332,18 @@
     padding: 30px 0;
   }
 }
+
+.account-activity {
+  display: flex;
+  gap: 1px;
+  align-items: end;
+  min-height: 84px;
+  border-bottom: 1px solid currentColor;
+  margin-block: 1rem;
+}
+.account-activity span {
+  flex: 1;
+  min-width: 0;
+  background: var(--primary, #2563eb);
+  border-radius: 3px 3px 0 0;
+}
