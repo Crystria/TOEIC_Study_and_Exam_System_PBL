@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   gateway,
   failureMessage,
@@ -173,6 +173,7 @@ export function ApiAuth({
 }) {
   const inPanel = embedded;
   const Container = inPanel ? 'div' : 'main';
+  const passwordUpdated = useSearchParams().get('password') === 'updated';
   const [ready, setReady] = useState(false);
   const [registered, setRegistered] = useState(false);
   useEffect(() => setReady(true), []);
@@ -212,6 +213,9 @@ export function ApiAuth({
           ? 'Đăng nhập để quản lý nội dung và vận hành TOEIC Master.'
           : 'Dùng tài khoản của môi trường kiểm thử đã cấu hình.'}
       </p>
+      {!register && passwordUpdated && (
+        <p role="status">Mật khẩu đã được cập nhật. Hãy đăng nhập lại.</p>
+      )}
       <form
         ref={form}
         noValidate
@@ -429,6 +433,12 @@ export function ApiAuth({
       {!cms && (
         <p className="api-auth-support">
           <Link href="/verify-email">Kích hoạt email / gửi lại email</Link>
+          {!register && (
+            <>
+              {' '}
+              · <Link href="/forgot-password">Quên mật khẩu</Link>
+            </>
+          )}
         </p>
       )}
       {register && (

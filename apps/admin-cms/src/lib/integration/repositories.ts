@@ -7,6 +7,7 @@ import {
   segment,
   record,
   boolean,
+  date,
   matchingId,
   ContractError,
   type User,
@@ -34,16 +35,13 @@ export const cmsApi = {
   },
   users: (params: URLSearchParams, signal?: AbortSignal) =>
     gateway(`admin/users?${query('users', params)}`, { signal }).then((v) => page(v, parseUser)),
-  // Reconcile a known mutation using the existing filtered list contract. This does
-  // not implement the missing standalone admin GET-by-ID/deep-link contract.
-  async userForReconciliation(id: string, email: string) {
-    const params = new URLSearchParams({ keyword: email, page: '1', size: '50' });
-    const result = page(await gateway(`admin/users?${query('users', params)}`), parseUser);
-    const user = result.items.find(
-      (item) => item.id === id && item.email.toLowerCase() === email.toLowerCase(),
-    );
-    if (!user) throw new ContractError('admin.user.reconciliation');
-    return user;
+  async user(id: string, signal?: AbortSignal) {
+    const response = record(await gateway(`admin/users/${segment(id)}`, { signal }));
+    return {
+      ...matchingId(parseUser(response), id),
+      createdAt: date(response.createdAt),
+      updatedAt: date(response.updatedAt),
+    };
   },
   updateRoles: async (id: string, roles: string[]) => {
     if (!roles.length || roles.some((r) => !['USER', 'CONTENT_ADMIN', 'SYSTEM_ADMIN'].includes(r)))

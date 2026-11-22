@@ -69,7 +69,7 @@ integration('P2 Auth through Gateway with real PostgreSQL, Mailpit, RabbitMQ and
     }
     throw new Error('P2 verification timeout');
   }
-  async function mailToken(email: string) {
+  async function mailToken(email: string, kind: 'activation' | 'reset' = 'activation') {
     return until(async () => {
       const list = (await (await fetch(process.env.MAILPIT_URL + '/api/v1/messages')).json()) as {
         messages: Array<{ ID: string; To: Array<{ Address: string }> }>;
@@ -78,12 +78,16 @@ integration('P2 Auth through Gateway with real PostgreSQL, Mailpit, RabbitMQ and
         const mail = (await (
           await fetch(process.env.MAILPIT_URL + '/api/v1/message/' + row.ID)
         ).json()) as { Text: string };
-        const match = mail.Text.match(/token=([A-Za-z0-9_-]+)/);
+        const match = mail.Text.match(
+          kind === 'reset' ? /#token=([A-Za-z0-9_-]+)/ : /\?token=([A-Za-z0-9_-]+)/,
+        );
         if (match) {
-          const current = await db.emailActivation.findUnique({
-            where: { tokenHash: tokenHash(match[1]) },
-          });
-          if (current && !current.consumedAt) return match[1];
+          const where = { tokenHash: tokenHash(match[1]) };
+          const current =
+            kind === 'reset'
+              ? await db.passwordReset.findUnique({ where })
+              : await db.emailActivation.findUnique({ where });
+          if (current && !current.consumedAt && current.expiresAt > new Date()) return match[1];
         }
       }
       return undefined;
@@ -343,17 +347,15 @@ integration('P2 Auth through Gateway with real PostgreSQL, Mailpit, RabbitMQ and
     expect(
       (await api().post('/api/v1/auth/refresh').send({ refreshToken: inconsistent })).status,
     ).toBe(401);
-    const inconsistentAccess = auth
-      .get(JwtService)
-      .sign({
-        sub: userId,
-        sid: adminSession.id,
-        jti: randomUUID(),
-        userVersion: '0',
-        sessionVersion: adminSession.version.toString(),
-        roles: ['USER'],
-        type: 'access',
-      });
+    const inconsistentAccess = auth.get(JwtService).sign({
+      sub: userId,
+      sid: adminSession.id,
+      jti: randomUUID(),
+      userVersion: '0',
+      sessionVersion: adminSession.version.toString(),
+      roles: ['USER'],
+      type: 'access',
+    });
     expect(
       (
         await api()
@@ -698,6 +700,190 @@ integration('P2 Auth through Gateway with real PostgreSQL, Mailpit, RabbitMQ and
       ).status,
     ).toBe(400);
   });
+  it('recovers a password through Mailpit and revokes both devices on reset and change', async () => {
+    const account = await activeAccount();
+    const inactiveEmail = randomUUID() + '@example.test';
+    const inactive = await register(inactiveEmail);
+    expect(inactive.status).toBe(201);
+    const forgot = (email: string) => api().post('/api/v1/auth/forgot-password').send({ email });
+    const firstDevice = await login(account.email);
+    const secondDevice = await api()
+      .post('/api/v1/auth/login')
+      .send({ email: account.email, password, deviceId: 'other-device' });
+    expect(firstDevice.status).toBe(200);
+    expect(secondDevice.status).toBe(200);
+    expect(
+      (
+        await request(probe.getHttpServer())
+          .get('/probe')
+          .auth(firstDevice.body.accessToken, { type: 'bearer' })
+      ).status,
+    ).toBe(200);
+
+    const original = globalThis.fetch;
+    const unavailable = jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+      if (
+        init?.method === 'POST' &&
+        String(input).includes('/api/v1/send') &&
+        String(init.body).includes('Reset your TOEIC password')
+      )
+        throw new Error('simulated outage');
+      return original(input, init);
+    });
+    try {
+      const results = await Promise.all([
+        forgot(account.email.toUpperCase()),
+        forgot(account.email),
+        forgot(inactiveEmail),
+        forgot(randomUUID() + '@example.test'),
+      ]);
+      expect(results.map((response) => response.status)).toEqual([202, 202, 202, 202]);
+      for (const response of results) expect(response.body).toEqual(results[0].body);
+      expect(await db.passwordReset.count({ where: { userId: account.id } })).toBe(1);
+      expect(await db.passwordReset.count({ where: { userId: inactive.body.user.userId } })).toBe(
+        0,
+      );
+      await until(
+        async () =>
+          (
+            await db.emailDelivery.findFirst({
+              where: { userId: account.id, purpose: 'PASSWORD_RESET', retryCount: { gte: 1 } },
+              select: { encryptedToken: true },
+            })
+          )?.encryptedToken ?? undefined,
+      );
+    } finally {
+      unavailable.mockRestore();
+    }
+    const oldToken = await mailToken(account.email, 'reset');
+    const resetPassword = 'Reset-Test-2026!';
+    const reset = (token: string, newPassword = resetPassword) =>
+      api()
+        .post('/api/v1/auth/reset-password')
+        .send({ token, newPassword, confirmPassword: newPassword });
+    await db.passwordReset.update({
+      where: { tokenHash: tokenHash(oldToken) },
+      data: { createdAt: new Date(Date.now() - 61_000) },
+    });
+    expect((await forgot(account.email)).status).toBe(202);
+    const token = await mailToken(account.email, 'reset');
+    expect(token).not.toBe(oldToken);
+    const expired = 'expired-p2-reset';
+    const currentAccount = await db.user.findUniqueOrThrow({ where: { id: account.id } });
+    await db.passwordReset.createMany({
+      data: [
+        {
+          userId: account.id,
+          tokenHash: tokenHash(expired),
+          authorizationVersion: currentAccount.authorizationVersion,
+          expiresAt: new Date(0),
+          createdAt: new Date(Date.now() - 70_000),
+        },
+        ...[71_000, 72_000].map((age) => ({
+          userId: account.id,
+          tokenHash: tokenHash(randomUUID()),
+          authorizationVersion: currentAccount.authorizationVersion,
+          expiresAt: new Date(0),
+          createdAt: new Date(Date.now() - age),
+          consumedAt: new Date(),
+        })),
+      ],
+    });
+    await db.passwordReset.update({
+      where: { tokenHash: tokenHash(token) },
+      data: { createdAt: new Date(Date.now() - 61_000) },
+    });
+    expect((await forgot(account.email)).status).toBe(202);
+    expect(await db.passwordReset.count({ where: { userId: account.id } })).toBe(5);
+    for (const invalid of [oldToken, expired, 'unknown']) {
+      const rejected = await reset(invalid);
+      expect(rejected.status).toBe(400);
+      expect(rejected.body.code).toBe('INVALID_PASSWORD_RESET_TOKEN');
+    }
+    expect((await reset(token, 'Aa1' + 'é'.repeat(35))).body.code).toBe('VALIDATION_ERROR');
+    expect((await reset(token, password)).body.code).toBe('PASSWORD_UNCHANGED');
+    const simultaneous = await Promise.all([reset(token), reset(token)]);
+    expect(simultaneous.map(({ status }) => status).sort()).toEqual([200, 400]);
+    expect((await reset(token)).body.code).toBe('INVALID_PASSWORD_RESET_TOKEN');
+    expect((await login(account.email)).status).toBe(401);
+    for (const device of [firstDevice, secondDevice]) {
+      expect(
+        (await api().post('/api/v1/auth/refresh').send({ refreshToken: device.body.refreshToken }))
+          .status,
+      ).toBe(401);
+    }
+    await until(async () =>
+      (
+        await request(probe.getHttpServer())
+          .get('/probe')
+          .auth(firstDevice.body.accessToken, { type: 'bearer' })
+      ).status === 401
+        ? true
+        : undefined,
+    );
+
+    const sign = (value: string) =>
+      api()
+        .post('/api/v1/auth/login')
+        .send({ email: account.email, password: value, deviceId: randomUUID() });
+    const [changedDevice, other] = await Promise.all([sign(resetPassword), sign(resetPassword)]);
+    expect(changedDevice.status).toBe(200);
+    expect(other.status).toBe(200);
+    const nextPassword = 'Changed-Test-2026!';
+    const change = (currentPassword: string) =>
+      api()
+        .post('/api/v1/auth/change-password')
+        .auth(changedDevice.body.accessToken, { type: 'bearer' })
+        .send({ currentPassword, newPassword: nextPassword, confirmPassword: nextPassword });
+    expect((await change(password)).body.code).toBe('INCORRECT_CURRENT_PASSWORD');
+    expect(
+      (await api().get('/api/v1/users/me').auth(changedDevice.body.accessToken, { type: 'bearer' }))
+        .status,
+    ).toBe(200);
+    expect((await change(resetPassword)).status).toBe(200);
+    expect((await change(resetPassword)).status).toBe(401);
+    expect(
+      (await api().post('/api/v1/auth/refresh').send({ refreshToken: other.body.refreshToken }))
+        .status,
+    ).toBe(401);
+    expect((await sign(nextPassword)).status).toBe(200);
+    expect(
+      await db.auditLog.findMany({ where: { userId: account.id }, select: { action: true } }),
+    ).toEqual(
+      expect.arrayContaining([{ action: 'PASSWORD_RESET' }, { action: 'PASSWORD_CHANGED' }]),
+    );
+  });
+
+  it('reads user detail by ID only for a system administrator', async () => {
+    const account = await activeAccount();
+    const path = '/api/v1/admin/users/' + account.id;
+    const learner = await login(account.email);
+    expect((await api().get(path)).status).toBe(401);
+    expect((await api().get(path).auth(learner.body.accessToken, { type: 'bearer' })).status).toBe(
+      403,
+    );
+    await db.userRole.create({ data: { userId: account.id, roleCode: 'CONTENT_ADMIN' } });
+    const content = await login(account.email);
+    expect((await api().get(path).auth(content.body.accessToken, { type: 'bearer' })).status).toBe(
+      403,
+    );
+    const read = (url: string) => api().get(url).auth(adminToken, { type: 'bearer' });
+    const detail = await read(path);
+    expect(detail.status).toBe(200);
+    expect(detail.body).toMatchObject({
+      userId: account.id,
+      email: account.email,
+      status: 'ACTIVE',
+      roles: ['CONTENT_ADMIN', 'USER'],
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+    });
+    expect(detail.body).not.toHaveProperty('passwordHash');
+    expect(detail.body).not.toHaveProperty('authorizationVersion');
+    expect((await read('/api/v1/admin/users/invalid')).status).toBe(400);
+    expect((await read('/api/v1/admin/users/' + randomUUID())).status).toBe(404);
+  });
+
   it('fails closed with 503 after a cached state expires during Auth transport outage', async () => {
     const req = () =>
       request(probe.getHttpServer()).get('/probe').auth(userToken, { type: 'bearer' });

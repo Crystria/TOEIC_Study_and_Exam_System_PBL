@@ -119,9 +119,12 @@ function semantic(value, definition) {
     Object.entries(node).forEach(([childKey, child]) => visit(child, childKey));
   }
   visit(value);
-  if (definition === 'RegisterRequest') {
-    assert.equal(value.password, value.confirmPassword, 'Confirmation mismatch');
-    assert.ok(Buffer.byteLength(value.password, 'utf8') <= 72, 'BCrypt byte limit');
+  if (['RegisterRequest', 'ResetPasswordRequest', 'ChangePasswordRequest'].includes(definition)) {
+    const password = definition === 'RegisterRequest' ? value.password : value.newPassword;
+    assert.equal(password, value.confirmPassword, 'Confirmation mismatch');
+    assert.ok(Buffer.byteLength(password, 'utf8') <= 72, 'BCrypt byte limit');
+    if (definition === 'ChangePasswordRequest')
+      assert.ok(Buffer.byteLength(value.currentPassword, 'utf8') <= 72, 'BCrypt byte limit');
   }
   if (definition === 'PresignRequest') {
     const audio = value.kind === 'AUDIO';

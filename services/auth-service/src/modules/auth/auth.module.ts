@@ -6,10 +6,11 @@ import { ActivationMailService } from './activation-mail.service';
 import { AvatarService } from '../users/avatar.service';
 import { UserPresenter } from '../users/user-presenter';
 import { InternalAuthController } from './internal-auth.controller';
+import { PasswordService } from './password.service';
 
 @Module({
   controllers: [AuthController, SyncController, InternalAuthController],
-  providers: [AuthService, ActivationMailService, AvatarService, UserPresenter],
+  providers: [AuthService, ActivationMailService, AvatarService, UserPresenter, PasswordService],
   exports: [AuthService, AvatarService, UserPresenter, ActivationMailService],
 })
 export class AuthModule {}

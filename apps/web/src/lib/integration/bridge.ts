@@ -71,7 +71,10 @@ function permitted(app: BridgeConfig['app'], path: string, method: string): bool
     )
       return true;
     if (app === 'cms' && /^tests\/cms-metadata(?:\/[^/]+)?$/.test(path)) return true;
-    if (app === 'cms' && /^(questions(?:\/[^/]+)?|admin\/(users|audit-logs))$/.test(path))
+    if (
+      app === 'cms' &&
+      /^(questions(?:\/[^/]+)?|admin\/(users(?:\/[^/]+)?|audit-logs))$/.test(path)
+    )
       return true;
     return (
       app === 'web' &&
@@ -99,11 +102,7 @@ function permitted(app: BridgeConfig['app'], path: string, method: string): bool
       (method === 'PUT' && /^attempts\/[^/]+\/(draft|answers\/[^/]+)$/.test(path)))
   )
     return true;
-  if (
-    app === 'web' &&
-    method === 'POST' &&
-    /^learning\/lessons\/[^/]+\/complete$/.test(path)
-  )
+  if (app === 'web' && method === 'POST' && /^learning\/lessons\/[^/]+\/complete$/.test(path))
     return true;
   if (app !== 'cms') return false;
   if (
@@ -169,7 +168,10 @@ export async function handleBridge(
   } catch {
     return respond({ code: 'INVALID_LOCAL_TEST_GATEWAY' }, 503);
   }
-  if (writeMethods.has(method) && request.headers.get('origin') !== url.origin)
+  // Next dev can normalize request.url to localhost even when the browser used 127.0.0.1.
+  const host = request.headers.get('host');
+  const origin = host ? `${url.protocol}//${host.toLowerCase()}` : url.origin;
+  if (writeMethods.has(method) && request.headers.get('origin') !== origin)
     return respond({ code: 'ORIGIN_REJECTED' }, 403);
   if (
     !parts.length ||
@@ -331,6 +333,26 @@ export async function handleBridge(
       } finally {
         clear();
       }
+      return respond({ success: true });
+    }
+    if (
+      config.app === 'web' &&
+      method === 'POST' &&
+      ['auth/forgot-password', 'auth/reset-password'].includes(path)
+    ) {
+      const result = await call(path, method, body, '');
+      return respond(result, path === 'auth/forgot-password' ? 202 : 200);
+    }
+    if (path === 'auth/change-password' && method === 'POST') {
+      const user = await me();
+      if (user.status !== 'ACTIVE') {
+        clear();
+        return respond({ code: 'ACCOUNT_NOT_ACTIVE' }, 403);
+      }
+      const result = await call(path, method, body);
+      if ((result as { success?: unknown })?.success !== true)
+        throw new ContractError('passwordChange.success');
+      clear();
       return respond({ success: true });
     }
     if (path === 'auth/refresh' && method === 'POST') {

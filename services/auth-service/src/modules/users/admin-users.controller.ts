@@ -15,6 +15,9 @@ export class AdminUsersController {
   @Get('users') list(@Query() query: ListUsersQueryDto) {
     return this.users.listUsers(query);
   }
+  @Get('users/:id') detail(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.users.getMe(id);
+  }
   @Patch('users/:id/roles') roles(
     @CurrentUser('sub') actor: string,
     @Param('id', new ParseUUIDPipe()) id: string,

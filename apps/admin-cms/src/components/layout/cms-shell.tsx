@@ -206,7 +206,10 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
                 <strong>{apiAccount?.email ?? persona.name}</strong>
                 <p>{apiAccount?.roles.join(', ') ?? role}</p>
                 {apiAccount ? (
-                  <LogoutButton />
+                  <>
+                    <Link href="/account/password">Đổi mật khẩu</Link>
+                    <LogoutButton />
+                  </>
                 ) : (
                   <>
                     <p>Nhân vật minh họa, chưa đăng nhập tài khoản.</p>

@@ -25,6 +25,15 @@ describe('route policy', () => {
 
   it('allows public auth and health paths only', () => {
     expect(isPublicPath('/api/v1/auth/login')).toBe(true);
+    for (const path of ['/api/v1/auth/forgot-password', '/api/v1/auth/reset-password']) {
+      expect(isPublicPath(path, 'POST')).toBe(true);
+      expect(isPublicPath(path, 'GET')).toBe(false);
+      expect(ipRateLimitPolicy('POST', path, false)?.bucket).toBe('password-recovery');
+    }
+    expect(isPublicPath('/api/v1/auth/change-password', 'POST')).toBe(false);
+    expect(userRateLimitPolicy('POST', '/api/v1/auth/change-password').bucket).toBe(
+      'change-password',
+    );
     expect(isPublicPath('/api/v1/auth/me')).toBe(false);
     expect(isPublicPath('/health')).toBe(true);
     expect(isPublicPath('/status/')).toBe(true);
@@ -39,6 +48,7 @@ describe('route policy', () => {
 
   it('keeps user administration and search reindexing with system admins', () => {
     expect(requiredRoles('GET', '/api/v1/admin/users')).toEqual([RoleCode.SYSTEM_ADMIN]);
+    expect(requiredRoles('GET', '/api/v1/admin/users/1')).toEqual([RoleCode.SYSTEM_ADMIN]);
     expect(requiredRoles('POST', '/api/v1/questions/reindex')).toEqual([RoleCode.SYSTEM_ADMIN]);
   });
 

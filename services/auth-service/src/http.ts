@@ -19,7 +19,9 @@ export class ContractPipe implements PipeTransform {
   transform(input: unknown): unknown {
     let value = input;
     if (
-      ['RegisterRequest', 'LoginRequest', 'ResendRequest'].includes(this.definition) &&
+      ['RegisterRequest', 'LoginRequest', 'ResendRequest', 'ForgotPasswordRequest'].includes(
+        this.definition,
+      ) &&
       input &&
       typeof input === 'object'
     ) {

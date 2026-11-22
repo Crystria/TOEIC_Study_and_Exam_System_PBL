@@ -57,6 +57,8 @@ export const PUBLIC_PATHS = new Set([
   '/api/v1/auth/refresh',
   '/api/v1/auth/verify-email',
   '/api/v1/auth/resend-verification',
+  '/api/v1/auth/forgot-password',
+  '/api/v1/auth/reset-password',
   '/health',
   '/status',
   '/ready',
@@ -68,6 +70,8 @@ const AUTH_PUBLIC_PREFIXES = [
   '/api/v1/auth/refresh',
   '/api/v1/auth/verify-email',
   '/api/v1/auth/resend-verification',
+  '/api/v1/auth/forgot-password',
+  '/api/v1/auth/reset-password',
 ];
 
 const TEST_ATTEMPT_START = /^\/api\/v1\/tests\/[^/]+\/(?:part-)?attempts$/;
@@ -166,6 +170,9 @@ export function ipRateLimitPolicy(
     return undefined;
   }
 
+  if (method === 'POST' && /^\/api\/v1\/auth\/(forgot|reset)-password$/.test(normalizePath(path))) {
+    return { bucket: 'password-recovery', scope: 'ip', capacity: 10, refillPerSecond: 10 / 60 };
+  }
   if (isAuthPublicPath(path)) {
     return { bucket: 'auth', scope: 'ip', capacity: 10, refillPerSecond: 10 / 60 };
   }
@@ -178,6 +185,9 @@ export function ipRateLimitPolicy(
 }
 
 export function userRateLimitPolicy(method: string, path: string): RateLimitPolicy {
+  if (method === 'POST' && normalizePath(path) === '/api/v1/auth/change-password') {
+    return { bucket: 'change-password', scope: 'user', capacity: 5, refillPerSecond: 5 / 60 };
+  }
   if (isPresignPath(method, path)) {
     return { bucket: 'presign', scope: 'user', capacity: 30, refillPerSecond: 30 / 3600 };
   }

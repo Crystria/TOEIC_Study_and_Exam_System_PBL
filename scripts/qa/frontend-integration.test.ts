@@ -153,6 +153,65 @@ test('cross-origin writes are rejected before fetch', async () => {
     403,
   );
 });
+test('password recovery honors the browser host and forwards only unauthenticated web requests', async () => {
+  const calls: string[] = [];
+  const c = cfg(
+    async (input, init) => {
+      const path = new URL(String(input)).pathname;
+      calls.push(path);
+      assert.equal(new Headers(init?.headers).has('authorization'), false);
+      return path.endsWith('forgot-password')
+        ? json({ message: 'If eligible, a password reset email will be sent' }, 202)
+        : json({ success: true });
+    },
+    { writesEnabled: false },
+  );
+  const headers = { host: '127.0.0.1:3006', origin: 'http://127.0.0.1:3006' };
+  const forgot = 'auth/forgot-password';
+  const reset = 'auth/reset-password';
+  assert.equal((await bridge(forgot, 'POST', { email: user.email }, c, headers)).status, 202);
+  assert.equal((await bridge(reset, 'POST', {}, c, headers)).status, 200);
+  assert.equal(
+    (
+      await bridge(forgot, 'POST', {}, c, {
+        ...headers,
+        origin: 'http://localhost:3006',
+        'x-forwarded-host': 'localhost:3006',
+      })
+    ).status,
+    403,
+  );
+  assert.equal((await bridge(forgot, 'POST', {}, { ...c, app: 'cms' }, headers)).status, 501);
+  assert.deepEqual(calls, ['/api/v1/auth/forgot-password', '/api/v1/auth/reset-password']);
+});
+test('password changes clear only the current app cookies after confirmation', async () => {
+  for (const app of ['web', 'cms'] as const) {
+    let succeeds = false;
+    const c = cfg(
+      async (input, init) => {
+        const path = new URL(String(input)).pathname;
+        assert.match(new Headers(init?.headers).get('authorization') ?? '', /unit-access/);
+        if (path.endsWith('users/me')) return json(user);
+        assert.match(path, /auth\/change-password$/);
+        return succeeds
+          ? json({ success: true })
+          : json({ code: 'INCORRECT_CURRENT_PASSWORD' }, 400);
+      },
+      { app, writesEnabled: false },
+    );
+    const wrong = await bridge('auth/change-password', 'POST', {}, c);
+    assert.equal(wrong.status, 400);
+    assert.equal(wrong.headers.get('set-cookie'), null);
+    succeeds = true;
+    const changed = await bridge('auth/change-password', 'POST', {}, c);
+    assert.equal(changed.status, 200);
+    const cookies = changed.headers.getSetCookie();
+    assert.equal(cookies.length, 2);
+    assert.ok(
+      cookies.every((value) => value.startsWith(`toeic_${app}_`) && value.includes('Max-Age=0')),
+    );
+  }
+});
 test('empty, traversal, control and demo IDs are rejected', async () => {
   for (const p of ['', '..', 'demo-01', 'local-01', '\u0001'])
     assert.equal(
@@ -545,7 +604,9 @@ test('flashcard sessions pass through for active learners with experimental writ
     { writesEnabled: false },
   );
   for (const [route, method, body] of expected) {
-    const response = await bridge(route, method, body, config, { 'Idempotency-Key': 'flashcard-start' });
+    const response = await bridge(route, method, body, config, {
+      'Idempotency-Key': 'flashcard-start',
+    });
     assert.equal(response.status, 200);
   }
   assert.deepEqual(calls, expected);
@@ -553,8 +614,14 @@ test('flashcard sessions pass through for active learners with experimental writ
   assert.equal((await bridge(session, 'GET', undefined, { ...config, app: 'cms' })).status, 501);
   assert.equal((await bridge(session, 'DELETE', undefined, config)).status, 501);
   assert.equal((await bridge('learning/vocabulary-sessions', 'POST', start, config)).status, 503);
-  assert.equal((await bridge(path, 'POST', start, config, { origin: 'https://foreign.invalid' })).status, 403);
-  assert.equal((await handleBridge(req(path, 'POST', start, ''), path.split('/'), config)).status, 401);
+  assert.equal(
+    (await bridge(path, 'POST', start, config, { origin: 'https://foreign.invalid' })).status,
+    403,
+  );
+  assert.equal(
+    (await handleBridge(req(path, 'POST', start, ''), path.split('/'), config)).status,
+    401,
+  );
   assert.deepEqual(calls, expected);
 });
 
@@ -829,17 +896,25 @@ test('Vocabulary workbook import alone accepts larger CMS JSON bodies and forwar
     { app: 'cms', contentWritesEnabled: true },
   );
   const headers = { 'idempotency-key': key };
-  assert.equal((await bridge(vocabularyWorkbookImportPath, 'POST', body, config, headers)).status, 200);
-  assert.equal((await bridge('learning/admin/vocabularies/bulk', 'POST', body, config)).status, 413);
+  assert.equal(
+    (await bridge(vocabularyWorkbookImportPath, 'POST', body, config, headers)).status,
+    200,
+  );
+  assert.equal(
+    (await bridge('learning/admin/vocabularies/bulk', 'POST', body, config)).status,
+    413,
+  );
   assert.equal((await bridge(vocabularyWorkbookImportPath, 'GET', undefined, config)).status, 501);
   assert.equal(
     (await bridge(vocabularyWorkbookImportPath, 'POST', {}, { ...config, app: 'web' })).status,
     501,
   );
   assert.equal(
-    (await bridge(vocabularyWorkbookImportPath, 'POST', {}, config, {
-      'content-length': String(MAX_VOCABULARY_IMPORT_BYTES + 1),
-    })).status,
+    (
+      await bridge(vocabularyWorkbookImportPath, 'POST', {}, config, {
+        'content-length': String(MAX_VOCABULARY_IMPORT_BYTES + 1),
+      })
+    ).status,
     413,
   );
 });
@@ -1400,21 +1475,27 @@ test('CMS role/status changes require an acknowledgment of the requested state',
   }
 });
 
-test('CMS ambiguous mutation reconciliation uses a filtered GET and matches ID plus email', async () => {
+const cmsUserDetail = {
+  ...user,
+  createdAt: '2026-11-01T00:00:00.000Z',
+  updatedAt: '2026-11-02T00:00:00.000Z',
+};
+test('CMS detail and mutation reconciliation read by ID independently of list filters', async () => {
   const old = globalThis.fetch;
   const seen: { path: string; method: string }[] = [];
   globalThis.fetch = async (input, init) => {
     seen.push({ path: String(input), method: init?.method ?? 'GET' });
-    return json(wirePage([{ ...user, userId: '00000000-0000-4000-8000-000000000099' }, user]));
+    return json(cmsUserDetail);
   };
   try {
-    assert.equal((await cmsApi.userForReconciliation(user.userId, user.email)).id, user.userId);
+    const detail = await cmsApi.user(user.userId);
+    assert.equal(detail.id, user.userId);
+    assert.equal(detail.updatedAt, cmsUserDetail.updatedAt);
     assert.equal(seen.length, 1);
     assert.equal(seen[0].method, 'GET');
     const url = new URL(seen[0].path, 'http://localhost');
-    assert.equal(url.pathname, '/api/frontend/admin/users');
-    assert.equal(url.searchParams.get('keyword'), user.email);
-    assert.equal(url.searchParams.get('size'), '50');
+    assert.equal(url.pathname, `/api/frontend/admin/users/${user.userId}`);
+    assert.equal(url.search, '');
   } finally {
     globalThis.fetch = old;
   }
@@ -1422,11 +1503,17 @@ test('CMS ambiguous mutation reconciliation uses a filtered GET and matches ID p
 
 test('CMS reconciliation cannot confirm an unrelated or missing user', async () => {
   const old = globalThis.fetch;
-  const responses = [wirePage([{ ...user, email: 'other@example.invalid' }]), wirePage([])];
-  globalThis.fetch = async () => json(responses.shift());
+  const responses = [
+    json({ ...cmsUserDetail, userId: '00000000-0000-4000-8000-000000000099' }),
+    json({ code: 'USER_NOT_FOUND' }, 404),
+  ];
+  globalThis.fetch = async () => responses.shift()!;
   try {
-    await assert.rejects(cmsApi.userForReconciliation(user.userId, user.email), ContractError);
-    await assert.rejects(cmsApi.userForReconciliation(user.userId, user.email), ContractError);
+    await assert.rejects(cmsApi.user(user.userId), ContractError);
+    await assert.rejects(
+      cmsApi.user(user.userId),
+      (error) => error instanceof GatewayError && error.status === 404,
+    );
   } finally {
     globalThis.fetch = old;
   }

@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Media URLs are validated complete backend URLs. */
 import Link from 'next/link';
 import { AccountAnalytics } from './account-analytics';
+import { PasswordForm } from './password-forms';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useRef, useState, type ReactNode } from 'react';
 import { learningApi, examApi, analyticsApi, profileApi } from '../../lib/integration/repositories';
@@ -38,7 +39,8 @@ export function ApiStudentApplication({
   examWrites?: boolean;
 }) {
   const path = usePathname();
-  if (path === '/' || path === '/login' || path === '/register') return <>{children}</>;
+  if (['/', '/login', '/register', '/forgot-password', '/reset-password'].includes(path))
+    return <>{children}</>;
   if (path === '/verify-email') return <EmailActivation writes={writes} />;
   return (
     <SessionGate key={path}>
@@ -634,6 +636,9 @@ function Profile({
             .catch((e) => setError(failureMessage(e)));
         }}
       />
+      <article className="api-card">
+        <PasswordForm mode="change" />
+      </article>
     </>
   );
 }

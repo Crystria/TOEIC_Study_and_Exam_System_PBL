@@ -229,6 +229,8 @@ function validateOpenApi(file, internal = false) {
       '/auth/refresh',
       '/auth/verify-email',
       '/auth/resend-verification',
+      '/auth/forgot-password',
+      '/auth/reset-password',
     ].sort();
     assert.deepEqual(
       routes

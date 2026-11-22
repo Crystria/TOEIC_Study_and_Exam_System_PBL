@@ -73,6 +73,12 @@ Invoke-RestMethod http://localhost:3000/ready
 
   Đọc email/mật khẩu tại `private/credentials/content-admin-p3.json`. Đăng nhập qua `POST /api/v1/auth/login` với body `{"email":"...","password":"...","deviceId":"local-dev"}`, rồi gửi `Authorization: Bearer <accessToken>` khi gọi API cần quyền.
 
+### Khôi phục mật khẩu trên local và QA
+
+Áp dụng migration Auth `20261122120000_password_recovery` trước khi khởi động Auth phiên bản mới. Cập nhật toàn bộ tiến trình Auth dùng chung hàng đợi email và các service nhận sự kiện xác thực trước khi mở luồng đặt lại mật khẩu.
+
+`AUTH_PASSWORD_RESET_URL` trong cấu hình Auth trỏ tới trang Web học viên, mặc định `http://localhost:3006/reset-password`. Thay địa chỉ nếu Web chạy ở cổng hoặc hostname khác. Gửi yêu cầu từ **Quên mật khẩu** trên Web rồi mở email mới trong Mailpit tại [localhost:8025](http://localhost:8025). Liên kết dùng một lần và hết hạn sau 30 phút. Có thể chạy `npm.cmd run test:p2 -w @toeic/auth-service` để kiểm thử với database và Mailpit riêng.
+
 ## Những lần sau
 
 - **Chạy lại:** bật hạ tầng ở bước 2 rồi mở 6 service ở bước 4.

@@ -200,6 +200,64 @@
       ],
       "additionalProperties": true
     },
+    "ForgotPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 320
+        }
+      },
+      "required": ["email"],
+      "additionalProperties": false
+    },
+    "ResetPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "newPassword": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72,
+          "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\s\\S]+$"
+        },
+        "confirmPassword": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72
+        }
+      },
+      "required": ["token", "newPassword", "confirmPassword"],
+      "additionalProperties": false
+    },
+    "ChangePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "currentPassword": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 72
+        },
+        "newPassword": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72,
+          "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\s\\S]+$"
+        },
+        "confirmPassword": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72
+        }
+      },
+      "required": ["currentPassword", "newPassword", "confirmPassword"],
+      "additionalProperties": false
+    },
     "RegisterRequest": {
       "type": "object",
       "properties": {
@@ -3272,7 +3330,7 @@
         },
         "reason": {
           "type": "string",
-          "enum": ["LOGOUT", "USER_STATUS_CHANGED", "USER_ROLES_CHANGED"]
+          "enum": ["LOGOUT", "USER_STATUS_CHANGED", "USER_ROLES_CHANGED", "PASSWORD_CHANGED"]
         }
       },
       "required": ["userId", "userVersion", "sessionId", "sessionVersion", "reason"],

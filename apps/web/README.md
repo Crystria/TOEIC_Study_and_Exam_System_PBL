@@ -24,6 +24,8 @@ Student exam writes, individual flashcard reviews, and flashcard-to-quiz session
 
 Login sends `deviceId`; registration sends `confirmPassword` and waits for email activation instead of trying to parse tokens. `/verify-email` supports activation and neutral resend feedback. Logout clears local cookies even if server revocation cannot be confirmed. Failed mutations are never automatically replayed after a 401/network failure. Changed exam choices autosave after 700 ms; a failed save keeps choices on screen with an explicit manual retry. At expiry, the UI submits for server finalization using the last server-confirmed draft.
 
+In local/test API mode, `/forgot-password` requests a Mailpit email for eligible accounts, and its link opens `/reset-password`. The Auth service configures the link with `AUTH_PASSWORD_RESET_URL`. Learners can also change their password from `/profile`. Both operations revoke the affected account's sessions and require a fresh login. Password operations are available independently of `FRONTEND_TEST_WRITES`.
+
 ## API routes
 
 | Routes                                                                           | Current behavior                                                                                                                                                                                                                 |
