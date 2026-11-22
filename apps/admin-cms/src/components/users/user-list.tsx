@@ -300,7 +300,6 @@ export function UserList() {
               {data.items.map((item) => (
                 <li key={item.id} data-user-id={item.id}>
                   <div className="user-name">
-                    <span className="user-code">{item.id.toUpperCase()}</span>
                     <h3>{item.fullName?.trim() || 'Chưa có dữ liệu'}</h3>
                   </div>
                   <div>

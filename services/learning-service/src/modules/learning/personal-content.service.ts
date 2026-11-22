@@ -25,7 +25,7 @@ const timestamps = (row: { createdAt: Date; updatedAt: Date }) => ({
   deletedAt: null,
 });
 
-const wordView = (row: PersonalVocabulary) => ({
+export const personalVocabularyView = (row: PersonalVocabulary) => ({
   ...timestamps(row),
   vocabularyId: row.id,
   topicId: row.topicId,
@@ -187,21 +187,21 @@ export class PersonalContentService {
           }),
           tx.personalVocabulary.count({ where }),
         ]);
-        return pageView(rows.map(wordView), total, page, size);
+        return pageView(rows.map(personalVocabularyView), total, page, size);
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
     );
   }
 
   async readVocabulary(userId: string, id: string) {
-    return wordView(await this.vocabulary(this.db, userId, id));
+    return personalVocabularyView(await this.vocabulary(this.db, userId, id));
   }
 
   createVocabulary(userId: string, input: PersonalVocabularyCreate, key: string) {
     return this.mutate(userId, (tx) =>
       idempotent(tx, userId, 'personal:vocabularies:create', key, input, async () => {
         await this.topic(tx, userId, input.topicId);
-        return wordView(
+        return personalVocabularyView(
           await tx.personalVocabulary.create({
             data: {
               userId,
@@ -222,7 +222,7 @@ export class PersonalContentService {
     return this.mutate(userId, async (tx) => {
       await this.vocabulary(tx, userId, id);
       if (input.topicId) await this.topic(tx, userId, input.topicId);
-      return wordView(
+      return personalVocabularyView(
         await tx.personalVocabulary.update({
           where: { id_userId: { id, userId } },
           data: {

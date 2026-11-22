@@ -1,0 +1,108 @@
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --background: #101827;
+  --foreground: #e8eef8;
+  --cms-ink: var(--foreground);
+  --cms-muted: #aebdd0;
+  --cms-link: #93c5fd;
+  --cms-line: #33445d;
+  --cms-control-line: #566b87;
+  --cms-surface: #182438;
+  --cms-surface-muted: #24334b;
+  --cms-blue-surface: #223653;
+}
+
+:root[data-theme='dark'] .cms-brand strong {
+  color: var(--cms-link);
+}
+
+:root[data-theme='dark'] .admin-auth-page {
+  --admin-auth-ink: var(--cms-ink);
+  --admin-auth-muted: var(--cms-muted);
+}
+
+:root[data-theme='dark']
+  .admin-auth-page
+  :is(.admin-auth-brand strong, .admin-auth-eyebrow, .admin-auth-password-toggle:hover) {
+  color: var(--cms-link);
+}
+
+:root[data-theme='dark'] .bg-white {
+  background-color: var(--cms-surface);
+}
+
+:root[data-theme='dark'] :is(.hover\:bg-slate-50, .hover\:bg-slate-100):hover {
+  background-color: var(--cms-surface-muted);
+}
+
+:root[data-theme='dark'] :is(.border-slate-100, .border-slate-200) {
+  border-color: var(--cms-line);
+}
+
+:root[data-theme='dark'] .border-slate-300 {
+  border-color: var(--cms-control-line);
+}
+
+:root[data-theme='dark'] :is(.text-slate-700, .text-slate-900) {
+  color: var(--cms-ink);
+}
+
+:root[data-theme='dark'] :is(.text-slate-500, .text-slate-600) {
+  color: var(--cms-muted);
+}
+
+:root[data-theme='dark'] :is(.text-blue-700, .hover\:text-blue-800:hover) {
+  color: var(--cms-link);
+}
+
+/* CMS also uses the shared API forms, alerts and tables. */
+:where(:root[data-theme='dark']) :is(.api-root, .api-login) {
+  --api-ink: var(--cms-ink);
+  --api-blue: var(--cms-link);
+}
+
+:where(:root[data-theme='dark']) .api-card {
+  background: var(--cms-surface);
+  border-color: var(--cms-line);
+}
+
+:where(:root[data-theme='dark']) .api-root button:not([class]),
+:where(:root[data-theme='dark']) .api-login button:not(.api-primary),
+:where(:root[data-theme='dark']) .api-field :is(input, select, textarea),
+:where(:root[data-theme='dark']) .api-root :is(input, select),
+:where(:root[data-theme='dark']) .api-nav a {
+  background: var(--cms-surface);
+  border-color: var(--cms-control-line);
+  color: var(--cms-ink);
+}
+
+:where(:root[data-theme='dark']) .api-field [aria-invalid='true'] {
+  border-color: #fca5a5;
+}
+
+:where(:root[data-theme='dark']) :is(.api-root, .api-login) :focus-visible {
+  outline-color: var(--cms-link);
+}
+
+:where(:root[data-theme='dark']) .api-table :is(th, td) {
+  border-color: var(--cms-line);
+}
+
+:where(:root[data-theme='dark']) :is(.api-label, .api-nav a[aria-current='page']) {
+  background: var(--cms-blue-surface);
+  color: var(--cms-link);
+}
+
+:where(:root[data-theme='dark']) :is(.api-state, .api-root .lesson-markdown pre) {
+  background: var(--cms-surface-muted);
+}
+
+:where(:root[data-theme='dark']) .api-error {
+  background: #442528;
+  color: #fca5a5;
+}
+
+:where(:root[data-theme='dark']) .api-blocked {
+  background: #382c18;
+  color: #f9dc91;
+}

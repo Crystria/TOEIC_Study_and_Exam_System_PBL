@@ -195,13 +195,6 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.user-code {
-  display: block;
-  margin-bottom: 5px;
-  color: #64748b;
-  font-size: 10px;
-  letter-spacing: 0.035em;
-}
 .user-cell-label {
   position: absolute;
   width: 1px;

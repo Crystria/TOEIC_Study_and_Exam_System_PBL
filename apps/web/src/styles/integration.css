@@ -193,6 +193,10 @@
   outline: 3px solid var(--api-blue);
   outline-offset: 3px;
 }
+.history-entry-cta {
+  color: var(--api-blue);
+  font-weight: 600;
+}
 .learning-library-card {
   position: relative;
   transition:
@@ -250,48 +254,6 @@
 }
 .vocabulary-nav a[aria-current='page'] {
   font-weight: 700;
-}
-.vocabulary-review-group {
-  margin-top: 24px;
-}
-.vocabulary-review-group + .vocabulary-review-group {
-  margin-top: 36px;
-}
-.vocabulary-review-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-  padding: 16px 20px;
-  border: 1px solid #dce3ef;
-  border-radius: 12px;
-  background: #f0f4fc;
-}
-.api-root .vocabulary-review-heading h2 {
-  margin: 0 0 4px;
-  font-size: 18px;
-}
-.vocabulary-review-schedule {
-  margin: 0;
-  color: #64748b;
-  font-size: 14px;
-}
-.api-root a.vocabulary-review-open {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  max-width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #bdcadd;
-  border-radius: 8px;
-  background: white;
-  font-size: 14px;
-  text-decoration: none;
-}
-.api-root a.vocabulary-review-open:hover {
-  border-color: var(--api-blue);
-  background: #eef3ff;
 }
 .api-field {
   display: grid;
@@ -513,9 +475,6 @@
   border-color: #315bd6;
   color: #315bd6;
   background: #eef3ff;
-}
-.personal-learning-flashcard {
-  min-height: 260px;
 }
 .personal-learning-category {
   align-self: flex-start;

@@ -30,6 +30,7 @@ export interface VocabularyRecord {
   id: string;
   word: string;
   meaning: string;
+  englishDefinition: string;
   pronunciation: string;
   example: string;
   topicId: string;
@@ -108,6 +109,7 @@ export function blankRecord<K extends EntityKind>(kind: K): EntityMap[K] {
       id: '',
       word: '',
       meaning: '',
+      englishDefinition: '',
       pronunciation: '',
       example: '',
       topicId: '',

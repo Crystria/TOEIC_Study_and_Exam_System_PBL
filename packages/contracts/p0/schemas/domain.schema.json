@@ -352,6 +352,20 @@
       "required": ["success"],
       "additionalProperties": true
     },
+    "VocabularyBulkDeleted": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "const": true
+        },
+        "deletedCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["success", "deletedCount"],
+      "additionalProperties": false
+    },
     "ProfilePatch": {
       "type": "object",
       "properties": {
@@ -636,6 +650,18 @@
           "minLength": 1,
           "maxLength": 255
         },
+        "partOfSpeech": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "phonetic": {
           "anyOf": [
             {
@@ -652,6 +678,18 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 10000
+        },
+        "englishDefinition": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "example": {
           "anyOf": [
@@ -669,6 +707,228 @@
       "required": ["topicId", "word", "definition"],
       "additionalProperties": false
     },
+    "VocabularyBulkCreate": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "properties": {
+              "word": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              "partOfSpeech": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "phonetic": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "definition": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "englishDefinition": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "example": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": ["word", "definition"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["topicId", "items"],
+      "additionalProperties": false
+    },
+    "VocabularyBulkCreated": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Vocabulary"
+          }
+        }
+      },
+      "required": ["items"],
+      "additionalProperties": false
+    },
+    "VocabularyImportCreate": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "lists": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "words": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 2000,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "word": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    "partOfSpeech": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 255
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "phonetic": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 255
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "definition": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 10000
+                    },
+                    "englishDefinition": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 10000
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "example": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 10000
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["word", "definition"],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": ["name", "words"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["source", "lists"],
+      "additionalProperties": false
+    },
+    "VocabularyImportResult": {
+      "type": "object",
+      "properties": {
+        "listCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wordCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "createdCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "updatedCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unchangedCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["listCount", "wordCount", "createdCount", "updatedCount", "unchangedCount"],
+      "additionalProperties": false
+    },
     "VocabularyPatch": {
       "type": "object",
       "properties": {
@@ -679,6 +939,18 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 255
+        },
+        "partOfSpeech": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "phonetic": {
           "anyOf": [
@@ -696,6 +968,18 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 10000
+        },
+        "englishDefinition": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "example": {
           "anyOf": [
@@ -728,6 +1012,18 @@
           "minLength": 1,
           "maxLength": 255
         },
+        "partOfSpeech": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "phonetic": {
           "anyOf": [
             {
@@ -744,6 +1040,18 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 10000
+        },
+        "englishDefinition": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "example": {
           "anyOf": [
@@ -1606,6 +1914,251 @@
           },
           "minItems": 5,
           "maxItems": 5
+        }
+      },
+      "required": [
+        "sessionId",
+        "operationId",
+        "status",
+        "quizScore",
+        "quizTotal",
+        "completedAt",
+        "answers",
+        "progress"
+      ],
+      "additionalProperties": true
+    },
+    "FlashcardSessionCreate": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid",
+          "description": "ID of the shared vocabulary topic or the learner’s personal vocabulary list."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["NEW", "REVIEW"]
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["SHARED", "PERSONAL"]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of flashcards requested for this practice session."
+        }
+      },
+      "required": ["topicId", "mode", "scope", "limit"],
+      "additionalProperties": false
+    },
+    "FlashcardQuizQuestion": {
+      "type": "object",
+      "properties": {
+        "questionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "vocabularyId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 11000
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["WORD_TO_MEANING", "MEANING_CONFIRMATION"]
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/QuizOption"
+          },
+          "minItems": 2,
+          "maxItems": 4
+        }
+      },
+      "required": ["questionId", "vocabularyId", "prompt", "direction", "options"],
+      "additionalProperties": false
+    },
+    "FlashcardSession": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "topicId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["NEW", "REVIEW"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["IN_PROGRESS", "COMPLETED", "CANCELED", "EXPIRED"]
+        },
+        "startedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "expiresAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "vocabularies": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Vocabulary"
+          }
+        },
+        "quiz": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/FlashcardQuizQuestion"
+          }
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/FlashcardSessionResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["SHARED", "PERSONAL"]
+        },
+        "reviews": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 50,
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionReview"
+          }
+        }
+      },
+      "required": [
+        "sessionId",
+        "topicId",
+        "mode",
+        "status",
+        "startedAt",
+        "expiresAt",
+        "vocabularies",
+        "quiz",
+        "scope",
+        "reviews",
+        "result"
+      ],
+      "additionalProperties": true
+    },
+    "FlashcardSessionDraft": {
+      "type": "object",
+      "properties": {
+        "reviews": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionReview"
+          }
+        }
+      },
+      "required": ["reviews"],
+      "additionalProperties": false
+    },
+    "FlashcardSessionSubmit": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "reviews": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/SessionReview"
+          }
+        },
+        "answers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/QuizAnswer"
+          }
+        }
+      },
+      "required": ["operationId", "reviews", "answers"],
+      "additionalProperties": false
+    },
+    "FlashcardSessionResult": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "operationId": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+        },
+        "status": {
+          "const": "COMPLETED"
+        },
+        "quizScore": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "quizTotal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "completedAt": {
+          "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "questionId": {
+                "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+              },
+              "selectedOption": {
+                "type": "string",
+                "enum": ["A", "B", "C", "D"]
+              },
+              "correctOption": {
+                "type": "string",
+                "enum": ["A", "B", "C", "D"]
+              },
+              "isCorrect": {
+                "type": "boolean"
+              }
+            },
+            "required": ["questionId", "selectedOption", "correctOption", "isCorrect"],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 50
+        },
+        "progress": {
+          "type": "array",
+          "items": {
+            "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/ProgressSnapshot"
+          },
+          "minItems": 1,
+          "maxItems": 50
         }
       },
       "required": [

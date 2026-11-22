@@ -1,7 +1,7 @@
 # Question Bank Service
 
 REST: `/api/v1/questions`, `/api/v1/question-groups`. Reads require an access JWT;
-writes require `CONTENT_ADMIN` or `SYSTEM_ADMIN`. `POST /api/v1/questions/reindex`
+writes require `CONTENT_ADMIN`. `POST /api/v1/questions/reindex`
 requires `SYSTEM_ADMIN`.
 
 `GET /api/v1/ready` probes PostgreSQL; Redis/search can degrade to the documented
@@ -13,6 +13,14 @@ Question payloads use `questionText`, `correctOption`, `options: [{ optionCode,
 optionText }]`, `groupId`, `positionInGroup`, `audioKey`, `imageKey`, `transcript`,
 `difficulty`, `tags`. The old `stem/status/mediaUrl/isCorrect` REST fields are no
 longer accepted. USER responses omit answer keys, explanations and transcripts.
+
+`GET /api/v1/questions/details?ids=<uuid>,<uuid>` and
+`GET /api/v1/question-groups/details?ids=<uuid>,<uuid>` provide full admin details
+for 1–50 distinct UUID IDs per request. Both require `CONTENT_ADMIN` or
+`SYSTEM_ADMIN` and return `{ items, missingIds }` in requested order. Archived
+or unknown IDs appear in `missingIds`; question reads also exclude questions
+whose group is archived. Batch reads let the CMS display a complete exam without
+issuing one HTTP request for every question and shared group.
 
 ## Groups and upload flow
 

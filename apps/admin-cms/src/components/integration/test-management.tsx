@@ -17,21 +17,28 @@ import {
 import { ResourceState, useResource } from '../../../../web/src/components/integration/shared';
 import { cmsApi } from '../../lib/integration/repositories';
 import { bankApi } from '../../lib/integration/content-api';
-import { ManagementPager, useCmsLocation } from './content-management';
+import { NumberedPagination } from '../ui/numbered-pagination';
+import {
+  ManagementPager,
+  useCmsLocation,
+  useNumberedManagementResource,
+} from './content-management';
 import { ManagementSearch } from './management-search';
+import { TestQuestionDetails } from './test-question-details';
 
 type Ref = { questionId: string; part: number; orderNo: number };
 export function TestManagement({ writes }: { writes: boolean }) {
-  const { id, path, params, href, update } = useCmsLocation();
+  const location = useCmsLocation();
+  const { id, path, params, href, update } = location;
   const editorRoute = id === 'new' || path.endsWith('/edit');
   const editorBlocked = editorRoute && !writes;
-  const state = useResource(`tests:${id}:${params}`, async (signal) =>
-    editorBlocked
-      ? { detail: null, page: null }
-      : id && id !== 'new'
-        ? { detail: await examApi.detail(id, signal), page: null }
-        : { detail: null, page: id === 'new' ? null : await examApi.list(params, signal) },
+  const state = useNumberedManagementResource(
+    location,
+    'tests',
+    examApi.list,
+    editorBlocked ? undefined : examApi.detail,
   );
+  const visibleTests = state.page?.items.filter((test) => test.status !== 'ARCHIVED');
   const [deletingId, setDeletingId] = useState<string | null>(null),
     [error, setError] = useState(''),
     lock = useRef(false);
@@ -93,10 +100,10 @@ export function TestManagement({ writes }: { writes: boolean }) {
           )}
         </>
       )}
-      <ResourceState {...state} retry={state.reload} empty={state.data?.page?.items.length === 0} />
-      {state.data?.page && (
+      <ResourceState {...state} retry={state.reload} empty={visibleTests?.length === 0} />
+      {state.page && (
         <>
-          {state.data.page.items.map((t) => (
+          {visibleTests?.map((t) => (
             <article className="api-card" key={t.id}>
               <h2>
                 <Link href={href(t.id)}>{t.title}</Link>
@@ -106,7 +113,7 @@ export function TestManagement({ writes }: { writes: boolean }) {
               </p>
               <div className="api-actions">
                 <Link href={href(t.id)}>Xem chi tiết</Link>
-                {writes && t.status !== 'ARCHIVED' && (
+                {writes && (
                   <>
                     <Link href={href(t.id, true)}>Chỉnh sửa</Link>
                     <button
@@ -122,37 +129,44 @@ export function TestManagement({ writes }: { writes: boolean }) {
               </div>
             </article>
           ))}
-          <ManagementPager data={state.data.page} onPage={(n) => update('page', String(n))} />
+          <NumberedPagination
+            page={state.page.page}
+            totalPages={state.totalPages}
+            onPage={(page) => update('page', String(page))}
+          />
         </>
       )}
       {state.data?.detail && !path.endsWith('/edit') && (
-        <article className="api-card">
-          <h2>{state.data.detail.title}</h2>
-          <p>
-            {state.data.detail.questionCount} câu · {state.data.detail.durationSeconds / 60} phút
-          </p>
-          <ol>
-            {state.data.detail.questions?.map((q) => (
-              <li key={q.questionId}>
-                Part {q.part} ·{' '}
-                <Link href={'/questions/' + encodeURIComponent(q.questionId)}>{q.questionId}</Link>
-              </li>
-            ))}
-          </ol>
-          {writes && state.data.detail.status !== 'ARCHIVED' && (
-            <div className="api-actions">
-              <Link href={href(id, true)}>Chỉnh sửa đề / cấu trúc</Link>
-              <button
-                type="button"
-                className="api-danger-action"
-                disabled={deletingId !== null}
-                onClick={() => id && void remove(id)}
-              >
-                {deletingId === id ? 'Đang xóa…' : 'Xóa đề thi'}
-              </button>
-            </div>
-          )}
-        </article>
+        <>
+          <article className="api-card">
+            <h2>{state.data.detail.title}</h2>
+            <p>
+              {state.data.detail.questionCount} câu · {state.data.detail.durationSeconds / 60} phút
+            </p>
+            <p className="cms-muted">Mã đề: {state.data.detail.id}</p>
+            <p>
+              Trạng thái: {state.data.detail.status === 'ARCHIVED' ? 'Đã lưu trữ' : 'Đang sử dụng'}
+            </p>
+            {writes && state.data.detail.status !== 'ARCHIVED' && (
+              <div className="api-actions">
+                <Link href={href(id, true)}>Chỉnh sửa đề / cấu trúc</Link>
+                <button
+                  type="button"
+                  className="api-danger-action"
+                  disabled={deletingId !== null}
+                  onClick={() => id && void remove(id)}
+                >
+                  {deletingId === id ? 'Đang xóa…' : 'Xóa đề thi'}
+                </button>
+              </div>
+            )}
+          </article>
+          <TestQuestionDetails
+            testId={state.data.detail.id}
+            references={state.data.detail.questions ?? []}
+            writes={writes}
+          />
+        </>
       )}
       {writes &&
         (id === 'new' || (path.endsWith('/edit') && state.data?.detail?.status === 'ACTIVE')) && (

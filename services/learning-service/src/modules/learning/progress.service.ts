@@ -19,6 +19,38 @@ export interface Snapshot {
   revision: string;
   state: unknown;
 }
+
+function nextVocabularyReview(current: UserVocabularyProgress | null, quality: number, at: Date) {
+  const previous = current
+    ? {
+        easinessFactor: Number(current.easinessFactor),
+        repetitionNumber: current.repetitionNumber,
+        intervalDays: current.intervalDays,
+      }
+    : { easinessFactor: 2.5, repetitionNumber: 0, intervalDays: 0 };
+  let next;
+  try {
+    next = calculateSm2(previous, quality, at);
+  } catch (error) {
+    if ((error as Error).message === 'SM2_DOMAIN_EXHAUSTED') fail(503, 'PROGRESS_DOMAIN_EXHAUSTED');
+    throw error;
+  }
+  const firstLearned = !current?.firstLearnedAt && quality >= 3;
+  return {
+    firstLearned,
+    data: {
+      quality,
+      intervalDays: next.intervalDays,
+      easinessFactor: next.easinessFactor,
+      repetitionNumber: next.repetitionNumber,
+      nextReviewDate: new Date(next.nextReviewDate + 'T00:00:00.000Z'),
+      firstLearnedAt: current?.firstLearnedAt ?? (firstLearned ? at : null),
+      revision: nextRevision(current?.revision ?? 0n),
+      updatedAt: new Date(),
+    },
+  };
+}
+
 export function vocabularySnapshot(row: UserVocabularyProgress | null, id: string): Snapshot {
   return {
     entityType: 'VOCABULARY',
@@ -119,33 +151,7 @@ export class ProgressService {
     });
     if ((current?.revision ?? 0n) !== BigInt(expected))
       fail(409, 'ENTITY_REVISION_CONFLICT', { currentProgress: [vocabularySnapshot(current, id)] });
-    const previous = current
-      ? {
-          easinessFactor: Number(current.easinessFactor),
-          repetitionNumber: current.repetitionNumber,
-          intervalDays: current.intervalDays,
-        }
-      : { easinessFactor: 2.5, repetitionNumber: 0, intervalDays: 0 };
-    let next;
-    try {
-      next = calculateSm2(previous, quality, at);
-    } catch (error) {
-      if ((error as Error).message === 'SM2_DOMAIN_EXHAUSTED')
-        fail(503, 'PROGRESS_DOMAIN_EXHAUSTED');
-      throw error;
-    }
-    const firstLearned = !current?.firstLearnedAt && quality >= 3,
-      firstLearnedAt = current?.firstLearnedAt ?? (firstLearned ? at : null);
-    const data = {
-      quality,
-      intervalDays: next.intervalDays,
-      easinessFactor: next.easinessFactor,
-      repetitionNumber: next.repetitionNumber,
-      nextReviewDate: new Date(next.nextReviewDate + 'T00:00:00.000Z'),
-      firstLearnedAt,
-      revision: nextRevision(current?.revision ?? 0n),
-      updatedAt: new Date(),
-    };
+    const { data, firstLearned } = nextVocabularyReview(current, quality, at);
     const row = await tx.userVocabularyProgress.upsert({
       where: { userId_vocabularyId: { userId, vocabularyId: id } },
       create: { userId, vocabularyId: id, ...data },
@@ -163,11 +169,35 @@ export class ProgressService {
         quality,
         revision: row.revision.toString(),
         firstLearned,
-        firstLearnedAt: firstLearnedAt?.toISOString() ?? null,
+        firstLearnedAt: data.firstLearnedAt?.toISOString() ?? null,
         activityAt: at.toISOString(),
       },
       at,
     );
+    return vocabularySnapshot(row, id);
+  }
+  async reviewPersonalInTx(
+    tx: Tx,
+    userId: string,
+    id: string,
+    quality: number,
+    expected: bigint,
+    at: Date,
+  ) {
+    const word = await tx.personalVocabulary.findUnique({
+      where: { id_userId: { id, userId } },
+      select: { progress: { where: { userId } } },
+    });
+    if (!word) fail(404, 'PERSONAL_CONTENT_NOT_FOUND');
+    const current = word.progress[0] ?? null;
+    if ((current?.revision ?? 0n) !== expected)
+      fail(409, 'ENTITY_REVISION_CONFLICT', { currentProgress: [vocabularySnapshot(current, id)] });
+    const { data } = nextVocabularyReview(current, quality, at);
+    const row = await tx.userPersonalVocabularyProgress.upsert({
+      where: { userId_vocabularyId: { userId, vocabularyId: id } },
+      create: { userId, vocabularyId: id, ...data },
+      update: data,
+    });
     return vocabularySnapshot(row, id);
   }
   async review(
@@ -304,7 +334,8 @@ export class ProgressService {
           vocabulariesLearned,
           dueVocabularies,
           grammarLessonsCompleted,
-          sessionsCompleted,
+          legacySessionsCompleted,
+          practiceSessionsCompleted,
           lastVocabulary,
           lastLesson,
         ] = await Promise.all([
@@ -319,6 +350,7 @@ export class ProgressService {
           }),
           tx.userLessonProgress.count({ where: { userId } }),
           tx.vocabularySession.count({ where: { userId, status: 'COMPLETED' } }),
+          tx.flashcardSession.count({ where: { userId, status: 'COMPLETED', scope: 'SHARED' } }),
           tx.userVocabularyProgress.findFirst({
             where: { userId },
             orderBy: { updatedAt: 'desc' },
@@ -333,7 +365,7 @@ export class ProgressService {
           vocabulariesLearned,
           dueVocabularies,
           grammarLessonsCompleted,
-          sessionsCompleted,
+          sessionsCompleted: legacySessionsCompleted + practiceSessionsCompleted,
           updatedAt: dates[0]?.toISOString() ?? null,
         };
       },

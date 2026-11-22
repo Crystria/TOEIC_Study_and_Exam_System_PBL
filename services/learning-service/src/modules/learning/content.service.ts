@@ -3,9 +3,25 @@ import { Injectable } from '@nestjs/common';
 import MarkdownIt from 'markdown-it';
 import { PrismaService } from '../../prisma/prisma.service';
 import { GrammarLesson, Vocabulary, VocabularyTopic, Prisma } from '../../generated/prisma';
-import { Tx, contentAudit, contentLock, fail, idempotent, normalized } from '../../core';
-import { ContentKind, ContentInput, SearchQuery } from './queries';
+import {
+  Tx,
+  contentAudit,
+  contentAuditData,
+  contentLock,
+  fail,
+  idempotent,
+  normalized,
+} from '../../core';
+import {
+  ContentKind,
+  ContentInput,
+  SearchQuery,
+  VocabularyBulkInput,
+  VocabularyCreateItem,
+  VocabularyImportInput,
+} from './queries';
 import { LearningMediaService } from './media.service';
+
 const markdown = new MarkdownIt({ html: false, linkify: false, breaks: false }).disable('image');
 markdown.validateLink = (url: string) => {
   try {
@@ -49,7 +65,9 @@ export class ContentService {
         topicId: r.topicId,
         word: r.word,
         phonetic: r.phonetic,
+        partOfSpeech: r.partOfSpeech,
         definition: r.definition,
+        englishDefinition: r.englishDefinition,
         example: r.example,
         audioKey: r.audioKey,
         imageKey: r.imageKey,
@@ -85,7 +103,7 @@ export class ContentService {
         let rows: Array<VocabularyTopic | Vocabulary | GrammarLesson>, total: number;
         if (kind === 'topics') {
           const where: Prisma.VocabularyTopicWhereInput = {
-            ...(!admin ? { deletedAt: null } : {}),
+            deletedAt: null,
             name: keyword ? { contains: keyword, mode: 'insensitive' } : undefined,
           };
           [rows, total] = await Promise.all([
@@ -99,12 +117,14 @@ export class ContentService {
           ]);
         } else if (kind === 'vocabularies') {
           const where: Prisma.VocabularyWhereInput = {
-            ...(!admin ? { deletedAt: null, topic: { deletedAt: null } } : {}),
+            deletedAt: null,
+            ...(!admin ? { topic: { deletedAt: null } } : {}),
             topicId: query.topicId,
             OR: keyword
               ? [
                   { word: { contains: keyword, mode: 'insensitive' } },
                   { definition: { contains: keyword, mode: 'insensitive' } },
+                  { englishDefinition: { contains: keyword, mode: 'insensitive' } },
                 ]
               : undefined,
           };
@@ -119,9 +139,8 @@ export class ContentService {
           ]);
         } else {
           const where: Prisma.GrammarLessonWhereInput = {
-            ...(!admin
-              ? { deletedAt: null, status: 'PUBLISHED' as const }
-              : { status: query.status }),
+            deletedAt: admin && query.status === 'ARCHIVED' ? undefined : null,
+            status: admin ? (query.status ?? { not: 'ARCHIVED' }) : 'PUBLISHED',
             category: query.category,
             lessonTitle: keyword ? { contains: keyword, mode: 'insensitive' } : undefined,
           };
@@ -175,17 +194,7 @@ export class ContentService {
             row = await tx.vocabularyTopic.create({ data: { name: input.topicName! } });
           else if (kind === 'vocabularies') {
             await this.get('topics', input.topicId!, false, tx);
-            row = await tx.vocabulary.create({
-              data: {
-                topicId: input.topicId!,
-                word: input.word!,
-                wordKey: normalized(input.word!),
-                phonetic: input.phonetic,
-                definition: input.definition!,
-                definitionKey: normalized(input.definition!),
-                example: input.example,
-              },
-            });
+            row = await tx.vocabulary.create({ data: vocabularyCreateData(input.topicId!, input) });
           } else
             row = await tx.grammarLesson.create({
               data: {
@@ -207,6 +216,162 @@ export class ContentService {
       throw error;
     }
   }
+  async createVocabularyBulk(input: VocabularyBulkInput, actor: string, key: string, cid: string) {
+    for (const item of input.items) validateContent(item);
+    try {
+      return await this.db.$transaction(async (tx) => {
+        await contentLock(tx);
+        return idempotent(tx, actor, 'vocabularies:create-bulk', key, input, async () => {
+          await this.get('topics', input.topicId, false, tx);
+          const data = input.items.map((item) => vocabularyCreateData(input.topicId, item));
+          const rows = await tx.vocabulary.createManyAndReturn({ data });
+          const rowsByWord = new Map(rows.map((row) => [row.wordKey, row]));
+          const items = [];
+          for (const { wordKey } of data) {
+            const row = rowsByWord.get(wordKey)!;
+            const result = await this.present('vocabularies', row, tx);
+            await contentAudit(tx, actor, row.id, 'VOCABULARIES_CREATED', null, result, cid);
+            items.push(result);
+          }
+          return { items };
+        });
+      });
+    } catch (error) {
+      if ((error as { code?: string }).code === 'P2002') fail(409, 'DUPLICATE_CONTENT');
+      throw error;
+    }
+  }
+  async importVocabulary(input: VocabularyImportInput, actor: string, key: string, cid: string) {
+    const wordCount = validateVocabularyImport(input);
+    try {
+      return await this.db.$transaction(
+        async (tx) => {
+          await contentLock(tx);
+          return idempotent(tx, actor, 'vocabularies:import', key, input, async () => {
+            let createdCount = 0;
+            let updatedCount = 0;
+            for (const list of input.lists) {
+              const topicId = await this.importTopic(tx, input.source, list.name, actor, cid);
+              const { created, updated } = await this.importWords(
+                tx,
+                topicId,
+                list.words,
+                actor,
+                cid,
+              );
+              createdCount += created;
+              updatedCount += updated;
+            }
+            return {
+              listCount: input.lists.length,
+              wordCount,
+              createdCount,
+              updatedCount,
+              unchangedCount: wordCount - createdCount - updatedCount,
+            };
+          });
+        },
+        { timeout: 25_000 },
+      );
+    } catch (error) {
+      if ((error as { code?: string }).code === 'P2002') fail(409, 'DUPLICATE_CONTENT');
+      throw error;
+    }
+  }
+  private async importTopic(tx: Tx, source: string, listName: string, actor: string, cid: string) {
+    const name = listName.trim();
+    const identity = { importSource: source, importListKey: normalized(name) };
+    const existing = await tx.vocabularyTopic.findUnique({
+      where: { importSource_importListKey: identity },
+    });
+    if (existing && existing.name === name && !existing.deletedAt) return existing.id;
+
+    const before = existing ? await this.present('topics', existing, tx) : null;
+    const topic = existing
+      ? await tx.vocabularyTopic.update({
+          where: { id: existing.id },
+          data: { name, deletedAt: null },
+        })
+      : await tx.vocabularyTopic.create({ data: { name, ...identity } });
+    await contentAudit(
+      tx,
+      actor,
+      topic.id,
+      existing ? 'TOPICS_UPDATED' : 'TOPICS_CREATED',
+      before,
+      await this.present('topics', topic, tx),
+      cid,
+    );
+    return topic.id;
+  }
+  private async importWords(
+    tx: Tx,
+    topicId: string,
+    words: VocabularyCreateItem[],
+    actor: string,
+    cid: string,
+  ) {
+    const imported = words.map((word) => vocabularyCreateData(topicId, word));
+    const existing = await tx.vocabulary.findMany({
+      where: { topicId, wordKey: { in: imported.map((word) => word.wordKey) } },
+      orderBy: [{ deletedAt: { sort: 'desc', nulls: 'first' } }, { id: 'asc' }],
+    });
+    const byWord = new Map<string, Vocabulary>();
+    for (const row of existing) {
+      if (!byWord.has(row.wordKey)) byWord.set(row.wordKey, row);
+    }
+
+    const pending = [];
+    const audits: Prisma.ContentAuditCreateManyInput[] = [];
+    for (const data of imported) {
+      const row = byWord.get(data.wordKey);
+      if (!row) {
+        pending.push(data);
+        continue;
+      }
+      const unchanged = Object.entries(data).every(
+        ([field, value]) => value === undefined || row[field as keyof typeof data] === value,
+      );
+      if (unchanged && !row.deletedAt) continue;
+
+      const updated = await tx.vocabulary.update({
+        where: { id: row.id },
+        data: {
+          ...data,
+          // Archived vocabulary media may already have been removed by the cleanup worker.
+          ...(row.deletedAt ? { deletedAt: null, audioKey: null, imageKey: null } : {}),
+        },
+      });
+      audits.push(
+        contentAuditData(
+          actor,
+          row.id,
+          'VOCABULARIES_UPDATED',
+          await this.present('vocabularies', row, tx),
+          await this.present('vocabularies', updated, tx),
+          cid,
+        ),
+      );
+    }
+    const updated = audits.length;
+    const created = pending.length
+      ? await tx.vocabulary.createManyAndReturn({ data: pending })
+      : [];
+    for (const row of created) {
+      audits.push(
+        contentAuditData(
+          actor,
+          row.id,
+          'VOCABULARIES_CREATED',
+          null,
+          await this.present('vocabularies', row, tx),
+          cid,
+        ),
+      );
+    }
+    if (audits.length) await tx.contentAudit.createMany({ data: audits });
+    return { created: created.length, updated };
+  }
   async patch(kind: ContentKind, id: string, input: ContentInput, actor: string, cid: string) {
     validateContent(input);
     try {
@@ -226,7 +391,9 @@ export class ContentService {
               word: input.word,
               wordKey: input.word === undefined ? undefined : normalized(input.word),
               phonetic: input.phonetic,
+              partOfSpeech: input.partOfSpeech,
               definition: input.definition,
+              englishDefinition: input.englishDefinition,
               definitionKey:
                 input.definition === undefined ? undefined : normalized(input.definition),
               example: input.example,
@@ -290,17 +457,85 @@ export class ContentService {
       return { success: true };
     });
   }
+  async removeTopicVocabulary(topicId: string, actor: string, cid: string) {
+    return this.db.$transaction(
+      async (tx) => {
+        await contentLock(tx);
+        await this.get('topics', topicId, false, tx);
+        const where = { topicId, deletedAt: null };
+        const words = await tx.vocabulary.findMany({ where });
+        if (!words.length) return { success: true, deletedCount: 0 };
+
+        await tx.vocabulary.updateMany({ where, data: { deletedAt: new Date() } });
+        const objectKeys = words.flatMap(({ audioKey, imageKey }) =>
+          [audioKey, imageKey].filter((key): key is string => Boolean(key)),
+        );
+        await this.media.garbageMany(tx, objectKeys);
+        const audits = await Promise.all(
+          words.map(async (word) =>
+            contentAuditData(
+              actor,
+              word.id,
+              'VOCABULARIES_DELETED',
+              await this.present('vocabularies', word, tx),
+              { deleted: true },
+              cid,
+            ),
+          ),
+        );
+        await tx.contentAudit.createMany({ data: audits });
+        return { success: true, deletedCount: words.length };
+      },
+      { timeout: 25_000 },
+    );
+  }
+}
+function vocabularyCreateData(topicId: string, input: Partial<VocabularyCreateItem>) {
+  return {
+    topicId,
+    word: input.word!,
+    wordKey: normalized(input.word!),
+    phonetic: input.phonetic,
+    partOfSpeech: input.partOfSpeech,
+    definition: input.definition!,
+    englishDefinition: input.englishDefinition,
+    definitionKey: normalized(input.definition!),
+    example: input.example,
+  };
 }
 function validateContent(input: ContentInput) {
   for (const key of [
     'topicName',
     'word',
     'definition',
+    'partOfSpeech',
+    'englishDefinition',
     'lessonTitle',
     'category',
     'contentMarkdown',
   ] as const)
-    if (input[key] !== undefined && !input[key]!.trim()) fail(400, 'EMPTY_CONTENT');
+    if (typeof input[key] === 'string' && !input[key].trim()) fail(400, 'EMPTY_CONTENT');
+}
+function validateVocabularyImport(input: VocabularyImportInput) {
+  const wordCount = input.lists.reduce((count, list) => count + list.words.length, 0);
+  if (wordCount > 5000) fail(400, 'IMPORT_LIMIT_EXCEEDED');
+
+  const lists = new Set<string>();
+  for (const { name, words } of input.lists) {
+    const listKey = normalized(name);
+    if (!listKey) fail(400, 'EMPTY_CONTENT');
+    if (lists.has(listKey)) fail(409, 'DUPLICATE_IMPORT_LIST');
+    lists.add(listKey);
+
+    const wordKeys = new Set<string>();
+    for (const word of words) {
+      validateContent(word);
+      const key = normalized(word.word);
+      if (wordKeys.has(key)) fail(409, 'DUPLICATE_IMPORT_WORD');
+      wordKeys.add(key);
+    }
+  }
+  return wordCount;
 }
 function requireSlug(title: string) {
   return (

@@ -171,7 +171,7 @@ integration('Question Bank with PostgreSQL, RabbitMQ, MinIO and Elasticsearch', 
           audience: config.get<string>('JWT_AUDIENCE') ?? 'toeic-api',
         },
       );
-    admin = sign(['SYSTEM_ADMIN']);
+    admin = sign(['CONTENT_ADMIN']);
     user = sign(['USER']);
   }, 30_000);
   afterAll(async () => {

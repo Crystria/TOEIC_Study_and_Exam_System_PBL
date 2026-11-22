@@ -7,8 +7,12 @@ import { Button, buttonStyles } from '../ui/button';
 import { Badge, EmptyState } from '../ui/feedback';
 import { Field } from '../ui/field';
 import { Icon } from '../ui/icon';
+import { NumberedPagination } from '../ui/numbered-pagination';
 import { Panel } from '../ui/panel';
+import { useLocalPagination } from '../ui/use-local-pagination';
 import { ExamHeading, ExamSteps } from './exam-shared';
+
+const PAGE_SIZE = 6;
 
 export function ExamLibrary({
   tests,
@@ -22,10 +26,12 @@ export function ExamLibrary({
   const [skill, setSkill] = useState('all');
   const searchInput = useRef<HTMLInputElement>(null);
   const visible = filterTests(tests, search, type, skill);
+  const { page, totalPages, setPage, items } = useLocalPagination(visible, PAGE_SIZE);
   const reset = () => {
     setSearch('');
     setType('all');
     setSkill('all');
+    setPage(1);
     searchInput.current?.focus();
   };
   return (
@@ -89,11 +95,21 @@ export function ExamLibrary({
           type="search"
           placeholder="Tên đề, bộ đề hoặc từ khóa…"
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={(event) => {
+            setSearch(event.target.value);
+            setPage(1);
+          }}
         />
         <div className="exam-select-field">
           <label htmlFor="exam-type">Loại đề</label>
-          <select id="exam-type" value={type} onChange={(event) => setType(event.target.value)}>
+          <select
+            id="exam-type"
+            value={type}
+            onChange={(event) => {
+              setType(event.target.value);
+              setPage(1);
+            }}
+          >
             <option value="all">Tất cả loại đề</option>
             <option value="FULL_TEST">Full Test · 120 phút</option>
             <option value="MINI_TEST">Mini Test · 30 phút</option>
@@ -101,7 +117,14 @@ export function ExamLibrary({
         </div>
         <div className="exam-select-field">
           <label htmlFor="exam-skill">Có kỹ năng</label>
-          <select id="exam-skill" value={skill} onChange={(event) => setSkill(event.target.value)}>
+          <select
+            id="exam-skill"
+            value={skill}
+            onChange={(event) => {
+              setSkill(event.target.value);
+              setPage(1);
+            }}
+          >
             <option value="all">Tất cả kỹ năng</option>
             <option value="LISTENING">Listening · Nghe</option>
             <option value="READING">Reading · Đọc</option>
@@ -121,7 +144,7 @@ export function ExamLibrary({
       </div>
       {visible.length ? (
         <div className="exam-card-grid">
-          {visible.map((test) => {
+          {items.map((test) => {
             const href = `/exam/${test.id}${practice ? '?entry=practice' : ''}`;
             return (
               <Panel className="exam-card" key={test.id}>
@@ -190,6 +213,7 @@ export function ExamLibrary({
           </EmptyState>
         </Panel>
       )}
+      <NumberedPagination page={page} totalPages={totalPages} onPage={setPage} />
     </>
   );
 }

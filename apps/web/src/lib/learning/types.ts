@@ -16,6 +16,7 @@ export interface Vocabulary {
   phonetic: string;
   wordClass: string;
   definition: string;
+  englishDefinition?: string | null;
   example: string;
   translation: string;
   // Resolved media URL, never constructed from a production object key by the client.
@@ -47,10 +48,15 @@ export interface VocabularyProgress {
   lastReviewAt: string;
 }
 
+export type VocabularySessionMode = 'quiz' | 'flashcards' | 'flashcards-quiz';
+export type FlashcardStudyMode = 'NEW' | 'REVIEW';
+
 export interface VocabularySession {
   id: string; // Also the idempotency key for this preview submission.
   topicId: string;
   wordIds: string[];
+  mode?: VocabularySessionMode; // Older preview sessions default to quiz.
+  quizVersion?: 2; // Older sessions keep their original options for saved answers.
   phase: 'flashcards' | 'quiz' | 'completed';
   ratings: Record<string, MemoryQuality>;
   answers: Record<string, string>;
@@ -69,6 +75,7 @@ export interface LearningProgress {
 export interface VocabularyQuestion {
   vocabularyId: string;
   word: string;
+  confirmation?: string;
   correctOptionId: string;
   options: Array<{ id: string; label: string }>;
 }

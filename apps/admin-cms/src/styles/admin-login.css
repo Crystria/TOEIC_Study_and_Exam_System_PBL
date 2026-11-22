@@ -6,7 +6,7 @@
   flex-direction: column;
   min-height: 100dvh;
   padding: 32px 40px 22px;
-  background: #f5f7fc;
+  background: light-dark(#f5f7fc, var(--background));
   color: var(--admin-auth-ink);
 }
 
@@ -48,9 +48,9 @@
 
 .admin-auth-page .admin-auth-header-label {
   padding: 6px 12px;
-  border: 1px solid #dde5f3;
+  border: 1px solid light-dark(#dde5f3, var(--cms-line));
   border-radius: 20px;
-  color: #687b98;
+  color: light-dark(#687b98, var(--cms-muted));
   font-size: 11px;
   font-weight: 600;
   text-align: right;
@@ -70,9 +70,9 @@
   width: min(1000px, 100%);
   min-height: 628px;
   overflow: hidden;
-  border: 1px solid #e8edf6;
+  border: 1px solid light-dark(#e8edf6, var(--cms-line));
   border-radius: 28px;
-  background: #fff;
+  background: var(--cms-surface);
   box-shadow: 0 24px 80px rgb(34 62 115 / 8%);
   animation: admin-auth-enter 0.45s ease both;
 }
@@ -143,7 +143,7 @@
 .admin-auth-page .api-field label,
 .admin-auth-page .cms-field label {
   margin: 0;
-  color: #33465e;
+  color: light-dark(#33465e, var(--cms-ink));
   font-size: 13px;
   font-weight: 650;
 }
@@ -153,9 +153,9 @@
   display: flex;
   align-items: center;
   min-width: 0;
-  border: 1px solid #dde4ef;
+  border: 1px solid light-dark(#dde4ef, var(--cms-control-line));
   border-radius: 12px;
-  background: #fbfcfe;
+  background: light-dark(#fbfcfe, var(--cms-surface));
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -164,7 +164,7 @@
 .admin-auth-page .admin-auth-input > svg {
   position: absolute;
   left: 15px;
-  color: #8b9ab1;
+  color: light-dark(#8b9ab1, var(--cms-muted));
   pointer-events: none;
 }
 
@@ -186,7 +186,7 @@
 }
 
 .admin-auth-page .admin-auth-input input::placeholder {
-  color: #6b7a90;
+  color: light-dark(#6b7a90, var(--cms-muted));
   opacity: 1;
 }
 
@@ -204,7 +204,7 @@
 }
 
 .admin-auth-page .admin-auth-input:has(input:disabled) {
-  background: #f3f5fa;
+  background: light-dark(#f3f5fa, var(--cms-surface-muted));
 }
 
 .admin-auth-page .admin-auth-input .admin-auth-password-toggle {
@@ -218,11 +218,11 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: #8493aa;
+  color: light-dark(#8493aa, var(--cms-muted));
 }
 
 .admin-auth-page .admin-auth-input .admin-auth-password-toggle:hover:not(:disabled) {
-  background: #edf1fb;
+  background: light-dark(#edf1fb, var(--cms-surface-muted));
   color: var(--admin-auth-primary);
 }
 
@@ -259,7 +259,7 @@
 .admin-auth-page .api-error,
 .admin-auth-page .cms-field-error {
   margin: 0;
-  color: #b8353e;
+  color: light-dark(#b8353e, #fca5a5);
   font-size: 12px;
   line-height: 1.7;
 }
@@ -267,9 +267,9 @@
 .admin-auth-page form > .api-error,
 .admin-auth-page form > .cms-field-error {
   padding: 10px 12px;
-  border: 1px solid #f4d5d8;
+  border: 1px solid light-dark(#f4d5d8, #855154);
   border-radius: 10px;
-  background: #fff5f5;
+  background: light-dark(#fff5f5, #442528);
 }
 
 .admin-auth-page .admin-auth-account-note {
@@ -278,7 +278,7 @@
   gap: 8px;
   margin: 24px 0 0;
   padding-top: 20px;
-  border-top: 1px solid #edf0f6;
+  border-top: 1px solid light-dark(#edf0f6, var(--cms-line));
   color: var(--admin-auth-muted);
   font-size: 11px;
   line-height: 1.85;
@@ -415,7 +415,7 @@
 }
 
 .admin-auth-page .admin-auth-footer {
-  color: #8b98ac;
+  color: light-dark(#8b98ac, var(--cms-muted));
   font-size: 10px;
   text-align: center;
 }
@@ -423,9 +423,9 @@
 .admin-auth-page .cms-preview-notice {
   margin: -10px 0 24px;
   padding: 10px 12px;
-  border: 1px solid #e4eaf5;
+  border: 1px solid light-dark(#e4eaf5, var(--cms-line));
   border-radius: 10px;
-  background: #f7f9fd;
+  background: light-dark(#f7f9fd, var(--cms-surface-muted));
   color: var(--admin-auth-muted);
   font-size: 11px;
   line-height: 1.8;

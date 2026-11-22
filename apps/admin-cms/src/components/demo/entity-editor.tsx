@@ -21,15 +21,25 @@ import { useWorkspace } from './workspace-provider';
 export function EntityEditor({
   kind,
   original,
+  returnHref,
+  vocabularyTopicId,
 }: {
   kind: EntityKind;
   original?: EntityMap[EntityKind];
+  returnHref?: string;
+  vocabularyTopicId?: string;
 }) {
   const { state, store, setNotice } = useWorkspace();
   const params = new URLSearchParams(useSearchParams().toString());
   const router = useRouter();
   const role = parseDemoRole(params.get('demoRole'));
-  const [draft, setDraft] = useState(() => structuredClone(original ?? blankRecord(kind)));
+  const initialDraft = () =>
+    original
+      ? structuredClone(original)
+      : kind === 'vocabulary' && vocabularyTopicId
+        ? { ...blankRecord('vocabulary'), topicId: vocabularyTopicId }
+        : blankRecord(kind);
+  const [draft, setDraft] = useState(initialDraft);
   const [members, setMembersValue] = useState(() =>
     kind === 'groups'
       ? state.questions.filter((q) => q.groupId === original?.id).map((q) => q.id)
@@ -92,7 +102,7 @@ export function EntityEditor({
       setNotice(
         'Đã cập nhật bản ghi trong RAM demo. Chưa lưu lên server; reload khôi phục dữ liệu mẫu.',
       );
-      router.push(workspaceHref(kind, store.getSnapshot(), params, id));
+      router.push(returnHref ?? workspaceHref(kind, store.getSnapshot(), params, id));
     } catch (e) {
       setFailure(e instanceof Error ? e.message : 'Không cập nhật được bản ghi demo.');
     }
@@ -145,7 +155,10 @@ export function EntityEditor({
             <Button variant="ghost" onClick={() => setReset(true)}>
               Khôi phục form
             </Button>
-            <Link href={workspaceHref(kind, state, params, original?.id)} className="ws-link">
+            <Link
+              href={returnHref ?? workspaceHref(kind, state, params, original?.id)}
+              className="ws-link"
+            >
               Hủy / quay lại
             </Link>
           </div>
@@ -180,7 +193,12 @@ export function EntityEditor({
           onClose={() => setConfirm(false)}
           onConfirm={save}
         >
-          <p>Tài khoản: {(draft as EntityMap['users']).email || draft.id}</p>
+          <p>
+            Tài khoản:{' '}
+            {(draft as EntityMap['users']).email ||
+              (draft as EntityMap['users']).fullName ||
+              'Chưa có tên'}
+          </p>
           <p>
             Vai trò: {(original as EntityMap['users'])?.roles.join(', ') || 'Chưa có'} →{' '}
             {(draft as EntityMap['users']).roles.join(', ')}
@@ -197,7 +215,7 @@ export function EntityEditor({
           title="Bỏ thay đổi chưa cập nhật trong form?"
           onClose={() => setReset(false)}
           onConfirm={() => {
-            setDraft(structuredClone(original ?? blankRecord(kind)));
+            setDraft(initialDraft());
             setErrors({});
             setPreview(null);
             setFailure('');

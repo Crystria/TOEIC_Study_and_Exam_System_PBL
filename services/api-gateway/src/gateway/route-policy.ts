@@ -31,13 +31,13 @@ export const ROUTES: RouteRule[] = [
     prefix: '/api/v1/questions',
     upstream: 'QUESTION_BANK_SERVICE_URL',
     auth: 'jwt',
-    writeRoles: [RoleCode.CONTENT_ADMIN, RoleCode.SYSTEM_ADMIN],
+    writeRoles: [RoleCode.CONTENT_ADMIN],
   },
   {
     prefix: '/api/v1/question-groups',
     upstream: 'QUESTION_BANK_SERVICE_URL',
     auth: 'jwt',
-    writeRoles: [RoleCode.CONTENT_ADMIN, RoleCode.SYSTEM_ADMIN],
+    writeRoles: [RoleCode.CONTENT_ADMIN],
   },
   {
     prefix: '/api/v1/tests',
@@ -121,6 +121,10 @@ export function isSubmitPath(method: string, path: string): boolean {
   return method === 'POST' && SUBMIT_PATH.test(normalizePath(path));
 }
 
+export function isVocabularyImportPath(method: string, path: string): boolean {
+  return method === 'POST' && normalizePath(path) === '/api/v1/learning/admin/vocabularies/import';
+}
+
 export function isPresignPath(method: string, path: string): boolean {
   return (
     (method === 'POST' && /\/media\/presign$/.test(normalizePath(path))) ||
@@ -146,18 +150,11 @@ export function requiredRoles(method: string, path: string): RoleCode[] {
     return [];
   }
 
-  if (matchPrefix(normalized, '/api/v1/tests')) {
-    return [RoleCode.CONTENT_ADMIN];
+  if (method === 'POST' && normalized === '/api/v1/questions/reindex') {
+    return [RoleCode.SYSTEM_ADMIN];
   }
 
-  if (
-    matchPrefix(normalized, '/api/v1/questions') ||
-    matchPrefix(normalized, '/api/v1/question-groups')
-  ) {
-    return [RoleCode.CONTENT_ADMIN, RoleCode.SYSTEM_ADMIN];
-  }
-
-  return [];
+  return matchRoute(normalized)?.writeRoles ?? [];
 }
 
 export function ipRateLimitPolicy(
@@ -195,5 +192,13 @@ export function userRateLimitPolicy(method: string, path: string): RateLimitPoli
 }
 
 export function proxyTimeoutMs(method: string, path: string): number {
+  if (
+    isVocabularyImportPath(method, path) ||
+    (method === 'DELETE' &&
+      /^\/api\/v1\/learning\/admin\/vocabulary-topics\/[^/]+\/vocabularies$/.test(
+        normalizePath(path),
+      ))
+  )
+    return 30_000;
   return isSubmitPath(method, path) ? 15_000 : 5_000;
 }

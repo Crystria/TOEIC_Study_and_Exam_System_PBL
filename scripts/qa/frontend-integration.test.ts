@@ -26,7 +26,11 @@ import {
   remainingTime,
 } from '../../apps/web/src/lib/integration/attempt-contract';
 import { examWritesEnabled, isExamMutation } from '../../apps/web/src/lib/integration/exam-access';
-import { cmsContentWritesEnabled } from '../../apps/web/src/lib/integration/cms-access';
+import {
+  cmsContentWritesEnabled,
+  MAX_VOCABULARY_IMPORT_BYTES,
+  vocabularyWorkbookImportPath,
+} from '../../apps/web/src/lib/integration/cms-access';
 import { query } from '../../apps/web/src/lib/integration/query';
 import {
   GatewayError,
@@ -446,7 +450,7 @@ test('student exams work independently of experimental writes without opening ot
   for (const [path, method] of [
     ['users/me', 'PATCH'],
     ['learning/lessons/lesson-id/complete', 'POST'],
-    ['learning/flashcards/word-id/review', 'POST'],
+    ['learning/vocabulary-sessions', 'POST'],
     ['auth/register', 'POST'],
   ]) {
     assert.equal(isExamMutation(path, method), false);
@@ -466,6 +470,92 @@ test('student exams work independently of experimental writes without opening ot
     503,
   );
   assert.equal((await bridge(paths[0][0], 'POST', {}, { ...config, app: 'cms' })).status, 501);
+});
+
+test('individual flashcard reviews work for an active web account with experimental writes disabled', async () => {
+  const path = 'learning/flashcards/word-id/review';
+  const body = { operationId: 'flashcard-review', quality: 3, baseEntityRevision: '1' };
+  let reviews = 0;
+  const config = cfg(
+    async (input, init) => {
+      if (String(input).endsWith('/users/me')) return json({ ...user, roles: ['USER'] });
+      assert.equal(String(input), `http://127.0.0.1:3999/api/v1/${path}`);
+      assert.equal(init?.method, 'POST');
+      assert.deepEqual(JSON.parse(String(init?.body)), body);
+      reviews++;
+      return json({ operationId: body.operationId });
+    },
+    { writesEnabled: false, examWritesEnabled: false },
+  );
+
+  assert.equal((await bridge(path, 'POST', body, config)).status, 200);
+  assert.equal((await bridge(path, 'POST', body, { ...config, app: 'cms' })).status, 501);
+  assert.equal((await bridge(path, 'GET', undefined, config)).status, 501);
+  assert.equal(
+    (await handleBridge(req(path, 'POST', body, ''), path.split('/'), config)).status,
+    401,
+  );
+  assert.equal(
+    (await bridge(path, 'POST', body, config, { origin: 'https://foreign.invalid' })).status,
+    403,
+  );
+  assert.equal(
+    (
+      await bridge(path, 'POST', body, {
+        ...config,
+        fetcher: async () => json({ ...user, status: 'INACTIVE' }),
+      })
+    ).status,
+    403,
+  );
+  assert.equal(reviews, 1);
+});
+
+test('flashcard sessions pass through for active learners with experimental writes disabled', async () => {
+  const path = 'learning/flashcard-sessions';
+  const session = `${path}/round-id`;
+  const start = { topicId: 'topic-id', scope: 'PERSONAL', mode: 'REVIEW', limit: 2 };
+  const review = { reviews: [{ vocabularyId: 'word-id', quality: 5 }] };
+  const submit = {
+    ...review,
+    operationId: 'quiz-operation',
+    answers: [{ questionId: 'question-id', selectedOption: 'A' }],
+  };
+  const expected = [
+    [path, 'POST', start],
+    [session, 'GET', undefined],
+    [`${session}/reviews`, 'POST', review],
+    [`${session}/submit`, 'POST', submit],
+    [`${session}/cancel`, 'POST', undefined],
+  ] as const;
+  const calls: unknown[] = [];
+  const config = cfg(
+    async (input, init) => {
+      const url = String(input);
+      if (url.endsWith('/users/me')) return json({ ...user, roles: ['USER'] });
+      calls.push([
+        url.replace('http://127.0.0.1:3999/api/v1/', ''),
+        init?.method,
+        init?.body === undefined ? undefined : JSON.parse(String(init.body)),
+      ]);
+      if (url.endsWith('/flashcard-sessions'))
+        assert.equal(new Headers(init?.headers).get('Idempotency-Key'), 'flashcard-start');
+      return json({ success: true });
+    },
+    { writesEnabled: false },
+  );
+  for (const [route, method, body] of expected) {
+    const response = await bridge(route, method, body, config, { 'Idempotency-Key': 'flashcard-start' });
+    assert.equal(response.status, 200);
+  }
+  assert.deepEqual(calls, expected);
+  assert.equal((await bridge(path, 'POST', start, { ...config, app: 'cms' })).status, 501);
+  assert.equal((await bridge(session, 'GET', undefined, { ...config, app: 'cms' })).status, 501);
+  assert.equal((await bridge(session, 'DELETE', undefined, config)).status, 501);
+  assert.equal((await bridge('learning/vocabulary-sessions', 'POST', start, config)).status, 503);
+  assert.equal((await bridge(path, 'POST', start, config, { origin: 'https://foreign.invalid' })).status, 403);
+  assert.equal((await handleBridge(req(path, 'POST', start, ''), path.split('/'), config)).status, 401);
+  assert.deepEqual(calls, expected);
 });
 
 test('exam write configuration has an explicit read-only override and stays local/test only', () => {
@@ -559,16 +649,40 @@ test('CMS content CRUD works with account writes disabled', async () => {
     }
   }
   for (const path of [
+    'learning/admin/vocabularies/bulk',
+    vocabularyWorkbookImportPath,
     'questions/content-id/media/presign',
     'question-groups/content-id/media/presign',
     'learning/vocabularies/content-id/media/presign',
     'learning/vocabularies/content-id/media/confirm',
   ])
     assert.equal((await bridge(path, 'POST', {}, config)).status, 200);
+  const topicWordsPath = 'learning/admin/vocabulary-topics/content-id/vocabularies';
+  assert.equal((await bridge(topicWordsPath, 'DELETE', undefined, config)).status, 200);
+  assert.deepEqual(calls.at(-1), {
+    path: `http://127.0.0.1:3999/api/v1/${topicWordsPath}`,
+    method: 'DELETE',
+  });
   const before = calls.length;
   for (const path of ['admin/users/other/roles', 'admin/users/other/status', 'users/me'])
     assert.equal((await bridge(path, 'PATCH', {}, config)).status, 503);
   assert.equal(calls.length, before);
+});
+
+test('deleting all words in a topic requires the CMS, content writes and CONTENT_ADMIN', async () => {
+  const path = 'learning/admin/vocabulary-topics/content-id/vocabularies';
+  const fetcher: BridgeConfig['fetcher'] = async (input) => {
+    assert.ok(String(input).endsWith('/users/me'));
+    return json({ ...user, roles: ['SYSTEM_ADMIN'] });
+  };
+  const config = cfg(fetcher, { app: 'cms', contentWritesEnabled: true });
+  assert.equal((await bridge(path, 'DELETE', undefined, config)).status, 403);
+  assert.equal((await bridge(path, 'GET', undefined, config)).status, 501);
+  assert.equal(
+    (await bridge(path, 'DELETE', undefined, { ...config, contentWritesEnabled: false })).status,
+    503,
+  );
+  assert.equal((await bridge(path, 'DELETE', undefined, { ...config, app: 'web' })).status, 501);
 });
 
 test('CMS content writes enforce role, session, account status and same-origin checks', async () => {
@@ -578,12 +692,16 @@ test('CMS content writes enforce role, session, account status and same-origin c
     [['USER'], 'question-groups', 403],
     [['USER'], 'learning/admin/lessons', 403],
     [['USER'], 'learning/admin/vocabularies', 403],
+    [['USER'], 'learning/admin/vocabularies/bulk', 403],
+    [['USER'], vocabularyWorkbookImportPath, 403],
     [['USER'], 'learning/admin/vocabulary-topics', 403],
     [['SYSTEM_ADMIN'], 'learning/admin/lessons', 403],
     [['SYSTEM_ADMIN'], 'learning/admin/vocabularies', 403],
+    [['SYSTEM_ADMIN'], 'learning/admin/vocabularies/bulk', 403],
+    [['SYSTEM_ADMIN'], vocabularyWorkbookImportPath, 403],
     [['SYSTEM_ADMIN'], 'learning/admin/vocabulary-topics', 403],
-    [['SYSTEM_ADMIN'], 'questions', 200],
-    [['SYSTEM_ADMIN'], 'question-groups', 200],
+    [['SYSTEM_ADMIN'], 'questions', 403],
+    [['SYSTEM_ADMIN'], 'question-groups', 403],
     [['SYSTEM_ADMIN'], 'tests', 403],
   ] as const) {
     let mutations = 0;
@@ -596,7 +714,7 @@ test('CMS content writes enforce role, session, account status and same-origin c
       { app: 'cms', writesEnabled: false, contentWritesEnabled: true },
     );
     assert.equal((await bridge(path, 'POST', {}, config)).status, expected);
-    assert.equal(mutations, expected === 200 ? 1 : 0);
+    assert.equal(mutations, 0);
   }
   let mutations = 0;
   const config = cfg(
@@ -620,7 +738,7 @@ test('CMS content writes enforce role, session, account status and same-origin c
   assert.equal(mutations, 0);
 });
 
-test('CMS test writes require CONTENT_ADMIN while SYSTEM_ADMIN keeps list and detail reads', async () => {
+test('CMS exam content writes require CONTENT_ADMIN while SYSTEM_ADMIN can read each part', async () => {
   for (const roles of [['SYSTEM_ADMIN'], ['CONTENT_ADMIN'], ['SYSTEM_ADMIN', 'CONTENT_ADMIN']]) {
     const calls: Array<{ path: string; method: string }> = [];
     const config = cfg(
@@ -632,7 +750,13 @@ test('CMS test writes require CONTENT_ADMIN while SYSTEM_ADMIN keeps list and de
       },
       { app: 'cms', writesEnabled: false, contentWritesEnabled: true },
     );
-    for (const path of ['tests', 'tests/content-id']) {
+    for (const path of [
+      'tests',
+      'tests/content-id',
+      'tests/content-id/parts',
+      'questions/details',
+      'question-groups/details',
+    ]) {
       assert.equal((await bridge(path, 'GET', undefined, config)).status, 200);
       assert.deepEqual(calls.at(-1), { path, method: 'GET' });
     }
@@ -640,6 +764,14 @@ test('CMS test writes require CONTENT_ADMIN while SYSTEM_ADMIN keeps list and de
       ['tests', 'POST'],
       ['tests/content-id', 'PATCH'],
       ['tests/content-id', 'DELETE'],
+      ['questions', 'POST'],
+      ['questions/content-id', 'PATCH'],
+      ['questions/content-id', 'DELETE'],
+      ['questions/content-id/media/presign', 'POST'],
+      ['question-groups', 'POST'],
+      ['question-groups/content-id', 'PATCH'],
+      ['question-groups/content-id', 'DELETE'],
+      ['question-groups/content-id/media/presign', 'POST'],
     ]) {
       const before = calls.length;
       const response = await bridge(path, method, {}, config);
@@ -649,7 +781,7 @@ test('CMS test writes require CONTENT_ADMIN while SYSTEM_ADMIN keeps list and de
       } else {
         assert.equal(response.status, 403);
         assert.equal((await response.json()).code, 'INSUFFICIENT_PERMISSIONS');
-        assert.equal(calls.length, before, 'A rejected test write must never reach the Gateway');
+        assert.equal(calls.length, before, 'A rejected content write must never reach the Gateway');
       }
     }
   }
@@ -676,9 +808,40 @@ test('CMS read-only override blocks content even when account writes are enabled
     ['tests/id', 'PATCH'],
     ['learning/admin/lessons/id', 'DELETE'],
     ['learning/admin/vocabularies', 'POST'],
+    ['learning/admin/vocabularies/bulk', 'POST'],
+    [vocabularyWorkbookImportPath, 'POST'],
     ['questions/id/media/presign', 'POST'],
   ])
     assert.equal((await bridge(path, method, {}, config)).status, 503);
+});
+test('Vocabulary workbook import alone accepts larger CMS JSON bodies and forwards its key', async () => {
+  const key = 'workbook-import-test';
+  const body = { sample: 'ộ'.repeat(500_000) };
+  const config = cfg(
+    async (input, init) => {
+      if (String(input).endsWith('/users/me')) return json({ ...user, roles: ['CONTENT_ADMIN'] });
+      assert.equal(String(input).split('/api/v1/')[1], vocabularyWorkbookImportPath);
+      assert.equal(init?.method, 'POST');
+      assert.equal(new Headers(init?.headers).get('idempotency-key'), key);
+      assert.equal(init?.body, JSON.stringify(body));
+      return json({ success: true });
+    },
+    { app: 'cms', contentWritesEnabled: true },
+  );
+  const headers = { 'idempotency-key': key };
+  assert.equal((await bridge(vocabularyWorkbookImportPath, 'POST', body, config, headers)).status, 200);
+  assert.equal((await bridge('learning/admin/vocabularies/bulk', 'POST', body, config)).status, 413);
+  assert.equal((await bridge(vocabularyWorkbookImportPath, 'GET', undefined, config)).status, 501);
+  assert.equal(
+    (await bridge(vocabularyWorkbookImportPath, 'POST', {}, { ...config, app: 'web' })).status,
+    501,
+  );
+  assert.equal(
+    (await bridge(vocabularyWorkbookImportPath, 'POST', {}, config, {
+      'content-length': String(MAX_VOCABULARY_IMPORT_BYTES + 1),
+    })).status,
+    413,
+  );
 });
 test('unknown paths, unsafe AI and internal endpoints stay blocked', async () => {
   for (const p of ['ai/conversations', 'internal/auth/state', 'arbitrary', 'questions/reindex'])

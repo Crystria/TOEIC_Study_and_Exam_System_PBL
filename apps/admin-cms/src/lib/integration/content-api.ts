@@ -1,5 +1,9 @@
 import { gateway } from '../../../../web/src/lib/integration/client';
 import {
+  MAX_VOCABULARY_IMPORT_BYTES,
+  vocabularyWorkbookImportPath,
+} from '../../../../web/src/lib/integration/cms-access';
+import {
   ContractError,
   count,
   id,
@@ -13,12 +17,45 @@ import {
   text,
 } from '../../../../web/src/lib/integration/contracts';
 import { query } from '../../../../web/src/lib/integration/query';
+import type { BankGroup, BankQuestion, QuestionInput } from '../questions/content-types';
+export type { QuestionInput } from '../questions/content-types';
 
 export type ContentKind = 'topics' | 'vocabulary' | 'lessons';
+export type VocabularyInput = {
+  word: string;
+  phonetic: string;
+  definition: string;
+  example: string;
+  englishDefinition: string;
+  partOfSpeech: string;
+};
+type VocabularyImportWord = Pick<VocabularyInput, 'word' | 'definition'> & {
+  [K in Exclude<keyof VocabularyInput, 'word' | 'definition'>]?: string | null;
+};
+export type VocabularyImportRequest = {
+  source: string;
+  lists: { name: string; words: VocabularyImportWord[] }[];
+};
+
+export const MAX_VOCABULARY_BATCH_SIZE = 50;
+export const optionalVocabularyFields: readonly string[] = [
+  'phonetic',
+  'example',
+  'englishDefinition',
+  'partOfSpeech',
+];
 const paths = { topics: 'vocabulary-topics', vocabulary: 'vocabularies', lessons: 'lessons' };
 const fields = {
   topics: ['topicName'],
-  vocabulary: ['topicId', 'word', 'phonetic', 'definition', 'example'],
+  vocabulary: [
+    'topicId',
+    'word',
+    'phonetic',
+    'definition',
+    'example',
+    'englishDefinition',
+    'partOfSpeech',
+  ],
   lessons: ['lessonTitle', 'category', 'contentMarkdown', 'status'],
 };
 export function parseContent(kind: ContentKind, value: unknown) {
@@ -50,7 +87,9 @@ export const contentApi = {
     const body = Object.fromEntries(
       fields[kind].map((k) => [
         k,
-        ['phonetic', 'example'].includes(k) ? input[k]?.trim() || null : input[k]?.trim(),
+        kind === 'vocabulary' && optionalVocabularyFields.includes(k)
+          ? input[k]?.trim() || null
+          : input[k]?.trim(),
       ]),
     );
     const r = parseContent(
@@ -63,6 +102,67 @@ export const contentApi = {
     );
     return itemId ? matchingId(r, itemId) : r;
   },
+  async createVocabularyBatch(topicId: string, rows: VocabularyInput[], key: string) {
+    const body = {
+      topicId,
+      items: rows.map(
+        ({ word, phonetic, definition, example, englishDefinition, partOfSpeech }) => ({
+          word,
+          phonetic: phonetic || null,
+          definition,
+          example: example || null,
+          englishDefinition: englishDefinition || null,
+          partOfSpeech: partOfSpeech || null,
+        }),
+      ),
+    };
+    if (new TextEncoder().encode(JSON.stringify(body)).byteLength > 1_048_576) {
+      throw new Error('Dữ liệu quá lớn. Vui lòng chia từ vựng thành nhiều lượt lưu.');
+    }
+    const result = record(
+      await gateway(`learning/admin/${paths.vocabulary}/bulk`, {
+        method: 'POST',
+        body,
+        idempotencyKey: key,
+      }),
+    );
+    const items = list(result.items, (item) => parseContent('vocabulary', item));
+    if (
+      items.length !== rows.length ||
+      new Set(items.map((item) => item.id)).size !== items.length ||
+      items.some((item) => item.fields.topicId !== topicId || item.deleted)
+    ) {
+      throw new ContractError('items');
+    }
+  },
+  async importVocabulary(body: VocabularyImportRequest, key: string) {
+    if (new TextEncoder().encode(JSON.stringify(body)).byteLength > MAX_VOCABULARY_IMPORT_BYTES) {
+      throw new Error('Dữ liệu trong file Excel vượt quá giới hạn 4 MB sau khi đọc.');
+    }
+    const result = record(
+      await gateway(vocabularyWorkbookImportPath, {
+        method: 'POST',
+        body,
+        idempotencyKey: key,
+        timeoutMs: 40_000,
+      }),
+    );
+    const summary = {
+      listCount: count(result.listCount),
+      wordCount: count(result.wordCount),
+      createdCount: count(result.createdCount),
+      updatedCount: count(result.updatedCount),
+      unchangedCount: count(result.unchangedCount),
+    };
+    if (
+      summary.listCount !== body.lists.length ||
+      summary.wordCount !== body.lists.reduce((total, list) => total + list.words.length, 0) ||
+      summary.wordCount !== summary.createdCount + summary.updatedCount + summary.unchangedCount
+    ) {
+      throw new ContractError('vocabulary import summary');
+    }
+    return summary;
+  },
   async remove(kind: ContentKind, itemId: string) {
     if (
       record(
@@ -71,20 +171,17 @@ export const contentApi = {
     )
       throw new ContractError('delete');
   },
+  async removeTopicVocabulary(topicId: string) {
+    const result = record(
+      await gateway(`learning/admin/${paths.topics}/${segment(topicId)}/${paths.vocabulary}`, {
+        method: 'DELETE',
+        timeoutMs: 40_000,
+      }),
+    );
+    if (result.success !== true) throw new ContractError('delete');
+    return count(result.deletedCount);
+  },
 };
-export interface QuestionInput {
-  part: number;
-  type: string;
-  questionText: string;
-  difficulty: string;
-  correctOption: string;
-  explanation: string | null;
-  transcript: string | null;
-  groupId: string | null;
-  positionInGroup: number | null;
-  options: { optionCode: string; optionText: string }[];
-  tags: string[];
-}
 export const emptyQuestion = (part = 5): QuestionInput => ({
   part,
   type: 'SINGLE_CHOICE',
@@ -122,7 +219,7 @@ export function parseBankQuestion(value: unknown) {
       }),
       tags: list(r.tags, (v) => text(v)),
     } satisfies QuestionInput,
-  };
+  } satisfies BankQuestion;
 }
 export function parseGroup(value: unknown) {
   const r = record(value);
@@ -147,9 +244,17 @@ export function parseGroup(value: unknown) {
     questionIds: list(r.questionIds, (v) => id(v)),
     audioKey: optionalText(r.audioKey),
     isComplete: r.isComplete === true,
-  };
+  } satisfies BankGroup;
 }
 export const bankApi = {
+  questionBatch: (ids: string[], signal?: AbortSignal) =>
+    gateway(`questions/details?${new URLSearchParams({ ids: ids.join(',') })}`, { signal }).then(
+      (v) => list(record(v).items, parseBankQuestion),
+    ),
+  groupBatch: (ids: string[], signal?: AbortSignal) =>
+    gateway(`question-groups/details?${new URLSearchParams({ ids: ids.join(',') })}`, {
+      signal,
+    }).then((v) => list(record(v).items, parseGroup)),
   question: (itemId: string, signal?: AbortSignal) =>
     gateway(`questions/${segment(itemId)}`, { signal }).then((v) =>
       matchingId(parseBankQuestion(v), itemId),

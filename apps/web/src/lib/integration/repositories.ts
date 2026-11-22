@@ -12,6 +12,7 @@ import {
   parseWord,
   record,
   count,
+  date,
   text,
   boolean,
   segment,
@@ -90,7 +91,7 @@ export const learningApi = {
     );
     const p = result.progress.find((p) => p.entityId === id && p.entityType === 'VOCABULARY');
     if (result.operationId !== operationId || !p) throw new ContractError('review');
-    return p;
+    return { ...p, nextReviewAt: date(p.nextReviewAt) };
   },
   async complete(id: string, revision: string, operationId: string) {
     const result = parseOperation(
