@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "ets-2023-test-01",
+  "target": {
+    "gateway": "http://127.0.0.1:3000/api/v1",
+    "verifiedAt": "2026-11-21T12:31:16.174Z",
+    "verifiedScopes": [
+      "learning"
+    ],
+    "databases": {
+      "auth-service": {
+        "host": "localhost",
+        "port": "5432",
+        "name": "auth_db",
+        "source": "Existing service environment; Docker Compose uses the same database name"
+      },
+      "question-bank-service": {
+        "host": "localhost",
+        "port": "5432",
+        "name": "question_db",
+        "source": "Existing service environment; Docker Compose uses the same database name"
+      },
+      "exam-service": {
+        "host": "localhost",
+        "port": "5432",
+        "name": "exam_db",
+        "source": "Existing service environment; Docker Compose uses the same database name"
+      },
+      "learning-service": {
+        "host": "localhost",
+        "port": "5432",
+        "name": "learning_db",
+        "source": "Existing service environment; Docker Compose uses the same database name"
+      }
+    },
+    "storagePublicOrigin": "http://localhost:19000",
+    "questionBucket": "toeic-media",
+    "learningBucket": "toeic-media",
+    "verification": "Compared existing local Compose/service config and all Learning resource IDs through PostgreSQL read-only Prisma and Gateway; media upload bucket must also match presign response"
+  },
+  "records": {
+    "ets-2023-test-01-topic-office": {
+      "id": "6294a828-8f3b-43b4-8b54-da51c40299e6",
+      "kind": "topic",
+      "status": "verified",
+      "fingerprint": "ff73dfcd1735133905b61aa5d6ff44be6ea8e35ff96007d7956ab63dd890e401"
+    },
+    "ets-2023-test-01-word-meeting": {
+      "id": "7af3c8cc-feee-4462-8a56-b21545d644cf",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "183b7d8ec96e4b57ae25c58589b015f3f46961e956c8bda66511dae5ad2d60ba"
+    },
+    "ets-2023-test-01-word-sales-staff": {
+      "id": "d2a2a119-e35d-4d35-a2c8-c3f4e1c3838b",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "3d463fe0613d941ec9241c9b485a26b4546359881ed7e2246a07321b5b25f692"
+    },
+    "ets-2023-test-01-word-perform": {
+      "id": "169bdc86-3091-4f92-9aea-25630836166d",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "b47367fb497445379f66316780c8cde5df0d34090e26d8360194041c823806a9"
+    },
+    "ets-2023-test-01-word-quarter": {
+      "id": "d0fe2978-7336-4dc0-abdc-79690ca4939e",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "e88b76be815a06d6cd4d066b09b10f7c25ea7244decb26f0819bc1af8dc16397"
+    },
+    "ets-2023-test-01-word-inform": {
+      "id": "6e57ec80-f32a-4936-acef-6383cda3140a",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "2fd24dcb87086802543cbfdedd4da4626642a45f9c36572ed108e525b09e4738"
+    },
+    "ets-2023-test-01-word-proposed": {
+      "id": "88544c02-b01b-43f4-9afc-980069e10f7a",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "c6552c578a32f4e00b6557de3f70cd6b74f1275b722eae243b11c27afe821131"
+    },
+    "ets-2023-test-01-word-partnership": {
+      "id": "38fc3e79-3940-4cc2-b9f6-6a0ee780947f",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "cc94c7521f8d6a45f390a65fbefc8c9cd52d3f360067420f7e5c86602a1c5903"
+    },
+    "ets-2023-test-01-word-discuss": {
+      "id": "d3f543af-47dd-400c-a462-78d7d03dd696",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "8b0ae584f058b5b4efc781e3cf2cc0c958181e61da479cdbd6c86046f06d8013"
+    },
+    "ets-2023-test-01-word-idea": {
+      "id": "84dd585a-e866-4aba-967a-b2a6feb2bedf",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "c2c734eee8200f09045a9bb64fbaa5c5e373c720c794c5421100b82cad1a9240"
+    },
+    "ets-2023-test-01-word-support": {
+      "id": "defe46c3-d10f-4b01-83cd-0030a00356e2",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "b619eb37c9a03312d8a85b512e7173297681d1f5ea8c6ff0413807aaf31ffa37"
+    },
+    "ets-2023-test-01-word-busy": {
+      "id": "116c4ee3-221d-4995-89c9-c7b0cdaa55de",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "6223f663c51d4f593350699c84a234c00a996102394940423345809a5512288f"
+    },
+    "ets-2023-test-01-word-guideline": {
+      "id": "46eb8ecb-801b-48cb-9d8f-d7096647d187",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "0226605800646747a29e494532bd167a2ca1644015e505a68cb5695e012a7864"
+    },
+    "ets-2023-test-01-word-construction": {
+      "id": "d613f8bc-0910-4c42-b3c9-2f8b8bc36caf",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "037503cb21d17f643b2baf3d7d9c798a9567c07bd55faf77802e7fa7c75981fa"
+    },
+    "ets-2023-test-01-word-worker": {
+      "id": "43a17678-1d8e-41d7-9cac-9e52ca4b30ca",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "77ebe12ed4b9dc578959677f46f35c7349851b91b90e957af4105d97ae1f2958"
+    },
+    "ets-2023-test-01-word-task": {
+      "id": "ff816bca-bc10-421a-8720-a76e20c52325",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "43c73819ce354793ada3684c9bb286927c3724ee7048141d19fbd714a27fb0d1"
+    },
+    "ets-2023-test-01-word-complete": {
+      "id": "e3425a80-5173-4061-ba51-dc095dd5c601",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "89af842ec97994c5d7f5d12fd875e708cbdc1d1bcfac4995a39fe14b6d113258"
+    },
+    "ets-2023-test-01-word-attendance": {
+      "id": "39273252-9e82-45a9-b153-ab80c8383bee",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "265182333eb7066b2f802e66fcdb8ee0752f9f4fafdebf6b1f835d8485c6102a"
+    },
+    "ets-2023-test-01-word-mandatory": {
+      "id": "085ddd01-1d0c-4de9-a558-f363337c7ffa",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "ed3c98fa1d3d026b6d629273554bab26485af714cc8873984213dba889cf9906"
+    },
+    "ets-2023-test-01-word-engineer": {
+      "id": "d9d15581-838b-4d6a-96ca-e6f7bbfb1c93",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "4d1605a3346108a5b9871c4e5bb400940ea4cd45084f60d738072ca5871e4fc4"
+    },
+    "ets-2023-test-01-word-conference": {
+      "id": "8b3595f7-8145-48c0-a1d1-663527d1cb64",
+      "kind": "word",
+      "status": "verified",
+      "fingerprint": "3a5c72ba4b9b981f0740539b0fdf442759688ac6a679b85c68cbefb60ad85769"
+    },
+    "ets-2023-test-01-lesson-1": {
+      "id": "60db96d6-3e2a-4802-8053-7d86dcb6e2b5",
+      "kind": "lesson",
+      "status": "verified",
+      "fingerprint": "99a249388665be52ef97ab91053bc83677a91b933a66b5b8edaf0f211312a248"
+    },
+    "ets-2023-test-01-q001": {
+      "id": "6e3576fd-bebf-41ed-b2f6-edf6bb89da90",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "944d18ba79f09e12a8eecce4a38a1197ab4361c69fbe131c663829674f990823"
+    },
+    "ets-2023-test-01-q007": {
+      "id": "ba2ab2f7-9b52-46aa-9cec-0cf4ed6e7cb6",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "b3a7c353cfb83832f8d48d734e614cce299030168a8deacfb187ac4fcb959518"
+    },
+    "ets-2023-test-01-q101": {
+      "id": "246fe7b4-71a3-43c2-8b9e-b65e4eb82279",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "fab407aabd8f45339044d58d65d7eb73c23c9fd8d4d785af9647d808ab342376"
+    },
+    "ets-2023-test-01-q102": {
+      "id": "24728d1f-374b-46ef-9feb-61b906f155f8",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "73087fa28c60594f042153a8905cf09011bb971f6535cb9824e162bf80bb052e"
+    },
+    "ets-2023-test-01-q103": {
+      "id": "2161af65-5683-4e8c-8d02-130d04ce68cd",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "7958ab35b26b2897abf72223f942b9b9bf19563f71ace7973e841e992d4e1b61"
+    },
+    "ets-2023-test-01-g62-64": {
+      "id": "7f6f2c42-c72e-4c63-af6e-11fe84ffaccf",
+      "kind": "group",
+      "status": "verified",
+      "fingerprint": "017be5f252777fb52ed5cf551878a61c776c20618d1257ae863e808e9aa468da"
+    },
+    "ets-2023-test-01-q062": {
+      "id": "0fbb487f-04a8-43ea-a2f4-63c235619284",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "34ae5ffd235666be16c77a45073153ec8287cd426c2e3e29708b62d9291e473c"
+    },
+    "ets-2023-test-01-q063": {
+      "id": "f5066352-25a8-4705-be5d-29af7f65db8b",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "b1dbe97de4e98fbb3e368c90c16a87fce3e999deaf36a11417050af397130d13"
+    },
+    "ets-2023-test-01-q064": {
+      "id": "1c9297a1-6966-4e7f-bd00-0b69cb486e31",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "a45472f417dc1838c20d8cf4a95b4982ab388b1f6971edb61fd11a5293fb3e1e"
+    },
+    "ets-2023-test-01-g95-97": {
+      "id": "2e66de94-f28f-41a5-beee-fad643aa1986",
+      "kind": "group",
+      "status": "verified",
+      "fingerprint": "f64e489ee7235d7b1677a93d10f6427037db8e0ca042a2bb0d2f10895b83dabe"
+    },
+    "ets-2023-test-01-q095": {
+      "id": "52902fcd-3520-4083-a578-6e62f2c7d62e",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "42eaccd064c6dafb163e7193c2018d79df80f137e17179866a659d730f26f0db"
+    },
+    "ets-2023-test-01-q096": {
+      "id": "86315a7b-7a49-41a5-a6b2-1c244ef0f669",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "7bdc11ea8b72eba0f59527bb9f18623ea313b1bdf51553d1d528af975ef5df1a"
+    },
+    "ets-2023-test-01-q097": {
+      "id": "f8a504bd-3360-47b8-94f7-c37231a90814",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "b8de534a25f3a242788c53bc8cdedcccd86c87343614ddcc057f677a78971c48"
+    },
+    "ets-2023-test-01-g131-134": {
+      "id": "c1da08cc-208a-4704-a226-71ce7de1f0df",
+      "kind": "group",
+      "status": "verified",
+      "fingerprint": "1d82e3b971eb50d23bcb64a1218a95b82ee9d03ae3776bc4e350f6a04f184d18"
+    },
+    "ets-2023-test-01-q131": {
+      "id": "596428bf-2864-44e2-b1fe-436e46512bff",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "fd26f7dd3e1d57b9c49cf7afbc3c88837ab8e84e2c9863fec04a8c36ba8dd51f"
+    },
+    "ets-2023-test-01-q132": {
+      "id": "a925fc79-a0d8-4500-904b-b08579cb21ec",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "901c3387727f7c057267baf4a6155f79eac5b6d8febe2d5ca857253298fa97b0"
+    },
+    "ets-2023-test-01-q133": {
+      "id": "eb0b291b-8ca1-4303-816f-c32214243945",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "d38f1ad6aed8bfb403d7c5581dc79c69b452bd32dab61e8d0f0aa63497e6743d"
+    },
+    "ets-2023-test-01-q134": {
+      "id": "c69f1fc3-8e7c-4bf6-b54e-493762ab9354",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "7de878af99b4ef7ba50c5cb481b9ae8fd5e58686e3f5ab2cae872a0658836a6b"
+    },
+    "ets-2023-test-01-g186-190": {
+      "id": "73033655-4c26-49b8-936b-b3845017943c",
+      "kind": "group",
+      "status": "verified",
+      "fingerprint": "d858db65e58ba0402a77da17ba76b644c1cb4d29ba6a8f5220100220192904b1"
+    },
+    "ets-2023-test-01-q186": {
+      "id": "7f37781f-24ed-4726-9e48-0795c5ba6b25",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "f50b13f67f4c9013b370fff1bf205fd7ad29f73d882650332c341d2e63b41f2a"
+    },
+    "ets-2023-test-01-q187": {
+      "id": "fd6b065b-52a5-43f7-955f-fac6441f2d1f",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "922815f1987c0152d1668b321797ee6054e6f7ad9f25ce9b8eee3fd4102a558e"
+    },
+    "ets-2023-test-01-q188": {
+      "id": "b9898f31-7c5b-48bc-a79b-605eab291ada",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "714224b8f304a23fa6e6ff5fcfdf0765a4fba87284f5de55a4e1399308a1b9ab"
+    },
+    "ets-2023-test-01-q189": {
+      "id": "6b9dfdc6-c72e-4f4e-a142-31e5c74dc14a",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "d47a9a6479f0a2ac576b2823c3a638dab03a7231247e4a276da1e46efd16805c"
+    },
+    "ets-2023-test-01-q190": {
+      "id": "3db6e543-1e58-4d6d-a1cf-578f57357f49",
+      "kind": "question",
+      "status": "verified",
+      "fingerprint": "4f4aa2f93a71edac8c6793cdc2f46590e6e2d890cb7d4f5079f4bdd18a6ec0a8"
+    }
+  },
+  "media": {
+    "ets-2023-test-01-q001-image": {
+      "ownerSourceId": "ets-2023-test-01-q001",
+      "sha256": "c08aabfd20932592f0bf745877d2d2979ced0983c245761c6e362f618e190546",
+      "storageKey": "questions/part-1/6e3576fd-bebf-41ed-b2f6-edf6bb89da90/image/793fd2c9-60ab-49c1-82fe-e29e767cff9c.png",
+      "status": "verified"
+    },
+    "ets-2023-test-01-audio-1-1": {
+      "ownerSourceId": "ets-2023-test-01-q001",
+      "sha256": "d2a69358463602b9caff0d8d6aad8b508106097b99706a177e5f63395c7eddb3",
+      "storageKey": "questions/part-1/6e3576fd-bebf-41ed-b2f6-edf6bb89da90/audio/e7398ac6-c30a-4e86-98db-f9d2d10a43d9.mp3",
+      "status": "verified"
+    },
+    "ets-2023-test-01-audio-7-7": {
+      "ownerSourceId": "ets-2023-test-01-q007",
+      "sha256": "ce1fe3988b3067a6f33a298c5168730554c9211c31d10d519b9c7d72da7e3481",
+      "storageKey": "questions/part-2/ba2ab2f7-9b52-46aa-9cec-0cf4ed6e7cb6/audio/6408c5f5-8640-4828-aac5-a9866d2dd8e7.mp3",
+      "status": "verified"
+    },
+    "ets-2023-test-01-g62-64-graphic": {
+      "ownerSourceId": "ets-2023-test-01-g62-64",
+      "sha256": "9b8c774be32f02d20c4c76bbb8b7bc24a19011c6bca74cfd976148eaeb85701a",
+      "storageKey": "groups/part-3/7f6f2c42-c72e-4c63-af6e-11fe84ffaccf/image/5e4772d4-8e55-44ee-b965-5e91c8220af3.png",
+      "status": "verified"
+    },
+    "ets-2023-test-01-audio-62-64": {
+      "ownerSourceId": "ets-2023-test-01-g62-64",
+      "sha256": "44451aff774fa22eab271afa8b4c37f0a95cf3d6d99ae13c2047fc2c33d7e1a4",
+      "storageKey": "groups/part-3/7f6f2c42-c72e-4c63-af6e-11fe84ffaccf/audio/7aab25e5-b7de-45b6-a092-c86b6f64a0bb.mp3",
+      "status": "verified"
+    },
+    "ets-2023-test-01-g95-97-graphic": {
+      "ownerSourceId": "ets-2023-test-01-g95-97",
+      "sha256": "ade9db408a4c78fc48a93b96fd49598aa4d653a128de62536172270bbc829ab7",
+      "storageKey": "groups/part-4/2e66de94-f28f-41a5-beee-fad643aa1986/image/8ada63f3-dc5e-4752-adc2-59d491e27683.png",
+      "status": "verified"
+    },
+    "ets-2023-test-01-audio-95-97": {
+      "ownerSourceId": "ets-2023-test-01-g95-97",
+      "sha256": "7b65c42a733c9c68773372b3d3c77b590040dd8bea02c2b89cc777dae1d29737",
+      "storageKey": "groups/part-4/2e66de94-f28f-41a5-beee-fad643aa1986/audio/673e9ed3-1516-4220-aa58-dc2f9664820c.mp3",
+      "status": "verified"
+    }
+  },
+  "actorId": "d26af7b4-51dd-4791-b62b-47da79e1a7b9",
+  "acceptance": {
+    "learningPilotApi": true,
+    "learningPilot": false,
+    "ui": false,
+    "evidence": "tmp\\toeic-mobile-dev-20261121-learning-pilot-acceptance\\report.json"
+  }
+}
