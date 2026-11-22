@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import { contentLock, fail, idempotent, inputJson, Tx, userLock } from '../../core';
+import { event, contentLock, fail, idempotent, inputJson, Tx, userLock } from '../../core';
 import { Prisma } from '../../generated/prisma';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ContentService } from './content.service';
@@ -310,6 +310,8 @@ export class FlashcardSessionService {
                 review.quality,
                 item.expectedRevision,
                 at,
+                operationId,
+                id,
               )
             : await this.progress.reviewInTx(
                 tx,
@@ -396,6 +398,21 @@ export class FlashcardSessionService {
         where: { id },
         data: { status: 'COMPLETED', completedAt: at, result: inputJson(result) },
       });
+      await event(
+        tx,
+        id,
+        'FlashcardSessionCompletedEvent.v2',
+        {
+          userId,
+          sessionId: id,
+          source: 'FLASHCARD',
+          scope: round.scope,
+          quizScore: result.quizScore,
+          quizTotal: result.quizTotal,
+          completedAt: result.completedAt,
+        },
+        at,
+      );
       // Card ratings already recorded their own revisions and events.
       await this.progress.commit(tx, userId, body.operationId, action, result, [], at, false);
       return result;
