@@ -229,9 +229,9 @@ async function end() {
       await heading('Chưa tìm thấy chủ đề phù hợp').waitFor();
       await p.getByLabel('Tìm chủ đề hoặc từ vựng', { exact: true }).fill('');
       await p.locator('.topic-open').first().click();
-      await button('Học bộ từ').waitFor();
+      await button('Bắt đầu flashcard → quiz').waitFor();
       await shots('vocabulary-topic');
-      await button('Học bộ từ').click();
+      await button('Bắt đầu flashcard → quiz').click();
       await button('Lật thẻ xem nghĩa').waitFor();
       await button('Nghe lại từ đầu').click();
       await p.waitForFunction(() => {
@@ -245,42 +245,57 @@ async function end() {
       await p.keyboard.press('Space');
       await button(/.*Đã thuộc.*/).click();
       const before = await raw(learningKey);
+      const { session, vocabulary } = JSON.parse(before);
+      assert.equal(vocabulary[session.wordIds[0]].quality, 5);
       await p.getByRole('link', { name: 'Tạm dừng và về thư viện', exact: true }).click();
       await p.getByRole('link', { name: 'Tiếp tục', exact: true }).click();
-      await p.waitForURL('**/study/vocabulary/business-office');
+      await p.waitForURL('**/study/vocabulary/business-office?view=session');
       await button('Lật thẻ xem nghĩa').waitFor();
       assert.equal(await raw(learningKey), before);
       await p.reload();
       await button('Lật thẻ xem nghĩa').waitFor();
       assert.equal(await raw(learningKey), before);
-      for (let i = 1; i < 8; i++) {
+      for (let i = 1; i < session.wordIds.length; i++) {
         await button('Lật thẻ xem nghĩa').click();
         await button(/.*Đã thuộc.*/).click();
       }
-      await button('Nộp bài quiz').waitFor();
-      await button('Nộp bài quiz').click();
-      await p.getByText('Vui lòng trả lời đủ 5 câu trước khi nộp bài.', { exact: true }).waitFor();
-      assert.equal(
-        await p
-          .getByRole('radio')
-          .first()
-          .evaluate((e) => e === document.activeElement),
-        true,
-      );
-      await p.locator('.quiz-question').first().getByRole('radio').nth(1).check();
+      const question = p.locator('.quiz-question');
+      const choices = question.getByRole('radio');
+      const choose = (index) => question.locator('.quiz-option').nth(index).click();
+      const previous = button('Câu trước');
+      const next = button('Tiếp theo');
+      const submitQuiz = button('Nộp quiz');
+      await question.waitFor();
+      assert.equal(await question.count(), 1);
+      assert.equal(await p.locator('audio').count(), 0);
+      assert.equal(await previous.isDisabled(), true);
+      assert.equal(await next.isDisabled(), true);
+      assert.equal(await submitQuiz.count(), 0);
+      await choose(1);
       const quizBefore = await raw(learningKey);
       await p.reload();
-      await button('Nộp bài quiz').waitFor();
+      await question.waitFor();
       assert.equal(await raw(learningKey), quizBefore);
-      assert.equal(
-        await p.locator('.quiz-question').first().getByRole('radio').nth(1).isChecked(),
-        true,
-      );
+      assert.equal(await choices.nth(1).isChecked(), true);
       await shots('vocabulary-quiz');
+      const firstQuestion = await question.innerText();
+      await next.click();
+      assert.notEqual(await question.innerText(), firstQuestion);
+      await previous.click();
+      assert.equal(await question.innerText(), firstQuestion);
+      assert.equal(await choices.nth(1).isChecked(), true);
+      await choose(0);
+      assert.equal(await choices.nth(1).isChecked(), false);
+      await next.click();
+      for (let i = 1; i < session.wordIds.length - 1; i++) {
+        assert.equal(await next.isDisabled(), true);
+        await choose(0);
+        await next.click();
+      }
+      assert.equal(await submitQuiz.isDisabled(), true);
+      await choose(0);
       await shots('vocabulary-quiz-submit', () => p.locator('.quiz-submit'));
-      for (const question of await p.locator('.quiz-question').all())
-        await question.getByRole('radio').first().check();
-      await button('Nộp bài quiz').click();
+      await submitQuiz.click();
       await heading('Thêm một bước tiến hôm nay!').waitFor();
       await shots('vocabulary-result');
       await shots('vocabulary-result-review', () => p.locator('.quiz-review'));

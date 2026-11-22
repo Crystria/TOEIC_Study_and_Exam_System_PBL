@@ -22,6 +22,8 @@ export function ExamQuestionGroup({
   readOnly = false,
   solutions,
   visibleQuestionIds,
+  reference = false,
+  highlightEnabled = true,
 }: {
   group: ExamGroup;
   set: ExamQuestionSet;
@@ -35,12 +37,14 @@ export function ExamQuestionGroup({
   readOnly?: boolean;
   solutions?: Record<string, QuestionReview> | null;
   visibleQuestionIds?: string[];
+  reference?: boolean;
+  highlightEnabled?: boolean;
 }) {
   const container = useRef<HTMLDivElement>(null);
   const previousGroup = useRef<string | null>(null);
   const previousQuestion = useRef<string | null>(null);
   useEffect(() => {
-    if (readOnly) return;
+    if (readOnly || reference) return;
     if (
       previousQuestion.current === session.currentQuestionId &&
       previousGroup.current === group.id
@@ -53,12 +57,140 @@ export function ExamQuestionGroup({
     container.current?.querySelector<HTMLElement>(selector)?.focus();
     previousGroup.current = group.id;
     previousQuestion.current = session.currentQuestionId;
-  }, [session.currentQuestionId, group.id, readOnly]);
+  }, [session.currentQuestionId, group.id, readOnly, reference]);
   const questions = set.questions.filter(
     (question) =>
       group.questionIds.includes(question.id) &&
       (!visibleQuestionIds || visibleQuestionIds.includes(question.id)),
   );
+  if (reference && !readOnly) {
+    const reading = group.partId >= 6;
+    const passages = group.passages.length > 0 && (
+      <div className="reference-exam-passage">
+        {group.passages.map((passage) => (
+          <article key={passage.id}>
+            <h3>{passage.title}</h3>
+            {passage.paragraphs.map((text, index) => {
+              const id = `${passage.id}:${index}`;
+              const highlighted = session.highlightedIds.includes(id);
+              return (
+                <p
+                  key={id}
+                  className={`reference-exam-passage-paragraph ${highlighted ? 'is-highlighted' : ''}`}
+                  role={highlightEnabled ? 'button' : undefined}
+                  tabIndex={highlightEnabled && !locked ? 0 : undefined}
+                  aria-pressed={highlightEnabled ? highlighted : undefined}
+                  aria-label={
+                    highlightEnabled
+                      ? `${highlighted ? 'Bỏ tô sáng' : 'Tô sáng'}: ${text}`
+                      : undefined
+                  }
+                  onClick={() => {
+                    if (highlightEnabled && !locked)
+                      dispatch({ type: 'highlight', paragraphId: id });
+                  }}
+                  onKeyDown={(event) => {
+                    if (
+                      highlightEnabled &&
+                      !locked &&
+                      (event.key === 'Enter' || event.key === ' ')
+                    ) {
+                      event.preventDefault();
+                      dispatch({ type: 'highlight', paragraphId: id });
+                    }
+                  }}
+                >
+                  {text}
+                </p>
+              );
+            })}
+          </article>
+        ))}
+      </div>
+    );
+    return (
+      <section className="reference-exam-group" data-part={group.partId} aria-label={group.title}>
+        {group.partId === 1 && (
+          <div className="reference-exam-group-media">
+            <ExamMedia group={group} locked={locked} preview={preview} suppressAudio />
+          </div>
+        )}
+        <div className={reading ? 'reference-exam-reading' : undefined}>
+          {passages}
+          <div className="reference-exam-questions">
+            {questions.map((question) => {
+              const flagged = session.flaggedIds.includes(question.id);
+              const current = session.currentQuestionId === question.id;
+              return (
+                <article
+                  className={`reference-exam-question ${group.partId <= 2 || group.partId === 6 ? 'is-options-only' : ''}`}
+                  id={`exam-question-${question.id}`}
+                  key={question.id}
+                  data-current-question={current}
+                  tabIndex={-1}
+                >
+                  <div className="reference-exam-question-heading">
+                    <button
+                      type="button"
+                      className={`reference-exam-number ${flagged ? 'is-flagged' : ''}`}
+                      disabled={locked}
+                      aria-pressed={flagged}
+                      aria-label={`${flagged ? 'Bỏ đánh dấu' : 'Đánh dấu xem lại'} câu ${question.number}`}
+                      onClick={() => dispatch({ type: 'flag', questionId: question.id })}
+                    >
+                      {question.number}
+                    </button>
+                    {group.partId > 2 && group.partId !== 6 && (
+                      <p className="reference-exam-prompt">{question.prompt}</p>
+                    )}
+                  </div>
+                  <fieldset className="reference-exam-options" disabled={locked}>
+                    <legend className="sr-only">Đáp án câu {question.number}</legend>
+                    {question.options.map((option) => (
+                      <label
+                        key={option.key}
+                        className={
+                          session.answers[question.id] === option.key ? 'is-selected' : undefined
+                        }
+                      >
+                        <input
+                          type="radio"
+                          name={question.id}
+                          value={option.key}
+                          checked={session.answers[question.id] === option.key}
+                          onChange={() =>
+                            dispatch({
+                              type: 'answer',
+                              questionId: question.id,
+                              option: option.key,
+                            })
+                          }
+                        />
+                        <span>
+                          {option.key}.{group.partId > 2 && ` ${option.text}`}
+                        </span>
+                      </label>
+                    ))}
+                  </fieldset>
+                  {session.answers[question.id] && (
+                    <button
+                      className="reference-exam-clear"
+                      type="button"
+                      disabled={locked}
+                      onClick={() => dispatch({ type: 'clear', questionId: question.id })}
+                      aria-label={`Xóa lựa chọn câu ${question.number}`}
+                    >
+                      Xóa lựa chọn
+                    </button>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <div ref={container} className="player-group">
       <Panel className="player-stimulus">

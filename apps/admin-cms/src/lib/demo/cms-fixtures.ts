@@ -16,8 +16,8 @@ export const DEMO_PERSONAS: Record<DemoRole, DemoPersona> = {
     label: 'Quản trị nội dung',
     name: 'Minh Anh · Nhân vật demo',
     initials: 'MA',
-    description: 'Khám phá không gian câu hỏi, đề thi, bài học và từ vựng.',
-    home: '/questions',
+    description: 'Khám phá không gian đề thi, bài học và từ vựng.',
+    home: '/tests',
   },
   SYSTEM_ADMIN: {
     label: 'Quản trị hệ thống',
@@ -35,6 +35,7 @@ interface CmsDestination {
   group: 'Nội dung học tập' | 'Quản trị hệ thống';
   role: DemoRole;
   description: string;
+  hiddenFromNavigation?: boolean;
 }
 
 // SRS user classes and FK-03/05/07/10/11: no implicit role inheritance specified.
@@ -46,6 +47,7 @@ export const CMS_DESTINATIONS: readonly CmsDestination[] = [
     group: 'Nội dung học tập',
     role: 'CONTENT_ADMIN',
     description: 'Chọn và xem trước audio/hình ảnh cục bộ trong RAM demo.',
+    hiddenFromNavigation: true,
   },
   {
     href: '/questions',
@@ -54,6 +56,7 @@ export const CMS_DESTINATIONS: readonly CmsDestination[] = [
     group: 'Nội dung học tập',
     role: 'CONTENT_ADMIN',
     description: 'Câu hỏi Listening Part 1–4 và Reading Part 5–7.',
+    hiddenFromNavigation: true,
   },
   {
     href: '/tests',
@@ -99,6 +102,13 @@ export const CMS_DESTINATIONS: readonly CmsDestination[] = [
 
 export function demoHref(path: CmsPath, role: DemoRole): string {
   return `${path}?demoRole=${role}`;
+}
+
+export function canViewDemoDestination(destination: CmsDestination, role: DemoRole) {
+  return (
+    destination.role === role ||
+    (role === 'SYSTEM_ADMIN' && ['/questions', '/tests'].includes(destination.href))
+  );
 }
 
 export function parseDemoRole(value: string | null): DemoRole {

@@ -1,19 +1,27 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-import { isDue, selectStudyWords, startVocabularySession } from '@/lib/learning/study';
-import type { Vocabulary } from '@/lib/learning/types';
+import { isDue, selectFlashcardPracticeWords, startVocabularySession } from '@/lib/learning/study';
+import type { FlashcardStudyMode } from '@/lib/learning/types';
 
 import { Button, buttonStyles } from '../ui/button';
 import { Badge, EmptyState } from '../ui/feedback';
 import { Icon } from '../ui/icon';
+import { NumberedPagination } from '../ui/numbered-pagination';
 import { Panel } from '../ui/panel';
+import { useDialogBackdropDismiss } from '../ui/use-dialog-backdrop-dismiss';
+import { useLocalPagination } from '../ui/use-local-pagination';
 import { useLearning } from './learning-provider';
 import { LearningBackLink, LearningHeading } from './learning-shared';
+import { useFlashcardPracticeLimit } from './use-flashcard-practice-limit';
+import { VocabularyEntryCard } from './vocabulary-entry-card';
 import { VocabularySessionView } from './vocabulary-session';
 import { topicIcons } from './vocabulary-library';
+
+const PAGE_SIZE = 6;
 
 function ReplaceSessionDialog({
   onCancel,
@@ -27,6 +35,7 @@ function ReplaceSessionDialog({
     dialog.current?.close();
     onCancel();
   }
+  const backdropDismiss = useDialogBackdropDismiss(cancel);
   useEffect(() => {
     const element = dialog.current;
     element?.showModal();
@@ -41,12 +50,10 @@ function ReplaceSessionDialog({
         event.preventDefault();
         cancel();
       }}
+      {...backdropDismiss}
     >
       <h2 id="replace-title">Bắt đầu một phiên mới?</h2>
-      <p>
-        Đánh giá thẻ và đáp án của phiên chưa nộp sẽ được thay thế. Tiến độ từ những phiên đã hoàn
-        thành vẫn được giữ.
-      </p>
+      <p>Phiên đang học sẽ được thay thế. Lịch ôn đã lưu vẫn được giữ.</p>
       <div className="learning-actions">
         <Button variant="secondary" autoFocus onClick={cancel}>
           Giữ phiên đang học
@@ -66,8 +73,14 @@ function ReplaceSessionDialog({
 
 export function VocabularyTopicView({ topicId }: { topicId: string }) {
   const { catalog, progress, update } = useLearning();
-  const [replacement, setReplacement] = useState<Vocabulary[] | null>(null);
+  const [limit] = useFlashcardPracticeLimit('demo');
+  const [mode, setMode] = useState<FlashcardStudyMode>('NEW');
+  const [replacement, setReplacement] = useState(false);
+  const router = useRouter();
+  const search = useSearchParams();
   const topic = catalog.topics.find((item) => item.id === topicId);
+  const words = catalog.words.filter((word) => word.topicId === topicId);
+  const { page, totalPages, setPage, items } = useLocalPagination(words, PAGE_SIZE);
   if (!topic)
     return (
       <>
@@ -85,21 +98,33 @@ export function VocabularyTopicView({ topicId }: { topicId: string }) {
         </Panel>
       </>
     );
-  if (progress.session?.topicId === topicId)
-    return <VocabularySessionView session={progress.session} />;
+  const session = progress.session?.topicId === topicId ? progress.session : null;
+  if (session && search.get('view') === 'session')
+    return <VocabularySessionView session={session} />;
+
+  const sessionParams = new URLSearchParams(search.toString());
+  sessionParams.set('view', 'session');
+  const sessionHref = `/study/vocabulary/${topicId}?${sessionParams}`;
   const now = new Date().toISOString();
-  const words = catalog.words.filter((word) => word.topicId === topicId);
-  const queue = selectStudyWords(catalog, progress, topicId, now);
-  const due = selectStudyWords(catalog, progress, topicId, now, true);
+  const queue = selectFlashcardPracticeWords(catalog, progress, topicId, now, mode, limit);
+  const dueCount = words.filter((word) => isDue(progress.vocabulary[word.id], now)).length;
   const reviewed = words.filter((word) => progress.vocabulary[word.id]).length;
-  function begin(selected: Vocabulary[]) {
+  function start() {
+    const started = update((current) => {
+      const at = new Date().toISOString();
+      const selected = selectFlashcardPracticeWords(catalog, current, topicId, at, mode, limit);
+      return selected.length
+        ? startVocabularySession(current, selected, crypto.randomUUID(), at, 'flashcards-quiz')
+        : current;
+    });
+    if (started) router.push(sessionHref);
+  }
+  function begin() {
     if (progress.session && progress.session.phase !== 'completed') {
-      setReplacement(selected);
+      setReplacement(true);
       return;
     }
-    update((current) =>
-      startVocabularySession(current, selected, crypto.randomUUID(), new Date().toISOString()),
-    );
+    start();
   }
   return (
     <div className="learning-page">
@@ -114,88 +139,83 @@ export function VocabularyTopicView({ topicId }: { topicId: string }) {
           <Icon name={topicIcons[topic.id] ?? 'layers'} width="34" height="34" />
         </span>
         <div>
-          <h2>Một phiên học, ba bước</h2>
-          <p>Lật thẻ và xem ví dụ → đánh giá mức ghi nhớ → quiz 5 câu.</p>
+          <h2>Tổng quan chủ đề</h2>
           <div className="learning-inline-meta">
             <span>{words.length} từ trong chủ đề</span>
             <span>{reviewed} từ đã ôn</span>
-            <span>{due.length} từ đến hạn</span>
+            <span>{dueCount} từ đến hạn</span>
           </div>
         </div>
       </Panel>
       <Panel className="topic-study-options" id="study-options">
         <div>
-          <h2>Sẵn sàng bắt đầu?</h2>
-          <p>
-            Học bộ {queue.length} từ, tối đa {catalog.dailyVocabularyGoal} từ/phiên theo mục tiêu
-            mẫu. Từ đến hạn được xếp trước, sau đó là từ mới và từ củng cố.
-          </p>
-          <p className="learning-small">
-            Ôn đến hạn chỉ lấy các từ có lịch ôn từ hôm nay trở về trước. Mỗi quiz cần ít nhất 5 từ
-            khác nhau.
+          <h2>Luyện tập bằng flashcard</h2>
+          <div className="learning-select-field">
+            <label htmlFor="flashcard-study-mode">Loại phiên</label>
+            <select
+              id="flashcard-study-mode"
+              value={mode}
+              onChange={(event) => setMode(event.target.value as FlashcardStudyMode)}
+            >
+              <option value="NEW">Học từ mới</option>
+              <option value="REVIEW">Ôn từ đến hạn</option>
+            </select>
+          </div>
+          <p className="learning-small" aria-live="polite">
+            {queue.length
+              ? `${queue.length} thẻ trong phiên. Lịch ôn cập nhật sau mỗi đánh giá.`
+              : mode === 'NEW'
+                ? 'Danh sách này chưa có từ mới.'
+                : 'Danh sách này chưa có từ đến hạn ôn.'}
           </p>
         </div>
         <div className="learning-actions">
-          <Button disabled={queue.length < 5} onClick={() => begin(queue)}>
-            Học bộ từ
+          <Button disabled={!queue.length} onClick={begin}>
+            Bắt đầu flashcard → quiz
             <Icon name="arrow" width="17" />
           </Button>
-          <Button variant="secondary" disabled={due.length < 5} onClick={() => begin(due)}>
-            Ôn {due.length} từ đến hạn
-          </Button>
+          {session && (
+            <Link href={sessionHref} className={buttonStyles('secondary')}>
+              {session.phase === 'completed' ? 'Xem kết quả phiên học' : 'Tiếp tục phiên học'}
+            </Link>
+          )}
         </div>
-        {due.length > 0 && due.length < 5 && (
-          <p className="learning-small">
-            Chưa đủ 5 từ đến hạn để tạo quiz. Bạn có thể chọn “Học bộ từ” để tiếp tục.
-          </p>
-        )}
       </Panel>
       <div className="learning-section-title">
-        <div>
-          <h2>Các từ trong chủ đề</h2>
-          <p>Phiên âm, nghĩa và ví dụ sẽ xuất hiện trong Flashcard.</p>
-        </div>
+        <h2>Danh sách từ vựng</h2>
         <Badge tone="neutral">{words.length} từ</Badge>
       </div>
-      <Panel className="topic-word-list">
-        {words.map((word) => (
-          <div className="topic-word-row" key={word.id}>
-            <div>
-              <strong lang="en">{word.word}</strong>
-              <span lang="en">{word.phonetic}</span>
-            </div>
-            <span>{word.definition}</span>
-            <Badge
-              tone={
-                isDue(progress.vocabulary[word.id], now)
-                  ? 'amber'
-                  : progress.vocabulary[word.id]
-                    ? 'green'
-                    : 'neutral'
+      <div className="vocabulary-entry-list">
+        {items.map((word) => {
+          const entry = progress.vocabulary[word.id];
+          const isReviewDue = isDue(entry, now);
+          return (
+            <VocabularyEntryCard
+              key={word.id}
+              entry={{
+                word: word.word,
+                pronunciation: word.phonetic,
+                meaning: word.definition,
+                englishDefinition: word.englishDefinition,
+                example: word.example,
+                exampleTranslation: word.translation,
+              }}
+              status={
+                <Badge tone={isReviewDue ? 'amber' : entry ? 'green' : 'neutral'}>
+                  {isReviewDue ? 'Đến hạn ôn' : entry ? 'Đã ôn' : 'Từ mới'}
+                </Badge>
               }
-            >
-              {isDue(progress.vocabulary[word.id], now)
-                ? 'Đến hạn ôn'
-                : progress.vocabulary[word.id]
-                  ? 'Đã ôn'
-                  : 'Từ mới'}
-            </Badge>
-          </div>
-        ))}
-      </Panel>
+            />
+          );
+        })}
+      </div>
+      <NumberedPagination page={page} totalPages={totalPages} onPage={setPage} />
       {replacement && (
         <ReplaceSessionDialog
-          onCancel={() => setReplacement(null)}
+          onCancel={() => setReplacement(false)}
           onConfirm={() => {
-            update((current) =>
-              startVocabularySession(
-                current,
-                replacement,
-                crypto.randomUUID(),
-                new Date().toISOString(),
-              ),
-            );
-            setReplacement(null);
+            start();
+            setReplacement(false);
           }}
         />
       )}

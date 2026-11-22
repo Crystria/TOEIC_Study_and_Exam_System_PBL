@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ApiStudentApplication } from '@/components/integration/student-application';
+import { examWritesEnabled } from '@/lib/integration/exam-access';
+import { sidebarInitializationScript } from '@/lib/sidebar';
+import { themeInitializationScript } from '@/lib/theme';
 
 import { StudentShell } from '@/components/layout/student-shell';
 import { ExamSessionProvider } from '@/components/exams/exam-session-provider';
@@ -12,6 +15,14 @@ import '@/styles/exams.css';
 import '@/styles/exam-player.css';
 import '@/styles/exam-results.css';
 import '@/styles/integration.css';
+import '@/styles/exam-taking.css';
+import '@/styles/attempt-result.css';
+import '@/styles/attempt-review-dialog.css';
+import '@/styles/vocabulary.css';
+import '@/styles/numbered-pagination.css';
+import '@/styles/theme.css';
+import '@/styles/theme-toggle.css';
+import '@/styles/sidebar-toggle.css';
 
 export const metadata: Metadata = {
   title: {
@@ -24,11 +35,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
+        <script dangerouslySetInnerHTML={{ __html: sidebarInitializationScript }} />
+      </head>
       <body>
         {process.env.NEXT_PUBLIC_DATA_MODE === 'api' ? (
           <Suspense fallback={<p role="status">Đang tải giao diện…</p>}>
-            <ApiStudentApplication writes={process.env.FRONTEND_TEST_WRITES === 'enabled'}>
+            <ApiStudentApplication
+              writes={process.env.FRONTEND_TEST_WRITES === 'enabled'}
+              examWrites={examWritesEnabled(
+                process.env.FRONTEND_API_ENV,
+                process.env.FRONTEND_EXAM_WRITES,
+              )}
+            >
               {children}
             </ApiStudentApplication>
           </Suspense>

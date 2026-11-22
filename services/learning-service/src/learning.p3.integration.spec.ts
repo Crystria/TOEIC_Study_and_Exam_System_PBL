@@ -89,7 +89,10 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
         ).definition;
         return {
           questionId: q.questionId,
-          selectedOption: q.options.find((o: any) => (o.text === definition) === correct).code,
+          selectedOption: q.options.find((option: any) => {
+            const correctText = q.direction === 'MEANING_CONFIRMATION' ? 'Có' : definition;
+            return (option.text === correctText) === correct;
+          }).code,
         };
       }),
     };
@@ -262,11 +265,433 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
       ).status,
     ).toBe(409);
     expect((await del('vocabulary-topics/' + topic)).status).toBe(409);
+    const adminTopicList = 'admin/vocabulary-topics?size=1&keyword=' + payload.topicName;
+    expect((await get(adminTopicList, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [{ topicId: a.body.topicId }],
+      total: 1,
+      totalPages: 1,
+    });
     expect((await del('vocabulary-topics/' + a.body.topicId)).status).toBe(200);
+    expect((await get(adminTopicList, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [],
+      total: 0,
+      totalPages: 0,
+    });
     expect((await get('vocabulary-topics/' + a.body.topicId)).status).toBe(404);
+    expect(
+      (await get('admin/vocabulary-topics/' + a.body.topicId, 'CONTENT_ADMIN')).body,
+    ).toMatchObject({ topicId: a.body.topicId, deletedAt: expect.any(String) });
     expect(await db.contentAudit.count({ where: { actorId: ids.CONTENT_ADMIN } })).toBeGreaterThan(
       7,
     );
+  });
+  it('creates auditable vocabulary batches and rolls back conflicts', async () => {
+    const topicId = (await createTopic(0)).topic;
+    const path = 'admin/vocabularies/bulk';
+    const key = randomUUID();
+    const items = ['Six', 'Five', 'Four', 'Three', 'Two', 'One'].map((word) => ({
+      word,
+      phonetic: null,
+      definition: 'ộ'.repeat(10_000),
+      example: null,
+    }));
+    const body = { topicId, items };
+
+    expect((await post(path, body, 'SYSTEM_ADMIN')).status).toBe(403);
+    const created = await post(path, body, 'CONTENT_ADMIN', key);
+    expect(created.status).toBe(201);
+    validateRequest('VocabularyBulkCreated', created.body);
+    expect(created.body.items).toMatchObject(items.map((item) => ({ ...item, topicId })));
+    expect((await post(path, body, 'CONTENT_ADMIN', key)).body).toEqual(created.body);
+
+    const conflict = await post(path, { topicId, items: items.slice(1) }, 'CONTENT_ADMIN', key);
+    expect(conflict.status).toBe(409);
+    expect(conflict.body.code).toBe('IDEMPOTENCY_CONFLICT');
+    const duplicate = await post(
+      path,
+      {
+        topicId,
+        items: [
+          { word: 'New word', definition: 'New meaning' },
+          { word: ' ONE ', definition: 'Duplicate' },
+        ],
+      },
+      'CONTENT_ADMIN',
+    );
+    expect(duplicate.status).toBe(409);
+    expect(duplicate.body.code).toBe('DUPLICATE_CONTENT');
+    expect((await get('vocabularies?topicId=' + topicId)).body.total).toBe(items.length);
+    expect(
+      await db.contentAudit.count({
+        where: {
+          actorId: ids.CONTENT_ADMIN,
+          action: 'VOCABULARIES_CREATED',
+          entityId: {
+            in: created.body.items.map((item: { vocabularyId: string }) => item.vocabularyId),
+          },
+        },
+      }),
+    ).toBe(items.length);
+  });
+  it('archives only the active vocabulary of a topic and lets admins archive the empty topic', async () => {
+    const { topic: target, cards: words } = await createTopic(4);
+    const targetPath = 'vocabulary-topics/' + target;
+    const path = targetPath + '/vocabularies';
+    const [archived, ...activeIds] = words.map((word) => word.vocabularyId as string);
+    const imageKey = `learning/${target}/image.png`;
+    await db.vocabulary.update({ where: { id: activeIds[0] }, data: { imageKey } });
+    expect((await del('vocabularies/' + archived)).status).toBe(200);
+
+    expect((await del(targetPath)).body.code).toBe('TOPIC_NOT_EMPTY');
+    for (const role of ['USER', 'SYSTEM_ADMIN']) {
+      expect(
+        (
+          await api()
+            .delete('/api/v1/learning/admin/' + path)
+            .auth(tokens[role], { type: 'bearer' })
+        ).status,
+      ).toBe(403);
+    }
+    const cleared = await del(path);
+    expect(cleared.status).toBe(200);
+    validateRequest('VocabularyBulkDeleted', cleared.body);
+    expect(cleared.body).toEqual({ success: true, deletedCount: activeIds.length });
+    expect((await del(path)).body).toEqual({ success: true, deletedCount: 0 });
+
+    for (const [prefix, role] of [
+      ['', 'USER'],
+      ['admin/', 'CONTENT_ADMIN'],
+    ]) {
+      expect(
+        (await get(`${prefix}vocabularies?topicId=${target}&size=1`, role)).body,
+      ).toMatchObject({
+        items: [],
+        total: 0,
+      });
+    }
+    expect((await get(targetPath)).body).toMatchObject({ topicId: target, vocabularyCount: 0 });
+    expect((await get('vocabularies?topicId=' + topic)).body.total).toBe(cards.length);
+    expect(
+      await db.contentAudit.count({
+        where: { action: 'VOCABULARIES_DELETED', entityId: { in: [archived, ...activeIds] } },
+      }),
+    ).toBe(words.length);
+    expect(await db.learningStorageGarbage.findUnique({ where: { objectKey: imageKey } })).not.toBe(
+      null,
+    );
+    expect((await del(targetPath)).status).toBe(200);
+    expect((await get(targetPath)).status).toBe(404);
+  });
+  it('imports workbook lists atomically and updates vocabulary without duplicating it', async () => {
+    const path = 'admin/vocabularies/import';
+    const source = `excel-${randomUUID()}`;
+    const word = {
+      word: 'accountant',
+      partOfSpeech: 'n',
+      phonetic: '/əˈkaʊn.tənt/',
+      definition: 'kế toán',
+      englishDefinition: 'a person responsible for the money in a business',
+      example: 'My [accountant] takes care of my taxes.\n(=Dịch: Kế toán của tôi lo liệu thuế.)',
+    };
+    const body = {
+      source,
+      lists: [
+        { name: 'List 1', words: [word] },
+        { name: 'List 2', words: [{ ...word, word: 'ACCOUNTANT' }] },
+      ],
+    };
+    const duplicate = {
+      ...body,
+      lists: [...body.lists, { name: 'List 3', words: [word, { ...word, word: ' ACCOUNTANT ' }] }],
+    };
+    const manual = await post('admin/vocabulary-topics', { topicName: 'List 1' }, 'CONTENT_ADMIN');
+    expect((await post(path, body, 'USER')).status).toBe(403);
+    expect((await post(path, duplicate, 'CONTENT_ADMIN')).body.code).toBe('DUPLICATE_IMPORT_WORD');
+    expect(await db.vocabularyTopic.count({ where: { importSource: source } })).toBe(0);
+
+    const key = randomUUID();
+    const result = await post(path, body, 'CONTENT_ADMIN', key);
+    expect(result.status).toBe(201);
+    validateRequest('VocabularyImportResult', result.body);
+    expect(result.body).toEqual({
+      listCount: 2,
+      wordCount: 2,
+      createdCount: 2,
+      updatedCount: 0,
+      unchangedCount: 0,
+    });
+    expect((await post(path, body, 'CONTENT_ADMIN', key)).body).toEqual(result.body);
+    expect((await post(path, body, 'CONTENT_ADMIN')).body).toMatchObject({
+      createdCount: 0,
+      updatedCount: 0,
+      unchangedCount: 2,
+    });
+
+    const topics = await db.vocabularyTopic.findMany({ where: { importSource: source } });
+    expect(topics.map((entry) => entry.name).sort()).toEqual(['List 1', 'List 2']);
+    expect(await db.vocabulary.count({ where: { topicId: manual.body.topicId } })).toBe(0);
+    const topicId = topics.find((entry) => entry.name === 'List 1')!.id;
+    const cards = await get(`vocabularies?topicId=${topicId}&keyword=responsible`);
+    expect(cards.body.items).toMatchObject([word]);
+    const vocabularyId = cards.body.items[0].vocabularyId;
+
+    const change = { ...word, englishDefinition: 'someone who prepares accounts' };
+    const revised = { ...body, lists: [{ name: 'List 1', words: [change] }, body.lists[1]] };
+    expect((await post(path, revised, 'CONTENT_ADMIN', key)).body.code).toBe(
+      'IDEMPOTENCY_CONFLICT',
+    );
+    expect((await post(path, revised, 'CONTENT_ADMIN')).body).toMatchObject({
+      createdCount: 0,
+      updatedCount: 1,
+      unchangedCount: 1,
+    });
+    expect((await get(`vocabularies/${vocabularyId}`)).body).toMatchObject(change);
+    expect(
+      (await patch(`vocabularies/${vocabularyId}`, { englishDefinition: null })).body,
+    ).toMatchObject({ englishDefinition: null, definition: word.definition });
+
+    const adminTopicWords = `admin/vocabularies?topicId=${topicId}&size=1`;
+    expect((await get(adminTopicWords, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [{ vocabularyId }],
+      total: 1,
+      totalPages: 1,
+    });
+    expect((await del(`vocabularies/${vocabularyId}`)).status).toBe(200);
+    for (const list of [adminTopicWords, `${adminTopicWords}&keyword=accountant`]) {
+      expect((await get(list, 'CONTENT_ADMIN')).body).toMatchObject({
+        items: [],
+        total: 0,
+        totalPages: 0,
+      });
+    }
+    const activeTopicId = topics.find((entry) => entry.name === 'List 2')!.id;
+    expect(
+      (await get('admin/vocabularies?keyword=accountant&size=1', 'CONTENT_ADMIN')).body,
+    ).toMatchObject({ items: [{ topicId: activeTopicId }], total: 1, totalPages: 1 });
+    expect((await get(`admin/vocabularies/${vocabularyId}`, 'CONTENT_ADMIN')).body).toMatchObject({
+      vocabularyId,
+      deletedAt: expect.any(String),
+    });
+
+    expect((await post(path, revised, 'CONTENT_ADMIN')).body).toMatchObject({
+      createdCount: 0,
+      updatedCount: 1,
+      unchangedCount: 1,
+    });
+    expect((await get(`vocabularies/${vocabularyId}`)).body).toMatchObject(change);
+  });
+  it('keeps personal CRUD private to each learner and cascades only their private topic words', async () => {
+    const prefix = 'Personal ' + randomUUID();
+    const key = randomUUID();
+    const created = await post('personal/vocabulary-topics', { topicName: prefix }, 'USER', key);
+    expect(created.status).toBe(201);
+    const topicId = created.body.topicId;
+    expect(created.body).toMatchObject({ topicName: prefix, vocabularyCount: 0 });
+    expect(created.body).not.toHaveProperty('userId');
+    expect(
+      (await post('personal/vocabulary-topics', { topicName: prefix }, 'USER', key)).body,
+    ).toEqual(created.body);
+    expect(
+      (await post('personal/vocabulary-topics', { topicName: prefix + ' changed' }, 'USER', key))
+        .status,
+    ).toBe(409);
+    const otherTopic = await post('personal/vocabulary-topics', { topicName: prefix }, 'OTHER');
+    expect(otherTopic.status).toBe(201);
+    expect(otherTopic.body.topicId).not.toBe(topicId);
+    const ownWord = await post('personal/vocabularies', {
+      topicId,
+      word: 'Private word',
+      definition: 'Private meaning',
+      phonetic: '/word/',
+    });
+    const otherWord = await post(
+      'personal/vocabularies',
+      { topicId: otherTopic.body.topicId, word: 'Other private word', definition: 'Other meaning' },
+      'OTHER',
+    );
+    expect(ownWord.status).toBe(201);
+    expect(otherWord.status).toBe(201);
+    expect(ownWord.body).toMatchObject({ topicId, audioUrl: null, imageUrl: null });
+    const ownLesson = await post('personal/lessons', {
+      lessonTitle: prefix,
+      category: 'Personal',
+      contentMarkdown: '# Private notes',
+    });
+    expect(ownLesson.status).toBe(201);
+    expect(ownLesson.body.status).toBe('PRIVATE');
+    const vocabularyId = ownWord.body.vocabularyId,
+      lessonId = ownLesson.body.lessonId;
+    for (const [path, body] of [
+      [`vocabulary-topics/${topicId}`, { topicName: 'Stolen' }],
+      [`vocabularies/${vocabularyId}`, { word: 'Stolen' }],
+      [`lessons/${lessonId}`, { lessonTitle: 'Stolen' }],
+    ] as const) {
+      expect((await get('personal/' + path, 'OTHER')).status).toBe(404);
+      expect(
+        (
+          await api()
+            .patch('/api/v1/learning/personal/' + path)
+            .auth(tokens.OTHER, { type: 'bearer' })
+            .send(body)
+        ).status,
+      ).toBe(404);
+      expect(
+        (
+          await api()
+            .delete('/api/v1/learning/personal/' + path)
+            .auth(tokens.OTHER, { type: 'bearer' })
+        ).status,
+      ).toBe(404);
+    }
+    expect(
+      (
+        await post(
+          'personal/vocabularies',
+          { topicId, word: 'Wrong owner', definition: 'No' },
+          'OTHER',
+        )
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await api()
+          .patch('/api/v1/learning/personal/vocabularies/' + vocabularyId)
+          .auth(tokens.USER, { type: 'bearer' })
+          .send({ topicId: otherTopic.body.topicId })
+      ).status,
+    ).toBe(404);
+    // The database also prevents a forged ownership link if a future code path bypasses the service.
+    await expect(
+      db.personalVocabulary.create({
+        data: { userId: ids.OTHER, topicId, word: 'Forged', definition: 'No' },
+      }),
+    ).rejects.toMatchObject({ code: 'P2003' });
+    expect(
+      (await get('personal/vocabulary-topics?keyword=' + encodeURIComponent(prefix))).body,
+    ).toMatchObject({ total: 1, items: [{ topicId, vocabularyCount: 1 }] });
+    expect(
+      (await get('personal/vocabularies?topicId=' + topicId + '&keyword=meaning')).body,
+    ).toMatchObject({ total: 1, items: [{ vocabularyId }] });
+    expect(
+      (await get('personal/lessons?category=Personal&keyword=' + encodeURIComponent(prefix))).body,
+    ).toMatchObject({ total: 1, items: [{ lessonId, status: 'PRIVATE' }] });
+    expect(
+      (
+        await get(
+          'personal/vocabulary-topics?keyword=' + encodeURIComponent(prefix) + '&size=1&page=2',
+        )
+      ).body,
+    ).toMatchObject({ total: 1, page: 2, size: 1, items: [] });
+    const changedWord = await api()
+      .patch('/api/v1/learning/personal/vocabularies/' + vocabularyId)
+      .auth(tokens.USER, { type: 'bearer' })
+      .send({ word: 'Renamed', phonetic: null, example: null });
+    expect(changedWord.status).toBe(200);
+    expect(changedWord.body).toMatchObject({
+      word: 'Renamed',
+      phonetic: null,
+      example: null,
+      definition: 'Private meaning',
+    });
+    expect(
+      (
+        await api()
+          .patch('/api/v1/learning/personal/lessons/' + lessonId)
+          .auth(tokens.USER, { type: 'bearer' })
+          .send({ contentMarkdown: '# Edited privately' })
+      ).body,
+    ).toMatchObject({ contentMarkdown: '# Edited privately', status: 'PRIVATE' });
+    expect(
+      (
+        await api()
+          .patch('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+          .auth(tokens.USER, { type: 'bearer' })
+          .send({ topicName: 'Renamed private topic' })
+      ).status,
+    ).toBe(200);
+    const deleted = await api()
+      .delete('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+      .auth(tokens.USER, { type: 'bearer' });
+    expect(deleted.status).toBe(200);
+    expect(deleted.body).toMatchObject({ id: topicId, deleted: true, success: true });
+    expect((await get('personal/vocabularies/' + vocabularyId)).status).toBe(404);
+    expect(
+      (await get('personal/vocabularies/' + otherWord.body.vocabularyId, 'OTHER')).status,
+    ).toBe(200);
+    expect(
+      (
+        await api()
+          .delete('/api/v1/learning/personal/vocabularies/' + otherWord.body.vocabularyId)
+          .auth(tokens.OTHER, { type: 'bearer' })
+      ).status,
+    ).toBe(200);
+    expect(
+      (
+        await api()
+          .delete('/api/v1/learning/personal/lessons/' + lessonId)
+          .auth(tokens.USER, { type: 'bearer' })
+      ).status,
+    ).toBe(200);
+    expect((await get('personal/lessons/' + lessonId)).status).toBe(404);
+    // Shared catalog lookups cannot expose private notes and retain existing content.
+    expect((await get('lessons/' + lessonId)).status).toBe(404);
+    expect((await get('vocabulary-topics/' + topic)).status).toBe(200);
+  });
+  it('rejects personal ownership injection, invalid patches and invalid queries through HTTP', async () => {
+    const created = await post('personal/vocabulary-topics', {
+      topicName: 'Validation ' + randomUUID(),
+    });
+    expect(created.status).toBe(201);
+    const topicId = created.body.topicId;
+    expect(
+      (await post('personal/vocabulary-topics', { topicName: 'Forged', userId: ids.OTHER })).status,
+    ).toBe(400);
+    expect(
+      (
+        await post('personal/lessons', {
+          lessonTitle: 'No',
+          category: 'Notes',
+          contentMarkdown: ' ',
+          status: 'PUBLISHED',
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await post('personal/vocabularies', {
+          topicId,
+          word: 'X',
+          definition: 'Y',
+          ownerId: ids.OTHER,
+        })
+      ).status,
+    ).toBe(400);
+    for (const body of [
+      {},
+      { topicName: null },
+      { topicName: ' ' },
+      { topicName: 'x'.repeat(256) },
+      { userId: ids.OTHER },
+    ]) {
+      expect(
+        (
+          await api()
+            .patch('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+            .auth(tokens.USER, { type: 'bearer' })
+            .send(body)
+        ).status,
+      ).toBe(400);
+    }
+    expect((await get('personal/vocabulary-topics?userId=' + ids.OTHER)).status).toBe(400);
+    expect((await get('personal/vocabulary-topics?size=51')).status).toBe(400);
+    expect((await get('personal/vocabulary-topics/not-a-uuid')).status).toBe(400);
+    expect((await api().get('/api/v1/learning/personal/vocabulary-topics')).status).toBe(401);
+    expect((await get('personal/vocabulary-topics/' + topicId)).body.topicName).toMatch(
+      /^Validation /,
+    );
+    await api()
+      .delete('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+      .auth(tokens.USER, { type: 'bearer' });
   });
   it('rejects whitespace-only PATCH fields without changing content, publication status or audit', async () => {
     const created = await post(
@@ -303,10 +728,40 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
       }
     }
     expect(await snapshot()).toEqual(before);
+    const adminLessons = `admin/lessons?size=1&category=TENSE&keyword=${encodeURIComponent(before.lesson.lessonTitle)}`;
+    expect((await get(`${adminLessons}&status=DRAFT`, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [{ lessonId, status: 'DRAFT' }],
+      total: 1,
+      totalPages: 1,
+    });
     expect((await get('lessons/' + lessonId)).status).toBe(404);
     expect((await patch('lessons/' + lessonId, { status: 'PUBLISHED' })).status).toBe(200);
     expect((await get('lessons/' + lessonId)).body.lessonTitle).toBe(before.lesson.lessonTitle);
+    expect((await get(adminLessons, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [{ lessonId, status: 'PUBLISHED' }],
+      total: 1,
+      totalPages: 1,
+    });
     expect((await del('lessons/' + lessonId)).status).toBe(200);
+    expect((await get(adminLessons, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [],
+      total: 0,
+      totalPages: 0,
+    });
+    expect((await get(`${adminLessons}&status=ARCHIVED`, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [{ lessonId, status: 'ARCHIVED', deletedAt: expect.any(String) }],
+      total: 1,
+    });
+    expect((await get('admin/lessons/' + lessonId, 'CONTENT_ADMIN')).body).toMatchObject({
+      lessonId,
+      deletedAt: expect.any(String),
+    });
+    expect((await get('lessons/' + lessonId)).status).toBe(404);
+    await db.grammarLesson.update({ where: { id: lessonId }, data: { deletedAt: null } });
+    expect((await get(adminLessons, 'CONTENT_ADMIN')).body).toMatchObject({
+      items: [],
+      total: 0,
+    });
   });
   it('hides draft/archived lessons, renders safe Markdown and completes lessons only once', async () => {
     const created = await post(
@@ -667,6 +1122,256 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
     validateRequest('Session', review.body);
     expect((await post('vocabulary-sessions', { topicId: t.topic, mode: 'NEW' })).status).toBe(409);
   });
+  it('schedules flashcards individually as a topic drops from four due cards to none', async () => {
+    const t = await createTopic(4);
+    const emptyTopic = await createTopic(0);
+    for (const card of t.cards) {
+      const first = await post('flashcards/' + card.vocabularyId + '/review', {
+        operationId: randomUUID(),
+        baseEntityRevision: '0',
+        quality: 5,
+      });
+      expect(first.status).toBe(200);
+    }
+    await db.userVocabularyProgress.updateMany({
+      where: { userId: ids.USER, vocabularyId: { in: t.cards.map((card) => card.vocabularyId) } },
+      data: { nextReviewDate: new Date(0) },
+    });
+
+    const path = 'review-today?topicId=' + t.topic;
+    const limited = await get(path + '&size=2');
+    expect(limited.status).toBe(200);
+    expect(limited.body).toMatchObject({ total: 4, size: 2, totalPages: 2 });
+    expect(limited.body.items).toHaveLength(2);
+    expect((await get('review-today?topicId=' + emptyTopic.topic)).body).toMatchObject({
+      total: 0,
+      items: [],
+    });
+
+    for (let remaining = 4; remaining > 0; remaining--) {
+      const due = await get(path);
+      expect(due.status).toBe(200);
+      expect(due.body.items).toHaveLength(remaining);
+      const [card] = due.body.items;
+      const reviewPath = 'flashcards/' + card.entityId + '/review';
+      const body = {
+        operationId: randomUUID(),
+        baseEntityRevision: card.revision,
+        quality: 5,
+      };
+      const review = await post(reviewPath, body);
+      expect(review.status).toBe(200);
+      expect(review.body.progress).toMatchObject([
+        {
+          entityId: card.entityId,
+          revision: '2',
+          state: { repetitionNumber: 2, intervalDays: 6, nextReviewDate: expect.any(String) },
+        },
+      ]);
+      if (remaining === 1) expect((await post(reviewPath, body)).body).toEqual(review.body);
+    }
+    expect((await get(path)).body).toMatchObject({ total: 0, items: [] });
+  });
+  it('starts shared flashcard and quiz sessions with each due count from four down to one', async () => {
+    const { topic: topicId, cards: words } = await createTopic(4);
+    for (const { vocabularyId } of words) {
+      const response = await post(`flashcards/${vocabularyId}/review`, {
+        operationId: randomUUID(),
+        baseEntityRevision: '0',
+        quality: 5,
+      });
+      expect(response.status).toBe(200);
+    }
+    await db.userVocabularyProgress.updateMany({
+      where: { userId: ids.USER, vocabularyId: { in: words.map((word) => word.vocabularyId) } },
+      data: { nextReviewDate: new Date(0) },
+    });
+
+    const start = { topicId, scope: 'SHARED', mode: 'REVIEW', limit: 8 };
+    for (let remaining = 4; remaining > 0; remaining--) {
+      const response = await post('flashcard-sessions', start);
+      expect(response.status).toBe(201);
+      const round = response.body;
+      validateRequest('FlashcardSession', round);
+      expect(round.scope).toBe('SHARED');
+      expect(round.vocabularies).toHaveLength(remaining);
+      expect(round.quiz).toHaveLength(remaining);
+      const body = submission(round, 5, true);
+      const path = `flashcard-sessions/${round.sessionId}`;
+      expect((await post(`${path}/reviews`, { reviews: body.reviews.slice(0, 1) })).status).toBe(200);
+      expect((await get(`review-today?topicId=${topicId}`)).body.total).toBe(remaining - 1);
+      if (remaining === 1) {
+        const result = await post(`${path}/submit`, body);
+        expect(result.status).toBe(200);
+        validateRequest('FlashcardSessionResult', result.body);
+        expect(result.body).toMatchObject({ quizScore: 1, quizTotal: 1 });
+      } else {
+        expect((await post(`${path}/cancel`, undefined)).status).toBe(200);
+      }
+    }
+    const empty = await post('flashcard-sessions', start);
+    expect(empty.status).toBe(409);
+    expect(empty.body.code).toBe('NO_ELIGIBLE_FLASHCARDS');
+    const progress = await db.userVocabularyProgress.findMany({
+      where: { userId: ids.USER, vocabularyId: { in: words.map((word) => word.vocabularyId) } },
+    });
+    expect(progress).toHaveLength(4);
+    for (const entry of progress)
+      expect(entry).toMatchObject({ revision: 2n, repetitionNumber: 2, intervalDays: 6 });
+  });
+  it('draws different Vietnamese distractors from the active catalog across quiz questions', async () => {
+    const prefix = randomUUID();
+    const definitions = Array.from({ length: 21 }, (_, index) => `Nghĩa ${index} ${prefix}`);
+    const { topic: topicId, cards: words } = await createTopic(definitions.length, definitions);
+    const response = await post('flashcard-sessions', {
+      topicId,
+      scope: 'SHARED',
+      mode: 'NEW',
+      limit: 5,
+    });
+    expect(response.status).toBe(201);
+    validateRequest('FlashcardSession', response.body);
+
+    const meaningById = new Map(words.map((word) => [word.vocabularyId, word.definition]));
+    for (const round of [response.body, await session(topicId)]) {
+      const used = new Set<string>();
+      expect(round.quiz).toHaveLength(5);
+      for (const question of round.quiz) {
+        const answers = question.options.map((option: { text: string }) => option.text);
+        const correct = meaningById.get(question.vocabularyId);
+        expect(answers).toHaveLength(4);
+        expect(new Set(answers).size).toBe(4);
+        expect(answers).toContain(correct);
+        for (const answer of answers) {
+          expect(definitions).toContain(answer);
+          if (answer !== correct) {
+            expect(used.has(answer)).toBe(false);
+            used.add(answer);
+          }
+        }
+      }
+      expect(used.size).toBe(15);
+    }
+    expect((await get(`flashcard-sessions/${response.body.sessionId}`)).body).toEqual(
+      response.body,
+    );
+  });
+  it('limits personal flashcard rounds and saves each private SM-2 rating before grading the quiz', async () => {
+    const topicResponse = await post('personal/vocabulary-topics', {
+      topicName: 'Private flashcards ' + randomUUID(),
+    });
+    expect(topicResponse.status).toBe(201);
+    const { topicId } = topicResponse.body;
+    for (const word of ['private first', 'private second', 'private third']) {
+      const created = await post('personal/vocabularies', {
+        topicId,
+        word,
+        definition: 'Shared meaning',
+      });
+      expect(created.status).toBe(201);
+    }
+    const start = { topicId, scope: 'PERSONAL', mode: 'NEW', limit: 2 };
+    expect((await post('flashcard-sessions', start, 'OTHER')).status).toBe(404);
+    const startKey = randomUUID();
+    const response = await post('flashcard-sessions', start, 'USER', startKey);
+    expect(response.status).toBe(201);
+    const round = response.body;
+    validateRequest('FlashcardSession', round);
+    expect((await post('flashcard-sessions', start, 'USER', startKey)).body).toEqual(round);
+    expect(round.scope).toBe('PERSONAL');
+    expect(round.vocabularies).toHaveLength(2);
+    expect(round.quiz).toHaveLength(2);
+    const sharedDefinitions = new Set(
+      (
+        await db.vocabulary.findMany({
+          where: { deletedAt: null, topic: { deletedAt: null } },
+          select: { definition: true },
+        })
+      ).map(({ definition }) => definition),
+    );
+    for (const question of round.quiz) {
+      expect(question.direction).toBe('WORD_TO_MEANING');
+      expect(question.options).toHaveLength(4);
+      expect(question).not.toHaveProperty('correctOption');
+      expect(question.options.map((option: { text: string }) => option.text)).toContain(
+        'Shared meaning',
+      );
+      for (const option of question.options) {
+        if (option.text !== 'Shared meaning') expect(sharedDefinitions.has(option.text)).toBe(true);
+      }
+    }
+    const path = `flashcard-sessions/${round.sessionId}`;
+    const body = submission(round, 5, false);
+    const [first, second] = body.reviews;
+    const review = { reviews: [first] };
+    expect((await get(path, 'OTHER')).status).toBe(404);
+    expect((await post(`${path}/reviews`, review, 'OTHER')).status).toBe(404);
+    expect((await post(`${path}/reviews`, review)).status).toBe(200);
+    expect((await post(`${path}/reviews`, review)).status).toBe(200);
+    expect((await get(path)).body.reviews).toMatchObject([first]);
+    const progress = () =>
+      db.userPersonalVocabularyProgress.findMany({
+        where: { userId: ids.USER, vocabulary: { topicId } },
+      });
+    expect(await progress()).toMatchObject([
+      { vocabularyId: first.vocabularyId, quality: 5, revision: 1n, nextReviewDate: expect.any(Date) },
+    ]);
+    expect((await post(`${path}/reviews`, { reviews: [{ ...first, quality: 1 }] })).status).toBe(409);
+    expect((await post(`${path}/submit`, body)).status).toBe(409);
+    expect((await post(`${path}/reviews`, { reviews: [second] })).status).toBe(200);
+    expect(await progress()).toHaveLength(2);
+
+    const result = await post(`${path}/submit`, body);
+    expect(result.status).toBe(200);
+    validateRequest('FlashcardSessionResult', result.body);
+    expect(result.body).toMatchObject({ quizScore: 0, quizTotal: 2 });
+    expect((await post(`${path}/submit`, body)).body).toEqual(result.body);
+    for (const entry of await progress())
+      expect(entry).toMatchObject({ quality: 5, revision: 1n, repetitionNumber: 1, intervalDays: 1 });
+
+    const reviewStart = { ...start, mode: 'REVIEW', limit: 1 };
+    expect((await post('flashcard-sessions', reviewStart)).body.code).toBe('NO_ELIGIBLE_FLASHCARDS');
+    await db.userPersonalVocabularyProgress.updateMany({
+      where: { userId: ids.USER, vocabularyId: first.vocabularyId },
+      data: { nextReviewDate: new Date(0) },
+    });
+    const due = await post('flashcard-sessions', reviewStart);
+    expect(due.status).toBe(201);
+    expect(due.body.vocabularies).toMatchObject([{ vocabularyId: first.vocabularyId }]);
+    expect(due.body.quiz).toHaveLength(1);
+    const saved = await post(`flashcard-sessions/${due.body.sessionId}/reviews`, { reviews: [first] });
+    expect(saved.status).toBe(200);
+    expect(await progress()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          vocabularyId: first.vocabularyId,
+          revision: 2n,
+          repetitionNumber: 2,
+          intervalDays: 6,
+        }),
+      ]),
+    );
+    expect((await post('flashcard-sessions', reviewStart)).body.code).toBe('NO_ELIGIBLE_FLASHCARDS');
+
+    const removedWord = await api()
+      .delete(`/api/v1/learning/personal/vocabularies/${first.vocabularyId}`)
+      .auth(tokens.USER, { type: 'bearer' });
+    expect(removedWord.status).toBe(200);
+    expect((await get(path)).status).toBe(404);
+    expect((await post(`${path}/submit`, body)).status).toBe(404);
+    expect((await post('flashcard-sessions', start, 'USER', startKey)).status).toBe(404);
+    expect(await progress()).toMatchObject([{ vocabularyId: second.vocabularyId }]);
+
+    const lastRound = await post('flashcard-sessions', start);
+    expect(lastRound.status).toBe(201);
+    expect(lastRound.body.vocabularies).toHaveLength(1);
+    const removedTopic = await api()
+      .delete(`/api/v1/learning/personal/vocabulary-topics/${topicId}`)
+      .auth(tokens.USER, { type: 'bearer' });
+    expect(removedTopic.status).toBe(200);
+    expect((await get(`flashcard-sessions/${lastRound.body.sessionId}`)).status).toBe(404);
+    expect(await progress()).toEqual([]);
+  });
   it('retains committed progress and original event IDs through broker publish failure', async () => {
     await until(async () => (await db.outboxEvent.count({ where: { publishedAt: null } })) === 0);
     const t = await createTopic(1),
@@ -714,7 +1419,7 @@ integration('P3 Learning via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO', 
     const summary = await get('progress');
     expect(summary.status).toBe(200);
     validateRequest('LearningProgress', summary.body);
-    expect(summary.body).toMatchObject({ grammarLessonsCompleted: 1, sessionsCompleted: 1 });
+    expect(summary.body).toMatchObject({ grammarLessonsCompleted: 1, sessionsCompleted: 2 });
     await until(async () => (await db.outboxEvent.count({ where: { publishedAt: null } })) === 0);
     const rows = await db.outboxEvent.findMany();
     for (const row of rows) {

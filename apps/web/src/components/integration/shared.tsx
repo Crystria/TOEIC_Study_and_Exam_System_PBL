@@ -9,6 +9,7 @@ import {
   validationFields,
 } from '../../lib/integration/client';
 import { parseSessionUser, record, type User } from '../../lib/integration/contracts';
+import { Icon } from '../ui/icon';
 
 export function useResource<T>(key: string, loader: (signal: AbortSignal) => Promise<T>) {
   const ref = useRef(loader);
@@ -153,11 +154,19 @@ export function ApiAuth({
   cms = false,
   register = false,
   writes = false,
+  embedded = false,
+  onSwitch,
+  onBusyChange,
 }: {
   cms?: boolean;
   register?: boolean;
   writes?: boolean;
+  embedded?: boolean;
+  onSwitch?: (intent: 'login' | 'register') => void;
+  onBusyChange?: (busy: boolean) => void;
 }) {
+  const inPanel = embedded;
+  const Container = inPanel ? 'div' : 'main';
   const [ready, setReady] = useState(false);
   const [registered, setRegistered] = useState(false);
   useEffect(() => setReady(true), []);
@@ -166,6 +175,13 @@ export function ApiAuth({
     form = useRef<HTMLFormElement>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  useEffect(() => {
+    onBusyChange?.(busy);
+    return () => {
+      if (busy) onBusyChange?.(false);
+    };
+  }, [busy, onBusyChange]);
   const [fields, setFields] = useState<Record<string, string>>({});
   const [values, setValues] = useState({ fullName: '', email: '', password: '', confirm: '' });
   const update = (key: keyof typeof values, value: string) => {
@@ -174,14 +190,26 @@ export function ApiAuth({
     setError('');
   };
   return (
-    <main className="api-login">
-      <Link href="/">TOEIC Master</Link>
-      <span className="api-label">API · Local / test</span>
-      <h1>{register ? 'Tạo tài khoản' : cms ? 'Đăng nhập quản trị' : 'Chào mừng bạn trở lại'}</h1>
-      <p>Dùng tài khoản của môi trường kiểm thử đã cấu hình.</p>
+    <Container className={`api-login${cms ? ' api-auth-admin' : ' api-auth-student'}`}>
+      {!inPanel && (
+        <>
+          <Link href="/">TOEIC Master</Link>
+          <span className="api-label">API · Local / test</span>
+        </>
+      )}
+      {cms && <span className="admin-auth-eyebrow">CHÀO MỪNG TRỞ LẠI</span>}
+      <h1 id={inPanel && !cms ? 'student-auth-title' : undefined}>
+        {register ? 'Tạo tài khoản' : cms ? 'Đăng nhập quản trị' : 'Chào mừng bạn trở lại'}
+      </h1>
+      <p className="api-auth-description">
+        {cms
+          ? 'Đăng nhập để quản lý nội dung và vận hành TOEIC Master.'
+          : 'Dùng tài khoản của môi trường kiểm thử đã cấu hình.'}
+      </p>
       <form
         ref={form}
         noValidate
+        aria-label={cms ? 'Đăng nhập quản trị' : register ? 'Tạo tài khoản' : 'Đăng nhập tài khoản'}
         aria-busy={!ready || busy}
         onSubmit={async (event) => {
           event.preventDefault();
@@ -220,6 +248,7 @@ export function ApiAuth({
               }),
             );
             setValues((v) => ({ ...v, password: '', confirm: '' }));
+            setShowPassword(false);
             if (register) {
               if (result.activationRequired !== true)
                 throw new Error('Phản hồi đăng ký không hợp lệ.');
@@ -230,7 +259,7 @@ export function ApiAuth({
             router.push(
               cms
                 ? user.roles.includes('CONTENT_ADMIN')
-                  ? '/questions'
+                  ? '/tests'
                   : user.roles.includes('SYSTEM_ADMIN')
                     ? '/users'
                     : '/login?denied=1'
@@ -258,25 +287,22 @@ export function ApiAuth({
         <fieldset disabled={!ready || busy || registered || (register && !writes)}>
           {(['fullName', 'email', 'password', 'confirm'] as const)
             .filter((key) => register || !['fullName', 'confirm'].includes(key))
-            .map((key) => (
-              <div className="api-field" key={key}>
-                <label htmlFor={`api-${key}`}>
-                  {
-                    {
-                      fullName: 'Họ và tên',
-                      email: 'Email',
-                      password: 'Mật khẩu',
-                      confirm: 'Xác nhận mật khẩu',
-                    }[key]
-                  }
-                </label>
+            .map((key) => {
+              const input = (
                 <input
                   id={`api-${key}`}
+                  name={key === 'confirm' ? 'confirmPassword' : key}
+                  required
+                  minLength={
+                    key === 'fullName' ? 2 : register && key === 'password' ? 8 : undefined
+                  }
                   type={
                     key === 'email'
                       ? 'email'
                       : ['password', 'confirm'].includes(key)
-                        ? 'password'
+                        ? cms && showPassword
+                          ? 'text'
+                          : 'password'
                         : 'text'
                   }
                   autoComplete={
@@ -288,18 +314,63 @@ export function ApiAuth({
                           ? 'new-password'
                           : 'current-password'
                   }
+                  placeholder={
+                    cms
+                      ? key === 'email'
+                        ? 'quantri@example.com'
+                        : key === 'password'
+                          ? 'Nhập mật khẩu của bạn'
+                          : undefined
+                      : undefined
+                  }
+                  autoCapitalize={key === 'email' ? 'none' : undefined}
+                  spellCheck={key === 'email' ? false : undefined}
                   value={values[key]}
                   onChange={(e) => update(key, e.target.value)}
                   aria-invalid={!!fields[key]}
                   aria-describedby={fields[key] ? `api-error-${key}` : undefined}
                 />
-                {fields[key] && (
-                  <p id={`api-error-${key}`} className="api-error">
-                    {fields[key]}
-                  </p>
-                )}
-              </div>
-            ))}
+              );
+              return (
+                <div className="api-field" key={key}>
+                  <label htmlFor={`api-${key}`}>
+                    {
+                      {
+                        fullName: 'Họ và tên',
+                        email: 'Email',
+                        password: 'Mật khẩu',
+                        confirm: 'Xác nhận mật khẩu',
+                      }[key]
+                    }
+                  </label>
+                  {cms ? (
+                    <div className="admin-auth-input">
+                      <Icon name={key === 'email' ? 'mail' : 'lock'} width="19" height="19" />
+                      {input}
+                      {key === 'password' && (
+                        <button
+                          type="button"
+                          className="admin-auth-password-toggle"
+                          aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                          aria-pressed={showPassword}
+                          aria-controls="api-password"
+                          onClick={() => setShowPassword((visible) => !visible)}
+                        >
+                          <Icon name={showPassword ? 'eyeOff' : 'eye'} width="19" height="19" />
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    input
+                  )}
+                  {fields[key] && (
+                    <p id={`api-error-${key}`} className="api-error">
+                      {fields[key]}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
         </fieldset>
         {error && (
           <p role="alert" className="api-error">
@@ -307,27 +378,51 @@ export function ApiAuth({
           </p>
         )}
         <button
-          className="api-primary"
+          type="submit"
+          className="api-primary api-auth-submit"
           disabled={!ready || busy || registered || (register && !writes)}
         >
           {busy ? 'Đang gửi…' : register ? 'Tạo tài khoản' : 'Đăng nhập'}
+          {!busy && <Icon name="arrow" width="20" height="20" />}
         </button>
       </form>
+      {cms && (
+        <p className="admin-auth-account-note">
+          <Icon name="lock" width="15" height="15" />
+          Không gian làm việc sẽ mở theo quyền của tài khoản.
+        </p>
+      )}
       {registered && (
         <p role="status">
           Tài khoản đã được tạo và cần kích hoạt email. Kiểm tra hộp thư trước khi đăng nhập.
         </p>
       )}
       {!cms && (
-        <p>
-          <Link href="/verify-email">Kích hoạt email / gửi lại email</Link>
+        <p className="api-auth-switch">
+          <Link
+            href={register ? '/login' : '/register'}
+            onClick={(event) => {
+              if (
+                !onSwitch ||
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return;
+              event.preventDefault();
+              if (!busyRef.current) onSwitch(register ? 'login' : 'register');
+            }}
+          >
+            {register ? 'Đã có tài khoản? Đăng nhập' : 'Tạo tài khoản'}
+          </Link>
         </p>
       )}
       {!cms && (
-        <p>
-          <Link href={register ? '/login' : '/register'}>
-            {register ? 'Đã có tài khoản? Đăng nhập' : 'Tạo tài khoản'}
-          </Link>
+        <p className="api-auth-support">
+          <Link href="/verify-email">Kích hoạt email / gửi lại email</Link>
         </p>
       )}
       {register && (
@@ -337,6 +432,6 @@ export function ApiAuth({
           khi xác minh thành công.
         </Blocked>
       )}
-    </main>
+    </Container>
   );
 }

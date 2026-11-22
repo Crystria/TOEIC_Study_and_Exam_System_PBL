@@ -1,5 +1,8 @@
 import type { SVGProps } from 'react';
 
+const sidebarFrame =
+  'M6 3h12a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm3 0v18';
+
 const paths = {
   book: 'M4 4h6a3 3 0 0 1 3 3v14a4 4 0 0 0-4-3H4V4Zm16 0h-4a3 3 0 0 0-3 3v14a4 4 0 0 1 4-3h3V4Z',
   grid: 'M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 0h7v7h-7v-7Z',
@@ -14,6 +17,8 @@ const paths = {
   check: 'm5 12 4 4L19 6',
   close: 'm6 6 12 12M6 18 18 6',
   menu: 'M4 6h16M4 12h16M4 18h16',
+  sidebarOpen: `${sidebarFrame}M14 8l4 4-4 4`,
+  sidebarClose: `${sidebarFrame}M18 8l-4 4 4 4`,
   flame: 'M13 3c1 6-4 6-2 10 1-1 3-2 3-5 4 3 6 6 4 10-3 6-13 4-13-3 0-4 4-6 8-12Z',
   target: 'M21 12a9 9 0 1 1-9-9m6 9a6 6 0 1 1-6-6m3 6a3 3 0 1 1-3-3m0 3 9-9m-5 0h5v5',
   sparkles: 'm12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z',
@@ -28,6 +33,10 @@ const paths = {
   calendar: 'M4 5h16v16H4V5Zm0 5h16M8 3v4m8-4v4M8 14h2m4 0h2m-8 3h2',
   logout: 'M10 4H4v16h6m4-13 5 5-5 5m-6-5h13',
   search: 'M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z',
+  pencil: 'm14 6 4 4M4 20l1-5L16 4a2.83 2.83 0 0 1 4 4L9 19l-5 1Z',
+  trash: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v6m4-6v6',
+  sun: 'M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5m-3 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+  moon: 'M20.5 14A8.7 8.7 0 0 1 10 3.5 8.7 8.7 0 1 0 20.5 14Z',
   volume: 'm3 9 5 0 5-5v16l-5-5H3V9Zm13-2a7 7 0 0 1 0 10m3-13a11 11 0 0 1 0 16',
   flip: 'M4 8h14l-4-4m4 16H4l4-4M20 8v5M2 16v-5',
   briefcase: 'M3 7h18v14H3V7Zm5 0V3h8v4M3 12l9 3 9-3m-9 1v4',

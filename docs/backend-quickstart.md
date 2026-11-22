@@ -58,7 +58,7 @@ Question Bank còn dùng gRPC **50052**. Hướng dẫn này chạy backend Nest
 Trong terminal khác:
 
 ```powershell
-Invoke-RestMethod http://localhost:3000/api/v1/ready
+Invoke-RestMethod http://localhost:3000/ready
 ```
 
 `status: ready` nghĩa là Gateway và các upstream đã qua readiness check. Nếu trả 503, kiểm tra `docker compose ps`, log terminal service và `/api/v1/ready` tại từng cổng 3001–3005.
@@ -90,7 +90,7 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml up -d --build --
 ```
 
 ```powershell
-Invoke-RestMethod http://localhost:3000/api/v1/ready
+Invoke-RestMethod http://localhost:3000/ready
 ```
 
 Chỉ định `api-gateway` sẽ kéo theo 5 service backend còn lại và hạ tầng qua `depends_on`, cùng các job migration/media. Web/CMS không được khởi động. Lần build đầu cần tải image, cài dependency; 600 giây là thời hạn đợi container sẵn sàng, không giới hạn thời gian build image.
@@ -110,3 +110,40 @@ docker compose -f docker-compose.yml -f docker-compose.apps.yml stop
 ```
 
 `start:dev` chạy bên trong container. Lệnh `up` trên không tự đồng bộ file từ host; cần build lại như trên sau khi sửa code. Địa chỉ API/Mailpit và cách kiểm tra ở bước 5 vẫn giữ nguyên. Nếu cần script tạo CONTENT_ADMIN trên host, generate Auth Prisma Client trước: `npm.cmd run prisma:generate -w @toeic/auth-service`, rồi chạy `node scripts/prepare-content-admin.mjs`.
+
+## Đăng nhập trả 502 hoặc Docker không bind được cổng
+
+Trang `/login` trả 200 chỉ xác nhận frontend đang chạy. Khi `POST /api/frontend/auth/login` trả 502, kiểm tra Gateway và backend trước:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:3000/ready
+docker compose -f docker-compose.yml -f docker-compose.apps.yml ps -a
+docker compose -f docker-compose.yml -f docker-compose.apps.yml logs --tail 80 auth-service api-gateway
+```
+
+Nếu Gateway từ chối kết nối hoặc container ở trạng thái `Exited`, bật lại hạ tầng và backend theo cách A/B đã chọn. Để bật riêng container đã có, lấy ID bằng `docker compose -f docker-compose.yml -f docker-compose.apps.yml ps -a -q <tên-service>`, rồi dùng `docker start <container-id>` cho từng service đã dừng; cách này không chạy lại job migration/media phụ thuộc. Không cần seed/reset database hay tạo lại tài khoản để xử lý lỗi kết nối. `npm.cmd run dev` ở root chạy các workspace tuần tự và có thể chỉ mở frontend đầu tiên; nó không đảm bảo backend đã chạy.
+
+Trên Windows, lỗi bind như `An attempt was made to access a socket in a way forbidden by its access permissions` có thể do cổng nằm trong dải hệ thống dành riêng, dù không thấy tiến trình lắng nghe:
+
+```powershell
+netsh interface ipv4 show excludedportrange protocol=tcp
+netsh interface ipv6 show excludedportrange protocol=tcp
+```
+
+Chọn cổng ngoài các dải trên. Ví dụ, nếu 7379 hoặc 8025 bị chặn, sửa các biến sau trong `.env` root:
+
+```dotenv
+REDIS_PORT=16379
+REDIS_URL=redis://localhost:16379
+MAILPIT_UI_PORT=18025
+```
+
+Áp dụng lại port mapping của các container đã có bằng lệnh dưới; `--no-deps` giữ nguyên các backend/job migration khác, và dữ liệu vẫn ở volume hiện có:
+
+```powershell
+docker compose -f docker-compose.yml -f docker-compose.apps.yml up -d --no-deps redis mailpit
+```
+
+Nếu chạy service **trên máy (cách A)**, đồng bộ `REDIS_URL=redis://localhost:16379` trong `services/*/.env` đang dùng Redis; AI giữ hậu tố `/0` nếu có. Đặt `MAILPIT_URL=http://localhost:18025` trong `services/auth-service/.env`, rồi khởi động lại các service đã đổi cấu hình.
+
+Nếu chạy backend **trong Docker (cách B)**, các URL nội bộ vẫn là `redis://redis:6379` và `http://mailpit:8025`; các biến cổng root chỉ đổi cổng công bố trên máy. Với ví dụ này, mở Mailpit tại [http://localhost:18025](http://localhost:18025). Frontend vẫn dùng `FRONTEND_GATEWAY_URL=http://127.0.0.1:3000/api/v1` trong `apps/web/.env.local`; khởi động lại frontend nếu sửa file đó.

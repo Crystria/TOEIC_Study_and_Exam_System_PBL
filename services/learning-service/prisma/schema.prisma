@@ -22,39 +22,44 @@ enum VocabularySessionStatus {
 }
 
 model VocabularyTopic {
-  id           String              @id @default(uuid())
-  name         String
-  description  String?
-  deletedAt    DateTime?           @map("deleted_at")
-  createdAt    DateTime            @default(now()) @map("created_at")
-  updatedAt    DateTime            @updatedAt @map("updated_at")
-  vocabularies Vocabulary[]
-  sessions     VocabularySession[]
+  id            String              @id @default(uuid())
+  name          String
+  description   String?
+  importSource  String?             @map("import_source")
+  importListKey String?             @map("import_list_key")
+  deletedAt     DateTime?           @map("deleted_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+  vocabularies  Vocabulary[]
+  sessions      VocabularySession[]
 
+  @@unique([importSource, importListKey])
   @@map("vocabulary_topics")
 }
 
 model Vocabulary {
-  id             String                   @id @default(uuid())
-  topicId        String                   @map("topic_id")
-  word           String
-  wordKey        String                   @map("normalized_word")
-  definitionKey  String                   @map("normalized_definition")
-  phonetic       String?                  @map("phonetic")
-  definition     String
-  example        String?
-  legacyAudioUrl String?                  @map("audio_url")
-  legacyImageUrl String?                  @map("image_url")
-  audioKey       String?                  @map("audio_key")
-  imageKey       String?                  @map("image_key")
-  deletedAt      DateTime?                @map("deleted_at")
-  createdAt      DateTime                 @default(now()) @map("created_at")
-  updatedAt      DateTime                 @updatedAt @map("updated_at")
-  topic          VocabularyTopic          @relation(fields: [topicId], references: [id], onDelete: Restrict)
-  legacyProgress LegacyUserProgress[]
-  progress       UserVocabularyProgress[]
-  items          VocabularySessionItem[]
-  uploads        LearningUpload[]
+  id                String                   @id @default(uuid())
+  topicId           String                   @map("topic_id")
+  word              String
+  wordKey           String                   @map("normalized_word")
+  definitionKey     String                   @map("normalized_definition")
+  phonetic          String?                  @map("phonetic")
+  partOfSpeech      String?                  @map("part_of_speech")
+  definition        String
+  englishDefinition String?                  @map("english_definition")
+  example           String?
+  legacyAudioUrl    String?                  @map("audio_url")
+  legacyImageUrl    String?                  @map("image_url")
+  audioKey          String?                  @map("audio_key")
+  imageKey          String?                  @map("image_key")
+  deletedAt         DateTime?                @map("deleted_at")
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @updatedAt @map("updated_at")
+  topic             VocabularyTopic          @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  legacyProgress    LegacyUserProgress[]
+  progress          UserVocabularyProgress[]
+  items             VocabularySessionItem[]
+  uploads           LearningUpload[]
 
   @@index([topicId])
   @@map("vocabularies")
@@ -76,6 +81,54 @@ model GrammarLesson {
 
   @@index([legacyLevel, status])
   @@map("grammar_lessons")
+}
+
+// Learner-authored content is separate from the shared, administrator-managed catalog.
+model PersonalVocabularyTopic {
+  id           String               @id @default(uuid())
+  userId       String               @map("user_id")
+  name         String
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+  vocabularies PersonalVocabulary[]
+
+  @@unique([id, userId])
+  @@index([userId, name])
+  @@map("personal_vocabulary_topics")
+}
+
+model PersonalVocabulary {
+  id         String                           @id @default(uuid())
+  userId     String                           @map("user_id")
+  topicId    String                           @map("topic_id")
+  word       String
+  phonetic   String?
+  definition String
+  example    String?
+  createdAt  DateTime                         @default(now()) @map("created_at")
+  updatedAt  DateTime                         @updatedAt @map("updated_at")
+  topic      PersonalVocabularyTopic          @relation(fields: [topicId, userId], references: [id, userId], onDelete: Cascade, onUpdate: Restrict)
+  progress   UserPersonalVocabularyProgress[]
+
+  @@unique([id, userId])
+  @@index([userId, topicId])
+  @@index([userId, word])
+  @@map("personal_vocabularies")
+}
+
+model PersonalGrammarLesson {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  lessonTitle     String   @map("lesson_title")
+  category        String
+  contentMarkdown String   @map("content_markdown")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([id, userId])
+  @@index([userId, lessonTitle])
+  @@index([userId, category])
+  @@map("personal_grammar_lessons")
 }
 
 // Legacy progress/sessions remain intact; never fabricate quality, quiz or firstLearned history.
@@ -151,6 +204,24 @@ model UserLessonProgress {
   @@map("user_lesson_progress")
 }
 
+model UserPersonalVocabularyProgress {
+  userId           String             @map("user_id")
+  vocabularyId     String             @map("vocabulary_id")
+  quality          Int
+  intervalDays     Int                @map("interval_days")
+  easinessFactor   Decimal            @map("easiness_factor") @db.Decimal(4, 2)
+  repetitionNumber Int                @map("repetition_number")
+  nextReviewDate   DateTime           @map("next_review_date") @db.Date
+  firstLearnedAt   DateTime?          @map("first_learned_at")
+  revision         BigInt             @default(1)
+  updatedAt        DateTime           @map("updated_at")
+  vocabulary       PersonalVocabulary @relation(fields: [vocabularyId, userId], references: [id, userId], onDelete: Cascade, onUpdate: Restrict, map: "user_personal_vocabulary_progress_word_fkey")
+
+  @@id([userId, vocabularyId])
+  @@index([userId, nextReviewDate])
+  @@map("user_personal_vocabulary_progress")
+}
+
 model VocabularySession {
   id          String                  @id @default(uuid())
   userId      String                  @map("user_id")
@@ -188,6 +259,42 @@ model VocabularySessionItem {
   @@id([sessionId, vocabularyId])
   @@unique([sessionId, position])
   @@map("vocabulary_session_items")
+}
+
+model FlashcardSession {
+  id          String                  @id @default(uuid())
+  userId      String                  @map("user_id")
+  topicId     String                  @map("topic_id")
+  scope       String
+  mode        String
+  status      VocabularySessionStatus @default(IN_PROGRESS)
+  startedAt   DateTime                @map("started_at")
+  expiresAt   DateTime                @map("expires_at")
+  completedAt DateTime?               @map("completed_at")
+  result      Json?
+  items       FlashcardSessionItem[]
+
+  @@index([userId, startedAt])
+  @@map("flashcard_sessions")
+}
+
+model FlashcardSessionItem {
+  questionId       String           @id @map("question_id")
+  sessionId        String           @map("session_id")
+  vocabularyId     String           @map("vocabulary_id")
+  position         Int
+  expectedRevision BigInt           @map("expected_revision")
+  quality          Int?
+  reviewProgress   Json?            @map("review_progress")
+  snapshot         Json
+  direction        String
+  options          Json
+  correctOption    String           @map("correct_option")
+  session          FlashcardSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+
+  @@unique([sessionId, vocabularyId])
+  @@unique([sessionId, position])
+  @@map("flashcard_session_items")
 }
 
 model OperationLedger {

@@ -57,6 +57,20 @@ export class GroupsService {
   async findById(id: string, admin = false) {
     return this.view(await this.record(id), admin);
   }
+  async details(ids: string[]) {
+    const groups = await this.prisma.questionGroup.findMany({
+      where: { id: { in: ids }, deletedAt: null },
+      include,
+    });
+    const found = new Map(groups.map((group) => [group.id, group]));
+    return {
+      items: ids.flatMap((id) => {
+        const group = found.get(id);
+        return group ? [this.view(group, true)] : [];
+      }),
+      missingIds: ids.filter((id) => !found.has(id)),
+    };
+  }
   async list(query: ListGroupsDto, admin = false) {
     const page = query.page ?? 1,
       size = Math.min(query.size ?? 20, 50);
@@ -121,24 +135,31 @@ export class GroupsService {
       const { assets, questionOrder, ...fields } = dto;
       await this.verifyMedia(id, { ...old, ...fields, assets: assets ?? old.assets });
       if (questionOrder) {
+        const activeQuestions = old.questions.filter((q) => !q.deletedAt);
         if (
-          questionOrder.length !== old.questions.length ||
+          questionOrder.length !== activeQuestions.length ||
           new Set(questionOrder).size !== questionOrder.length ||
-          !old.questions.every((q) => questionOrder.includes(q.id))
+          !activeQuestions.every((q) => questionOrder.includes(q.id))
         )
           throw new BadRequestException(
-            'questionOrder must contain every group question exactly once',
+            'questionOrder must contain every active group question exactly once',
           );
-        // Temporary negative positions make swapping unique positions safe in one transaction.
-        for (const [index, questionId] of questionOrder.entries())
+        // Keep archived slots and Part 6 placeholders intact when active members swap.
+        const positions = activeQuestions.map((q) => q.positionInGroup!).sort((a, b) => a - b);
+        const occupied = new Set(old.questions.map((q) => q.positionInGroup));
+        let temporaryPosition = -1;
+        for (const questionId of questionOrder) {
+          while (occupied.has(temporaryPosition)) temporaryPosition--;
           await tx.question.update({
             where: { id: questionId },
-            data: { positionInGroup: -(index + 1) },
+            data: { positionInGroup: temporaryPosition },
           });
+          occupied.add(temporaryPosition--);
+        }
         for (const [index, questionId] of questionOrder.entries())
           await tx.question.update({
             where: { id: questionId },
-            data: { positionInGroup: index + 1 },
+            data: { positionInGroup: positions[index] },
           });
       }
       if (assets) await tx.questionGroupAsset.deleteMany({ where: { groupId: id } });

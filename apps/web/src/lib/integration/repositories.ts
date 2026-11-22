@@ -12,6 +12,7 @@ import {
   parseWord,
   record,
   count,
+  date,
   text,
   boolean,
   segment,
@@ -42,6 +43,10 @@ export const learningApi = {
   topics: (signal?: AbortSignal, params = new URLSearchParams()) =>
     gateway(`learning/vocabulary-topics?${query('topics', params)}`, { signal }).then((v) =>
       page(v, parseTopic),
+    ),
+  topic: (id: string, signal?: AbortSignal) =>
+    gateway(`learning/vocabulary-topics/${segment(id)}`, { signal }).then((v) =>
+      matchingId(parseTopic(v), id),
     ),
   words: (params: URLSearchParams, signal?: AbortSignal) =>
     gateway(`learning/vocabularies?${query('words', params)}`, { signal }).then((v) =>
@@ -86,7 +91,7 @@ export const learningApi = {
     );
     const p = result.progress.find((p) => p.entityId === id && p.entityType === 'VOCABULARY');
     if (result.operationId !== operationId || !p) throw new ContractError('review');
-    return p;
+    return { ...p, nextReviewAt: date(p.nextReviewAt) };
   },
   async complete(id: string, revision: string, operationId: string) {
     const result = parseOperation(

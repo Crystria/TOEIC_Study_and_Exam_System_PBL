@@ -2,8 +2,14 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
+  AccountRoleSelect,
+  AccountRoles,
+  AccountStatusSelect,
+  canManageAccountRole,
+  managedAccountRole,
+} from '@/components/users/account-controls';
+import {
   OPTION_KEYS,
-  ROLE_CODES,
   GROUP_PARTS,
   type EntityKind,
   type EntityMap,
@@ -11,7 +17,7 @@ import {
   type TestRecord,
   type WorkspaceState,
 } from '@/lib/demo/workspace-model';
-import { USER_STATUSES, USER_STATUS_LABELS, USER_ROLE_LABELS } from '@/lib/users/types';
+import { EDITABLE_USER_STATUSES, USER_STATUS_LABELS } from '@/lib/users/types';
 import { entityTitle } from '@/lib/demo/workspace-query';
 import { Field } from './workspace-primitives';
 import { MediaField } from './media-controls';
@@ -90,10 +96,17 @@ export function EntityFields({
         />
         <Field
           name="meaning"
-          label="Định nghĩa *"
+          label="Nghĩa tiếng Việt *"
           value={r.meaning}
           onChange={(meaning) => onChange({ ...r, meaning })}
           error={errors.meaning}
+          multiline
+        />
+        <Field
+          name="englishDefinition"
+          label="English definition"
+          value={r.englishDefinition}
+          onChange={(englishDefinition) => onChange({ ...r, englishDefinition })}
           multiline
         />
         <Field
@@ -126,22 +139,6 @@ export function EntityFields({
             </option>
           ))}
         </Field>
-        <MediaField
-          name="audioId"
-          label="Audio phát âm"
-          kind="audio"
-          value={r.audioId}
-          onChange={(audioId) => onChange({ ...r, audioId })}
-          error={errors.audioId}
-        />
-        <MediaField
-          name="imageId"
-          label="Hình minh họa"
-          kind="image"
-          value={r.imageId}
-          onChange={(imageId) => onChange({ ...r, imageId })}
-          error={errors.imageId}
-        />
       </>
     );
   }
@@ -391,60 +388,47 @@ export function EntityFields({
           <strong>{r.fullName || 'Chưa có tên'}</strong>
           <br />
           {r.email || 'Chưa có email'}
-          <br />
-          {r.id}
-        </p>
-        <p>
-          Họ tên, email và ID chỉ đọc. Persona SYSTEM_ADMIN chỉ minh họa thao tác trên tài khoản
-          demo khác.
         </p>
         <fieldset
-          id="ws-roles"
-          tabIndex={-1}
+          className="account-editor-field"
           aria-describedby={errors.roles ? 'ws-roles-error' : undefined}
         >
           <legend>Vai trò *</legend>
-          {ROLE_CODES.map((role) => (
-            <label className="ws-check" key={role}>
-              <input
-                type="checkbox"
-                checked={r.roles.includes(role)}
-                onChange={(e) =>
-                  onChange({
-                    ...r,
-                    roles: e.target.checked
-                      ? [...r.roles, role]
-                      : r.roles.filter((x) => x !== role),
-                  })
-                }
-              />
-              {USER_ROLE_LABELS[role]} ({role})
-            </label>
-          ))}
+          {canManageAccountRole(r.roles) ? (
+            <AccountRoleSelect
+              id="ws-roles"
+              name="Vai trò tài khoản"
+              value={managedAccountRole(r.roles)}
+              onChange={(role) => onChange({ ...r, roles: role ? [role] : [] })}
+            />
+          ) : (
+            <AccountRoles roles={r.roles} />
+          )}
           {errors.roles && (
             <p id="ws-roles-error" className="ws-error">
               {errors.roles}
             </p>
           )}
         </fieldset>
-        <Field
-          name="status"
-          label="Trạng thái theo source *"
-          value={r.status}
-          onChange={(status) => onChange({ ...r, status: status as typeof r.status })}
-          error={errors.status}
+        <fieldset
+          className="account-editor-field"
+          aria-describedby={errors.status ? 'ws-status-error' : undefined}
         >
-          <option value="">Chọn trạng thái</option>
-          {USER_STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {USER_STATUS_LABELS[s]} ({s})
-            </option>
-          ))}
-        </Field>
-        <p className="ws-note">
-          Word dùng ACTIVE/SUSPENDED/INACTIVE; source dùng ACTIVE/LOCKED/DISABLED/PENDING. Demo dùng
-          enum source, chưa ánh xạ các trạng thái này. Không phát sinh audit thật.
-        </p>
+          <legend>Trạng thái tài khoản *</legend>
+          <AccountStatusSelect
+            id="ws-status"
+            name="Trạng thái tài khoản"
+            value={r.status}
+            statuses={EDITABLE_USER_STATUSES}
+            statusLabels={USER_STATUS_LABELS}
+            onChange={(status) => onChange({ ...r, status })}
+          />
+          {errors.status && (
+            <p id="ws-status-error" className="ws-error">
+              {errors.status}
+            </p>
+          )}
+        </fieldset>
       </>
     );
   }

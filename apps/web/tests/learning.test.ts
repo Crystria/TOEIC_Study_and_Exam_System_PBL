@@ -13,6 +13,7 @@ import {
   normalizeSearch,
   previewSm2,
   rateVocabulary,
+  selectFlashcardPracticeWords,
   selectStudyWords,
   startVocabularySession,
 } from '../src/lib/learning/study';
@@ -78,18 +79,84 @@ test('a duplicate rating cannot advance or grade another unseen card', () => {
   assert.equal(next.vocabulary, first.vocabulary, 'ratings stay provisional until quiz submission');
 });
 
-test('quiz has exactly five distinct learned words and four distinct valid options each, stable across reload', () => {
+test('flashcard practice completes lists of one to four due cards and schedules each rating immediately', () => {
+  for (const size of [1, 2, 3, 4]) {
+    const progress = initial();
+    const dueWords = selectStudyWords(catalog, progress, 'business-office', now, true);
+    for (const word of dueWords.slice(size)) {
+      progress.vocabulary[word.id].nextReviewAt = '2026-10-24T12:00:00Z';
+    }
+    const selected = selectStudyWords(catalog, progress, 'business-office', now, true, 10);
+    assert.deepEqual(selected, dueWords.slice(0, size));
+    let practice = startVocabularySession(progress, selected, 'practice', now, 'flashcards');
+    for (const [index, { id }] of selected.entries()) {
+      assert.equal(practice.session?.phase, 'flashcards');
+      const quality = index % 2 ? 1 : 5;
+      practice = rateVocabulary(practice, 'practice', id, quality, now);
+      assert.deepEqual(practice.vocabulary[id], previewSm2(progress.vocabulary[id], quality, now));
+      assert.equal(rateVocabulary(practice, 'practice', id, quality, now), practice);
+      assert.deepEqual(parseLearningProgress(JSON.stringify(practice), catalog), practice);
+    }
+    assert.equal(practice.session?.phase, 'completed');
+    assert.equal(practice.session?.completedAt, now);
+    assert.deepEqual(practice.session?.answers, {});
+  }
+});
+
+test('the flashcard limit caps due cards and old quiz sessions still resume', () => {
+  const progress = initial();
+  assert.equal(selectStudyWords(catalog, progress, 'business-office', now, true, 2).length, 2);
+  const legacy = started();
+  delete legacy.session!.mode;
+  delete legacy.session!.quizVersion;
+  assert.deepEqual(parseLearningProgress(JSON.stringify(legacy), catalog), legacy);
+});
+
+test('short practice saves the schedule before quiz and preserves it after submission', () => {
+  const progress = initial();
+  const topicId = 'business-office';
+  const fresh = selectFlashcardPracticeWords(catalog, progress, topicId, now, 'NEW', 2);
+  assert.equal(fresh.length, 2);
+  assert.ok(fresh.every(({ id }) => !progress.vocabulary[id]));
+  const [card] = selectFlashcardPracticeWords(catalog, progress, topicId, now, 'REVIEW', 1);
+  const shortCatalog = { ...catalog, words: [card] };
+  const shortProgress = { ...progress, vocabulary: { [card.id]: progress.vocabulary[card.id] } };
+  const session = startVocabularySession(shortProgress, [card], 'short', now, 'flashcards-quiz');
+  const rated = rateVocabulary(session, 'short', card.id, 5, now);
+  assert.equal(rated.session?.phase, 'quiz');
+  assert.deepEqual(rated.vocabulary[card.id], previewSm2(progress.vocabulary[card.id], 5, now));
+  assert.deepEqual(parseLearningProgress(JSON.stringify(rated), shortCatalog), rated);
+  const [question] = createVocabularyQuiz(rated.session!, shortCatalog);
+  assert.ok(question.confirmation);
+  assert.equal(question.options.length, 2);
+  const answered = answerVocabulary(rated, 'short', question, question.correctOptionId);
+  const completed = finishVocabularySession(answered, shortCatalog, 'short', now);
+  assert.equal(completed.session?.phase, 'completed');
+  assert.equal(completed.vocabulary, rated.vocabulary);
+});
+
+test('quiz uses five learned words with distinct catalog meanings and stable option order', () => {
   const progress = rated();
   assert.equal(progress.session!.phase, 'quiz');
   const quiz = createVocabularyQuiz(progress.session!, catalog);
   assert.equal(quiz.length, 5);
   assert.equal(new Set(quiz.map((question) => question.vocabularyId)).size, 5);
+  const definitions = new Map(catalog.words.map((word) => [word.id, word.definition]));
+  const distractors = new Set<string>();
   for (const question of quiz) {
     assert.ok(progress.session!.wordIds.includes(question.vocabularyId));
-    assert.equal(new Set(question.options.map((option) => option.id)).size, 4);
-    assert.ok(question.options.every((option) => progress.session!.wordIds.includes(option.id)));
+    assert.equal(new Set(question.options.map((option) => option.label)).size, 4);
+    for (const option of question.options) {
+      assert.equal(option.label, definitions.get(option.id));
+      if (option.id !== question.correctOptionId) distractors.add(option.label);
+    }
     assert.ok(question.options.some((option) => option.id === question.correctOptionId));
   }
+  assert.equal(
+    distractors.size,
+    15,
+    'use different wrong meanings across questions when available',
+  );
   assert.deepEqual(
     createVocabularyQuiz(JSON.parse(JSON.stringify(progress.session!)), catalog),
     quiz,
@@ -103,6 +170,37 @@ test('quiz has exactly five distinct learned words and four distinct valid optio
       now,
     ),
   );
+});
+
+test('quiz uses vocabulary outside a short topic and ignores duplicate Vietnamese meanings', () => {
+  const [word] = catalog.words;
+  const otherTopics = catalog.words.filter((entry) => entry.topicId !== word.topicId).slice(0, 3);
+  const duplicate = {
+    ...word,
+    id: 'same-definition',
+    word: 'different word',
+    definition: `  ${word.definition.toUpperCase().normalize('NFD').replace(' ', '  ')} `,
+  };
+  const shortCatalog = { ...catalog, words: [word, duplicate, ...otherTopics] };
+  const { session } = startVocabularySession(initial(), [word], 'short', now, 'flashcards-quiz');
+  const [question] = createVocabularyQuiz(session!, shortCatalog);
+  assert.equal(question.confirmation, undefined);
+  assert.deepEqual(
+    question.options.map((option) => option.id).sort(),
+    [word.id, ...otherTopics.map((entry) => entry.id)].sort(),
+  );
+});
+
+test('saved pre-existing quiz keeps its selected answers from the original option pool', () => {
+  let progress = rated();
+  delete progress.session!.quizVersion;
+  const questions = createVocabularyQuiz(progress.session!, catalog);
+  for (const question of questions) {
+    assert.ok(question.options.every((option) => progress.session!.wordIds.includes(option.id)));
+    const wrong = question.options.find((option) => option.id !== question.correctOptionId)!;
+    progress = answerVocabulary(progress, 'session-test', question, wrong.id);
+  }
+  assert.deepEqual(parseLearningProgress(JSON.stringify(progress), catalog), progress);
 });
 
 test('incomplete quiz cannot update progress; successful submission applies SM-2 once', () => {

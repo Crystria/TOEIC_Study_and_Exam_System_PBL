@@ -2,6 +2,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { LessonMarkdown } from '../../../../web/src/components/learning/lesson-markdown';
+import { useDialogBackdropDismiss } from '../../../../web/src/components/ui/use-dialog-backdrop-dismiss';
 
 export function Field({
   name,
@@ -65,6 +66,7 @@ export function Confirm({
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const backdropDismiss = useDialogBackdropDismiss(onClose);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     const dialog = ref.current;
@@ -75,7 +77,13 @@ export function Confirm({
     };
   }, []);
   return (
-    <dialog ref={ref} className="ws-dialog" aria-labelledby="ws-confirm-title" onCancel={onClose}>
+    <dialog
+      ref={ref}
+      className="ws-dialog"
+      aria-labelledby="ws-confirm-title"
+      onCancel={onClose}
+      {...backdropDismiss}
+    >
       <h2 id="ws-confirm-title">{title}</h2>
       <div>{children}</div>
       <div className="ws-actions">

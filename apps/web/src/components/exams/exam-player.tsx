@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { demoExamTests } from '@/lib/exams/mock-data';
 import { loadDemoQuestions } from '@/lib/exams/question-fixtures';
 import { remainingSeconds } from '@/lib/exams/session';
-import { selectionQuery } from '@/lib/exams/selection';
 import { localResultHref } from '@/lib/exams/results';
+import { buildListeningAudioTracks } from '@/lib/exams/listening-audio';
 import type { ExamQuestionSet, LocalExamSession } from '@/lib/exams/session-types';
 import type { ExamQuery, ExamTest } from '@/lib/exams/types';
 import { Button, buttonStyles } from '../ui/button';
@@ -18,6 +18,10 @@ import { ExamQuestionGroup } from './exam-question-group';
 import { ExamQuestionMap } from './exam-question-map';
 import { useExamSession } from './exam-session-provider';
 import { HistoryNotice } from './exam-result-shared';
+import { ExamToolbar } from './exam-toolbar';
+import { ExamMobileBar } from './exam-mobile-bar';
+import { useExamNavigationGuard } from './use-exam-navigation-guard';
+import { ExamRetake } from './exam-retake';
 
 function Player({
   test,
@@ -33,20 +37,54 @@ function Player({
   const router = useRouter();
   const { dirty, issue, dispatch, retrySave, reloadDraft } = useExamSession();
   const [now, setNow] = useState(Date.now());
-  const [dialog, setDialog] = useState<'end' | 'exit' | 'back' | 'reload' | null>(null);
+  const [dialog, setDialog] = useState<'end' | 'exit' | 'reload' | null>(null);
   const [mapKey, setMapKey] = useState(0);
-  const dirtyRef = useRef(dirty);
-  dirtyRef.current = dirty;
-  const leaving = useRef(false);
+  const [highlightEnabled, setHighlightEnabled] = useState(true);
+  const content = useRef<HTMLDivElement>(null);
   const pendingHref = useRef(`/exam/${test.id}`);
   const endHeading = useRef<HTMLHeadingElement>(null);
   const remaining = remainingSeconds(session, now);
   const closed = session.status !== 'in-progress' || remaining === 0;
   const locked = closed || issue === 'conflict';
+  useExamNavigationGuard(!closed && issue !== 'conflict', session.localId, () => setDialog('end'));
   const currentIndex = set.questions.findIndex((q) => q.id === session.currentQuestionId);
   const question = set.questions[currentIndex];
   const group = set.groups.find((item) => item.id === question.groupId)!;
   const answered = Object.keys(session.answers).length;
+  const partIds = [...new Set(set.questions.map((item) => item.partId))];
+  const partIndex = partIds.indexOf(group.partId);
+  const partGroups = set.groups.filter((item) => item.partId === group.partId);
+  const audioTracks = useMemo(
+    () =>
+      buildListeningAudioTracks(
+        set.questions.map((item) => ({ ...item, part: item.partId, orderNo: item.number })),
+        set.groups.map((item) => ({
+          ...item,
+          audioUrl:
+            preview === 'media-error'
+              ? '/demo/exam/missing-audio.wav'
+              : preview === 'media-missing'
+                ? null
+                : item.audioUrl,
+        })),
+      ),
+    [set, preview],
+  );
+  const navigate = (questionId: string, top = false) => {
+    dispatch({ type: 'navigate', questionId });
+    window.requestAnimationFrame(() => {
+      if (top) content.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else {
+        const target = document.getElementById(`exam-question-${questionId}`);
+        target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target?.focus({ preventScroll: true });
+      }
+    });
+  };
+  const navigatePart = (partId: number) => {
+    const first = set.questions.find((item) => item.partId === partId);
+    if (first) navigate(first.id, true);
+  };
   useEffect(() => {
     const tick = () => {
       setNow(Date.now());
@@ -66,29 +104,6 @@ function Player({
       endHeading.current?.focus();
     }
   }, [closed]);
-  // A same-URL guard entry lets Back be cancelled before Next unmounts this page.
-  // Native unload/reload is handled by the provider only when a write has failed.
-  useEffect(() => {
-    const id = session.localId;
-    if (window.history.state?.toeicExamGuard !== id)
-      window.history.pushState(
-        { ...window.history.state, toeicExamGuard: id },
-        '',
-        window.location.href,
-      );
-    const onPop = (event: PopStateEvent) => {
-      if (leaving.current || event.state?.toeicExamGuard === id) return;
-      if (dirtyRef.current) {
-        window.history.forward();
-        setDialog('back');
-      } else {
-        leaving.current = true;
-        window.history.back();
-      }
-    };
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
-  }, [session.localId]);
   const requestExit = (href: string) => {
     pendingHref.current = href;
     if (dirty) setDialog('exit');
@@ -102,58 +117,17 @@ function Player({
     else if (action === 'reload') {
       reloadDraft();
       setMapKey((value) => value + 1);
-    } else if (action === 'back') {
-      leaving.current = true;
-      window.history.go(-2);
     } else if (action === 'exit') {
-      leaving.current = true;
       router.push(pendingHref.current);
     }
   };
   return (
-    <div className="exam-player">
-      <header className="player-header">
-        <Button variant="ghost" onClick={exit}>
-          <Icon name="arrow" className="player-back-icon" width="17" />
-          Rời bài
-        </Button>
-        <div className="player-test-title">
-          <strong>{test.title}</strong>
-          <span>
-            Demo cục bộ · {session.selection.mode === 'PRACTICE' ? 'Luyện tập' : 'Thi thử'} ·{' '}
-            {session.selection.partIds.map((id) => `Part ${id}`).join(', ')}
-          </span>
-        </div>
-        <Badge tone="amber">Phiên demo cục bộ</Badge>
-        <div
-          className={`player-timer ${remaining <= 60 ? 'is-urgent' : ''}`}
-          role="timer"
-          aria-label="Thời gian còn lại"
-          aria-live="off"
-        >
-          <Icon name="clock" width="18" />
-          <strong>
-            {Math.floor(remaining / 3600) > 0
-              ? `${Math.floor(remaining / 3600)
-                  .toString()
-                  .padStart(2, '0')}:`
-              : ''}
-            {Math.floor((remaining / 60) % 60)
-              .toString()
-              .padStart(2, '0')}
-            :{(remaining % 60).toString().padStart(2, '0')}
-          </strong>
-          <span>còn lại</span>
-        </div>
+    <div className="reference-exam">
+      <header className="reference-exam-header">
+        <h1 className="reference-exam-title">{test.title}</h1>
       </header>
-      <div className="player-body">
-        <div className="player-demo-note">
-          <Icon name="info" width="17" />
-          <p>
-            <strong>Chế độ demo.</strong> Câu hỏi gốc minh họa có lặp để kiểm tra cấu trúc. Không
-            phải đề ETS; không chấm điểm, chưa có Attempt và chưa gửi đáp án lên server.
-          </p>
-        </div>
+      <div className="reference-exam-status">
+        <p>Demo cục bộ · Câu hỏi minh họa, chưa chấm điểm hoặc gửi đáp án lên server.</p>
         {session.qa === 'short-timer' && (
           <Alert>
             Đang kiểm tra hết giờ với thời lượng demo 15 giây. Phiên thông thường giữ thời lượng từ
@@ -185,111 +159,166 @@ function Player({
             </Button>
           </Alert>
         )}
-        {!dirty && issue !== 'conflict' && (
-          <p className="player-save-state">
-            <Icon name="check" width="15" />
-            Bản nháp hiện tại đã có trên trình duyệt này · chưa gửi lên server.
+      </div>
+      {closed ? (
+        <Panel className="player-closed">
+          <span className="player-closed-icon">
+            <Icon name={session.status === 'ended' ? 'check' : 'clock'} width="30" height="30" />
+          </span>
+          <h1 ref={endHeading} tabIndex={-1}>
+            {session.status === 'ended' ? 'Phiên demo đã kết thúc' : 'Đã hết thời gian làm bài'}
+          </h1>
+          <p>
+            Câu trả lời đã khóa. {answered}/{set.questions.length} câu có lựa chọn,{' '}
+            {set.questions.length - answered} câu chưa trả lời.
           </p>
-        )}
-        {closed ? (
-          <Panel className="player-closed">
-            <span className="player-closed-icon">
-              <Icon name={session.status === 'ended' ? 'check' : 'clock'} width="30" height="30" />
-            </span>
-            <h1 ref={endHeading} tabIndex={-1}>
-              {session.status === 'ended' ? 'Phiên demo đã kết thúc' : 'Đã hết thời gian làm bài'}
-            </h1>
-            <p>
-              Câu trả lời đã khóa. {answered}/{set.questions.length} câu có lựa chọn,{' '}
-              {set.questions.length - answered} câu chưa trả lời.
-            </p>
-            <Alert>
-              Đây chỉ là kết thúc phiên demo tại trình duyệt. Chưa nộp bài lên server, chưa chấm
-              điểm. Lịch sử demo được lưu riêng trên trình duyệt, không phải lịch sử tài khoản.
-            </Alert>
-            <HistoryNotice />
-            <div className="player-closed-actions">
-              <Button onClick={() => requestExit(localResultHref(session))}>
-                Xem thông tin phiên
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => requestExit(localResultHref(session, 'review'))}
-              >
-                Xem lại lựa chọn
-              </Button>
-              <Button variant="ghost" onClick={exit}>
-                Về chi tiết đề
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  requestExit(`/exam/${test.id}/prepare?${selectionQuery(session.selection)}`)
-                }
-              >
-                Chuẩn bị phiên mới
-              </Button>
-            </div>
-          </Panel>
-        ) : (
-          <>
-            <div className="player-section-bar">
-              <div>
-                <span className="eyebrow">{group.partId <= 4 ? 'LISTENING' : 'READING'}</span>
-                <h1>{group.title}</h1>
-              </div>
-              <span>
-                Câu {question.number} · vị trí {currentIndex + 1}/{set.questions.length}
-              </span>
-            </div>
-            <div className="player-grid">
-              <div className="player-main">
+          <Alert>
+            Đây chỉ là kết thúc phiên demo tại trình duyệt. Chưa nộp bài lên server, chưa chấm điểm.
+            Lịch sử demo được lưu riêng trên trình duyệt, không phải lịch sử tài khoản.
+          </Alert>
+          <HistoryNotice />
+          <div className="player-closed-actions">
+            <Button onClick={() => requestExit(localResultHref(session))}>
+              Xem thông tin phiên
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => requestExit(localResultHref(session, 'review'))}
+            >
+              Xem lại lựa chọn
+            </Button>
+            <Button variant="ghost" onClick={exit}>
+              Về chi tiết đề
+            </Button>
+            <ExamRetake test={test} previous={session} />
+          </div>
+        </Panel>
+      ) : (
+        <div className="reference-exam-layout">
+          <section
+            className="reference-exam-main"
+            ref={content}
+            aria-label={`Nội dung Part ${group.partId}`}
+          >
+            <ExamToolbar
+              audioTracks={audioTracks}
+              audioLabel="Audio minh họa toàn bộ phần nghe"
+              showAudio={group.partId <= 4}
+              highlightEnabled={highlightEnabled}
+              onHighlightChange={() => setHighlightEnabled((value) => !value)}
+              locked={locked}
+            />
+            <nav className="reference-exam-tabs" aria-label="Các phần của bài thi">
+              {partIds.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={id === group.partId ? 'is-active' : undefined}
+                  aria-current={id === group.partId ? 'page' : undefined}
+                  disabled={locked}
+                  onClick={() => navigatePart(id)}
+                >
+                  Part {id}
+                </button>
+              ))}
+            </nav>
+            <div className="reference-exam-content">
+              {partGroups.map((item) => (
                 <ExamQuestionGroup
-                  group={group}
+                  key={item.id}
+                  group={item}
                   set={set}
                   session={session}
                   locked={locked}
                   dispatch={dispatch}
                   preview={preview}
+                  reference
+                  highlightEnabled={highlightEnabled}
                 />
-                <nav className="player-question-nav" aria-label="Chuyển câu hỏi">
-                  <Button
-                    variant="secondary"
-                    disabled={locked || currentIndex === 0}
-                    onClick={() =>
-                      dispatch({ type: 'navigate', questionId: set.questions[currentIndex - 1].id })
-                    }
-                  >
-                    <Icon name="arrow" className="player-back-icon" width="16" />
-                    Câu trước
-                  </Button>
-                  <span>
-                    {currentIndex + 1} / {set.questions.length}
-                  </span>
-                  <Button
-                    disabled={locked || currentIndex === set.questions.length - 1}
-                    onClick={() =>
-                      dispatch({ type: 'navigate', questionId: set.questions[currentIndex + 1].id })
-                    }
-                  >
-                    Câu tiếp <Icon name="arrow" width="16" />
-                  </Button>
-                </nav>
-              </div>
-              <aside className="player-aside">
-                <ExamQuestionMap
-                  key={mapKey}
-                  set={set}
-                  session={session}
-                  dispatch={dispatch}
-                  locked={locked}
-                  onEnd={() => setDialog('end')}
-                />
-              </aside>
+              ))}
             </div>
-          </>
-        )}
-      </div>
+            <nav className="reference-exam-footer" aria-label="Chuyển phần thi">
+              <button
+                type="button"
+                disabled={locked || partIndex === 0}
+                onClick={() => navigatePart(partIds[partIndex - 1])}
+              >
+                <Icon name="arrow" className="player-back-icon" width="16" /> PHẦN TRƯỚC
+              </button>
+              <button
+                type="button"
+                disabled={locked || partIndex === partIds.length - 1}
+                onClick={() => navigatePart(partIds[partIndex + 1])}
+              >
+                TIẾP THEO <Icon name="arrow" width="16" />
+              </button>
+            </nav>
+          </section>
+          <aside
+            className="reference-exam-aside"
+            id="exam-question-sidebar"
+            tabIndex={-1}
+            aria-label="Thời gian và bảng câu hỏi"
+          >
+            <div
+              className={`reference-exam-timer ${remaining <= 60 ? 'is-urgent' : ''}`}
+              role="timer"
+              aria-label="Thời gian còn lại"
+              aria-live="off"
+            >
+              <span>Thời gian còn lại:</span>
+              <strong>
+                {Math.floor(remaining / 60)}:{(remaining % 60).toString().padStart(2, '0')}
+              </strong>
+            </div>
+            <button
+              type="button"
+              className="reference-exam-submit"
+              disabled={locked}
+              onClick={() => setDialog('end')}
+            >
+              KẾT THÚC DEMO
+            </button>
+            <details className="reference-exam-save">
+              <summary>Khôi phục/lưu bài làm</summary>
+              <p>{dirty ? 'Chưa lưu được thay đổi mới nhất.' : 'Đã lưu trên trình duyệt này.'}</p>
+              <button type="button" disabled={issue === 'conflict'} onClick={retrySave}>
+                Lưu nháp
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (dirty) setDialog('reload');
+                  else {
+                    reloadDraft();
+                    setMapKey((value) => value + 1);
+                  }
+                }}
+              >
+                Khôi phục bản đã lưu
+              </button>
+            </details>
+            <p className="reference-exam-review-note">
+              Chú ý: bạn có thể click vào số thứ tự câu hỏi trong bài để đánh dấu review.
+            </p>
+            <ExamQuestionMap
+              key={mapKey}
+              set={set}
+              session={session}
+              locked={locked}
+              onNavigate={navigate}
+            />
+          </aside>
+        </div>
+      )}
+      {!closed && (
+        <ExamMobileBar
+          seconds={remaining}
+          disabled={locked}
+          submitLabel="Kết thúc demo"
+          onSubmit={() => setDialog('end')}
+        />
+      )}
       <ExamDialog
         open={dialog !== null}
         title={

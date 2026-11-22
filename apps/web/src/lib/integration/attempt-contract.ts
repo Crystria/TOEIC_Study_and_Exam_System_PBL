@@ -112,6 +112,8 @@ export function parseAttempt(value: unknown) {
     questions,
     answers,
     durationSeconds: count(r.durationSeconds),
+    submittedAt: final && r.submittedAt != null ? date(r.submittedAt) : null,
+    completedAt: final && r.completedAt != null ? date(r.completedAt) : null,
     serverTime: date(r.serverTime),
     remainingSeconds: count(r.remainingSeconds),
     scoreDisclaimer: final && base.mode === 'FULL' ? optionalText(r.scoreDisclaimer) : null,
@@ -146,6 +148,20 @@ export function parseAttempt(value: unknown) {
 }
 export type ServerAttempt = ReturnType<typeof parseAttempt>;
 export type AttemptChoices = Record<string, string | null>;
+
+/** Final attempts have zero remaining time, including those submitted early. */
+export function attemptElapsedSeconds(attempt: ServerAttempt): number | null {
+  if (attempt.status === 'IN_PROGRESS') return null;
+  // Expiry is finalized at the deadline even if the server processes it later.
+  const endedAt =
+    attempt.completedAt ??
+    attempt.submittedAt ??
+    (attempt.status === 'EXPIRED' ? attempt.deadlineAt : null);
+  if (!endedAt) return null;
+  const elapsed = (Date.parse(endedAt) - Date.parse(attempt.startedAt)) / 1000;
+  if (!Number.isFinite(elapsed) || elapsed < 0) return null;
+  return Math.min(attempt.durationSeconds, Math.floor(elapsed));
+}
 
 /** Elapsed monotonic time cannot reset the server's remaining time on a React render. */
 export function remainingTime(seconds: number, elapsedMs: number) {

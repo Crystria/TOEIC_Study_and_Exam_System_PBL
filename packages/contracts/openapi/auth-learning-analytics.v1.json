@@ -3496,6 +3496,122 @@
         }
       }
     },
+    "/learning/admin/vocabulary-topics/{id}/vocabularies": {
+      "delete": {
+        "operationId": "archiveTopicVocabulary",
+        "tags": ["learning"],
+        "summary": "Archive all active vocabulary in a topic",
+        "description": "The vocabulary topic remains active. Repeating the request on an empty topic returns a deleted count of zero.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "x-access": "CONTENT_ADMIN",
+        "x-upstream-service": "learning",
+        "responses": {
+          "200": {
+            "description": "All active words in this topic were archived.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VocabularyBulkDeleted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid topic ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Content administrator role required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Active topic not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/learning/vocabularies": {
       "get": {
         "operationId": "listvocabularies",
@@ -4104,6 +4220,304 @@
             }
           }
         }
+      }
+    },
+    "/learning/admin/vocabularies/bulk": {
+      "post": {
+        "operationId": "createVocabularyBulk",
+        "tags": ["learning"],
+        "summary": "Create vocabulary items for one topic",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "x-access": "CONTENT_ADMIN",
+        "x-upstream-service": "learning",
+        "x-contract-status": "P0_TARGET_NOT_RUNTIME",
+        "responses": {
+          "201": {
+            "description": "Success. Target P0 contract, not implemented runtime.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VocabularyBulkCreated"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "413; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VocabularyBulkCreate"
+              }
+            }
+          }
+        },
+        "description": "Creates 1 to 50 vocabulary items in a single transaction and returns them in request order. A duplicate word in the topic or batch rejects the entire request."
+      }
+    },
+    "/learning/admin/vocabularies/import": {
+      "post": {
+        "operationId": "importVocabularyWorkbook",
+        "tags": ["learning"],
+        "summary": "Import vocabulary lists from a workbook",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "x-access": "CONTENT_ADMIN",
+        "x-upstream-service": "learning",
+        "x-contract-status": "P3_RUNTIME",
+        "responses": {
+          "201": {
+            "description": "Vocabulary lists imported.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VocabularyImportResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "413; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VocabularyImportCreate"
+              }
+            }
+          }
+        },
+        "description": "Imports up to 5,000 vocabulary items in one transaction. The source identifies the workbook or course across imports. Items are matched by list and word, and the result counts created, updated and unchanged items."
       }
     },
     "/learning/admin/vocabularies/{id}": {
@@ -7167,6 +7581,723 @@
         }
       }
     },
+    "/learning/flashcard-sessions": {
+      "post": {
+        "operationId": "createFlashcardSession",
+        "tags": ["learning"],
+        "summary": "createFlashcardSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "x-access": "AUTHENTICATED",
+        "x-upstream-service": "learning",
+        "x-contract-status": "P0_TARGET_NOT_RUNTIME",
+        "responses": {
+          "201": {
+            "description": "Success. Target P0 contract, not implemented runtime.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlashcardSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "413; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlashcardSessionCreate"
+              }
+            }
+          }
+        },
+        "description": "Start a flashcard and quiz session for a shared topic or an owned personal list. A session contains up to the requested limit."
+      }
+    },
+    "/learning/flashcard-sessions/{id}": {
+      "get": {
+        "operationId": "getFlashcardSession",
+        "tags": ["learning"],
+        "summary": "getFlashcardSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "x-access": "AUTHENTICATED",
+        "x-upstream-service": "learning",
+        "x-contract-status": "P0_TARGET_NOT_RUNTIME",
+        "responses": {
+          "200": {
+            "description": "Success. Target P0 contract, not implemented runtime.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlashcardSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "413; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "description": "Read an owned flashcard session and its saved ratings."
+      }
+    },
+    "/learning/flashcard-sessions/{id}/reviews": {
+      "post": {
+        "operationId": "saveFlashcardSessionReviews",
+        "tags": ["learning"],
+        "summary": "saveFlashcardSessionReviews",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "x-access": "AUTHENTICATED",
+        "x-upstream-service": "learning",
+        "x-contract-status": "P0_TARGET_NOT_RUNTIME",
+        "responses": {
+          "200": {
+            "description": "Success. Target P0 contract, not implemented runtime.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "413; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlashcardSessionDraft"
+              }
+            }
+          }
+        },
+        "description": "Save ratings and update their SM-2 schedules immediately. Retrying a saved rating with the same value is safe."
+      }
+    },
+    "/learning/flashcard-sessions/{id}/submit": {
+      "post": {
+        "operationId": "submitFlashcardSession",
+        "tags": ["learning"],
+        "summary": "submitFlashcardSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "x-access": "AUTHENTICATED",
+        "x-upstream-service": "learning",
+        "x-contract-status": "P0_TARGET_NOT_RUNTIME",
+        "responses": {
+          "200": {
+            "description": "Success. Target P0 contract, not implemented runtime.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlashcardSessionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "413; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlashcardSessionSubmit"
+              }
+            }
+          }
+        },
+        "description": "Grade the quiz after all flashcard ratings have been saved."
+      }
+    },
+    "/learning/flashcard-sessions/{id}/cancel": {
+      "post": {
+        "operationId": "cancelFlashcardSession",
+        "tags": ["learning"],
+        "summary": "cancelFlashcardSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Uuid"
+            }
+          }
+        ],
+        "x-access": "AUTHENTICATED",
+        "x-upstream-service": "learning",
+        "x-contract-status": "P0_TARGET_NOT_RUNTIME",
+        "responses": {
+          "200": {
+            "description": "Success. Target P0 contract, not implemented runtime.",
+            "headers": {
+              "X-Correlation-ID": {
+                "schema": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "409; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "413; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "429; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "503; stable code in Error. See P0 API rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "description": "Cancel an owned flashcard session. Saved reviews remain in the SM-2 schedule."
+      }
+    },
     "/analytics/progress": {
       "get": {
         "operationId": "getAnalytics_progress",
@@ -8369,6 +9500,20 @@
         "required": ["success"],
         "additionalProperties": true
       },
+      "VocabularyBulkDeleted": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": true
+          },
+          "deletedCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["success", "deletedCount"],
+        "additionalProperties": false
+      },
       "ProfilePatch": {
         "type": "object",
         "properties": {
@@ -8653,6 +9798,18 @@
             "minLength": 1,
             "maxLength": 255
           },
+          "partOfSpeech": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "phonetic": {
             "anyOf": [
               {
@@ -8669,6 +9826,18 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 10000
+          },
+          "englishDefinition": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "example": {
             "anyOf": [
@@ -8686,6 +9855,228 @@
         "required": ["topicId", "word", "definition"],
         "additionalProperties": false
       },
+      "VocabularyBulkCreate": {
+        "type": "object",
+        "properties": {
+          "topicId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "partOfSpeech": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "phonetic": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "definition": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "englishDefinition": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 10000
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "example": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 10000
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": ["word", "definition"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["topicId", "items"],
+        "additionalProperties": false
+      },
+      "VocabularyBulkCreated": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/Vocabulary"
+            }
+          }
+        },
+        "required": ["items"],
+        "additionalProperties": false
+      },
+      "VocabularyImportCreate": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "lists": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "words": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 2000,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "word": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                      },
+                      "partOfSpeech": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "phonetic": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "definition": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 10000
+                      },
+                      "englishDefinition": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 10000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "example": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 10000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": ["word", "definition"],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": ["name", "words"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["source", "lists"],
+        "additionalProperties": false
+      },
+      "VocabularyImportResult": {
+        "type": "object",
+        "properties": {
+          "listCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "wordCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "createdCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "updatedCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "unchangedCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["listCount", "wordCount", "createdCount", "updatedCount", "unchangedCount"],
+        "additionalProperties": false
+      },
       "VocabularyPatch": {
         "type": "object",
         "properties": {
@@ -8696,6 +10087,18 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 255
+          },
+          "partOfSpeech": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "phonetic": {
             "anyOf": [
@@ -8713,6 +10116,18 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 10000
+          },
+          "englishDefinition": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "example": {
             "anyOf": [
@@ -8745,6 +10160,18 @@
             "minLength": 1,
             "maxLength": 255
           },
+          "partOfSpeech": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "phonetic": {
             "anyOf": [
               {
@@ -8761,6 +10188,18 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 10000
+          },
+          "englishDefinition": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "example": {
             "anyOf": [
@@ -9623,6 +11062,251 @@
             },
             "minItems": 5,
             "maxItems": 5
+          }
+        },
+        "required": [
+          "sessionId",
+          "operationId",
+          "status",
+          "quizScore",
+          "quizTotal",
+          "completedAt",
+          "answers",
+          "progress"
+        ],
+        "additionalProperties": true
+      },
+      "FlashcardSessionCreate": {
+        "type": "object",
+        "properties": {
+          "topicId": {
+            "$ref": "#/components/schemas/Uuid",
+            "description": "ID of the shared vocabulary topic or the learner’s personal vocabulary list."
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["NEW", "REVIEW"]
+          },
+          "scope": {
+            "type": "string",
+            "enum": ["SHARED", "PERSONAL"]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum number of flashcards requested for this practice session."
+          }
+        },
+        "required": ["topicId", "mode", "scope", "limit"],
+        "additionalProperties": false
+      },
+      "FlashcardQuizQuestion": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "vocabularyId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 11000
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["WORD_TO_MEANING", "MEANING_CONFIRMATION"]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuizOption"
+            },
+            "minItems": 2,
+            "maxItems": 4
+          }
+        },
+        "required": ["questionId", "vocabularyId", "prompt", "direction", "options"],
+        "additionalProperties": false
+      },
+      "FlashcardSession": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "topicId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["NEW", "REVIEW"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["IN_PROGRESS", "COMPLETED", "CANCELED", "EXPIRED"]
+          },
+          "startedAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "vocabularies": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/Vocabulary"
+            }
+          },
+          "quiz": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/FlashcardQuizQuestion"
+            }
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FlashcardSessionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "enum": ["SHARED", "PERSONAL"]
+          },
+          "reviews": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/SessionReview"
+            }
+          }
+        },
+        "required": [
+          "sessionId",
+          "topicId",
+          "mode",
+          "status",
+          "startedAt",
+          "expiresAt",
+          "vocabularies",
+          "quiz",
+          "scope",
+          "reviews",
+          "result"
+        ],
+        "additionalProperties": true
+      },
+      "FlashcardSessionDraft": {
+        "type": "object",
+        "properties": {
+          "reviews": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/SessionReview"
+            }
+          }
+        },
+        "required": ["reviews"],
+        "additionalProperties": false
+      },
+      "FlashcardSessionSubmit": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "reviews": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/SessionReview"
+            }
+          },
+          "answers": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/QuizAnswer"
+            }
+          }
+        },
+        "required": ["operationId", "reviews", "answers"],
+        "additionalProperties": false
+      },
+      "FlashcardSessionResult": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "operationId": {
+            "$ref": "#/components/schemas/Uuid"
+          },
+          "status": {
+            "const": "COMPLETED"
+          },
+          "quizScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          },
+          "quizTotal": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "completedAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "questionId": {
+                  "$ref": "#/components/schemas/Uuid"
+                },
+                "selectedOption": {
+                  "type": "string",
+                  "enum": ["A", "B", "C", "D"]
+                },
+                "correctOption": {
+                  "type": "string",
+                  "enum": ["A", "B", "C", "D"]
+                },
+                "isCorrect": {
+                  "type": "boolean"
+                }
+              },
+              "required": ["questionId", "selectedOption", "correctOption", "isCorrect"],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 50
+          },
+          "progress": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgressSnapshot"
+            },
+            "minItems": 1,
+            "maxItems": 50
           }
         },
         "required": [

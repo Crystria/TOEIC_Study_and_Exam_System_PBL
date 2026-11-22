@@ -460,11 +460,17 @@ async function main() {
     await login('http://localhost:3006', credentials.accounts.user);
     await check(
       'B-final-audio-layout-keyboard-empty',
-      'Final shared audio layout at 3 viewports; mobile Escape restores focus; real empty search',
+      'Vocabulary layout without audio or API badge at 3 viewports; mobile Escape restores focus; real empty search',
       async () => {
         await go('http://localhost:3006', '/study/vocabulary/' + state.resources.topic.topicId);
-        await page.locator('audio').first().waitFor();
-        const web = await responsive('final-web-audio');
+        await page
+          .getByRole('heading', { name: state.resources.word0.word, exact: true })
+          .waitFor();
+        assert.equal(
+          await page.locator('.api-root :is(audio, .player-media-missing, .api-label)').count(),
+          0,
+        );
+        const web = await responsive('final-web-vocabulary');
         await page.setViewportSize({ width: 390, height: 844 });
         const menu = page.getByRole('button', { name: 'Mở menu học tập', exact: true });
         await menu.click();

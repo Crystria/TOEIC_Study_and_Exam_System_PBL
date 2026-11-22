@@ -64,10 +64,10 @@
 .api-root a,
 .api-login a {
   color: var(--api-blue);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  text-decoration: none;
 }
 .api-root button:not([class]),
+.api-root button.api-primary,
 .api-login button,
 .api-nav a {
   border: 1px solid #cbd5e1;
@@ -89,6 +89,41 @@
   background: #315bd6;
   color: white;
   border-color: #315bd6;
+}
+.api-auth-student form {
+  display: grid;
+  gap: 20px;
+}
+.api-auth-student fieldset {
+  margin: 0;
+}
+.api-login .api-auth-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgb(49 91 214 / 16%);
+  font-weight: 700;
+  transition: box-shadow 0.15s;
+}
+.api-login .api-auth-submit:hover:not(:disabled) {
+  box-shadow: 0 12px 28px rgb(49 91 214 / 22%);
+}
+.api-auth-switch {
+  margin: 28px 0 0;
+  text-align: center;
+}
+.api-auth-switch a {
+  font-weight: 700;
+}
+.api-auth-support {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 0.875rem;
 }
 .api-root a.cms-link-button {
   color: #fff;
@@ -132,6 +167,93 @@
 }
 .api-card p {
   margin: 10px 0;
+}
+.api-root a.api-exam-card {
+  display: block;
+  color: var(--api-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color 150ms,
+    background-color 150ms,
+    box-shadow 150ms;
+}
+.api-exam-card h2 {
+  color: var(--api-blue);
+}
+.api-root a.api-exam-card:hover {
+  border-color: #9ab2ed;
+  background: #fbfcff;
+  box-shadow: 0 4px 14px #315bd610;
+}
+.api-root a.api-exam-card:active {
+  background: #eff4ff;
+}
+.api-root a.api-exam-card:focus-visible {
+  outline: 3px solid var(--api-blue);
+  outline-offset: 3px;
+}
+.history-entry-cta {
+  color: var(--api-blue);
+  font-weight: 600;
+}
+.learning-library-card {
+  position: relative;
+  transition:
+    border-color 150ms,
+    background-color 150ms,
+    box-shadow 150ms;
+}
+.api-root .learning-library-card .learning-card-open {
+  position: static;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--api-blue);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.learning-card-open::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 16px;
+  content: '';
+  cursor: pointer;
+}
+.learning-library-card:hover {
+  border-color: #9ab2ed;
+  background: #fbfcff;
+  box-shadow: 0 4px 14px #315bd610;
+}
+.api-root .learning-library-card .learning-card-open:focus-visible {
+  outline: none;
+}
+.learning-card-open:focus-visible::after {
+  outline: 3px solid var(--api-blue);
+  outline-offset: 3px;
+}
+.learning-card-actions > :is(a, button) {
+  position: relative;
+  z-index: 2;
+}
+.vocabulary-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+.api-root .vocabulary-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  text-decoration: none;
+}
+.vocabulary-nav a[aria-current='page'] {
+  font-weight: 700;
 }
 .api-field {
   display: grid;
@@ -192,6 +314,265 @@
   align-items: center;
   gap: 10px;
   margin: 14px 0;
+}
+.api-search-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 20px 0;
+}
+.api-search-form .api-field {
+  flex: 1 1 220px;
+  max-width: 420px;
+  min-width: 0;
+  margin: 0;
+}
+.api-root .api-search-form input,
+.api-root .api-search-form button {
+  height: 46px;
+  min-height: 46px;
+  margin: 0;
+}
+.api-search-form button {
+  flex-shrink: 0;
+}
+.personal-learning-tabs {
+  display: flex;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid #dce3ef;
+  border-radius: 10px;
+  background: white;
+  margin: 20px 0;
+}
+.api-root .personal-learning-tabs a {
+  display: block;
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: #5c6f84;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.api-root .personal-learning-tabs a[aria-current='page'] {
+  background: #eaf0ff;
+  color: #315bd6;
+}
+.personal-learning-intro,
+.personal-learning-hint {
+  color: #64748b;
+  font-size: 14px;
+}
+.personal-learning-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 28px 0 8px;
+}
+.api-root .personal-learning-heading h2 {
+  margin: 0 0 3px;
+}
+.personal-learning-heading p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+.api-root .personal-learning-library button.api-primary {
+  border-color: #315bd6;
+  background: #315bd6;
+  color: white;
+}
+.personal-learning-back {
+  display: inline-block;
+  margin-top: 14px;
+}
+.personal-learning-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+.personal-learning-filters > form {
+  flex: 1 1 300px;
+}
+.personal-learning-notice {
+  padding: 10px 14px;
+  margin: 16px 0;
+  border: 1px solid #b8dcc8;
+  border-radius: 8px;
+  color: #236344;
+  background: #f0faf4;
+}
+.personal-learning-grid {
+  gap: 18px;
+  margin-top: 18px;
+}
+.personal-learning-grid .api-card {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.api-root .personal-learning-card h2 {
+  margin: 0 0 10px;
+}
+.personal-learning-definition {
+  flex: 1;
+  white-space: pre-wrap;
+}
+.personal-learning-example {
+  color: #66758a;
+  font-style: italic;
+}
+.personal-learning-pronunciation {
+  color: #66758a;
+  font-size: 14px;
+}
+.personal-learning-excerpt {
+  flex: 1;
+  color: #64748b;
+  white-space: pre-wrap;
+}
+.personal-learning-card-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 16px;
+  margin-top: auto;
+}
+.personal-learning-card-actions > a {
+  margin-right: auto;
+  font-size: 14px;
+}
+.api-root .personal-learning-card-actions button,
+.api-root .personal-learning-view button,
+.api-root .personal-learning-dialog button {
+  min-height: 40px;
+  padding: 7px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  color: #334e6b;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+.api-root button.personal-learning-delete {
+  border: 1px solid #edc4c8;
+  border-radius: 7px;
+  background: #fff7f7;
+  color: #b62d3e;
+}
+.personal-learning-view {
+  display: flex;
+  gap: 8px;
+  margin: 18px 0;
+}
+.api-root .personal-learning-view button[aria-pressed='true'] {
+  border-color: #315bd6;
+  color: #315bd6;
+  background: #eef3ff;
+}
+.personal-learning-category {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 3px 9px;
+  margin-bottom: 12px;
+  border-radius: 5px;
+  color: #536b9d;
+  background: #eef3fc;
+  font-size: 12px;
+}
+.personal-learning-dialog {
+  width: min(680px, calc(100% - 28px));
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  padding: 26px;
+  overflow-y: auto;
+  border: 1px solid #dce3ef;
+  border-radius: 14px;
+  color: #18314b;
+  background: white;
+  box-shadow: 0 24px 90px #14285033;
+  overflow-wrap: anywhere;
+}
+.personal-learning-dialog::backdrop {
+  background: #17243c70;
+}
+.api-root .personal-learning-dialog > h2 {
+  margin: 0 0 18px;
+  font-size: 22px;
+}
+.personal-learning-dialog textarea {
+  resize: vertical;
+}
+.personal-learning-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 20px;
+}
+.api-root .personal-learning-dialog button.api-primary {
+  border-color: #315bd6;
+  background: #315bd6;
+  color: white;
+}
+.personal-learning-preview {
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+.personal-learning-preview .learning-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.personal-learning-preview :is(ul, ol) {
+  padding-left: 24px;
+  list-style: revert;
+}
+@media (max-width: 480px) {
+  .api-search-form {
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  .api-search-form .api-field {
+    flex: 1 1 0;
+  }
+  .personal-learning-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .personal-learning-dialog {
+    padding: 20px 16px;
+  }
+}
+.api-exam-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+}
+.api-exam-map button[aria-current='step'] {
+  background: #e8efff;
+  border-color: #315bd6;
+  font-weight: 700;
+}
+.api-exam-timer {
+  position: sticky;
+  top: 8px;
+  z-index: 2;
+  padding: 12px 16px;
+  border: 1px solid #bdcadd;
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 .api-table {
   width: 100%;

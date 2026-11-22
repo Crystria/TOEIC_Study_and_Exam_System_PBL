@@ -30,7 +30,7 @@ export class TestsController {
   }
 
   @ApiBearerAuth()
-  @Roles(RoleCode.SYSTEM_ADMIN, RoleCode.CONTENT_ADMIN)
+  @Roles(RoleCode.CONTENT_ADMIN)
   @Post()
   @ApiOperation({ summary: 'Tạo đề thi' })
   create(@Body() dto: CreateTestDto, @CurrentUser('sub') userId: string) {
@@ -38,14 +38,14 @@ export class TestsController {
   }
 
   @ApiBearerAuth()
-  @Roles(RoleCode.SYSTEM_ADMIN, RoleCode.CONTENT_ADMIN)
+  @Roles(RoleCode.CONTENT_ADMIN)
   @Patch(':id')
   @ApiOperation({ summary: 'Cập nhật đề thi / cấu trúc' })
   update(@Param('id') id: string, @Body() dto: UpdateTestDto) {
     return this.testsService.update(id, dto);
   }
   @Delete(':id')
-  @Roles(RoleCode.CONTENT_ADMIN, RoleCode.SYSTEM_ADMIN)
+  @Roles(RoleCode.CONTENT_ADMIN)
   remove(@Param('id') id: string) {
     return this.testsService.remove(id);
   }

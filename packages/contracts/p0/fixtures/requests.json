@@ -110,6 +110,49 @@
     }
   },
   {
+    "name": "flashcard-session-personal-single-card",
+    "definition": "FlashcardSessionCreate",
+    "valid": true,
+    "data": {
+      "topicId": "00000065-0000-4000-8000-000000000000",
+      "mode": "REVIEW",
+      "scope": "PERSONAL",
+      "limit": 1
+    }
+  },
+  {
+    "name": "flashcard-session-limit-over-maximum",
+    "definition": "FlashcardSessionCreate",
+    "valid": false,
+    "expectedStage": "schema",
+    "data": {
+      "topicId": "00000065-0000-4000-8000-000000000000",
+      "mode": "NEW",
+      "scope": "SHARED",
+      "limit": 51
+    }
+  },
+  {
+    "name": "flashcard-session-single-answer",
+    "definition": "FlashcardSessionSubmit",
+    "valid": true,
+    "data": {
+      "operationId": "0000001e-0000-4000-8000-000000000000",
+      "reviews": [
+        {
+          "vocabularyId": "00000066-0000-4000-8000-000000000000",
+          "quality": 3
+        }
+      ],
+      "answers": [
+        {
+          "questionId": "00000067-0000-4000-8000-000000000000",
+          "selectedOption": "A"
+        }
+      ]
+    }
+  },
+  {
     "name": "session-five",
     "definition": "SessionSubmit",
     "valid": true,

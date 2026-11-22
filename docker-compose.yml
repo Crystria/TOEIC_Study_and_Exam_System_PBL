@@ -6,7 +6,7 @@ services:
     container_name: toeic-mailpit
     restart: unless-stopped
     ports:
-      - '127.0.0.1:8025:8025'
+      - '127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025'
 
   postgres:
     image: postgres:16-alpine

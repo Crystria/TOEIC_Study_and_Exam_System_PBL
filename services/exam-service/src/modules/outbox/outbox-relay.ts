@@ -23,6 +23,7 @@ export class ExamOutboxRelay implements OnModuleInit, OnModuleDestroy {
   private timer?: NodeJS.Timeout;
   private running?: Promise<void>;
   private closing = false;
+  private deadLetterQueueReady = false;
   private readonly logger = new Logger(ExamOutboxRelay.name);
   constructor(
     private readonly prisma: PrismaService,
@@ -30,11 +31,12 @@ export class ExamOutboxRelay implements OnModuleInit, OnModuleDestroy {
     private readonly config: ConfigService = new ConfigService(),
   ) {}
   async onModuleInit() {
-    const prefix = this.config.get<string>('ANALYTICS_QUEUE_PREFIX');
-    await this.messaging.declareQueue(
-      (prefix ? prefix + '.' : '') + 'exam-outbox-dlq',
-      'exam.outbox.dead',
-    );
+    try {
+      await this.ensureDeadLetterQueue();
+    } catch {
+      this.logger.warn('Outbox queue is not ready; provisioning will be retried before polling');
+    }
+    if (this.closing) return;
     this.timer = setInterval(() => {
       if (this.running || this.closing) return;
       this.running = this.poll()
@@ -45,12 +47,25 @@ export class ExamOutboxRelay implements OnModuleInit, OnModuleDestroy {
     }, 500);
     this.timer.unref();
   }
+  private async ensureDeadLetterQueue() {
+    if (this.deadLetterQueueReady) return;
+    const prefix = this.config.get<string>('ANALYTICS_QUEUE_PREFIX');
+    await this.messaging.declareQueue(
+      (prefix ? prefix + '.' : '') + 'exam-outbox-dlq',
+      'exam.outbox.dead',
+    );
+    this.deadLetterQueueReady = true;
+  }
   async onModuleDestroy() {
     this.closing = true;
     clearInterval(this.timer);
     await this.running;
   }
   async poll() {
+    if (this.closing) return;
+    // Do not claim rows or consume event retries until the holding queue exists.
+    await this.ensureDeadLetterQueue();
+    if (this.closing) return;
     await this.prisma.$transaction(
       async (tx) => {
         const events = await tx.$queryRaw<

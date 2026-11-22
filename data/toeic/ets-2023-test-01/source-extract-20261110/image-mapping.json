@@ -1,0 +1,1058 @@
+[
+  {
+    "assetId": "part1-example",
+    "imageFile": "images/assets/part1-example.png",
+    "sha256": "311b15e82f9debd3505723c60c47ae7bd4fb7728155b5fdd41c799f4102dbe8f",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 2,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      390,
+      860,
+      1580,
+      1620
+    ],
+    "questionNumbers": [],
+    "role": "EXAMPLE_PHOTO",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "q001-photo",
+    "imageFile": "images/assets/q001-photo.png",
+    "sha256": "c08aabfd20932592f0bf745877d2d2979ced0983c245761c6e362f618e190546",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 3,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      570,
+      150,
+      1335,
+      1260
+    ],
+    "questionNumbers": [
+      1
+    ],
+    "role": "QUESTION_PHOTO",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "q002-photo",
+    "imageFile": "images/assets/q002-photo.png",
+    "sha256": "1d040b202c6ed0364b4e5be8749d6e17c7b332ecc4e9f96dd00cee297f948ac0",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 3,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      350,
+      1440,
+      1540,
+      2280
+    ],
+    "questionNumbers": [
+      2
+    ],
+    "role": "QUESTION_PHOTO",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "q003-photo",
+    "imageFile": "images/assets/q003-photo.png",
+    "sha256": "e36cf155018f6c3011ef8333faf1118b6e8408c5a4f6911647dd49e1126f498f",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 4,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      400,
+      155,
+      1590,
+      1010
+    ],
+    "questionNumbers": [
+      3
+    ],
+    "role": "QUESTION_PHOTO",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "q004-photo",
+    "imageFile": "images/assets/q004-photo.png",
+    "sha256": "cbb17cef6990dc7fe4946148dc873dd9d8dee86d44c16530e93b8f5d162bc652",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 4,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      400,
+      1180,
+      1590,
+      2040
+    ],
+    "questionNumbers": [
+      4
+    ],
+    "role": "QUESTION_PHOTO",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "q005-photo",
+    "imageFile": "images/assets/q005-photo.png",
+    "sha256": "1b6c6123d1814b118fb4521ef4f9b7bd98299cd3f8f77a5662ca9565a75d9da7",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 5,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      360,
+      150,
+      1540,
+      1020
+    ],
+    "questionNumbers": [
+      5
+    ],
+    "role": "QUESTION_PHOTO",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "q006-photo",
+    "imageFile": "images/assets/q006-photo.png",
+    "sha256": "e3153e28864d743e7a63f82909852d8ba895e97b82b0ee1cda1d8dd683ec39a4",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 5,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      360,
+      1180,
+      1540,
+      2045
+    ],
+    "questionNumbers": [
+      6
+    ],
+    "role": "QUESTION_PHOTO",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g062-064-graphic",
+    "imageFile": "images/assets/g062-064-graphic.png",
+    "sha256": "9b8c774be32f02d20c4c76bbb8b7bc24a19011c6bca74cfd976148eaeb85701a",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 9,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      1045,
+      145,
+      1665,
+      680
+    ],
+    "questionNumbers": [
+      62,
+      63,
+      64
+    ],
+    "role": "LISTENING_GRAPHIC",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g065-067-graphic",
+    "imageFile": "images/assets/g065-067-graphic.png",
+    "sha256": "beced708eff567b906e26ca93ebdbef030e7e18e4aeec26b9773e452e1c81c5d",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 10,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      270,
+      140,
+      855,
+      600
+    ],
+    "questionNumbers": [
+      65,
+      66,
+      67
+    ],
+    "role": "LISTENING_GRAPHIC",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g068-070-graphic",
+    "imageFile": "images/assets/g068-070-graphic.png",
+    "sha256": "39d6b2bd981e208cc3cf55fa986b7fe4ff32617157ddeacba5d552dc91187442",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 10,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      1020,
+      145,
+      1665,
+      615
+    ],
+    "questionNumbers": [
+      68,
+      69,
+      70
+    ],
+    "role": "LISTENING_GRAPHIC",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g095-097-graphic",
+    "imageFile": "images/assets/g095-097-graphic.png",
+    "sha256": "ade9db408a4c78fc48a93b96fd49598aa4d653a128de62536172270bbc829ab7",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 13,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      245,
+      145,
+      890,
+      550
+    ],
+    "questionNumbers": [
+      95,
+      96,
+      97
+    ],
+    "role": "LISTENING_GRAPHIC",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g098-100-graphic",
+    "imageFile": "images/assets/g098-100-graphic.png",
+    "sha256": "fc5331ff4c750c965b51ca43f12bbf6bf5edcfde1c7227afc062dfd4ffa6fe6d",
+    "sourcePdf": "docs\\TEST 1\\1.1. ĐỀ ETS 2023 LC TEST 01.pdf",
+    "pdfPage": 13,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      1040,
+      140,
+      1665,
+      655
+    ],
+    "questionNumbers": [
+      98,
+      99,
+      100
+    ],
+    "role": "LISTENING_GRAPHIC",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g131-134-document-1",
+    "imageFile": "images/assets/g131-134-document-1.png",
+    "sha256": "c9be58ea15e07a3938ef3869ef870e9e8eae3491a6f7601958f8e8729c4b23c0",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 5,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      280,
+      635,
+      1635,
+      1405
+    ],
+    "questionNumbers": [
+      131,
+      132,
+      133,
+      134
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g131-134-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g135-138-document-1",
+    "imageFile": "images/assets/g135-138-document-1.png",
+    "sha256": "041add72b569e995b45eed7bf4229c90bad926e7be6571605fcb08fbc68ebd04",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 6,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      275,
+      300,
+      1650,
+      1030
+    ],
+    "questionNumbers": [
+      135,
+      136,
+      137,
+      138
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g135-138-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g139-142-document-1",
+    "imageFile": "images/assets/g139-142-document-1.png",
+    "sha256": "e8df1d069bace4f34ef90e898042a6daa3b2636b86e12275dd5ed4a2a0377110",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 7,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      270,
+      305,
+      1615,
+      1390
+    ],
+    "questionNumbers": [
+      139,
+      140,
+      141,
+      142
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g139-142-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g143-146-document-1",
+    "imageFile": "images/assets/g143-146-document-1.png",
+    "sha256": "681c5b349874196ab1c3d35ab3c2660602cd9d7ee03619dbd0762ba7ad3bfdcb",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 8,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      280,
+      315,
+      1650,
+      1030
+    ],
+    "questionNumbers": [
+      143,
+      144,
+      145,
+      146
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g143-146-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g147-148-document-1",
+    "imageFile": "images/assets/g147-148-document-1.png",
+    "sha256": "c19c02aa4f2912dc19bf0af0c262fe1be096a0ebee6171931287016fca49a576",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 9,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      470,
+      645,
+      1475,
+      1395
+    ],
+    "questionNumbers": [
+      147,
+      148
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g147-148-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g149-150-document-1",
+    "imageFile": "images/assets/g149-150-document-1.png",
+    "sha256": "817cd0cccdeb535ccd1b76fdd89e01cdaf74d6a7685ccbce4c47e5719fe86220",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 10,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      360,
+      300,
+      1650,
+      965
+    ],
+    "questionNumbers": [
+      149,
+      150
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g149-150-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g151-153-document-1",
+    "imageFile": "images/assets/g151-153-document-1.png",
+    "sha256": "8215d4d6cff08b9272b759a6d78f9e6320676095621cbe41f4991bad3e64671e",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 11,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      280,
+      300,
+      1635,
+      900
+    ],
+    "questionNumbers": [
+      151,
+      152,
+      153
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g151-153-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed",
+    "textLayout": "LEFT_COLUMN_THEN_RIGHT_COLUMN"
+  },
+  {
+    "assetId": "g154-155-document-1",
+    "imageFile": "images/assets/g154-155-document-1.png",
+    "sha256": "41122983298a55736db945ee2bbd41c10f1e2556f21017e35118217691285007",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 12,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      525,
+      300,
+      1405,
+      1400
+    ],
+    "questionNumbers": [
+      154,
+      155
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g154-155-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g156-157-document-1",
+    "imageFile": "images/assets/g156-157-document-1.png",
+    "sha256": "8381e4bae8ea6e9065494ec6ebc219662da3b599dc70605071fbf66cabf05403",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 13,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      340,
+      300,
+      1640,
+      1245
+    ],
+    "questionNumbers": [
+      156,
+      157
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g156-157-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g158-161-document-1",
+    "imageFile": "images/assets/g158-161-document-1.png",
+    "sha256": "9477fd044a3fd9007ce666f0e24d7453daab295ab4185b8746693f7fa08df100",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 14,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      350,
+      300,
+      1645,
+      1400
+    ],
+    "questionNumbers": [
+      158,
+      159,
+      160,
+      161
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g158-161-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g162-165-document-1",
+    "imageFile": "images/assets/g162-165-document-1.png",
+    "sha256": "92b35b9b10ca8331298b2a349508ae5b84722025bff14e5be6643e11278ee6c5",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 16,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      360,
+      300,
+      1650,
+      1410
+    ],
+    "questionNumbers": [
+      162,
+      163,
+      164,
+      165
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g162-165-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g166-168-document-1",
+    "imageFile": "images/assets/g166-168-document-1.png",
+    "sha256": "77be58e34d9299c74fafc5b26780153a1ec186f844b9ad327685c9e97fe9a56f",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 18,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      340,
+      300,
+      1625,
+      1240
+    ],
+    "questionNumbers": [
+      166,
+      167,
+      168
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g166-168-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g169-171-document-1",
+    "imageFile": "images/assets/g169-171-document-1.png",
+    "sha256": "6f6157eca4b6471bae2a05b6ab2260a8549ab93368504ffca1a88d2892f8dbba",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 19,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      340,
+      300,
+      1585,
+      1005
+    ],
+    "questionNumbers": [
+      169,
+      170,
+      171
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g169-171-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g172-175-document-1",
+    "imageFile": "images/assets/g172-175-document-1.png",
+    "sha256": "a3fa8b5b48654a3135e80fd05b551547aeefc1f992904480824181d6a4cf252a",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 20,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      275,
+      290,
+      1645,
+      1080
+    ],
+    "questionNumbers": [
+      172,
+      173,
+      174,
+      175
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g172-175-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed",
+    "textLayout": "LEFT_COLUMN_THEN_RIGHT_COLUMN"
+  },
+  {
+    "assetId": "g176-180-document-1",
+    "imageFile": "images/assets/g176-180-document-1.png",
+    "sha256": "26042112141f99272230f148da4fa09d4be2898df34b7335c204dc8a6bbce350",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 22,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      450,
+      300,
+      1550,
+      1190
+    ],
+    "questionNumbers": [
+      176,
+      177,
+      178,
+      179,
+      180
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g176-180-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g176-180-document-2",
+    "imageFile": "images/assets/g176-180-document-2.png",
+    "sha256": "41d0ae90fb8553c08408a210f925ab63c6bfc280e434bf6709fe5ce21f26b87f",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 22,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      360,
+      1230,
+      1650,
+      2115
+    ],
+    "questionNumbers": [
+      176,
+      177,
+      178,
+      179,
+      180
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 2,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g176-180-document-2.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g181-185-document-1",
+    "imageFile": "images/assets/g181-185-document-1.png",
+    "sha256": "52e25af27acf32196e1d63542940de0335919906ec0f33b8287539bbb049512f",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 24,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      360,
+      300,
+      1650,
+      1200
+    ],
+    "questionNumbers": [
+      181,
+      182,
+      183,
+      184,
+      185
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g181-185-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g181-185-document-2",
+    "imageFile": "images/assets/g181-185-document-2.png",
+    "sha256": "ec374dc70fa7dc8715cc4f43e367a3b1fd7561221058680eff4162cef74277cb",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 24,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      380,
+      1280,
+      1575,
+      1920
+    ],
+    "questionNumbers": [
+      181,
+      182,
+      183,
+      184,
+      185
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 2,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g181-185-document-2.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g186-190-document-1",
+    "imageFile": "images/assets/g186-190-document-1.png",
+    "sha256": "21b73c069ffbf1fa47367802a21a4c0e8e33898123a9c9bee4ba7d8bfec93d7c",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 26,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      370,
+      105,
+      1595,
+      775
+    ],
+    "questionNumbers": [
+      186,
+      187,
+      188,
+      189,
+      190
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g186-190-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g186-190-document-2",
+    "imageFile": "images/assets/g186-190-document-2.png",
+    "sha256": "a19a6d4d99df094ed10cf66561d0b47807848fb865bdb9f22e0a25e1b4ddbae0",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 26,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      335,
+      800,
+      1640,
+      1540
+    ],
+    "questionNumbers": [
+      186,
+      187,
+      188,
+      189,
+      190
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 2,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g186-190-document-2.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g186-190-document-3",
+    "imageFile": "images/assets/g186-190-document-3.png",
+    "sha256": "2bd0c18bfb6b846529f7c5c9b81facfb024c4b211f3c05829e63823f7996a11c",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 27,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      370,
+      245,
+      1545,
+      990
+    ],
+    "questionNumbers": [
+      186,
+      187,
+      188,
+      189,
+      190
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 3,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g186-190-document-3.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g191-195-document-1",
+    "imageFile": "images/assets/g191-195-document-1.png",
+    "sha256": "2fdd6f9e3b8c59dd2705d6ee5b8fe355f23526af38875b3f40d64f03f45e4134",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 28,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      430,
+      300,
+      1600,
+      920
+    ],
+    "questionNumbers": [
+      191,
+      192,
+      193,
+      194,
+      195
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g191-195-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g191-195-document-2",
+    "imageFile": "images/assets/g191-195-document-2.png",
+    "sha256": "7e0c61d389207e12b9ca5f651506ebf08ab02e9a663c2a79563e8018fd21a0e5",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 28,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      360,
+      975,
+      1650,
+      1840
+    ],
+    "questionNumbers": [
+      191,
+      192,
+      193,
+      194,
+      195
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 2,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g191-195-document-2.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g191-195-document-3",
+    "imageFile": "images/assets/g191-195-document-3.png",
+    "sha256": "fbd5ffb1487d801d69178427803db6d4b653868f305b4f9c18923effbefe4ea4",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 29,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      530,
+      255,
+      1415,
+      805
+    ],
+    "questionNumbers": [
+      191,
+      192,
+      193,
+      194,
+      195
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 3,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g191-195-document-3.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g196-200-document-1",
+    "imageFile": "images/assets/g196-200-document-1.png",
+    "sha256": "6d3fb464d81788533176d9b0631287689503d534e9dcd8175be31481adca5195",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 30,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      675,
+      300,
+      1250,
+      1250
+    ],
+    "questionNumbers": [
+      196,
+      197,
+      198,
+      199,
+      200
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 1,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g196-200-document-1.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g196-200-document-2",
+    "imageFile": "images/assets/g196-200-document-2.png",
+    "sha256": "743a921bd87660562e088918b5fe9129808d4f92d9cd61e19f52899849b88ac8",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 30,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      350,
+      1330,
+      1650,
+      2245
+    ],
+    "questionNumbers": [
+      196,
+      197,
+      198,
+      199,
+      200
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 2,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g196-200-document-2.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  },
+  {
+    "assetId": "g196-200-document-3",
+    "imageFile": "images/assets/g196-200-document-3.png",
+    "sha256": "7ef98e4e37aca2642eb5db5b86cd057ae5142402c8ef0c76972fe812afe1eaef",
+    "sourcePdf": "docs\\TEST 1\\1.2. ĐỀ ETS 2023 RC TEST 01.pdf",
+    "pdfPage": 31,
+    "pageSize": [
+      1932,
+      2500
+    ],
+    "cropPixels": [
+      350,
+      175,
+      1650,
+      1095
+    ],
+    "questionNumbers": [
+      196,
+      197,
+      198,
+      199,
+      200
+    ],
+    "role": "PASSAGE_DOCUMENT",
+    "documentOrder": 3,
+    "layoutReviewed": true,
+    "ocrTextFile": "passages/g196-200-document-3.raw-ocr.txt",
+    "layoutEvidence": "Contact sheets and source-page inspection in tmp/test1-source-process-20261110-064502-898/reviewed"
+  }
+]

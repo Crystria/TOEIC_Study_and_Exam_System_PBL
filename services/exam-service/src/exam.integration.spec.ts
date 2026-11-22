@@ -36,7 +36,7 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
     qb: QbPrisma,
     analytics: AnalyticsPrisma,
     redis: RedisService;
-  let testId: string, admin: string, owner: string;
+  let testId: string, admin: string, systemAdmin: string, owner: string;
   const users = new Set<string>(),
     tests = new Set<string>(),
     data = fullFixture();
@@ -210,7 +210,8 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
     app.get(ConfigService).set('ANALYTICS_QUEUE_PREFIX', 'p3-exam-tests-' + process.pid);
     await app.init();
     await eventually(async () => expect(await redis.getClient().ping()).toBe('PONG'));
-    admin = token(['SYSTEM_ADMIN']).jwt;
+    admin = token(['CONTENT_ADMIN']).jwt;
+    systemAdmin = token(['SYSTEM_ADMIN']).jwt;
     owner = token().jwt;
     const response = await api()
       .post('/api/v1/tests')
@@ -274,11 +275,31 @@ integration('Exam Full/Part workflow with real PostgreSQL/Redis/gRPC/RabbitMQ/An
     await qb?.$disconnect();
   }, 60_000);
 
-  it('enforces JWT and admin roles; rejects malformed Full test structures', async () => {
+  it('enforces JWT and content-admin writes; rejects malformed Full test structures', async () => {
     expect((await api().get('/api/v1/tests')).status).toBe(401);
     const body = { title: 'Bad', durationSeconds: 7200, questions: data.items.slice(1) };
     expect(
       (await api().post('/api/v1/tests').auth(owner, { type: 'bearer' }).send(body)).status,
+    ).toBe(403);
+    expect((await api().get('/api/v1/tests').auth(systemAdmin, { type: 'bearer' })).status).toBe(
+      200,
+    );
+    expect(
+      (await api().get(`/api/v1/tests/${testId}`).auth(systemAdmin, { type: 'bearer' })).status,
+    ).toBe(200);
+    expect(
+      (await api().post('/api/v1/tests').auth(systemAdmin, { type: 'bearer' }).send(body)).status,
+    ).toBe(403);
+    expect(
+      (
+        await api()
+          .patch(`/api/v1/tests/${testId}`)
+          .auth(systemAdmin, { type: 'bearer' })
+          .send({ title: 'Forbidden update' })
+      ).status,
+    ).toBe(403);
+    expect(
+      (await api().delete(`/api/v1/tests/${testId}`).auth(systemAdmin, { type: 'bearer' })).status,
     ).toBe(403);
     expect(
       (await api().post('/api/v1/tests').auth(admin, { type: 'bearer' }).send(body)).status,

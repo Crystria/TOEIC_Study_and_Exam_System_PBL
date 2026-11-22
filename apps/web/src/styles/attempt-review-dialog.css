@@ -1,0 +1,374 @@
+.attempt-review-dialog {
+  width: min(960px, calc(100vw - 40px));
+  max-width: none;
+  max-height: 90vh;
+  max-height: 90dvh;
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  color: #26334c;
+  font-size: 15px;
+  line-height: 1.6;
+  box-shadow: 0 22px 80px rgb(13 28 56 / 24%);
+}
+
+.attempt-review-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.attempt-review-dialog::backdrop {
+  background: rgb(16 26 46 / 55%);
+}
+
+.attempt-review-dialog .attempt-review-dialog-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 28px;
+  border-bottom: 1px solid #e7ebf1;
+}
+
+.attempt-review-dialog .attempt-review-dialog-header h2 {
+  margin: 0;
+  color: #273c64;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.attempt-review-dialog button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.attempt-review-dialog button:focus-visible,
+.attempt-review-dialog summary:focus-visible {
+  outline: 3px solid #4169b6;
+  outline-offset: 3px;
+}
+
+.attempt-review-dialog .attempt-review-dialog-close {
+  flex-shrink: 0;
+  width: 36px;
+  min-height: 36px;
+  padding: 6px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #6d788a;
+}
+
+.attempt-review-dialog .attempt-review-dialog-close:hover {
+  background: #f0f3f8;
+  color: #273c64;
+}
+
+.attempt-review-dialog .attempt-review-dialog-body {
+  min-height: 0;
+  padding: 26px 32px 30px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
+}
+
+.attempt-review-dialog .attempt-review-dialog-part {
+  display: inline-flex;
+  padding: 4px 13px;
+  margin-bottom: 22px;
+  border-radius: 5px;
+  background: #eaf0fc;
+  color: #375ca1;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.attempt-review-dialog .attempt-review-dialog-stimulus {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e9edf3;
+}
+
+.attempt-review-dialog .attempt-review-dialog-stimulus > img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 440px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.attempt-review-dialog .lesson-markdown {
+  min-width: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1.75;
+}
+
+.attempt-review-dialog .lesson-markdown > :first-child {
+  margin-top: 0;
+}
+
+.attempt-review-dialog .lesson-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.attempt-review-dialog .lesson-markdown :is(h2, h3, h4) {
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.attempt-review-dialog .lesson-markdown :is(table, pre) {
+  max-width: 100%;
+}
+
+.attempt-review-dialog .attempt-review-dialog-question-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.attempt-review-dialog .attempt-review-dialog-question-heading h3 {
+  margin: 0;
+  color: #2d4168;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.attempt-review-dialog .attempt-review-dialog-answer-state {
+  color: #69758a;
+  font-size: 13px;
+}
+
+.attempt-review-dialog .attempt-review-dialog-answer-state.is-correct {
+  color: #21815d;
+}
+
+.attempt-review-dialog .attempt-review-dialog-answer-state.is-wrong {
+  color: #c24667;
+}
+
+.attempt-review-dialog .attempt-review-dialog-options {
+  display: grid;
+  gap: 9px;
+  padding: 0;
+  margin: 20px 0 0;
+  list-style: none;
+}
+
+.attempt-review-dialog .attempt-review-dialog-options > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid #e7ebf1;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.attempt-review-dialog .attempt-review-dialog-options > li.is-correct {
+  border-color: #b8e1cd;
+  background: #edf8f1;
+  color: #21764f;
+}
+
+.attempt-review-dialog .attempt-review-dialog-options > li.is-wrong {
+  border-color: #f0c4cf;
+  background: #fff0f3;
+  color: #a83c5b;
+}
+
+.attempt-review-dialog .attempt-review-dialog-radio {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 5px;
+  border: 1.5px solid #a9b3c2;
+  border-radius: 50%;
+}
+
+.attempt-review-dialog .is-correct .attempt-review-dialog-radio {
+  border-color: #3b9a70;
+}
+
+.attempt-review-dialog .is-wrong .attempt-review-dialog-radio {
+  border-color: #c35877;
+}
+
+.attempt-review-dialog .attempt-review-dialog-radio.is-checked {
+  border: 5px solid currentColor;
+}
+
+.attempt-review-dialog .attempt-review-dialog-option-code {
+  flex-shrink: 0;
+  line-height: 1.75;
+}
+
+.attempt-review-dialog .attempt-review-dialog-option-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.attempt-review-dialog .attempt-review-dialog-option-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.attempt-review-dialog .attempt-review-dialog-correct-answer {
+  padding: 13px 0 4px;
+  margin: 0 0 20px;
+  color: #21815d;
+  font-size: 14px;
+}
+
+.attempt-review-dialog .attempt-review-dialog-correct-answer.is-unavailable {
+  color: #6b778b;
+}
+
+.attempt-review-dialog .attempt-review-dialog-details {
+  margin-top: 12px;
+  border: 1px solid #e1e7f1;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.attempt-review-dialog .attempt-review-dialog-details summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 16px;
+  border-radius: 7px;
+  background: #f5f8fe;
+  color: #385b97;
+  font-size: 14px;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.attempt-review-dialog .attempt-review-dialog-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.attempt-review-dialog .attempt-review-dialog-details summary > svg:last-child {
+  margin-left: auto;
+  transition: transform 150ms ease;
+}
+
+.attempt-review-dialog .attempt-review-dialog-details[open] summary > svg:last-child {
+  transform: rotate(180deg);
+}
+
+.attempt-review-dialog .attempt-review-dialog-details-content {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+
+.attempt-review-dialog .attempt-review-dialog-details-content > p {
+  margin: 0;
+  color: #6b778b;
+}
+
+.attempt-review-dialog .attempt-review-dialog-footer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 28px;
+  border-top: 1px solid #e7ebf1;
+  background: #fff;
+}
+
+.attempt-review-dialog .attempt-review-dialog-footer > button {
+  min-height: 38px;
+  padding: 7px 13px;
+  border: 1px solid #d7e1f2;
+  border-radius: 6px;
+  background: #f0f5ff;
+  color: #3c5e99;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.attempt-review-dialog .attempt-review-dialog-footer > button:hover:enabled {
+  background: #e3edff;
+}
+
+.attempt-review-dialog .attempt-review-dialog-footer > button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.attempt-review-dialog .attempt-review-dialog-footer > span {
+  color: #778297;
+  font-size: 13px;
+}
+
+.attempt-review-dialog .attempt-review-dialog-previous {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 600px) {
+  .attempt-review-dialog {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 28px);
+    font-size: 14px;
+    border-radius: 9px;
+  }
+
+  .attempt-review-dialog .attempt-review-dialog-header {
+    gap: 10px;
+    padding: 14px 15px;
+  }
+
+  .attempt-review-dialog .attempt-review-dialog-header h2 {
+    font-size: 16px;
+  }
+
+  .attempt-review-dialog .attempt-review-dialog-body {
+    padding: 20px 16px;
+  }
+
+  .attempt-review-dialog .attempt-review-dialog-options > li {
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 10px;
+  }
+
+  .attempt-review-dialog .attempt-review-dialog-option-label {
+    width: 100%;
+    padding-left: 23px;
+  }
+
+  .attempt-review-dialog .attempt-review-dialog-footer {
+    gap: 8px;
+    padding: 13px 14px;
+  }
+
+  .attempt-review-dialog .attempt-review-dialog-footer > button {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+}

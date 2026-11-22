@@ -283,7 +283,6 @@
 }
 .player-highlight:hover:not(:disabled) {
   color: #225bc8;
-  text-decoration: underline;
 }
 .player-question {
   border-left: 3px solid transparent;

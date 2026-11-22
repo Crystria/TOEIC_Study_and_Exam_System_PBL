@@ -169,3 +169,7 @@ uv.lock.bak
 private/
 
 artifacts/p6/
+
+# Machine-specific API import checkpoints; keep these locally when resuming.
+data/toeic/**/import-state.local.json
+data/toeic/**/import-state.local.json.lock

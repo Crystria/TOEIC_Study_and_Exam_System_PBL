@@ -2,8 +2,9 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { DEMO_PERSONAS, demoHref, type DemoRole } from '@/lib/demo/cms-fixtures';
+import { Icon } from '../../../../web/src/components/ui/icon';
+import { AdminLoginLayout } from './admin-login-layout';
 
 type FieldErrors = Partial<Record<'email' | 'password', string>>;
 
@@ -80,143 +81,119 @@ export function LoginPreview() {
   }
 
   return (
-    <main className="cms-login">
-      <section className="cms-login-story" aria-labelledby="cms-story-title">
-        <div className="cms-brand">
-          <span className="cms-brand-mark" aria-hidden="true">
-            T
-          </span>
-          <span>
-            TOEIC <strong>Master</strong>
-            <small>KHÔNG GIAN QUẢN TRỊ</small>
-          </span>
-        </div>
-        <div>
-          <span className="cms-badge">ADMIN CMS</span>
-          <h2 id="cms-story-title">
-            Nội dung chỉn chu.
-            <br />
-            Trải nghiệm học tốt hơn.
-          </h2>
-          <p>Một không gian để tổ chức nội dung TOEIC và quản trị nền tảng học tập.</p>
-        </div>
-        <div className="cms-story-note">
-          <strong>Hai vai trò, hai không gian</strong>
-          <p>Quản trị nội dung · Quản trị hệ thống</p>
-          <small>Đang xem thử giao diện · Không cần tài khoản</small>
-        </div>
-      </section>
-      <div className="cms-login-form-area">
-        <Card className="cms-login-card">
-          <CardContent>
-            <span className="cms-badge">BẢN XEM THỬ GIAO DIỆN</span>
-            <h1>Đăng nhập quản trị</h1>
-            <p className="cms-muted">Kiểm tra biểu mẫu đăng nhập hoặc vào thẳng không gian demo.</p>
-            <p className="cms-preview-notice" id="cms-login-note">
-              Chưa xác thực tài khoản. Không gửi hoặc lưu thông tin đăng nhập. Hãy dùng thông tin
-              minh họa.
-            </p>
-            <form
-              ref={form}
-              onSubmit={submit}
-              noValidate
-              autoComplete="off"
-              aria-label="Đăng nhập quản trị xem thử"
-              aria-describedby="cms-login-note"
-              aria-busy={!ready || loading}
-            >
-              <fieldset disabled={!ready || loading}>
-                <div className="cms-field">
-                  <label htmlFor="cms-email">
-                    Địa chỉ email <span aria-hidden="true">*</span>
-                  </label>
-                  <input
-                    id="cms-email"
-                    name="email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="off"
-                    autoCapitalize="none"
-                    spellCheck={false}
-                    required
-                    value={email}
-                    onChange={(event) => change('email', event.target.value)}
-                    placeholder="quantri@example.com"
-                    aria-invalid={Boolean(errors.email)}
-                    aria-describedby={errors.email ? 'cms-email-error' : undefined}
-                  />
-                  {errors.email && (
-                    <p className="cms-field-error" id="cms-email-error">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-                <div className="cms-field">
-                  <label htmlFor="cms-password">
-                    Mật khẩu <span aria-hidden="true">*</span>
-                  </label>
-                  <div className="cms-password">
-                    <input
-                      id="cms-password"
-                      name="password"
-                      type={visible ? 'text' : 'password'}
-                      autoComplete="new-password"
-                      required
-                      value={password}
-                      onChange={(event) => change('password', event.target.value)}
-                      placeholder="Nhập mật khẩu minh họa"
-                      aria-invalid={Boolean(errors.password)}
-                      aria-describedby={errors.password ? 'cms-password-error' : undefined}
-                    />
-                    <button
-                      type="button"
-                      aria-label={visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
-                      aria-pressed={visible}
-                      onClick={() => setVisible(!visible)}
-                    >
-                      {visible ? 'Ẩn' : 'Hiện'}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <p className="cms-field-error" id="cms-password-error">
-                      {errors.password}
-                    </p>
-                  )}
-                </div>
-              </fieldset>
-              {Object.keys(errors).length > 0 && (
-                <p role="alert" className="cms-field-error">
-                  Vui lòng kiểm tra các trường được đánh dấu.
+    <AdminLoginLayout preview>
+      <div className="admin-auth-form">
+        <span className="admin-auth-eyebrow">BẢN XEM THỬ GIAO DIỆN</span>
+        <h1>Đăng nhập quản trị</h1>
+        <p className="cms-muted">Kiểm tra biểu mẫu đăng nhập hoặc vào thẳng không gian demo.</p>
+        <p className="cms-preview-notice" id="cms-login-note">
+          Chưa xác thực tài khoản. Không gửi hoặc lưu thông tin đăng nhập. Hãy dùng thông tin minh
+          họa.
+        </p>
+        <form
+          ref={form}
+          onSubmit={submit}
+          noValidate
+          autoComplete="off"
+          aria-label="Đăng nhập quản trị xem thử"
+          aria-describedby="cms-login-note"
+          aria-busy={!ready || loading}
+        >
+          <fieldset disabled={!ready || loading}>
+            <div className="cms-field">
+              <label htmlFor="cms-email">
+                Địa chỉ email <span aria-hidden="true">*</span>
+              </label>
+              <div className="admin-auth-input">
+                <Icon name="mail" width="19" height="19" />
+                <input
+                  id="cms-email"
+                  name="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="off"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  required
+                  value={email}
+                  onChange={(event) => change('email', event.target.value)}
+                  placeholder="quantri@example.com"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? 'cms-email-error' : undefined}
+                />
+              </div>
+              {errors.email && (
+                <p className="cms-field-error" id="cms-email-error">
+                  {errors.email}
                 </p>
               )}
-              <Button type="submit" className="cms-submit" disabled={!ready || loading}>
-                {loading ? 'Đang kiểm tra biểu mẫu…' : 'Kiểm tra đăng nhập (xem thử)'}
-              </Button>
-              <p role="status" className={message ? 'cms-form-message' : 'cms-sr-only'}>
-                {message || (loading ? 'Đang kiểm tra biểu mẫu trên trình duyệt.' : '')}
-              </p>
-            </form>
-            <div className="cms-demo-entry">
-              <h2>Khám phá CMS demo</h2>
-              <p>Không cần nhập email hoặc mật khẩu. Chọn vai trò chỉ để xem thử UI.</p>
-              {(Object.keys(DEMO_PERSONAS) as DemoRole[]).map((role) => (
-                <Link
-                  className="cms-demo-entry-link"
-                  key={role}
-                  href={demoHref(DEMO_PERSONAS[role].home, role)}
-                >
-                  <strong>
-                    Xem thử {DEMO_PERSONAS[role].label.toLowerCase()}{' '}
-                    <span aria-hidden="true">→</span>
-                  </strong>
-                  <span>{DEMO_PERSONAS[role].description}</span>
-                </Link>
-              ))}
             </div>
-          </CardContent>
-        </Card>
-        <p className="cms-login-footer">TOEIC Master · Quản trị nội dung & nền tảng</p>
+            <div className="cms-field">
+              <label htmlFor="cms-password">
+                Mật khẩu <span aria-hidden="true">*</span>
+              </label>
+              <div className="admin-auth-input">
+                <Icon name="lock" width="19" height="19" />
+                <input
+                  id="cms-password"
+                  name="password"
+                  type={visible ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  required
+                  value={password}
+                  onChange={(event) => change('password', event.target.value)}
+                  placeholder="Nhập mật khẩu minh họa"
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={errors.password ? 'cms-password-error' : undefined}
+                />
+                <button
+                  type="button"
+                  className="admin-auth-password-toggle"
+                  aria-label={visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  aria-pressed={visible}
+                  aria-controls="cms-password"
+                  onClick={() => setVisible(!visible)}
+                >
+                  <Icon name={visible ? 'eyeOff' : 'eye'} width="19" height="19" />
+                </button>
+              </div>
+              {errors.password && (
+                <p className="cms-field-error" id="cms-password-error">
+                  {errors.password}
+                </p>
+              )}
+            </div>
+          </fieldset>
+          {Object.keys(errors).length > 0 && (
+            <p role="alert" className="cms-field-error">
+              Vui lòng kiểm tra các trường được đánh dấu.
+            </p>
+          )}
+          <Button type="submit" className="cms-submit" disabled={!ready || loading}>
+            {loading ? 'Đang kiểm tra biểu mẫu…' : 'Kiểm tra đăng nhập (xem thử)'}
+            {!loading && <Icon name="arrow" width="19" height="19" />}
+          </Button>
+          <p role="status" className={message ? 'cms-form-message' : 'cms-sr-only'}>
+            {message || (loading ? 'Đang kiểm tra biểu mẫu trên trình duyệt.' : '')}
+          </p>
+        </form>
+        <div className="cms-demo-entry">
+          <h2>Khám phá CMS demo</h2>
+          <p>Không cần nhập email hoặc mật khẩu. Chọn vai trò chỉ để xem thử UI.</p>
+          {(Object.keys(DEMO_PERSONAS) as DemoRole[]).map((role) => (
+            <Link
+              className="cms-demo-entry-link"
+              key={role}
+              href={demoHref(DEMO_PERSONAS[role].home, role)}
+            >
+              <strong>
+                Xem thử {DEMO_PERSONAS[role].label.toLowerCase()} <span aria-hidden="true">→</span>
+              </strong>
+              <span>{DEMO_PERSONAS[role].description}</span>
+            </Link>
+          ))}
+        </div>
       </div>
-    </main>
+    </AdminLoginLayout>
   );
 }

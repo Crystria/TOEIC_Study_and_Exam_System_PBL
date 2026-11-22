@@ -35,3 +35,10 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* Shared UI policy: keep current and future links/button labels free of
+   underlines in every state. Use colors, borders and focus outlines for feedback. */
+:where(a, button, [role='link']),
+:where(a, button, [role='link']) * {
+  text-decoration-line: none !important;
+}

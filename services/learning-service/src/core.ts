@@ -77,13 +77,23 @@ export async function contentAudit(
   correlationId: string,
 ) {
   await tx.contentAudit.create({
-    data: {
-      actorId,
-      entityId,
-      action,
-      before: before === null ? Prisma.JsonNull : inputJson(before),
-      after: after === null ? Prisma.JsonNull : inputJson(after),
-      correlationId,
-    },
+    data: contentAuditData(actorId, entityId, action, before, after, correlationId),
   });
+}
+export function contentAuditData(
+  actorId: string,
+  entityId: string,
+  action: string,
+  before: unknown,
+  after: unknown,
+  correlationId: string,
+): Prisma.ContentAuditCreateManyInput {
+  return {
+    actorId,
+    entityId,
+    action,
+    before: before === null ? Prisma.JsonNull : inputJson(before),
+    after: after === null ? Prisma.JsonNull : inputJson(after),
+    correlationId,
+  };
 }
