@@ -830,12 +830,18 @@ integration('P2 Auth through Gateway with real PostgreSQL, Mailpit, RabbitMQ and
     expect(changedDevice.status).toBe(200);
     expect(other.status).toBe(200);
     const nextPassword = 'Changed-Test-2026!';
-    const change = (currentPassword: string) =>
+    const change = (currentPassword: string, newPassword = nextPassword) =>
       api()
         .post('/api/v1/auth/change-password')
         .auth(changedDevice.body.accessToken, { type: 'bearer' })
-        .send({ currentPassword, newPassword: nextPassword, confirmPassword: nextPassword });
+        .send({ currentPassword, newPassword, confirmPassword: newPassword });
     expect((await change(password)).body.code).toBe('INCORRECT_CURRENT_PASSWORD');
+    const bothWrong = await change(password, 'short');
+    expect(bothWrong.status).toBe(400);
+    expect(bothWrong.body.code).toBe('INCORRECT_CURRENT_PASSWORD');
+    const invalidNew = await change(resetPassword, 'short');
+    expect(invalidNew.status).toBe(400);
+    expect(invalidNew.body.code).toBe('VALIDATION_ERROR');
     expect(
       (await api().get('/api/v1/users/me').auth(changedDevice.body.accessToken, { type: 'bearer' }))
         .status,

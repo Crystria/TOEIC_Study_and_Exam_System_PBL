@@ -184,10 +184,14 @@ export function AccountAnalytics() {
           <p>Theo dõi tiến độ học và kết quả thi của bạn.</p>
         </div>
       </header>
-      <section className="analytics-filters">
-        <label>
-          Khoảng thời gian{' '}
+      <section
+        className="analytics-filters analytics-filters--account"
+        aria-label="Bộ lọc thống kê"
+      >
+        <div>
+          <label htmlFor="account-analytics-range">Khoảng thời gian</label>
           <select
+            id="account-analytics-range"
             value={range}
             onChange={(e) => router.push('/analytics?timeRange=' + e.target.value)}
           >
@@ -197,26 +201,30 @@ export function AccountAnalytics() {
               </option>
             ))}
           </select>
-        </label>
-        <button onClick={refresh}>Làm mới</button>
+        </div>
+        <button type="button" onClick={refresh}>
+          Làm mới
+        </button>
       </section>
       <ResourceState {...state} retry={state.reload} />
       {data && (
         <>
-          <div className="api-grid">
-            {[
-              ['Từ mới đã học', data.activities.vocabulariesLearned],
-              ['Lượt ôn', data.activities.reviewCount],
-              ['Bài ngữ pháp hoàn thành', data.activities.grammarLessonsCompleted],
-              ['Full Test', data.activities.mockTestCount],
-              ['Lượt luyện Part', data.activities.practiceCount],
-              ['Ngày học', data.activities.studyDays],
-            ].map(([name, n]) => (
-              <article className="api-card" key={name}>
-                <h2>{name}</h2>
-                <strong>{n}</strong>
-              </article>
-            ))}
+          <div className="api-card account-metrics">
+            <dl aria-label="Chỉ số học tập">
+              {[
+                ['Từ mới đã học', data.activities.vocabulariesLearned],
+                ['Lượt ôn', data.activities.reviewCount],
+                ['Bài ngữ pháp hoàn thành', data.activities.grammarLessonsCompleted],
+                ['Full Test', data.activities.mockTestCount],
+                ['Lượt luyện Part', data.activities.practiceCount],
+                ['Ngày học', data.activities.studyDays],
+              ].map(([name, n]) => (
+                <div key={name}>
+                  <dt>{name}</dt>
+                  <dd>{n}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
           <section className="api-card">
             <h2>Nhịp học</h2>

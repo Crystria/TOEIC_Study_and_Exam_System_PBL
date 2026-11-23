@@ -201,6 +201,10 @@ test('password changes clear only the current app cookies after confirmation', a
     );
     const wrong = await bridge('auth/change-password', 'POST', {}, c);
     assert.equal(wrong.status, 400);
+    assert.deepEqual(await wrong.json(), {
+      code: 'GATEWAY_ERROR',
+      details: { code: 'INCORRECT_CURRENT_PASSWORD' },
+    });
     assert.equal(wrong.headers.get('set-cookie'), null);
     succeeds = true;
     const changed = await bridge('auth/change-password', 'POST', {}, c);

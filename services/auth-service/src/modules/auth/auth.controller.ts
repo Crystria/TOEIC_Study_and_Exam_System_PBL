@@ -73,10 +73,9 @@ export class AuthController {
 
   @Post('change-password') @HttpCode(200) change(
     @CurrentUser() claims: JwtPayload,
-    @Body(new ContractPipe('ChangePasswordRequest'))
-    dto: { currentPassword: string; newPassword: string },
+    @Body() dto: unknown,
     @Req() req: Request,
   ) {
-    return this.passwords.change(claims, dto.currentPassword, dto.newPassword, auditContext(req));
+    return this.passwords.change(claims, dto, auditContext(req));
   }
 }

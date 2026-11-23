@@ -827,6 +827,7 @@
         "operationId": "changePassword",
         "tags": ["auth"],
         "summary": "Change the signed-in account password",
+        "description": "For a well-formed request, verifies the current password before applying the new-password policy.",
         "security": [
           {
             "bearerAuth": []

@@ -7,6 +7,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import type { User } from '@/lib/integration/contracts';
 import { LogoutButton } from '../integration/shared';
+import { AccountAvatar } from '../profile/account-avatar';
 
 import { Badge } from '../ui/feedback';
 import { Icon, type IconName } from '../ui/icon';
@@ -23,8 +24,6 @@ const navigation: Array<{ href: string; label: string; icon: IconName }> = [
   { href: '/exam', label: 'Thi thử TOEIC', icon: 'clipboard' },
   { href: '/history', label: 'Lịch sử làm bài', icon: 'clock' },
   { href: '/analytics', label: 'Thống kê tiến độ', icon: 'chart' },
-  { href: '/ai-chat', label: 'Trợ lý học tập AI', icon: 'sparkles' },
-  { href: '/settings', label: 'Cài đặt học tập', icon: 'user' },
   { href: '/profile', label: 'Hồ sơ học viên', icon: 'user' },
 ];
 
@@ -195,7 +194,7 @@ export function StudentShell({
               }}
             >
               <summary aria-label={`Menu tài khoản — ${apiAccount?.fullName ?? 'Khách xem thử'}`}>
-                <span className="avatar">HV</span>
+                <AccountAvatar source={apiAccount?.avatarUrl} name={apiAccount?.fullName} />
                 <span className="profile-label">
                   {apiAccount?.fullName ?? 'Khách xem thử'}
                   <small>{apiAccount?.roles.join(', ') ?? 'Học viên · USER'}</small>
@@ -206,9 +205,6 @@ export function StudentShell({
                 <p>{apiAccount?.email ?? 'Chưa đăng nhập tài khoản'}</p>
                 <Link href="/profile">
                   <Icon name="user" width="17" /> Hồ sơ học viên{!apiAccount && ' demo'}
-                </Link>
-                <Link href="/settings">
-                  <Icon name="book" width="17" /> Cài đặt học tập{!apiAccount && ' demo'}
                 </Link>
                 {apiAccount ? (
                   <LogoutButton />

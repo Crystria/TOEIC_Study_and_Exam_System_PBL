@@ -426,6 +426,19 @@ main:focus {
   font-size: 12px;
   font-weight: 650;
   border: 3px solid #f6f9ff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.avatar--profile {
+  width: 72px;
+  height: 72px;
+  font-size: 22px;
+}
+.avatar .avatar-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .profile-label {
   font-size: 11px;

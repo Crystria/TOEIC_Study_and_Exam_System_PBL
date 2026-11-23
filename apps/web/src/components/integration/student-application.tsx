@@ -22,12 +22,16 @@ import {
   VocabularySessionStart,
 } from './vocabulary-session';
 import { MediaUpload } from './media-upload';
+import { AccountAvatar } from '../profile/account-avatar';
+import { ProfileUpdateStatus } from '../profile/profile-update-status';
 import { EmailActivation } from './email-activation';
 import { Blocked, ResourceState, SessionGate, useResource } from './shared';
 import { SearchForm } from './search-form';
 import { LearningLibraryNav, PersonalLearningLibrary } from './personal-learning';
 import { LearningLibraryCard } from './learning-library-card';
 import { ServerPagination } from './server-pagination';
+
+type ProfileChanges = Partial<Pick<User, 'fullName' | 'phoneNumber' | 'avatarUrl'>>;
 
 export function ApiStudentApplication({
   children,
@@ -94,7 +98,7 @@ function AuthenticatedStudent({
           )}
         <StudentDomain
           user={user}
-          onProfile={setUser}
+          onProfile={(changes) => setUser((current) => ({ ...current, ...changes }))}
           writes={writes}
           examWrites={examWrites}
           practiceEntry={practiceEntry}
@@ -111,7 +115,7 @@ function StudentDomain({
   practiceEntry,
 }: {
   user: User;
-  onProfile: (user: User) => void;
+  onProfile: (changes: ProfileChanges) => void;
   writes: boolean;
   examWrites: boolean;
   practiceEntry: boolean;
@@ -524,14 +528,13 @@ function Profile({
   writes,
 }: {
   user: User;
-  onSaved: (user: User) => void;
+  onSaved: (changes: ProfileChanges) => void;
   writes: boolean;
 }) {
   const [fullName, setName] = useState(user.fullName),
     [phone, setPhone] = useState(user.phoneNumber ?? '');
   const [busy, setBusy] = useState(false),
-    [error, setError] = useState(''),
-    [saved, setSaved] = useState(false),
+    [saveStatus, setSaveStatus] = useState<'success' | 'error' | null>(null),
     lock = useRef(false),
     form = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -539,7 +542,12 @@ function Profile({
     <>
       <h1>Hồ sơ của bạn</h1>
       <article className="api-card">
-        {user.avatarUrl && <ServerImage source={user.avatarUrl} label="Ảnh đại diện của bạn" />}
+        <AccountAvatar
+          source={user.avatarUrl}
+          name={user.fullName}
+          label="Ảnh đại diện của bạn"
+          large
+        />
         <p>Email: {user.email}</p>
         <p>Vai trò: {user.roles.join(', ')}</p>
         <p>Trạng thái: {user.status}</p>
@@ -548,11 +556,11 @@ function Profile({
           onSubmit={async (e) => {
             e.preventDefault();
             if (lock.current || !writes) return;
-            setError('');
-            setSaved(false);
+            setSaveStatus(null);
             setErrors({});
             if (fullName.trim().length < 2) {
               setErrors({ fullName: 'Họ tên cần ít nhất hai ký tự.' });
+              setSaveStatus('error');
               form.current?.querySelector('input')?.focus();
               return;
             }
@@ -560,12 +568,12 @@ function Profile({
             setBusy(true);
             try {
               const result = matchingId(await profileApi.update(fullName, phone), user.id);
-              onSaved(result);
+              onSaved({ fullName: result.fullName, phoneNumber: result.phoneNumber });
               setName(result.fullName);
               setPhone(result.phoneNumber ?? '');
-              setSaved(true);
+              setSaveStatus('success');
             } catch (cause) {
-              setError(failureMessage(cause));
+              setSaveStatus('error');
               setErrors(validationFields(cause, ['fullName', 'phoneNumber']));
               requestAnimationFrame(() =>
                 form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(),
@@ -586,7 +594,7 @@ function Profile({
                 aria-describedby={errors.fullName ? 'profile-name-error' : undefined}
                 onChange={(e) => {
                   setName(e.target.value);
-                  setSaved(false);
+                  setSaveStatus(null);
                 }}
               />
               {errors.fullName && (
@@ -605,7 +613,7 @@ function Profile({
                 aria-describedby={errors.phoneNumber ? 'profile-phone-error' : undefined}
                 onChange={(e) => {
                   setPhone(e.target.value);
-                  setSaved(false);
+                  setSaveStatus(null);
                 }}
               />
               {errors.phoneNumber && (
@@ -617,27 +625,20 @@ function Profile({
           </fieldset>
           <button disabled={busy || !writes}>{busy ? 'Đang lưu…' : 'Lưu hồ sơ'}</button>
         </form>
-        {error && (
-          <p role="alert" className="api-error">
-            {error}
-          </p>
-        )}
-        {saved && <p role="status">Server đã xác nhận cập nhật hồ sơ.</p>}
+        {saveStatus && <ProfileUpdateStatus status={saveStatus} />}
       </article>
       <MediaUpload
         scope="avatar"
         resourceId={user.id}
         kind="IMAGE"
         writes={writes}
-        saved={() => {
-          void profileApi
-            .read()
-            .then((value) => onSaved(matchingId(value, user.id)))
-            .catch((e) => setError(failureMessage(e)));
+        saved={async () => {
+          const { avatarUrl } = matchingId(await profileApi.read(), user.id);
+          onSaved({ avatarUrl });
         }}
       />
       <article className="api-card">
-        <PasswordForm mode="change" />
+        <PasswordForm mode="change" profileUpdateFeedback />
       </article>
     </>
   );

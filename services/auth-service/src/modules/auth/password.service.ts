@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { AuthorizationStateVerifier, JwtPayload } from '@toeic/common';
+import { validateRequest } from '@toeic/contracts/p0/runtime.cjs';
 import * as bcrypt from 'bcrypt';
 import {
   AuditContext,
@@ -14,6 +15,22 @@ import {
 } from '../../identity';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ActivationMailService } from './activation-mail.service';
+
+function readChangePasswordInput(input: unknown) {
+  if (!input || typeof input !== 'object' || Array.isArray(input))
+    failure(400, 'VALIDATION_ERROR', 'Check the submitted fields');
+  const { currentPassword, newPassword, confirmPassword } = input as Record<string, unknown>;
+  if (
+    Object.keys(input).length !== 3 ||
+    typeof currentPassword !== 'string' ||
+    !currentPassword ||
+    Buffer.byteLength(currentPassword, 'utf8') > 72 ||
+    typeof newPassword !== 'string' ||
+    typeof confirmPassword !== 'string'
+  )
+    failure(400, 'VALIDATION_ERROR', 'Check the submitted fields');
+  return { currentPassword, newPassword, confirmPassword };
+}
 
 @Injectable()
 export class PasswordService {
@@ -82,12 +99,9 @@ export class PasswordService {
     return { success: true };
   }
 
-  async change(
-    claims: JwtPayload,
-    currentPassword: string,
-    newPassword: string,
-    context: AuditContext,
-  ) {
+  async change(claims: JwtPayload, input: unknown, context: AuditContext) {
+    const passwords = readChangePasswordInput(input);
+    const { currentPassword, newPassword } = passwords;
     await this.prisma.$transaction(async (tx) => {
       const user = await lockedUser(tx, claims.sub);
       const session = await tx.authSession.findUnique({ where: { id: claims.sid } });
@@ -103,6 +117,12 @@ export class PasswordService {
         failure(401, 'SESSION_REVOKED');
       if (!user.passwordHash || !(await bcrypt.compare(currentPassword, user.passwordHash)))
         failure(400, 'INCORRECT_CURRENT_PASSWORD');
+      // Apply the new-password policy after confirming the current password.
+      try {
+        validateRequest('ChangePasswordRequest', passwords);
+      } catch {
+        failure(400, 'VALIDATION_ERROR', 'Check the submitted fields');
+      }
       await this.updatePassword(tx, user, newPassword, 'PASSWORD_CHANGED', context);
     });
     this.authorization.invalidate(claims.sub);
