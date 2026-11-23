@@ -11,6 +11,7 @@ export function sharedQuizDefinitions(
   topicId: string | null,
   limit: number,
   source: 'TOPIC' | 'CATALOG' = 'CATALOG',
+  availableAt: Date | null = null,
 ) {
   return tx.$queryRaw<Definition[]>`
     SELECT word, definition
@@ -20,6 +21,7 @@ export function sharedQuizDefinitions(
       FROM vocabularies v
       JOIN vocabulary_topics t ON t.id = v.topic_id
       WHERE v.deleted_at IS NULL AND t.deleted_at IS NULL
+        AND (${availableAt}::timestamp IS NULL OR (v.created_at <= ${availableAt} AND t.created_at <= ${availableAt}))
         AND (${source === 'CATALOG'} OR v.topic_id = ${topicId})
       ORDER BY v.normalized_definition, preferred DESC, v.id
     ) definitions
@@ -27,7 +29,13 @@ export function sharedQuizDefinitions(
     LIMIT ${limit}`;
 }
 
-export function personalQuizDefinitions(tx: Tx, userId: string, topicId: string, limit: number) {
+export function personalQuizDefinitions(
+  tx: Tx,
+  userId: string,
+  topicId: string,
+  limit: number,
+  availableAt: Date | null = null,
+) {
   return tx.$queryRaw<Definition[]>`
     SELECT word, definition, id AS "vocabularyId"
     FROM (
@@ -35,6 +43,7 @@ export function personalQuizDefinitions(tx: Tx, userId: string, topicId: string,
         id, word, definition, topic_id = ${topicId} AS preferred
       FROM personal_vocabularies
       WHERE user_id = ${userId}
+        AND (${availableAt}::timestamp IS NULL OR created_at <= ${availableAt})
       ORDER BY lower(normalize(btrim(definition), NFC)), preferred DESC, id
     ) definitions
     ORDER BY preferred DESC, random()
