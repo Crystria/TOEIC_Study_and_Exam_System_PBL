@@ -26,8 +26,9 @@ function ExamHistory({ revision }: { revision: number }) {
     (signal) => analyticsApi.history(mode, page, signal),
     revision,
   );
+  const history = state.data;
   return (
-    <section className="api-card">
+    <section className="api-card analytics-exam-history">
       <h2>Lịch sử làm bài · toàn bộ</h2>
       <label>
         Loại bài{' '}
@@ -42,30 +43,51 @@ function ExamHistory({ revision }: { revision: number }) {
           <option value="PART">Luyện Part</option>
         </select>
       </label>
-      <ResourceState {...state} retry={state.reload} empty={state.data?.total === 0} />
-      {state.data && (
-        <>
-          <ul>
-            {state.data.items.map((it) => (
-              <li key={it.attemptId}>
-                <Link href={'/exam/server/result?attempt=' + encodeURIComponent(it.attemptId)}>
-                  {day(it.completedAt)} · {it.result}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          {state.data.total > 10 && (
-            <nav aria-label="Phân trang lịch sử">
-              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-                Trang trước
-              </button>{' '}
-              {page} / {Math.ceil(state.data.total / 10)}{' '}
-              <button disabled={page * 10 >= state.data.total} onClick={() => setPage(page + 1)}>
-                Trang sau
-              </button>
-            </nav>
-          )}
-        </>
+      <ResourceState {...state} retry={state.reload} empty={history?.items.length === 0} />
+      {history && history.items.length > 0 && (
+        <AnalyticsTable label={mode === 'FULL' ? 'Lịch sử Full Test' : 'Lịch sử luyện Part'}>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Ngày hoàn thành</th>
+                <th scope="col">{mode === 'FULL' ? 'Điểm' : 'Số câu đúng'}</th>
+                <th scope="col">Chi tiết</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.items.map((item) => {
+                const completedOn = day(item.completedAt);
+                return (
+                  <tr key={item.attemptId}>
+                    <th scope="row">
+                      <time dateTime={item.completedAt}>{completedOn}</time>
+                    </th>
+                    <td>{item.result}</td>
+                    <td>
+                      <Link
+                        href={'/exam/server/result?attempt=' + encodeURIComponent(item.attemptId)}
+                        aria-label={`Xem kết quả ngày ${completedOn}, ${item.result}`}
+                      >
+                        Xem kết quả
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </AnalyticsTable>
+      )}
+      {history && history.total > 10 && (
+        <nav aria-label="Phân trang lịch sử">
+          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            Trang trước
+          </button>{' '}
+          {page} / {Math.ceil(history.total / 10)}{' '}
+          <button disabled={page * 10 >= history.total} onClick={() => setPage(page + 1)}>
+            Trang sau
+          </button>
+        </nav>
       )}
     </section>
   );

@@ -117,7 +117,7 @@
   min-width: 540px;
   margin: 0;
 }
-.analytics-chart-scroll .score-chart svg {
+.analytics-chart-scroll .score-chart > svg {
   width: 100%;
 }
 .analytics-page .chart-legend {
@@ -186,6 +186,27 @@
   color: var(--color-muted);
   font-size: 11px;
   margin-top: 5px;
+}
+.analytics-exam-history .analytics-scroll-hint {
+  display: none;
+}
+.analytics-exam-history table {
+  font-size: 0.875rem;
+}
+.analytics-exam-history .analytics-table-scroll :is(th, td) {
+  min-width: 0;
+}
+.analytics-exam-history .analytics-table-scroll thead th {
+  white-space: normal;
+}
+.analytics-exam-history tr > :last-child {
+  text-align: right;
+}
+.analytics-exam-history time {
+  white-space: nowrap;
+}
+.analytics-exam-history nav {
+  margin-top: 12px;
 }
 .analytics-part-title {
   display: block;

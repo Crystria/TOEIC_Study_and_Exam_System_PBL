@@ -1,5 +1,20 @@
 import type { ScoreAttempt } from '@/lib/dashboard/types';
 
+const totalLine = { stroke: '#2563eb', strokeWidth: 3 };
+const skillLines = [
+  {
+    key: 'scoreListening',
+    label: 'Listening',
+    line: { stroke: '#059669', strokeWidth: 2.5 },
+  },
+  {
+    key: 'scoreReading',
+    label: 'Reading',
+    line: { stroke: '#a855f7', strokeWidth: 2.5, strokeDasharray: '5 3' },
+  },
+] as const;
+const scoreLegend = [{ label: 'Tổng điểm', line: totalLine }, ...skillLines];
+
 export function ScoreTrend({
   attempts,
   target,
@@ -69,26 +84,23 @@ export function ScoreTrend({
         />
         <defs>
           <linearGradient id="score-area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2563eb" stopOpacity=".14" />
-            <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+            <stop offset="0%" stopColor={totalLine.stroke} stopOpacity=".14" />
+            <stop offset="100%" stopColor={totalLine.stroke} stopOpacity="0" />
           </linearGradient>
         </defs>
         <polyline
           points={points}
           fill="none"
-          stroke="#2563eb"
-          strokeWidth="3"
+          {...totalLine}
           strokeLinejoin="round"
           strokeLinecap="round"
         />
         {showSkills &&
-          (['scoreListening', 'scoreReading'] as const).map((key, i) => (
+          skillLines.map(({ key, line }) => (
             <polyline
               key={key}
               fill="none"
-              stroke={i ? '#a855f7' : '#059669'}
-              strokeWidth="2.5"
-              strokeDasharray={i ? '5 3' : undefined}
+              {...line}
               points={attempts
                 .flatMap((a, index) => (a[key] === null ? [] : [x(index) + ',' + y(a[key]!)]))
                 .join(' ')}
@@ -101,8 +113,7 @@ export function ScoreTrend({
               cy={y(attempt.totalScore ?? 0)}
               r="5"
               fill="#fff"
-              stroke="#2563eb"
-              strokeWidth="3"
+              {...totalLine}
             />
             <text
               x={x(index)}
@@ -118,7 +129,18 @@ export function ScoreTrend({
           </g>
         ))}
       </svg>
-      {showSkills && <p>Tổng điểm (xanh dương) · Listening (xanh lá) · Reading (nét đứt)</p>}
+      {showSkills && (
+        <ul className="score-chart-legend" aria-label="Chú giải biểu đồ điểm">
+          {scoreLegend.map(({ label, line }) => (
+            <li key={label}>
+              <svg width="28" height="12" viewBox="0 0 28 12" aria-hidden="true" focusable="false">
+                <line x1="2" y1="6" x2="26" y2="6" {...line} />
+              </svg>
+              <span>{label}</span>
+            </li>
+          ))}
+        </ul>
+      )}
       <table className="sr-only">
         <caption>Điểm thi thử toàn bộ đề theo thời gian</caption>
         <thead>
