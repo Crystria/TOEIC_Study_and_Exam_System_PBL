@@ -10,7 +10,12 @@ import {
   SessionGate,
   useResource,
 } from '../../../../web/src/components/integration/shared';
-import { failureMessage, mutationOutcomeUnknown } from '../../../../web/src/lib/integration/client';
+import {
+  failureMessage,
+  GatewayError,
+  mutationOutcomeUnknown,
+} from '../../../../web/src/lib/integration/client';
+import { PasswordForm } from '../../../../web/src/components/integration/password-forms';
 import type { User, Page } from '../../../../web/src/lib/integration/contracts';
 import { cmsApi, userChangeMatches, type UserChange } from '../../lib/integration/repositories';
 import { ACCOUNT_PAGE_SIZE } from '../../lib/users/types';
@@ -75,12 +80,14 @@ export function ApiCmsApplication({
         return (
           <CmsShell apiAccount={user}>
             <div className="api-root">
-              {!(system ? systemWrites : writes) && path !== '/audit-logs' && (
-                <Blocked>
-                  Chức năng chỉnh sửa đang tắt trong cấu hình. Bạn vẫn có thể xem và tìm kiếm dữ
-                  liệu.
-                </Blocked>
-              )}
+              {!(system ? systemWrites : writes) &&
+                path !== '/audit-logs' &&
+                path !== '/account/password' && (
+                  <Blocked>
+                    Chức năng chỉnh sửa đang tắt trong cấu hình. Bạn vẫn có thể xem và tìm kiếm dữ
+                    liệu.
+                  </Blocked>
+                )}
               <CmsDomain key={path} user={user} writes={system ? systemWrites : writes} />
             </div>
           </CmsShell>
@@ -115,7 +122,13 @@ function useLocation() {
   };
 }
 function CmsDomain({ user, writes }: { user: User; writes: boolean }) {
-  const { section } = useLocation();
+  const { section, path, id } = useLocation();
+  if (path === '/account/password')
+    return (
+      <Panel>
+        <PasswordForm mode="change" />
+      </Panel>
+    );
   const system = ['users', 'audit-logs'].includes(section),
     content = user.roles.includes('CONTENT_ADMIN'),
     admin = user.roles.includes('SYSTEM_ADMIN');
@@ -146,7 +159,12 @@ function CmsDomain({ user, writes }: { user: User; writes: boolean }) {
     );
   if (section === 'groups') return <GroupManagement writes={writes && content} />;
   if (section === 'topics') return <TopicManagement writes={writes} />;
-  if (section === 'users') return <Users writes={writes} currentId={user.id} />;
+  if (section === 'users')
+    return id ? (
+      <UserDetail id={id} writes={writes} currentId={user.id} />
+    ) : (
+      <Users writes={writes} currentId={user.id} />
+    );
   if (section === 'audit-logs') return <Audit />;
   if (['lessons', 'vocabulary'].includes(section))
     return <ContentManagement kind={section as 'lessons' | 'vocabulary'} writes={writes} />;
@@ -242,29 +260,26 @@ function Panel({ children }: { children: ReactNode }) {
   return <Card className="ws-panel api-card">{children}</Card>;
 }
 function Users({ writes, currentId }: { writes: boolean; currentId: string }) {
-  const { id, params, path, href, update } = useLocation();
+  const { params, path, update } = useLocation();
   const router = useRouter();
   const search = params.toString();
   const requestParams = new URLSearchParams(search);
-  if (!id) {
-    const page = Number(params.get('page') ?? 1);
-    const validPage = Number.isSafeInteger(page) && page >= 1 && page <= 2_147_483_647;
-    requestParams.set('page', String(validPage ? page : 1));
-    requestParams.set('size', String(ACCOUNT_PAGE_SIZE));
-  }
+  const page = Number(params.get('page') ?? 1);
+  const validPage = Number.isSafeInteger(page) && page >= 1 && page <= 2_147_483_647;
+  requestParams.set('page', String(validPage ? page : 1));
+  requestParams.set('size', String(ACCOUNT_PAGE_SIZE));
   const state = useResource(`users:${requestParams}`, (signal) =>
     cmsApi.users(requestParams, signal),
   );
   const data = state.data;
   const lastPage = Math.max(1, Math.ceil((data?.total ?? 0) / ACCOUNT_PAGE_SIZE));
-  const pageOutOfRange = !id && !!data && data.page > lastPage;
+  const pageOutOfRange = !!data && data.page > lastPage;
   useEffect(() => {
     if (!pageOutOfRange) return;
     const next = new URLSearchParams(search);
     next.set('page', String(lastPage));
     router.replace(`${path}?${next}`, { scroll: false });
   }, [lastPage, pageOutOfRange, path, router, search]);
-  const user = data?.items.find((user) => user.id === id);
   const uncertainByUser = useRef(new Map<string, AccountChangeKind[]>());
   const resourceState = (
     <ResourceState
@@ -293,51 +308,85 @@ function Users({ writes, currentId }: { writes: boolean; currentId: string }) {
   return (
     <>
       <h1>Người dùng & vai trò</h1>
-      {id ? (
-        <>
-          <Link href={href()}>← Danh sách</Link>
-          {resourceState}
-        </>
-      ) : (
-        <>
-          <UserAccountsTable
-            key={search}
-            items={data?.items}
-            href={(accountId) => `/users/${encodeURIComponent(accountId)}?${requestParams}`}
-            statuses={ACCOUNT_STATUSES}
-            statusLabels={ACCOUNT_STATUS_LABELS}
-            writes={writes}
-            editable={(account) => account.id !== currentId}
-            applyChanges={applyChanges}
-            onUpdated={state.reload}
-          >
-            <Filters
-              fields={[
-                { name: 'keyword', label: 'Tên / email' },
-                { name: 'status', label: 'Trạng thái', options: ACCOUNT_STATUSES },
-              ]}
-            />
-            {resourceState}
-          </UserAccountsTable>
-          {data && !pageOutOfRange && (
-            <AccountPagination
-              page={data.page}
-              total={data.total}
-              onPage={(page) => update({ page: String(page) })}
-            />
-          )}
-        </>
+      <UserAccountsTable
+        key={search}
+        items={data?.items}
+        href={(accountId) => `/users/${encodeURIComponent(accountId)}?${requestParams}`}
+        statuses={ACCOUNT_STATUSES}
+        statusLabels={ACCOUNT_STATUS_LABELS}
+        writes={writes}
+        editable={(account) => account.id !== currentId}
+        applyChanges={applyChanges}
+        onUpdated={state.reload}
+      >
+        <Filters
+          fields={[
+            { name: 'keyword', label: 'Tên / email' },
+            { name: 'status', label: 'Trạng thái', options: ACCOUNT_STATUSES },
+          ]}
+        />
+        {resourceState}
+      </UserAccountsTable>
+      {data && !pageOutOfRange && (
+        <AccountPagination
+          page={data.page}
+          total={data.total}
+          onPage={(page) => update({ page: String(page) })}
+        />
       )}
-      {user && <UserEditor key={user.id} user={user} writes={writes && user.id !== currentId} />}
-      {id === currentId && (
-        <Blocked>
-          Phiên này không tự đổi vai trò hoặc trạng thái của chính tài khoản đang đăng nhập.
-        </Blocked>
-      )}
-      {id && data && !user && (
-        <Blocked>
-          Không tìm thấy tài khoản trong trang kết quả hiện tại. Hãy mở tài khoản từ danh sách.
-        </Blocked>
+    </>
+  );
+}
+function UserDetail({ id, currentId, writes }: { id: string; currentId: string; writes: boolean }) {
+  const { path, href } = useLocation();
+  const edit = path.endsWith('/edit');
+  const editable = writes && id !== currentId;
+  const state = useResource(`user:${id}`, async (signal) => {
+    try {
+      return await cmsApi.user(id, signal);
+    } catch (error) {
+      if (error instanceof GatewayError) {
+        if (error.status === 400) throw new Error('ID tài khoản không hợp lệ.');
+        if (error.status === 403) throw new Error('Bạn không có quyền xem tài khoản này.');
+        if (error.status === 404) throw new Error('Không tìm thấy tài khoản.');
+      }
+      throw error;
+    }
+  });
+  const user = state.data;
+  const formatDate = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+  return (
+    <>
+      <h1>Chi tiết người dùng</h1>
+      <Link href={href()}>← Danh sách</Link>
+      <ResourceState {...state} retry={state.reload} />
+      {user && (
+        <>
+          <Panel>
+            {user.avatarUrl && (
+              // Private presigned URLs are fetched directly from storage.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={user.avatarUrl} alt="Ảnh đại diện" width={80} height={80} />
+            )}
+            <dl>
+              <dt>Số điện thoại</dt>
+              <dd>{user.phoneNumber ?? 'Chưa cập nhật'}</dd>
+              <dt>Ngày tạo</dt>
+              <dd>{formatDate.format(new Date(user.createdAt))}</dd>
+              <dt>Cập nhật gần nhất</dt>
+              <dd>{formatDate.format(new Date(user.updatedAt))}</dd>
+            </dl>
+            {editable && !edit && (
+              <Link href={href(id, true)}>Chỉnh sửa vai trò và trạng thái</Link>
+            )}
+            {edit && <Link href={href(id)}>Về chi tiết</Link>}
+          </Panel>
+          <UserEditor key={user.id} user={user} writes={editable && edit} />
+        </>
       )}
     </>
   );
@@ -352,7 +401,7 @@ async function applyAccountChanges(
   if (changes.status) updates.push({ kind: 'status', status: changes.status });
   const failures: AccountChangeFailure[] = [];
   let current = user;
-  const readCurrent = () => cmsApi.userForReconciliation(user.id, user.email);
+  const readCurrent = () => cmsApi.user(user.id);
 
   for (const change of updates) {
     const retry = uncertain.includes(change.kind);
@@ -469,7 +518,7 @@ function UserEditor({ user: initial, writes }: { user: User; writes: boolean }) 
     setBusy(true);
     setError('');
     try {
-      const current = await cmsApi.userForReconciliation(user.id, user.email);
+      const current = await cmsApi.user(user.id);
       setUser(current);
       const role =
         changes.role &&

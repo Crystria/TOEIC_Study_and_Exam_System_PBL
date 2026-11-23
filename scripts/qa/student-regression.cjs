@@ -484,10 +484,7 @@ async function end() {
       await button('Chỉnh sửa thông tin').click();
       await p.locator('[name="fullName"]').fill('QA sửa trong trang');
       await button('Lưu thông tin demo').click();
-      await p
-        .getByRole('status')
-        .filter({ hasText: 'Đã lưu họ tên và số điện thoại demo' })
-        .waitFor();
+      await p.getByRole('status').filter({ hasText: 'Cập nhật thành công' }).waitFor();
       assert.deepEqual(await p.evaluate(() => ({ ...localStorage })), before);
       await p.reload();
       await button('Chỉnh sửa thông tin').waitFor();

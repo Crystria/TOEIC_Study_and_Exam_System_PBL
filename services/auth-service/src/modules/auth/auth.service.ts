@@ -76,7 +76,7 @@ export class AuthService {
         data: { status: 'ACTIVE', failedLoginCount: 0, lockedUntil: null },
       });
       await tx.emailDelivery.updateMany({
-        where: { userId: user.id, deliveredAt: null },
+        where: { userId: user.id, deliveredAt: null, purpose: 'ACTIVATION' },
         data: { deliveredAt: new Date(), encryptedToken: null },
       });
     });

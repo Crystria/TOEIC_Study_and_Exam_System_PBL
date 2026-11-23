@@ -139,9 +139,21 @@ export function parseLesson(value: unknown) {
     status: text(r.status),
   };
 }
+function countsByLibrary<T>(value: unknown, parse: (row: Record<string, unknown>) => T) {
+  const libraries = record(value);
+  return { SHARED: parse(record(libraries.SHARED)), PERSONAL: parse(record(libraries.PERSONAL)) };
+}
 export function parseLearningProgress(value: unknown) {
   const r = record(value);
   return {
+    libraries:
+      r.libraries == null
+        ? null
+        : countsByLibrary(r.libraries, (v) => ({
+            reviewed: count(v.reviewed),
+            due: count(v.due),
+            learned: count(v.learned),
+          })),
     vocabulary: {
       reviewed: count(r.reviewedVocabularies),
       dueToday: count(r.dueVocabularies),
@@ -226,18 +238,45 @@ export function parseAnalyticsProgress(value: unknown) {
     activities = record(r.inRange);
   return {
     timeRange: text(r.timeRange),
+    asOf: date(r.asOf),
+    updatedAt: r.updatedAt == null ? null : date(r.updatedAt),
+    historyLiveFrom: date(r.historyLiveFrom),
+    from: r.from == null ? null : date(r.from),
+    current: count(r.learningStreakDays),
+    longest: count(r.longestStreak),
+    libraries: countsByLibrary(r.libraries, (v) => ({
+      reviews: count(v.reviews),
+      learned: count(v.learned),
+      sessions: count(v.sessions),
+      correct: count(v.correct),
+      total: count(v.total),
+    })),
+    latest: record(r.fullScores).latest === null ? null : count(record(r.fullScores).latest),
+    best: record(r.fullScores).best === null ? null : count(record(r.fullScores).best),
     lifetime: {
       totalStudyDays: count(l.studyDays),
       totalLessons: count(l.grammarLessonsCompleted),
       totalVocabLearned: count(l.vocabulariesLearned),
     },
-    activities: Object.fromEntries(
-      Object.entries(activities).map(([key, value]) => [key, count(value)]),
-    ),
+    activities: {
+      vocabulariesLearned: count(activities.vocabulariesLearned),
+      reviewCount: count(activities.reviewCount),
+      grammarLessonsCompleted: count(activities.grammarLessonsCompleted),
+      mockTestCount: count(activities.mockTestCount),
+      practiceCount: count(activities.practiceCount),
+      studyDays: count(activities.studyDays),
+    },
     predictedToeicScore: r.predictedToeicScore == null ? null : count(r.predictedToeicScore),
     dailyActivity: list(r.dailyActivity, (value) => {
       const d = record(value);
-      return { date: date(d.date), count: count(d.count) };
+      return {
+        date: date(d.date),
+        count: count(d.count),
+        reviews: count(d.reviews),
+        lessons: count(d.lessons),
+        full: count(d.full),
+        part: count(d.part),
+      };
     }),
     scoreTrend: list(r.scoreTrend, (value) => {
       const s = record(value);
@@ -245,6 +284,9 @@ export function parseAnalyticsProgress(value: unknown) {
         attemptId: id(s.attemptId),
         completedAt: date(s.completedAt),
         totalScore: count(s.totalScore),
+        scoreListening: count(s.scoreListening),
+        scoreReading: count(s.scoreReading),
+        scoring: record(s.scoring),
       };
     }),
     trendTruncated: r.scoreTrendNextCursor != null,

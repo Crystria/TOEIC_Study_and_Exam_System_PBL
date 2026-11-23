@@ -70,5 +70,23 @@
     "routingKey": "learning.progress.changed.v2",
     "queues": ["auth-learning-projection.v2"],
     "payloadDefinition": "ProgressChangedPayload"
+  },
+  {
+    "eventType": "PersonalVocabularyReviewedEvent.v2",
+    "schema": "../events/v2/PersonalVocabularyReviewedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/PersonalVocabularyReviewedEvent.schema.json",
+    "producer": "learning-service",
+    "routingKey": "personal.vocabulary.reviewed.v2",
+    "queues": ["analytics-service.v2"],
+    "payloadDefinition": "VocabularyLearnedPayload"
+  },
+  {
+    "eventType": "FlashcardSessionCompletedEvent.v2",
+    "schema": "../events/v2/FlashcardSessionCompletedEvent.schema.json",
+    "schemaId": "https://contracts.toeic.local/events/v2/FlashcardSessionCompletedEvent.schema.json",
+    "producer": "learning-service",
+    "routingKey": "flashcard.session.completed.v2",
+    "queues": ["analytics-service.v2"],
+    "payloadDefinition": "FlashcardQuizPayload"
   }
 ]

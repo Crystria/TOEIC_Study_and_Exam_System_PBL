@@ -2,7 +2,7 @@ import { randomInt, randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '../../generated/prisma';
-import { Tx, contentLock, fail, hash, idempotent, inputJson, userLock } from '../../core';
+import { Tx, event, contentLock, fail, hash, idempotent, inputJson, userLock } from '../../core';
 import { ContentService } from './content.service';
 import { ProgressService, Snapshot } from './progress.service';
 import {
@@ -252,6 +252,21 @@ export class SessionService {
       },
     });
     if (changed.count !== 1) fail(409, 'SESSION_ALREADY_COMPLETED');
+    await event(
+      tx,
+      id,
+      'FlashcardSessionCompletedEvent.v2',
+      {
+        userId,
+        sessionId: id,
+        source: 'LEGACY',
+        scope: 'SHARED',
+        quizScore: result.quizScore,
+        quizTotal: result.quizTotal,
+        completedAt: result.completedAt,
+      },
+      at,
+    );
     await this.progress.commit(tx, userId, body.operationId, action, result, progress, at);
     return result;
   }

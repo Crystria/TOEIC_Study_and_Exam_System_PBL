@@ -183,6 +183,8 @@ export class ProgressService {
     quality: number,
     expected: bigint,
     at: Date,
+    operationId: string,
+    sessionId: string,
   ) {
     const word = await tx.personalVocabulary.findUnique({
       where: { id_userId: { id, userId } },
@@ -192,12 +194,29 @@ export class ProgressService {
     const current = word.progress[0] ?? null;
     if ((current?.revision ?? 0n) !== expected)
       fail(409, 'ENTITY_REVISION_CONFLICT', { currentProgress: [vocabularySnapshot(current, id)] });
-    const { data } = nextVocabularyReview(current, quality, at);
+    const { data, firstLearned } = nextVocabularyReview(current, quality, at);
     const row = await tx.userPersonalVocabularyProgress.upsert({
       where: { userId_vocabularyId: { userId, vocabularyId: id } },
       create: { userId, vocabularyId: id, ...data },
       update: data,
     });
+    await event(
+      tx,
+      id,
+      'PersonalVocabularyReviewedEvent.v2',
+      {
+        userId,
+        vocabularyId: id,
+        operationId,
+        sessionId,
+        quality,
+        revision: row.revision.toString(),
+        firstLearned,
+        firstLearnedAt: data.firstLearnedAt?.toISOString() ?? null,
+        activityAt: at.toISOString(),
+      },
+      at,
+    );
     return vocabularySnapshot(row, id);
   }
   async review(
@@ -338,6 +357,9 @@ export class ProgressService {
           practiceSessionsCompleted,
           lastVocabulary,
           lastLesson,
+          personalReviewed,
+          personalLearned,
+          personalDue,
         ] = await Promise.all([
           tx.userVocabularyProgress.count({ where: { userId } }),
           tx.userVocabularyProgress.count({ where: { userId, firstLearnedAt: { not: null } } }),
@@ -356,6 +378,16 @@ export class ProgressService {
             orderBy: { updatedAt: 'desc' },
           }),
           tx.userLessonProgress.findFirst({ where: { userId }, orderBy: { updatedAt: 'desc' } }),
+          tx.userPersonalVocabularyProgress.count({ where: { userId } }),
+          tx.userPersonalVocabularyProgress.count({
+            where: { userId, firstLearnedAt: { not: null } },
+          }),
+          tx.userPersonalVocabularyProgress.count({
+            where: {
+              userId,
+              nextReviewDate: { lte: new Date(vietnamDate(new Date()) + 'T00:00:00Z') },
+            },
+          }),
         ]);
         const dates = [lastVocabulary?.updatedAt, lastLesson?.updatedAt]
           .filter((v): v is Date => !!v)
@@ -365,6 +397,14 @@ export class ProgressService {
           vocabulariesLearned,
           dueVocabularies,
           grammarLessonsCompleted,
+          libraries: {
+            SHARED: {
+              reviewed: reviewedVocabularies,
+              learned: vocabulariesLearned,
+              due: dueVocabularies,
+            },
+            PERSONAL: { reviewed: personalReviewed, learned: personalLearned, due: personalDue },
+          },
           sessionsCompleted: legacySessionsCompleted + practiceSessionsCompleted,
           updatedAt: dates[0]?.toISOString() ?? null,
         };

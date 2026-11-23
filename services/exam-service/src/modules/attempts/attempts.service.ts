@@ -1,3 +1,4 @@
+import { stableHash } from '@toeic/common';
 import { validateEvent } from '@toeic/contracts/p0/runtime.cjs';
 import { createHash, randomUUID } from 'node:crypto';
 import {
@@ -17,8 +18,27 @@ import { TestsService } from '../tests/tests.service';
 import { assertBundle, bundleErrors, fullStructureErrors } from '../tests/test-rules';
 import { AnswerDto, HistoryQueryDto, PartAttemptDto, SubmitDto } from './dto/attempt.dto';
 import { SaveAnswerDto } from './dto/save-answer.dto';
-import { DraftStore } from './draft.store';
+import { DraftAnswer, DraftStore } from './draft.store';
 import { attemptInclude, AttemptRecord, attemptView, SnapshotOption } from './attempt-view';
+
+type ExamTest = Prisma.TestGetPayload<{ include: { questions: true } }>;
+type AttemptMode = 'FULL' | 'PART';
+
+interface HistoricalAttempt {
+  userId: string;
+  testId: string;
+  key: string;
+  catalogHash: string;
+  parts: number[];
+  mode: AttemptMode;
+  durationSeconds: number;
+  startedAt: Date;
+  completedAt: Date;
+  accuracyPercent: number;
+  holdUntil: Date;
+}
+
+const fullParts = [1, 2, 3, 4, 5, 6, 7];
 
 @Injectable()
 export class AttemptsService {
@@ -68,7 +88,7 @@ export class AttemptsService {
     if (!rows.length) throw new NotFoundException('Attempt not found');
   }
   async start(testId: string, userId: string, key?: string) {
-    return this.startAttempt(testId, userId, 'FULL', [1, 2, 3, 4, 5, 6, 7], 7200, key);
+    return this.startAttempt(testId, userId, 'FULL', fullParts, 7200, key);
   }
   async startPart(testId: string, userId: string, dto: PartAttemptDto, key?: string) {
     if (
@@ -145,108 +165,17 @@ export class AttemptsService {
             if (a.status === 'IN_PROGRESS') await this.finalize(tx, a, [], true);
           }
         }
-        const items = test.questions.filter((q) => parts.includes(q.part));
-        const structural =
-          mode === 'FULL'
-            ? fullStructureErrors(items, test.durationSeconds)
-            : parts
-                .filter((p) => !items.some((q) => q.part === p))
-                .map((p) => `Part ${p} has no questions`);
-        if (structural.length)
-          throw new ConflictException({
-            message: 'Test structure is not available',
-            details: structural,
-          });
-        const ids = items.map((q) => q.questionId);
-        const [bundle, keys] = await Promise.all([
-          this.bank.getQuestionBundle(ids),
-          this.bank.getAnswerBundle(ids),
-        ]);
-        assertBundle(items, bundle, keys);
-        const byId = new Map(bundle.questions.map((q) => [q.id, q]));
-        const answers = new Map(keys.answers.map((a) => [a.question_id, a.correct_option]));
-        const usedGroups = bundle.groups.filter((g) =>
-          items.some((item) => byId.get(item.questionId)?.group_id === g.group_id),
+        const content = await this.snapshotContent(test, parts, mode);
+        const attemptId = await this.createSnapshot(
+          tx,
+          test.id,
+          userId,
+          mode,
+          parts,
+          durationSeconds,
+          new Date(),
+          content,
         );
-        usedGroups.sort(
-          (a, b) =>
-            Math.min(
-              ...items
-                .filter((i) => byId.get(i.questionId)?.group_id === a.group_id)
-                .map((i) => i.orderNo),
-            ) -
-            Math.min(
-              ...items
-                .filter((i) => byId.get(i.questionId)?.group_id === b.group_id)
-                .map((i) => i.orderNo),
-            ),
-        );
-        const groupIds = new Map(usedGroups.map((g) => [g.group_id, randomUUID()]));
-        const startedAt = new Date(),
-          attemptId = randomUUID();
-        await tx.attempt.create({
-          data: {
-            id: attemptId,
-            testId,
-            userId,
-            mode,
-            durationSeconds,
-            deadlineAt: new Date(startedAt.getTime() + durationSeconds * 1000),
-            startedAt,
-            snapshotVersion: 1,
-            totalQuestions: items.length,
-            parts: {
-              create: parts.map((part, index) => ({
-                part,
-                orderNo: index + 1,
-                totalQuestions: items.filter((q) => q.part === part).length,
-              })),
-            },
-          },
-        });
-        if (usedGroups.length)
-          await tx.attemptGroupSnapshot.createMany({
-            data: usedGroups.map((g, index) => ({
-              id: groupIds.get(g.group_id)!,
-              attemptId,
-              groupId: g.group_id,
-              part: g.part,
-              orderNo: index + 1,
-              type: g.type,
-              instruction: g.instruction || null,
-              audioKey: g.audio_key || null,
-              transcript: g.transcript || null,
-              passageText: g.passage_text || null,
-              assets: (g.assets ?? []).map((asset) => ({
-                assetId: asset.asset_id,
-                kind: asset.kind,
-                storageKey: asset.storage_key || null,
-                content: asset.content || null,
-                orderNo: asset.order_no,
-              })),
-            })),
-          });
-        await tx.attemptQuestionSnapshot.createMany({
-          data: items.map((item) => {
-            const q = byId.get(item.questionId)!;
-            return {
-              attemptId,
-              questionId: q.id,
-              part: q.part,
-              orderNo: item.orderNo,
-              type: q.type,
-              questionText: q.question_text || q.stem || '',
-              groupSnapshotId: groupIds.get(q.group_id) ?? null,
-              positionInGroup: q.position_in_group || null,
-              transcript: q.transcript || null,
-              audioKey: q.audio_key || null,
-              imageKey: q.image_key || null,
-              explanation: q.explanation || null,
-              correctOption: answers.get(q.id)!,
-              options: q.options.map((o) => ({ optionCode: o.option_key, optionText: o.content })),
-            };
-          }),
-        });
         if (key)
           await tx.attemptStartRequest.create({ data: { userId, key, fingerprint, attemptId } });
         return this.record(attemptId, tx);
@@ -255,6 +184,253 @@ export class AttemptsService {
     );
     return attemptView(result, this.publicBase);
   }
+  private async snapshotContent(test: ExamTest, parts: number[], mode: AttemptMode) {
+    const items = test.questions.filter((q) => parts.includes(q.part));
+    const structural =
+      mode === 'FULL'
+        ? fullStructureErrors(items, test.durationSeconds)
+        : parts
+            .filter((p) => !items.some((q) => q.part === p))
+            .map((p) => `Part ${p} has no questions`);
+    if (structural.length)
+      throw new ConflictException({
+        message: 'Test structure is not available',
+        details: structural,
+      });
+    const ids = items.map((q) => q.questionId);
+    const [bundle, keys] = await Promise.all([
+      this.bank.getQuestionBundle(ids),
+      this.bank.getAnswerBundle(ids),
+    ]);
+    assertBundle(items, bundle, keys);
+    return { items, bundle, keys };
+  }
+
+  private async createSnapshot(
+    tx: Prisma.TransactionClient,
+    testId: string,
+    userId: string,
+    mode: AttemptMode,
+    parts: number[],
+    durationSeconds: number,
+    startedAt: Date,
+    { items, bundle, keys }: Awaited<ReturnType<AttemptsService['snapshotContent']>>,
+  ) {
+    const byId = new Map(bundle.questions.map((q) => [q.id, q]));
+    const answers = new Map(keys.answers.map((a) => [a.question_id, a.correct_option]));
+    const usedGroups = bundle.groups.filter((g) =>
+      items.some((item) => byId.get(item.questionId)?.group_id === g.group_id),
+    );
+    usedGroups.sort(
+      (a, b) =>
+        Math.min(
+          ...items
+            .filter((i) => byId.get(i.questionId)?.group_id === a.group_id)
+            .map((i) => i.orderNo),
+        ) -
+        Math.min(
+          ...items
+            .filter((i) => byId.get(i.questionId)?.group_id === b.group_id)
+            .map((i) => i.orderNo),
+        ),
+    );
+    const groupIds = new Map(usedGroups.map((g) => [g.group_id, randomUUID()]));
+    const attemptId = randomUUID();
+    await tx.attempt.create({
+      data: {
+        id: attemptId,
+        testId,
+        userId,
+        mode,
+        durationSeconds,
+        deadlineAt: new Date(startedAt.getTime() + durationSeconds * 1000),
+        startedAt,
+        snapshotVersion: 1,
+        totalQuestions: items.length,
+        parts: {
+          create: parts.map((part, index) => ({
+            part,
+            orderNo: index + 1,
+            totalQuestions: items.filter((q) => q.part === part).length,
+          })),
+        },
+      },
+    });
+    if (usedGroups.length)
+      await tx.attemptGroupSnapshot.createMany({
+        data: usedGroups.map((g, index) => ({
+          id: groupIds.get(g.group_id)!,
+          attemptId,
+          groupId: g.group_id,
+          part: g.part,
+          orderNo: index + 1,
+          type: g.type,
+          instruction: g.instruction || null,
+          audioKey: g.audio_key || null,
+          transcript: g.transcript || null,
+          passageText: g.passage_text || null,
+          assets: (g.assets ?? []).map((asset) => ({
+            assetId: asset.asset_id,
+            kind: asset.kind,
+            storageKey: asset.storage_key || null,
+            content: asset.content || null,
+            orderNo: asset.order_no,
+          })),
+        })),
+      });
+    await tx.attemptQuestionSnapshot.createMany({
+      data: items.map((item) => {
+        const q = byId.get(item.questionId)!;
+        return {
+          attemptId,
+          questionId: q.id,
+          part: q.part,
+          orderNo: item.orderNo,
+          type: q.type,
+          questionText: q.question_text || q.stem || '',
+          groupSnapshotId: groupIds.get(q.group_id) ?? null,
+          positionInGroup: q.position_in_group || null,
+          transcript: q.transcript || null,
+          audioKey: q.audio_key || null,
+          imageKey: q.image_key || null,
+          explanation: q.explanation || null,
+          correctOption: answers.get(q.id)!,
+          options: q.options.map((o) => ({ optionCode: o.option_key, optionText: o.content })),
+        };
+      }),
+    });
+    return attemptId;
+  }
+
+  private seedCatalogHash(
+    test: ExamTest,
+    { items, bundle, keys }: Awaited<ReturnType<AttemptsService['snapshotContent']>>,
+  ) {
+    const totals = [6, 25, 39, 30, 30, 16, 54];
+    if (!totals.every((total, index) => items.filter((q) => q.part === index + 1).length === total))
+      throw new ConflictException('Test has non-standard Part counts for Analytics');
+    return stableHash({
+      testId: test.id,
+      updatedAt: test.updatedAt.toISOString(),
+      items,
+      questions: [...bundle.questions].sort((a, b) => a.id.localeCompare(b.id)),
+      groups: bundle.groups
+        .map((g) => ({ ...g, question_ids: [...g.question_ids].sort() }))
+        .sort((a, b) => a.group_id.localeCompare(b.group_id)),
+      answers: [...keys.answers].sort((a, b) => a.question_id.localeCompare(b.question_id)),
+    });
+  }
+
+  // The HTTP controllers use the live attempt methods.
+  async prepareHistoricalTest(test: ExamTest) {
+    this.scoring.provenance();
+    const catalogHash = this.seedCatalogHash(
+      test,
+      await this.snapshotContent(test, fullParts, 'FULL'),
+    );
+    const partDurationSeconds = Math.min(this.maxDuration, Math.max(this.minDuration, 1800));
+    return { catalogHash, partDurationSeconds };
+  }
+
+  async seedHistoricalAttempt(input: HistoricalAttempt) {
+    const {
+      userId,
+      testId,
+      key,
+      catalogHash,
+      parts,
+      mode,
+      durationSeconds,
+      startedAt,
+      completedAt,
+      accuracyPercent,
+      holdUntil,
+    } = input;
+    if (
+      startedAt >= completedAt ||
+      completedAt >= new Date() ||
+      completedAt.getTime() - startedAt.getTime() >= durationSeconds * 1000
+    )
+      throw new Error('Invalid historical exam dates');
+    if (
+      !Number.isInteger(accuracyPercent) ||
+      accuracyPercent < 0 ||
+      accuracyPercent > 100 ||
+      (mode === 'FULL' && (durationSeconds !== 7200 || parts.join(',') !== fullParts.join(','))) ||
+      (mode === 'PART' &&
+        (parts.length !== 1 ||
+          !fullParts.includes(parts[0]) ||
+          !Number.isInteger(durationSeconds) ||
+          durationSeconds < this.minDuration ||
+          durationSeconds > this.maxDuration))
+    )
+      throw new Error('Invalid historical attempt selection');
+    const fingerprint = stableHash({
+      testId,
+      catalogHash,
+      parts,
+      mode,
+      durationSeconds,
+      startedAt: startedAt.toISOString(),
+      completedAt: completedAt.toISOString(),
+      accuracyPercent,
+    });
+    return this.prisma.$transaction(
+      async (tx) => {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`exam-key:${userId}:${key}`}, 0))`;
+        const existing = await tx.attemptStartRequest.findUnique({
+          where: { userId_key: { userId, key } },
+        });
+        if (existing) {
+          if (existing.fingerprint !== fingerprint)
+            throw new ConflictException('Historical exam does not match the stored run');
+          return existing.attemptId;
+        }
+
+        await tx.$queryRaw`SELECT test_id FROM tests WHERE test_id = ${testId} FOR SHARE`;
+        const test = await this.tests.record(testId, tx);
+        const content = await this.snapshotContent(test, fullParts, 'FULL');
+        if (this.seedCatalogHash(test, content) !== catalogHash)
+          throw new ConflictException('Exam catalog changed after preflight');
+        const snapshot = {
+          ...content,
+          items: content.items.filter((item) => parts.includes(item.part)),
+        };
+        const id = await this.createSnapshot(
+          tx,
+          test.id,
+          userId,
+          mode,
+          parts,
+          durationSeconds,
+          startedAt,
+          snapshot,
+        );
+        const attempt = await this.record(id, tx);
+        const answers = parts.flatMap((part) => {
+          const questions = attempt.questionSnapshots
+            .filter((q) => q.part === part)
+            .map((question) => ({ question, rank: stableHash([key, question.questionId]) }))
+            .sort((a, b) => a.rank.localeCompare(b.rank));
+          const correct = Math.round((questions.length * accuracyPercent) / 100);
+          return questions.map(({ question }, index) => ({
+            questionId: question.questionId,
+            selectedOption:
+              index < correct
+                ? question.correctOption
+                : (question.options as unknown as SnapshotOption[]).find(
+                    (option) => option.optionCode !== question.correctOption,
+                  )!.optionCode,
+          }));
+        });
+        await this.finalize(tx, attempt, answers, false, { completedAt, holdUntil });
+        await tx.attemptStartRequest.create({ data: { userId, key, fingerprint, attemptId: id } });
+        return id;
+      },
+      { timeout: 30_000, maxWait: 10_000 },
+    );
+  }
+
   async parts(testId: string) {
     const test = await this.tests.record(testId);
     const bundle = await this.bank.getQuestionBundle(test.questions.map((q) => q.questionId));
@@ -336,12 +512,17 @@ export class AttemptsService {
     a: AttemptRecord,
     submitted: AnswerDto[],
     forceExpired = false,
+    historical?: { completedAt: Date; holdUntil: Date },
   ): Promise<AttemptRecord> {
     if (a.status !== 'IN_PROGRESS') return a;
     this.editable(a);
-    let expired = forceExpired || a.deadlineAt.getTime() <= Date.now();
-    const draft = await this.drafts.read(a.id);
-    expired ||= a.deadlineAt.getTime() <= Date.now();
+    let expired = false;
+    let draft: Record<string, DraftAnswer> = {};
+    if (!historical) {
+      expired = forceExpired || a.deadlineAt.getTime() <= Date.now();
+      draft = await this.drafts.read(a.id);
+      expired ||= a.deadlineAt.getTime() <= Date.now();
+    }
     const choices = new Map<string, string | null>(
       Object.entries(draft).map(([id, answer]) => [id, answer.selectedOption]),
     );
@@ -350,7 +531,7 @@ export class AttemptsService {
       for (const answer of submitted) choices.set(answer.questionId, answer.selectedOption);
     }
     const stats = partStats(a.questionSnapshots, choices),
-      completedAt = expired ? a.deadlineAt : new Date();
+      completedAt = historical?.completedAt ?? (expired ? a.deadlineAt : new Date());
     const correctCount = stats.reduce((n, p) => n + p.correctCount, 0),
       totalQuestions = a.questionSnapshots.length;
     if (!totalQuestions) throw new ConflictException('Attempt has no snapshots');
@@ -443,6 +624,7 @@ export class AttemptsService {
         aggregateId: a.id,
         eventType: envelope.eventType,
         occurredAt,
+        ...(historical && { nextAttemptAt: historical.holdUntil }),
         payload: envelope as unknown as Prisma.InputJsonValue,
       },
     });

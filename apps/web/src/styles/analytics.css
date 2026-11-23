@@ -117,7 +117,7 @@
   min-width: 540px;
   margin: 0;
 }
-.analytics-chart-scroll .score-chart svg {
+.analytics-chart-scroll .score-chart > svg {
   width: 100%;
 }
 .analytics-page .chart-legend {
@@ -186,6 +186,27 @@
   color: var(--color-muted);
   font-size: 11px;
   margin-top: 5px;
+}
+.analytics-exam-history .analytics-scroll-hint {
+  display: none;
+}
+.analytics-exam-history table {
+  font-size: 0.875rem;
+}
+.analytics-exam-history .analytics-table-scroll :is(th, td) {
+  min-width: 0;
+}
+.analytics-exam-history .analytics-table-scroll thead th {
+  white-space: normal;
+}
+.analytics-exam-history tr > :last-child {
+  text-align: right;
+}
+.analytics-exam-history time {
+  white-space: nowrap;
+}
+.analytics-exam-history nav {
+  margin-top: 12px;
 }
 .analytics-part-title {
   display: block;
@@ -331,4 +352,88 @@
   .analytics-panel .empty-state {
     padding: 30px 0;
   }
+}
+
+.analytics-filters--account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 12px;
+  max-width: 26rem;
+  padding: 0;
+}
+
+.analytics-filters--account > div {
+  flex: 1 1 11rem;
+  min-width: 0;
+}
+
+.analytics-filters--account label {
+  margin-bottom: 6px;
+}
+
+.analytics-filters--account :is(select, button) {
+  height: 44px;
+  line-height: 1.25;
+}
+
+.analytics-page .account-metrics {
+  container: account-metrics / inline-size;
+  margin: 0;
+  padding: 0;
+}
+
+.account-metrics dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+
+.account-metrics dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.account-metrics dl > div + div {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.account-metrics dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@container account-metrics (min-width: 34rem) {
+  .account-metrics dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .account-metrics dl > div:nth-child(2) {
+    border-block-start: 0;
+  }
+
+  .account-metrics dl > div:nth-child(even) {
+    border-inline-start: 1px solid var(--color-border);
+  }
+}
+
+.account-activity {
+  display: flex;
+  gap: 1px;
+  align-items: end;
+  min-height: 84px;
+  border-bottom: 1px solid currentColor;
+  margin-block: 1rem;
+}
+.account-activity span {
+  flex: 1;
+  min-width: 0;
+  background: var(--primary, #2563eb);
+  border-radius: 3px 3px 0 0;
 }

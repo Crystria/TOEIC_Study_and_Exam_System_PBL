@@ -52,6 +52,46 @@
   {
     "service": "auth",
     "method": "post",
+    "path": "/auth/forgot-password",
+    "operationId": "forgotPassword",
+    "access": "PUBLIC",
+    "request": "ForgotPasswordRequest",
+    "response": "MessageResponse",
+    "status": 202
+  },
+  {
+    "service": "auth",
+    "method": "post",
+    "path": "/auth/reset-password",
+    "operationId": "resetPassword",
+    "access": "PUBLIC",
+    "request": "ResetPasswordRequest",
+    "response": "Success",
+    "status": 200
+  },
+  {
+    "service": "auth",
+    "method": "post",
+    "path": "/auth/change-password",
+    "operationId": "changePassword",
+    "access": "AUTHENTICATED",
+    "request": "ChangePasswordRequest",
+    "response": "Success",
+    "status": 200
+  },
+  {
+    "service": "auth",
+    "method": "get",
+    "path": "/admin/users/{id}",
+    "operationId": "getAdminUser",
+    "access": "SYSTEM_ADMIN",
+    "request": null,
+    "response": "User",
+    "status": 200
+  },
+  {
+    "service": "auth",
+    "method": "post",
     "path": "/auth/logout",
     "operationId": "logout",
     "access": "AUTHENTICATED",

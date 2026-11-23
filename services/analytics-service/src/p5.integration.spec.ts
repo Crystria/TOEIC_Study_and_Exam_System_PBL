@@ -11,6 +11,8 @@ import { QUESTION_BANK_CLIENT } from '../../exam-service/src/grpc/question-bank.
 import { fullFixture } from '../../exam-service/src/test-fixtures';
 import { of } from 'rxjs';
 import { randomUUID } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { resolve } from 'node:path';
 import { createServer, AddressInfo } from 'node:net';
 import * as amqp from 'amqplib';
 import { INestApplication } from '@nestjs/common';
@@ -580,6 +582,125 @@ integration('P5 Analytics via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO',
       practiceCount: 1,
     });
   });
+  it('reflects a personal flashcard review and completed quiz once through Gateway, including after deleting the topic', async () => {
+    const role = 'OTHER_ADMIN';
+    const topic = await post('personal/vocabulary-topics', { topicName: 'My words' }, role);
+    expect(topic.status).toBe(201);
+    const topicId = topic.body.topicId;
+    expect(
+      (
+        await post(
+          'personal/vocabularies',
+          { topicId, word: 'invoice', definition: 'hóa đơn' },
+          role,
+        )
+      ).status,
+    ).toBe(201);
+    const start = await post(
+      'flashcard-sessions',
+      { topicId, scope: 'PERSONAL', mode: 'NEW', limit: 1 },
+      role,
+    );
+    expect(start.status).toBe(201);
+    const { sessionId, quiz } = start.body,
+      prefix = 'flashcard-sessions/' + sessionId;
+    const reviews = [{ vocabularyId: quiz[0].vocabularyId, quality: 4 }];
+    expect((await post(prefix + '/reviews', { reviews }, role)).status).toBe(200);
+    const submission = {
+      reviews,
+      operationId: randomUUID(),
+      answers: [{ questionId: quiz[0].questionId, selectedOption: quiz[0].options[0].code }],
+    };
+    const submitted = await post(prefix + '/submit', submission, role);
+    expect(submitted.status).toBe(200);
+    expect((await post(prefix + '/submit', submission, role)).status).toBe(200);
+    await until(async () => (await aget('progress', role)).body.libraries?.PERSONAL.sessions === 1);
+    const result = (await aget('progress', role)).body;
+    expect(result.libraries.PERSONAL).toEqual({
+      sessions: 1,
+      reviews: 1,
+      learned: 1,
+      correct: submitted.body.quizScore,
+      total: 1,
+    });
+    expect(result.inRange).toMatchObject({ studyDays: 1, reviewCount: 1 });
+    expect(result.dailyActivity.reduce((sum: number, d: any) => sum + d.count, 0)).toBe(1);
+    expect((await aget('progress', 'USER')).body.libraries.PERSONAL.sessions).toBe(0);
+    await api()
+      .delete('/api/v1/learning/personal/vocabulary-topics/' + topicId)
+      .auth(tokens[role], { type: 'bearer' })
+      .expect(200);
+    expect((await aget('progress', role)).body.libraries.PERSONAL).toEqual(
+      result.libraries.PERSONAL,
+    );
+  });
+  it('recovers personal quiz evidence and first-learned dates without inventing reviews, including a second recovery', async () => {
+    const { liveFrom } = await adb.analyticsHistoryCoverage.findUniqueOrThrow({
+      where: { key: 'personal-and-quiz' },
+    });
+    const at = new Date(liveFrom.getTime() - 86400000),
+      userId = ids.OTHER_ADMIN;
+    const topic = await db.personalVocabularyTopic.create({ data: { userId, name: 'Historical' } }),
+      word = await db.personalVocabulary.create({
+        data: { userId, topicId: topic.id, word: 'legacy', definition: 'Earlier' },
+      });
+    await db.userPersonalVocabularyProgress.create({
+      data: {
+        userId,
+        vocabularyId: word.id,
+        quality: 5,
+        intervalDays: 6,
+        easinessFactor: 2.5,
+        repetitionNumber: 2,
+        nextReviewDate: at,
+        firstLearnedAt: at,
+        revision: 2n,
+        updatedAt: at,
+      },
+    });
+    const sessionId = randomUUID();
+    await db.flashcardSession.create({
+      data: {
+        id: sessionId,
+        userId,
+        topicId: topic.id,
+        scope: 'PERSONAL',
+        mode: 'NEW',
+        status: 'COMPLETED',
+        startedAt: at,
+        expiresAt: at,
+        completedAt: at,
+        result: { sessionId, completedAt: at.toISOString(), quizScore: 2, quizTotal: 3 },
+      },
+    });
+    const env = {
+      ...process.env,
+      LEARNING_DATABASE_URL: process.env.P5_LEARNING_DATABASE_URL,
+      EXAM_DATABASE_URL: process.env.P5_EXAM_DATABASE_URL,
+      ANALYTICS_DATABASE_URL: process.env.P5_ANALYTICS_DATABASE_URL,
+    };
+    const recover = (mode: string) =>
+      execFileSync(process.execPath, [resolve(__dirname, '../scripts/recover-history.cjs'), mode], {
+        env,
+        windowsHide: true,
+      });
+    const summary = async () => (await aget('progress?timeRange=ALL_TIME', 'OTHER_ADMIN')).body;
+    const before = await summary();
+    recover('--dry-run');
+    expect((await summary()).libraries).toEqual(before.libraries);
+    recover('--apply');
+    recover('--apply');
+    const after = await summary();
+    expect(after.libraries.PERSONAL).toEqual({
+      ...before.libraries.PERSONAL,
+      learned: before.libraries.PERSONAL.learned + 1,
+      sessions: before.libraries.PERSONAL.sessions + 1,
+      correct: before.libraries.PERSONAL.correct + 2,
+      total: before.libraries.PERSONAL.total + 3,
+    });
+    expect(after.inRange.studyDays).toBe(before.inRange.studyDays);
+    expect(after.inRange.reviewCount).toBe(before.inRange.reviewCount);
+  });
   it('predicts from exactly the latest three Full facts and recomputes after the rolling window expires', async () => {
     const now = new Date();
     for (const [i, score] of [800, 700, 600, 990].entries())
@@ -648,7 +769,14 @@ integration('P5 Analytics via Gateway with real Auth/PostgreSQL/RabbitMQ/MinIO',
       expect(range.lifetime.reviewCount).toBe(2);
       expect(range.inRange.reviewCount).toBe(1);
       expect(range.dailyActivity).toHaveLength(7);
-      expect(range.dailyActivity[0]).toEqual({ date: '2026-10-26', count: 1 });
+      expect(range.dailyActivity[0]).toEqual({
+        date: '2026-10-26',
+        count: 1,
+        reviews: 1,
+        lessons: 0,
+        full: 0,
+        part: 0,
+      });
       const future = reviewed(ids.FUTURE, new Date(anchor.getTime() + 60000));
       future.occurredAt = new Date(anchor.getTime() + 60000).toISOString();
       await deliver(future);

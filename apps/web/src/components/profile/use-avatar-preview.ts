@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { validateAvatarFile } from '@/lib/profile/validation';
+import { validateAvatarFile } from '../../lib/profile/validation';
 
-export function useAvatarPreview() {
+export function useAvatarPreview(validate: (file: File) => string | null = validateAvatarFile) {
   const [url, setUrl] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export function useAvatarPreview() {
   }, [release]);
 
   async function select(file: File): Promise<void> {
-    const issue = validateAvatarFile(file);
+    const issue = validate(file);
     const requestVersion = ++version.current;
     if (pending.current) URL.revokeObjectURL(pending.current);
     pending.current = null;

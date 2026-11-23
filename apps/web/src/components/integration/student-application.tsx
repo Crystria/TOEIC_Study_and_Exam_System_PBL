@@ -1,6 +1,8 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- Media URLs are validated complete backend URLs. */
 import Link from 'next/link';
+import { AccountAnalytics } from './account-analytics';
+import { PasswordForm } from './password-forms';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useRef, useState, type ReactNode } from 'react';
 import { learningApi, examApi, analyticsApi, profileApi } from '../../lib/integration/repositories';
@@ -14,14 +16,22 @@ import { VocabularyEntryCard } from '../learning/vocabulary-entry-card';
 import { VocabularyListCard } from '../learning/vocabulary-list-card';
 import { ServerExamDetail, ServerHistory, ServerAttemptScreen } from './exam-flow';
 import { ExamLibraryCard } from '../exams/exam-library-card';
-import { flashcardTopicHref, VocabularySession, VocabularySessionStart } from './vocabulary-session';
+import {
+  flashcardTopicHref,
+  VocabularySession,
+  VocabularySessionStart,
+} from './vocabulary-session';
 import { MediaUpload } from './media-upload';
+import { AccountAvatar } from '../profile/account-avatar';
+import { ProfileUpdateStatus } from '../profile/profile-update-status';
 import { EmailActivation } from './email-activation';
 import { Blocked, ResourceState, SessionGate, useResource } from './shared';
 import { SearchForm } from './search-form';
 import { LearningLibraryNav, PersonalLearningLibrary } from './personal-learning';
 import { LearningLibraryCard } from './learning-library-card';
 import { ServerPagination } from './server-pagination';
+
+type ProfileChanges = Partial<Pick<User, 'fullName' | 'phoneNumber' | 'avatarUrl'>>;
 
 export function ApiStudentApplication({
   children,
@@ -33,7 +43,8 @@ export function ApiStudentApplication({
   examWrites?: boolean;
 }) {
   const path = usePathname();
-  if (path === '/' || path === '/login' || path === '/register') return <>{children}</>;
+  if (['/', '/login', '/register', '/forgot-password', '/reset-password'].includes(path))
+    return <>{children}</>;
   if (path === '/verify-email') return <EmailActivation writes={writes} />;
   return (
     <SessionGate key={path}>
@@ -63,9 +74,13 @@ function AuthenticatedStudent({
   const viewParams = new URLSearchParams(search.toString());
   viewParams.delete('page');
   const practiceEntry = /^\/exam\/[^/]+$/.test(path) && search.get('entry') === 'practice';
-  const hideReadOnlyNotice = ['/dashboard', '/study/vocabulary', '/study/grammar', '/history'].some(
-    (section) => path === section || path.startsWith(`${section}/`),
-  );
+  const hideReadOnlyNotice = [
+    '/analytics',
+    '/dashboard',
+    '/study/vocabulary',
+    '/study/grammar',
+    '/history',
+  ].some((section) => path === section || path.startsWith(`${section}/`));
   return (
     <StudentShell apiAccount={user} activeSection={practiceEntry ? '/practice' : undefined}>
       <div
@@ -78,13 +93,12 @@ function AuthenticatedStudent({
           path !== '/practice' &&
           search.get('library') !== 'personal' && (
             <Blocked>
-              Chưa bật cập nhật hồ sơ, phiên học kèm quiz hoặc hoàn thành bài học
-              cho tài khoản.
+              Chưa bật cập nhật hồ sơ, phiên học kèm quiz hoặc hoàn thành bài học cho tài khoản.
             </Blocked>
           )}
         <StudentDomain
           user={user}
-          onProfile={setUser}
+          onProfile={(changes) => setUser((current) => ({ ...current, ...changes }))}
           writes={writes}
           examWrites={examWrites}
           practiceEntry={practiceEntry}
@@ -101,7 +115,7 @@ function StudentDomain({
   practiceEntry,
 }: {
   user: User;
-  onProfile: (user: User) => void;
+  onProfile: (changes: ProfileChanges) => void;
   writes: boolean;
   examWrites: boolean;
   practiceEntry: boolean;
@@ -132,8 +146,7 @@ function StudentDomain({
           backHref={flashcardTopicHref(topicId, personal ? 'PERSONAL' : 'SHARED')}
         />
       );
-    if (personal)
-      return <PersonalLearningLibrary kind="vocabulary" ownerId={user.id} />;
+    if (personal) return <PersonalLearningLibrary kind="vocabulary" ownerId={user.id} />;
     return <Vocabulary key={parts[2] ?? 'topics'} topicId={parts[2]} ownerId={user.id} />;
   }
   if (path.startsWith('/study/grammar')) {
@@ -158,7 +171,7 @@ function StudentDomain({
         </Blocked>
       </>
     );
-  if (path === '/analytics') return <Analytics />;
+  if (path === '/analytics') return <AccountAnalytics />;
   if (path === '/profile') return <Profile user={user} onSaved={onProfile} writes={writes} />;
   if (path === '/settings')
     return (
@@ -209,8 +222,11 @@ function ProgressCards() {
         <div className="api-grid">
           <article className="api-card">
             <h2>Từ vựng</h2>
-            <p>{state.data.vocabulary.reviewed} từ đã ôn</p>
-            <p>{state.data.vocabulary.dueToday} từ đến lịch ôn</p>
+            <p>
+              {state.data.vocabulary.reviewed + (state.data.libraries?.PERSONAL.reviewed ?? 0)} từ
+              đã ôn
+            </p>
+            <p>{state.data.vocabulary.dueToday} từ thư viện chung đến lịch ôn</p>
             <Link href="/study/vocabulary?review=today">Luyện tập bằng flashcard</Link>
           </article>
           <article className="api-card">
@@ -241,7 +257,7 @@ function ApiDashboard() {
       )}
       <Blocked>
         Mục tiêu và thời gian học chưa có API. Điểm Full Test và thống kê được đọc từ backend tại
-        trang Thống kê.
+        <Link href="/analytics">trang Thống kê</Link>.
       </Blocked>
     </>
   );
@@ -506,153 +522,19 @@ function ExamLibrary({ practice }: { practice: boolean }) {
     </>
   );
 }
-function Analytics() {
-  const { params, update } = usePageQuery(),
-    range = params.get('timeRange') ?? 'LAST_30_DAYS';
-  const state = useResource('analytics:' + range, (signal) => analyticsApi.progress(range, signal));
-  const [more, setMore] = useState<Awaited<ReturnType<typeof analyticsApi.progress>>['scoreTrend']>(
-      [],
-    ),
-    [next, setNext] = useState<string>(),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState(''),
-    lock = useRef(false);
-  return (
-    <>
-      <h1>Thống kê học tập</h1>
-      <label className="api-field">
-        Khoảng thời gian
-        <select value={range} onChange={(e) => update({ timeRange: e.target.value })}>
-          <option value="LAST_7_DAYS">7 ngày</option>
-          <option value="LAST_30_DAYS">30 ngày</option>
-          <option value="ALL_TIME">Toàn bộ</option>
-        </select>
-      </label>
-      <ResourceState {...state} retry={state.reload} />
-      {state.data && (
-        <>
-          <article className="api-card">
-            <h2>Trong khoảng đã chọn</h2>
-            <p>
-              {state.data.activities.vocabulariesLearned} từ mới ·{' '}
-              {state.data.activities.grammarLessonsCompleted} bài ngữ pháp ·{' '}
-              {state.data.activities.mockTestCount} bài Full · {state.data.activities.practiceCount}{' '}
-              lượt luyện Part
-            </p>
-            <p>
-              Toàn bộ: {state.data.lifetime.totalStudyDays} ngày học ·{' '}
-              {state.data.lifetime.totalVocabLearned} từ · {state.data.lifetime.totalLessons} bài
-            </p>
-            <p>
-              Dự đoán server:{' '}
-              {state.data.predictedToeicScore === null
-                ? 'Cần ít nhất 3 bài Full hợp lệ trong 30 ngày'
-                : state.data.predictedToeicScore}
-            </p>
-          </article>
-          <article className="api-card">
-            <h2>Điểm Full Test trong khoảng đã chọn</h2>
-            {!state.data.scoreTrend.length && <p>Chưa có bài Full được chấm.</p>}
-            <ul>
-              {[...state.data.scoreTrend, ...more].map((v) => (
-                <li key={v.attemptId}>
-                  {new Date(v.completedAt).toLocaleDateString('vi-VN')}: {v.totalScore}
-                </li>
-              ))}
-            </ul>
-            {(next === undefined ? state.data.nextCursor : next) && (
-              <button
-                disabled={busy}
-                onClick={async () => {
-                  if (lock.current) return;
-                  lock.current = true;
-                  setBusy(true);
-                  setError('');
-                  try {
-                    const cursor = next ?? state.data!.nextCursor!;
-                    const page = await analyticsApi.progress(range, undefined, cursor);
-                    if (page.nextCursor === cursor)
-                      throw new Error('Cursor server không tiến triển.');
-                    setMore((v) => [
-                      ...v,
-                      ...page.scoreTrend.filter(
-                        (q) =>
-                          !state.data!.scoreTrend.some((x) => x.attemptId === q.attemptId) &&
-                          !v.some((x) => x.attemptId === q.attemptId),
-                      ),
-                    ]);
-                    setNext(page.nextCursor ?? '');
-                  } catch (e) {
-                    setError(failureMessage(e));
-                  } finally {
-                    lock.current = false;
-                    setBusy(false);
-                  }
-                }}
-              >
-                Tải tiếp xu hướng điểm
-              </button>
-            )}
-            {error && <p role="alert">{error}</p>}
-          </article>
-          <details className="api-card">
-            <summary>Hoạt động theo ngày</summary>
-            {state.data.dailyActivityTruncated && (
-              <p>Backend giới hạn cửa sổ hoạt động gần nhất.</p>
-            )}
-            <div className="api-scroll">
-              <table className="api-table">
-                <thead>
-                  <tr>
-                    <th>Ngày</th>
-                    <th>Hoạt động</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {state.data.dailyActivity.map((d) => (
-                    <tr key={d.date}>
-                      <td>{d.date}</td>
-                      <td>{d.count}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </details>
-          <article className="api-card">
-            <h2>Theo Part — cửa sổ 30 ngày của backend</h2>
-            <ul>
-              {state.data.weakAreas.map((p) => (
-                <li key={p.part}>
-                  Part {p.part}: {p.correct} / {p.total} ·{' '}
-                  {p.total < 20
-                    ? 'Chưa đủ dữ liệu'
-                    : p.isWeak
-                      ? 'Cần cải thiện'
-                      : 'Chưa thuộc vùng yếu'}
-                </li>
-              ))}
-            </ul>
-          </article>
-        </>
-      )}
-    </>
-  );
-}
 function Profile({
   user,
   onSaved,
   writes,
 }: {
   user: User;
-  onSaved: (user: User) => void;
+  onSaved: (changes: ProfileChanges) => void;
   writes: boolean;
 }) {
   const [fullName, setName] = useState(user.fullName),
     [phone, setPhone] = useState(user.phoneNumber ?? '');
   const [busy, setBusy] = useState(false),
-    [error, setError] = useState(''),
-    [saved, setSaved] = useState(false),
+    [saveStatus, setSaveStatus] = useState<'success' | 'error' | null>(null),
     lock = useRef(false),
     form = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -660,7 +542,12 @@ function Profile({
     <>
       <h1>Hồ sơ của bạn</h1>
       <article className="api-card">
-        {user.avatarUrl && <ServerImage source={user.avatarUrl} label="Ảnh đại diện của bạn" />}
+        <AccountAvatar
+          source={user.avatarUrl}
+          name={user.fullName}
+          label="Ảnh đại diện của bạn"
+          large
+        />
         <p>Email: {user.email}</p>
         <p>Vai trò: {user.roles.join(', ')}</p>
         <p>Trạng thái: {user.status}</p>
@@ -669,11 +556,11 @@ function Profile({
           onSubmit={async (e) => {
             e.preventDefault();
             if (lock.current || !writes) return;
-            setError('');
-            setSaved(false);
+            setSaveStatus(null);
             setErrors({});
             if (fullName.trim().length < 2) {
               setErrors({ fullName: 'Họ tên cần ít nhất hai ký tự.' });
+              setSaveStatus('error');
               form.current?.querySelector('input')?.focus();
               return;
             }
@@ -681,12 +568,12 @@ function Profile({
             setBusy(true);
             try {
               const result = matchingId(await profileApi.update(fullName, phone), user.id);
-              onSaved(result);
+              onSaved({ fullName: result.fullName, phoneNumber: result.phoneNumber });
               setName(result.fullName);
               setPhone(result.phoneNumber ?? '');
-              setSaved(true);
+              setSaveStatus('success');
             } catch (cause) {
-              setError(failureMessage(cause));
+              setSaveStatus('error');
               setErrors(validationFields(cause, ['fullName', 'phoneNumber']));
               requestAnimationFrame(() =>
                 form.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(),
@@ -707,7 +594,7 @@ function Profile({
                 aria-describedby={errors.fullName ? 'profile-name-error' : undefined}
                 onChange={(e) => {
                   setName(e.target.value);
-                  setSaved(false);
+                  setSaveStatus(null);
                 }}
               />
               {errors.fullName && (
@@ -726,7 +613,7 @@ function Profile({
                 aria-describedby={errors.phoneNumber ? 'profile-phone-error' : undefined}
                 onChange={(e) => {
                   setPhone(e.target.value);
-                  setSaved(false);
+                  setSaveStatus(null);
                 }}
               />
               {errors.phoneNumber && (
@@ -738,25 +625,21 @@ function Profile({
           </fieldset>
           <button disabled={busy || !writes}>{busy ? 'Đang lưu…' : 'Lưu hồ sơ'}</button>
         </form>
-        {error && (
-          <p role="alert" className="api-error">
-            {error}
-          </p>
-        )}
-        {saved && <p role="status">Server đã xác nhận cập nhật hồ sơ.</p>}
+        {saveStatus && <ProfileUpdateStatus status={saveStatus} />}
       </article>
       <MediaUpload
         scope="avatar"
         resourceId={user.id}
         kind="IMAGE"
         writes={writes}
-        saved={() => {
-          void profileApi
-            .read()
-            .then((value) => onSaved(matchingId(value, user.id)))
-            .catch((e) => setError(failureMessage(e)));
+        saved={async () => {
+          const { avatarUrl } = matchingId(await profileApi.read(), user.id);
+          onSaved({ avatarUrl });
         }}
       />
+      <article className="api-card">
+        <PasswordForm mode="change" profileUpdateFeedback />
+      </article>
     </>
   );
 }

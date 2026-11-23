@@ -30,7 +30,7 @@ async function run() {
       for (;;) {
         const rows = await db.$queryRaw<
           Array<{ user_id: string }>
-        >`SELECT DISTINCT user_id FROM learning_activity_facts WHERE user_id>${after} ORDER BY user_id LIMIT 100`;
+        >`SELECT user_id FROM (SELECT user_id FROM learning_activity_facts UNION SELECT user_id FROM historical_learned_words) users WHERE user_id>${after} ORDER BY user_id LIMIT 100`;
         if (!rows.length) break;
         for (const row of rows) {
           await projection.rebuild(row.user_id);

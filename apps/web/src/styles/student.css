@@ -426,6 +426,19 @@ main:focus {
   font-size: 12px;
   font-weight: 650;
   border: 3px solid #f6f9ff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.avatar--profile {
+  width: 72px;
+  height: 72px;
+  font-size: 22px;
+}
+.avatar .avatar-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .profile-label {
   font-size: 11px;
@@ -838,9 +851,27 @@ main:focus {
 .score-chart {
   margin: 15px -9px 4px;
 }
-.score-chart svg {
+.score-chart > svg {
   width: 100%;
   display: block;
+}
+.score-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0 9px;
+  padding: 0;
+  list-style: none;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+.score-chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.score-chart-legend svg {
+  flex: none;
 }
 .chart-grid-line {
   stroke: #e9edf4;

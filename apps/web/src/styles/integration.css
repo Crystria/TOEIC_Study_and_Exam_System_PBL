@@ -606,6 +606,12 @@
   max-width: 100%;
   height: auto;
 }
+.api-avatar-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block: 14px;
+}
 @media (max-width: 767px) {
   .api-grid {
     grid-template-columns: 1fr;

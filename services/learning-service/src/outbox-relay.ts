@@ -32,6 +32,8 @@ export class ServiceOutboxRelay implements OnModuleInit, OnModuleDestroy {
           if ((event.envelope as { version?: number }).version === 2 && !provisioned) {
             await messaging.declareConsumerQueue(`${prefix}analytics-service.v2`, [
               'vocabulary.learned.v2',
+              'personal.vocabulary.reviewed.v2',
+              'flashcard.session.completed.v2',
               'lesson.completed.v2',
             ]);
             await messaging.declareConsumerQueue(`${prefix}auth-learning-projection.v2`, [

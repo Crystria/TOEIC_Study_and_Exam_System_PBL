@@ -13,11 +13,12 @@ import { profileChanges, profileCharacterCount, validateProfile } from '@/lib/pr
 import { ExamDialog } from '../exams/exam-dialog';
 import { useSettingsNavigation } from '../settings/use-settings-navigation';
 import { Button } from '../ui/button';
-import { Alert, Badge } from '../ui/feedback';
+import { Badge } from '../ui/feedback';
 import { Field } from '../ui/field';
 import { Icon } from '../ui/icon';
 import { Panel } from '../ui/panel';
 import { useAvatarPreview } from './use-avatar-preview';
+import { ProfileUpdateStatus } from './profile-update-status';
 
 export function ProfileForm({
   initial,
@@ -32,7 +33,7 @@ export function ProfileForm({
   const [errors, setErrors] = useState<ProfileErrors>({});
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [notice, setNotice] = useState('');
+  const [succeeded, setSucceeded] = useState(false);
   const avatar = useAvatarPreview();
   const fullName = useRef<HTMLInputElement>(null);
   const phone = useRef<HTMLInputElement>(null);
@@ -52,7 +53,7 @@ export function ProfileForm({
     setDraft(profileDraft(saved));
     setErrors({});
     setFailed(false);
-    setNotice('');
+    setSucceeded(false);
     avatar.clear();
     setEditing(false);
     requestAnimationFrame(() => edit.current?.focus({ preventScroll: true }));
@@ -60,14 +61,14 @@ export function ProfileForm({
   function change(key: keyof ProfileDraft, value: string) {
     const next = { ...draft, [key]: value };
     setDraft(next);
-    setNotice('');
+    setSucceeded(false);
     if (errors[key]) setErrors((previous) => ({ ...previous, [key]: validateProfile(next)[key] }));
   }
   async function save() {
     if (request.current || !editing || !textDirty || avatar.loading) return;
     const issues = validateProfile(draft);
     setErrors(issues);
-    setNotice('');
+    setSucceeded(false);
     if (Object.keys(issues).length) {
       (issues.fullName ? fullName : phone).current?.focus();
       return;
@@ -85,9 +86,7 @@ export function ProfileForm({
       setDraft(profileDraft(result));
       setEditing(false);
       avatar.clear();
-      setNotice(
-        'Đã lưu họ tên và số điện thoại demo trong bộ nhớ trang này. Chưa cập nhật tài khoản/server. Ảnh xem trước không được lưu.',
-      );
+      setSucceeded(true);
       if (returnFocus) requestAnimationFrame(() => edit.current?.focus({ preventScroll: true }));
     } catch {
       if (!controller.signal.aborted) setFailed(true);
@@ -148,14 +147,14 @@ export function ProfileForm({
               {saving ? 'Đang lưu' : dirty ? 'Chưa lưu' : editing ? 'Đang chỉnh sửa' : 'Đang xem'}
             </Badge>
           </div>
-          {notice && <Alert tone="success">{notice}</Alert>}
+          {succeeded && <ProfileUpdateStatus status="success" />}
           {!editing && (
             <Button
               ref={edit}
               variant="secondary"
               onClick={() => {
                 setEditing(true);
-                setNotice('');
+                setSucceeded(false);
                 requestAnimationFrame(() => fullName.current?.focus());
               }}
             >
@@ -296,12 +295,7 @@ export function ProfileForm({
                 </div>
               </div>
             </div>
-            {failed && (
-              <Alert tone="error">
-                Mô phỏng: chưa lưu được thông tin demo. Nội dung và ảnh xem trước vẫn được giữ
-                nguyên. Chọn Thử lưu lại để tiếp tục.
-              </Alert>
-            )}
+            {failed && <ProfileUpdateStatus status="error" />}
             {editing && (
               <div className="profile-form-actions">
                 <Button variant="secondary" disabled={saving} onClick={reset}>

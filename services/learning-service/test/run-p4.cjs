@@ -132,26 +132,27 @@ function prisma(db, args) {
       '7',
     );
     const ar = create('authrehearsal'),
-      ad = path.join(root, 'services/auth-service/prisma/migrations');
-    for (const n of fs
+      ad = path.join(root, 'services/auth-service/prisma/migrations'),
+      syncMigration = '20261101040000_p4_auth_sync';
+    const authMigrations = fs
       .readdirSync(ad)
-      .filter(
-        (n) =>
-          n < '20261101040000_p4_auth_sync' && fs.existsSync(path.join(ad, n, 'migration.sql')),
-      )
-      .sort())
+      .filter((n) => fs.existsSync(path.join(ad, n, 'migration.sql')))
+      .sort();
+    for (const n of authMigrations.filter((n) => n < syncMigration))
       sql(ar, fs.readFileSync(path.join(ad, n, 'migration.sql'), 'utf8'));
     sql(
       ar,
       "INSERT INTO users(id,email,full_name,status,updated_at) VALUES('00000000-0000-4000-8000-000000000001','legacy-sync@example.test','Legacy sync','ACTIVE',now()); INSERT INTO user_sync_states(user_id,client_device_id,last_sync_time,version,updated_at) VALUES('00000000-0000-4000-8000-000000000001','legacy-device',now(),9,now())",
     );
-    const am = fs.readFileSync(path.join(ad, '20261101040000_p4_auth_sync/migration.sql'), 'utf8');
+    const am = fs.readFileSync(path.join(ad, syncMigration, 'migration.sql'), 'utf8');
     assert.throws(() => sql(ar, am), /P4_LEGACY_SYNC_REQUIRES_REVIEW/);
     assert.equal(sql(ar, "SELECT to_regclass('sync_heads') IS NULL"), 't');
     sql(ar, 'UPDATE user_sync_states SET version=0');
     sql(ar, am);
     assert.equal(sql(ar, 'SELECT sync_version FROM sync_heads'), '0');
     assert.equal(sql(ar, 'SELECT version FROM user_sync_states'), '0');
+    for (const n of authMigrations.filter((n) => n > syncMigration))
+      sql(ar, fs.readFileSync(path.join(ad, n, 'migration.sql'), 'utf8'));
     prisma(ar, [
       'migrate',
       'diff',
