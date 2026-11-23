@@ -26,6 +26,13 @@ database và schema.
 
 Trước khi ghi, script kiểm tra học viên đang hoạt động, đề Full hợp lệ, từ
 vựng chưa học, bài ngữ pháp chưa hoàn thành và ít nhất ba ngày lịch sử hợp lệ.
+Ba lượt Full Test và ba lượt luyện Part 2, 5, 7 được rải ngẫu nhiên qua các
+đề đã có đủ câu hỏi, nhóm câu, đáp án và tham chiếu tài nguyên vào ngày làm dự kiến.
+Trong các đề chưa chọn trong đợt này, script ưu tiên đề học viên chưa từng
+làm Full hoặc Part. Khi cần lặp, đề đã dùng ít nhất được ưu tiên.
+Cùng ngày lập lịch, cấu hình database, tài khoản, `run-id` và dữ liệu đầu vào
+sẽ cho cùng kết quả chọn đề khi xem trước và áp dụng. Lượt đang dở dùng lại đề đã lưu.
+
 Question Bank chỉ đọc. Exam và Learning lưu bản ghi nguồn, Analytics tổng
 hợp sự kiện, còn Auth nhận tiến độ đồng bộ trong đúng bộ local. Script giao
 các sự kiện của lượt chạy trực tiếp cho bộ xử lý tương ứng nên có thể dùng

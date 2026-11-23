@@ -1,4 +1,4 @@
-import { readOnly, safeError } from './local-db.mjs';
+import { digest, readOnly, safeError } from './local-db.mjs';
 
 const parts = [1, 2, 3, 4, 5, 6, 7];
 const dayMs = 86_400_000;
@@ -59,54 +59,65 @@ export async function checkStorage(db) {
   ]);
 }
 
-async function findTest(db, attempts) {
-  const candidates = await readOnly(db.exam, (tx) =>
-    tx.test.findMany({
+async function findEligibleTests(db, attempts, userId) {
+  const { candidates, attempted } = await readOnly(db.exam, async (tx) => {
+    const candidates = await tx.test.findMany({
       where: { deletedAt: null, durationSeconds: 7200 },
-      select: { id: true, createdAt: true },
-      orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
-    }),
-  );
+      select: { id: true },
+      orderBy: { id: 'asc' },
+    });
+    const attempted = candidates.length
+      ? await tx.attempt.groupBy({
+          by: ['testId'],
+          where: { userId, testId: { in: candidates.map(({ id }) => id) } },
+        })
+      : [];
+    return { candidates, attempted };
+  });
+  const history = new Set(attempted.map(({ testId }) => testId));
   const errors = [];
-  let selected;
-  for (const { id, createdAt: testCreatedAt } of candidates) {
-    if (selected && testCreatedAt.getTime() >= selected.availableAt) break;
+  const eligible = [];
+  for (const { id } of candidates) {
     const test = await getTest(db.exam, id);
     if (!test) continue;
     try {
-      const prepared = await attempts.prepareHistoricalTest(test);
-      const dates = await readOnly(db.question, (tx) =>
-        tx.question.findMany({
-          where: { id: { in: test.questions.map(({ questionId }) => questionId) } },
-          select: {
-            createdAt: true,
-            group: { select: { createdAt: true, assets: { select: { createdAt: true } } } },
-          },
-        }),
-      );
-      if (dates.length !== test.questions.length) throw new Error('Thiếu mốc tạo câu hỏi.');
-      const availableAt = Math.max(
-        test.createdAt.getTime(),
-        ...dates.map(({ createdAt, group }) =>
-          group
-            ? Math.max(
-                createdAt.getTime(),
-                group.createdAt.getTime(),
-                ...group.assets.map((a) => a.createdAt.getTime()),
-              )
-            : createdAt.getTime(),
-        ),
-      );
-      if (!selected || availableAt < selected.availableAt)
-        selected = { id, title: test.title, availableAt, ...prepared };
+      const prepared = await prepareTest(db.question, attempts, test);
+      eligible.push({ id, title: test.title, hasHistory: history.has(id), ...prepared });
     } catch (error) {
       errors.push(test.title + ' (' + safeError(error) + ')');
     }
   }
-  if (selected) return selected;
+  if (eligible.length) return eligible;
   throw new Error(
     'Thiếu đề Full hợp lệ' + (errors.length ? ' — ' + errors.slice(0, 3).join(', ') : '.'),
   );
+}
+
+async function prepareTest(questionDb, attempts, test) {
+  const prepared = await attempts.prepareHistoricalTest(test);
+  const dates = await readOnly(questionDb, (tx) =>
+    tx.question.findMany({
+      where: { id: { in: test.questions.map(({ questionId }) => questionId) } },
+      select: {
+        createdAt: true,
+        group: { select: { createdAt: true, assets: { select: { createdAt: true } } } },
+      },
+    }),
+  );
+  if (dates.length !== test.questions.length) throw new Error('Thiếu mốc tạo câu hỏi.');
+  const availableAt = Math.max(
+    test.createdAt.getTime(),
+    ...dates.map(({ createdAt, group }) =>
+      group
+        ? Math.max(
+            createdAt.getTime(),
+            group.createdAt.getTime(),
+            ...group.assets.map((asset) => asset.createdAt.getTime()),
+          )
+        : createdAt.getTime(),
+    ),
+  );
+  return { ...prepared, availableAt };
 }
 
 export function getTest(exam, id) {
@@ -172,16 +183,35 @@ async function checkPlannedWords(tx, userId, op, pendingNewWords) {
 }
 
 export async function checkRemainingPlan(db, attempts, userId, pending) {
-  const exam = pending.find(({ kind }) => kind === 'exam');
-  if (exam) {
-    const test = await getTest(db.exam, exam.testId);
-    const current = test && (await attempts.prepareHistoricalTest(test));
-    if (current?.catalogHash !== exam.catalogHash)
-      throw new Error('Đề thi hoặc câu hỏi đã thay đổi từ khi lập kế hoạch.');
+  const examsByTest = new Map();
+  for (const op of pending) {
+    if (op.kind !== 'exam') continue;
+    if (!examsByTest.has(op.testId)) examsByTest.set(op.testId, []);
+    examsByTest.get(op.testId).push(op);
+  }
+  for (const [testId, operations] of examsByTest) {
+    const label = `"${operations[0].title}" (${testId})`;
+    const test = await getTest(db.exam, testId);
+    if (!test) throw new Error(`Đề thi ${label} không còn khả dụng.`);
+    let current;
+    try {
+      current = await prepareTest(db.question, attempts, test);
+    } catch (error) {
+      throw new Error(`Đề thi ${label} không còn hợp lệ. ${safeError(error)}`);
+    }
     if (
-      pending.some((op) => op.mode === 'PART' && op.durationSeconds !== current.partDurationSeconds)
+      operations.some(
+        (op) =>
+          op.catalogHash !== current.catalogHash || Date.parse(op.startedAt) < current.availableAt,
+      )
     )
-      throw new Error('Cấu hình thời lượng luyện Part đã thay đổi từ khi lập kế hoạch.');
+      throw new Error(`Đề thi hoặc tài nguyên của ${label} đã thay đổi từ khi lập kế hoạch.`);
+    if (
+      operations.some(
+        (op) => op.mode === 'PART' && op.durationSeconds !== current.partDurationSeconds,
+      )
+    )
+      throw new Error(`Thời lượng luyện Part của đề ${label} đã thay đổi từ khi lập kế hoạch.`);
   }
   const pendingNewWords = new Set(
     pending
@@ -323,9 +353,33 @@ function examActivity(slot, test, mode, selectedParts, startedAt, accuracyPercen
   };
 }
 
-export async function createPlan(db, attempts, user) {
+function planExamActivities(tests, runKey, schedule) {
+  const usage = new Map();
+  return schedule.map(([slot, mode, selectedParts, startedAt, accuracyPercent]) => {
+    const available = tests.filter((test) => test.availableAt <= startedAt.getTime());
+    if (!available.length) throw new Error(`Thiếu đề hợp lệ vào thời điểm dự kiến của ${slot}.`);
+
+    const ranked = available.map((test) => ({
+      test,
+      uses: usage.get(test.id) ?? 0,
+      order: digest([runKey, slot, test.id]),
+    }));
+    ranked.sort(
+      (a, b) =>
+        a.uses - b.uses ||
+        (a.uses === 0 ? Number(a.test.hasHistory) - Number(b.test.hasHistory) : 0) ||
+        a.order.localeCompare(b.order) ||
+        a.test.id.localeCompare(b.test.id),
+    );
+    const { test, uses } = ranked[0];
+    usage.set(test.id, uses + 1);
+    return examActivity(slot, test, mode, selectedParts, startedAt, accuracyPercent);
+  });
+}
+
+export async function createPlan(db, attempts, user, runKey, now = new Date()) {
   const [exam, learning] = await Promise.allSettled([
-    findTest(db, attempts),
+    findEligibleTests(db, attempts, user.id),
     findLearningContent(db, user.id),
   ]);
   const missing = [exam, learning].flatMap((result) =>
@@ -338,9 +392,9 @@ export async function createPlan(db, attempts, user) {
       missing.push('Thiếu bài ngữ pháp đã xuất bản mà tài khoản chưa hoàn thành.');
   }
   if (missing.length) throw new Error(missing.join('\n'));
-  const test = exam.value;
+  const tests = exam.value;
   const { topics, personal, lessons } = learning.value;
-  const today = new Date(Date.now() + 7 * hourMs).toISOString().slice(0, 10);
+  const today = new Date(now.getTime() + 7 * hourMs).toISOString().slice(0, 10);
   const days = [7, 5, 3, 2, 1]
     .map((offset) =>
       new Date(Date.parse(today + 'T00:00:00Z') - offset * dayMs).toISOString().slice(0, 10),
@@ -349,7 +403,7 @@ export async function createPlan(db, attempts, user) {
       const first = at(day, 16, 25);
       return (
         user.createdAt <= first &&
-        test.availableAt <= at(day, 17).getTime() &&
+        tests.some((test) => test.availableAt <= at(day, 17).getTime()) &&
         Boolean(chooseCards(topics, first))
       );
     });
@@ -374,13 +428,18 @@ export async function createPlan(db, attempts, user) {
     lesson = lessons.find(({ createdAt }) => createdAt <= lessonAt);
   }
   if (!lesson) throw new Error('Bài ngữ pháp chưa tồn tại trong khoảng ngày có thể tạo lịch sử.');
+  const examSchedule = [
+    ['full-1', 'FULL', parts, at(first, 17), 55],
+    ['part-2', 'PART', [2], at(second, 16), 76],
+    ['full-2', 'FULL', parts, at(middle, 17), 65],
+    ['part-5', 'PART', [5], at(penultimate, 18, 30), 45],
+    ['full-3', 'FULL', parts, at(last, 17), 78],
+    ['part-7', 'PART', [7], at(last, 18, 40), 70],
+  ];
   const activities = [
+    ...planExamActivities(tests, runKey, examSchedule),
     flashcards('shared-new-1', 'SHARED', 'NEW', initial, at(first, 16, 25)),
-    examActivity('full-1', test, 'FULL', parts, at(first, 17), 55),
-    examActivity('part-2', test, 'PART', [2], at(second, 16), 76),
     flashcards('shared-review', 'SHARED', 'REVIEW', initial, at(middle, 16, 25)),
-    examActivity('full-2', test, 'FULL', parts, at(middle, 17), 65),
-    examActivity('part-5', test, 'PART', [5], at(penultimate, 18, 30), 45),
     {
       slot: 'lesson',
       kind: 'lesson',
@@ -389,8 +448,6 @@ export async function createPlan(db, attempts, user) {
       updatedAt: lesson.updatedAt.toISOString(),
       completedAt: lessonAt.toISOString(),
     },
-    examActivity('full-3', test, 'FULL', parts, at(last, 17), 78),
-    examActivity('part-7', test, 'PART', [7], at(last, 18, 40), 70),
   ];
   if (extra)
     activities.push(flashcards('shared-new-2', 'SHARED', 'NEW', extra, at(second, 16, 45)));

@@ -404,7 +404,7 @@ async function main() {
         throw new Error(
           'Lượt này đã ghi dữ liệu nhưng thiếu hồ sơ JSON. Hãy khôi phục hồ sơ trước khi tiếp tục.',
         );
-      const plan = await createPlan(db, runtime.attempts, user);
+      const plan = await createPlan(db, runtime.attempts, user, runKey);
       const now = new Date().toISOString();
       return {
         version: manifestVersion,

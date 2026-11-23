@@ -143,6 +143,17 @@ Lệnh chỉ đọc. Kiểm tra tên, cổng và schema của các database, tà
 đề thi, chủ đề và bài ngữ pháp mà script dự kiến dùng. Các mục tùy chọn bị bỏ qua sẽ có lý do
 trên terminal.
 
+Mỗi đợt có 3 lượt Full Test và 3 lượt luyện Part 2, 5, 7. Script chọn ngẫu nhiên theo từng
+lượt, trong số các đề đã có đủ câu hỏi, nhóm câu, đáp án và tham chiếu tài nguyên tại thời
+điểm làm dự kiến. Thứ tự ưu tiên là đề tài khoản chưa từng làm và chưa được chọn trong
+đợt này, rồi đề đã làm nhưng chưa được chọn. Khi phải lặp, script ưu tiên đề đã chọn ít
+lần nhất. Lượt Full hoặc Part đã bắt đầu đều tính vào lịch sử, kể cả lượt đang làm và
+lượt hết hạn. Nếu chỉ có một đề hợp lệ tại cả sáu thời điểm, cả sáu lượt sẽ dùng đề đó.
+
+Terminal hiển thị tên và ID đề cho từng lượt. Khi ngày lập lịch và dữ liệu đầu vào giữ
+nguyên, cùng tài khoản, database và `run-id` sẽ cho cùng kết quả giữa lệnh xem trước và
+`--apply`.
+
 ### Bước 3. Áp dụng và theo dõi kết quả
 
 ```powershell
@@ -157,8 +168,9 @@ node scripts/analytics/seed.mjs --list-runs --user $analyticsSeedUser
   `run-id`, tài khoản, thời điểm bắt đầu, trạng thái và số thao tác đã ghi hoặc đã giao sự kiện.
 - Nếu bị gián đoạn hoặc lỗi sau khi bắt đầu ghi, các thao tác đã hoàn tất được giữ lại.
   Giữ hồ sơ JSON, rồi chạy lại lệnh `--apply` với cùng bộ database, tài khoản và `run-id`
-  để tiếp tục. Khi muốn tạo một đợt mới, dùng `run-id` mới và xem trước lại vì tài khoản
-  có thể đã học các từ hoặc hoàn thành bài ngữ pháp từ lượt trước.
+  để tiếp tục với các đề đã lưu. Script báo tên đề và dừng trước khi ghi thêm nếu đề cho
+  lượt chưa ghi đã thay đổi. Khi muốn tạo một đợt mới, dùng `run-id` mới và xem trước lại
+  vì tài khoản có thể đã làm các đề, học các từ hoặc hoàn thành bài ngữ pháp từ lượt trước.
 
 ### Bước 4. Kiểm tra trên Web học viên
 
