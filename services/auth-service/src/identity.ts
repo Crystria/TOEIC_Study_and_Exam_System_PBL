@@ -46,7 +46,7 @@ export async function audit(
 export async function authorizationChanged(
   tx: IdentityTx,
   user: IdentityUser,
-  reason: 'LOGOUT' | 'USER_STATUS_CHANGED' | 'USER_ROLES_CHANGED',
+  reason: 'LOGOUT' | 'USER_STATUS_CHANGED' | 'USER_ROLES_CHANGED' | 'PASSWORD_CHANGED',
   session?: { id: string; version: bigint },
 ) {
   await writeV2Outbox(tx as never, user.id, {

@@ -1,8 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { attemptElapsedSeconds, type ServerAttempt } from '../../lib/integration/attempt-contract';
+import { failureMessage, mutationOutcomeUnknown } from '../../lib/integration/client';
+import { examApi } from '../../lib/integration/repositories';
 import { Icon } from '../ui/icon';
 import { AttemptReviewDialog } from './attempt-review-dialog';
 
@@ -15,12 +18,46 @@ function elapsedLabel(seconds: number | null) {
 
 export function ServerAttemptResult({
   attempt: a,
+  writes,
   review = false,
 }: {
   attempt: ServerAttempt;
+  writes: boolean;
   review?: boolean;
 }) {
+  const router = useRouter();
   const [questionId, setQuestionId] = useState<string | null>(null);
+  const [retaking, setRetaking] = useState(false);
+  const [retakeError, setRetakeError] = useState('');
+  const [retakeUncertain, setRetakeUncertain] = useState(false);
+  const retakeLock = useRef(false);
+  const retakeKey = useRef<string>();
+  const retake = async () => {
+    if (retakeLock.current || !writes) return;
+    retakeLock.current = true;
+    setRetaking(true);
+    setRetakeError('');
+    retakeKey.current ??= crypto.randomUUID();
+    try {
+      const next = await examApi.start(
+        a.testId,
+        a.mode,
+        [...a.parts],
+        a.durationSeconds,
+        retakeKey.current,
+      );
+      router.push(
+        `/exam/server/${next.status === 'IN_PROGRESS' ? 'take' : 'result'}?attempt=${encodeURIComponent(next.attemptId)}`,
+      );
+    } catch (caught) {
+      setRetakeError(failureMessage(caught));
+      const uncertain = mutationOutcomeUnknown(caught);
+      setRetakeUncertain(uncertain);
+      if (!uncertain) retakeKey.current = undefined;
+      retakeLock.current = false;
+      setRetaking(false);
+    }
+  };
   useEffect(() => {
     if (review) document.getElementById('attempt-answers')?.scrollIntoView();
   }, [review]);
@@ -62,10 +99,28 @@ export function ServerAttemptResult({
           <Link className="attempt-result-button is-primary" href="#attempt-answers">
             <Icon name="eye" width={17} /> Xem đáp án
           </Link>
-          <Link className="attempt-result-button" href={`/exam/${encodeURIComponent(a.testId)}`}>
-            <Icon name="refresh" width={17} /> Làm lại đề này
-          </Link>
+          <button
+            type="button"
+            className="attempt-result-button"
+            disabled={!writes || retaking}
+            aria-busy={retaking || undefined}
+            onClick={() => void retake()}
+          >
+            <Icon name="refresh" width={17} />{' '}
+            {retaking
+              ? 'Đang mở bài làm…'
+              : retakeUncertain
+                ? 'Thử mở lại bài làm'
+                : 'Làm lại đề này'}
+          </button>
         </div>
+        {retakeError && (
+          <p className="api-error" role="alert">
+            {retakeError}
+            {retakeUncertain && ' Bấm thử lại để tiếp tục cùng yêu cầu làm lại.'}
+          </p>
+        )}
+        {!writes && <p>Chức năng tạo bài làm mới đang tạm tắt.</p>}
       </header>
 
       <section className="attempt-result-overview" aria-label="Tổng quan kết quả">

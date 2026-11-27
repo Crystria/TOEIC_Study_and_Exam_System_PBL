@@ -7,6 +7,7 @@ import { formatPassageBlanks } from '../../lib/exams/passage';
 import { LessonMarkdown } from '../learning/lesson-markdown';
 import { AudioPlayer } from '../ui/audio-player';
 import { Icon } from '../ui/icon';
+import { useDialogBackdropDismiss } from '../ui/use-dialog-backdrop-dismiss';
 
 type ReviewProps = {
   attempt: ServerAttempt;
@@ -30,6 +31,7 @@ function OpenReviewDialog({
   const dialog = useRef<HTMLDialogElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
+  const backdropDismiss = useDialogBackdropDismiss(onClose);
   const titleId = useId();
   const questions = [...attempt.questions].sort((a, b) => a.orderNo - b.orderNo);
   const index = questions.findIndex((q) => q.id === question.id);
@@ -93,17 +95,7 @@ function OpenReviewDialog({
         event.preventDefault();
         onClose();
       }}
-      onClick={(event) => {
-        if (event.target !== event.currentTarget) return;
-        const bounds = event.currentTarget.getBoundingClientRect();
-        if (
-          event.clientX < bounds.left ||
-          event.clientX > bounds.right ||
-          event.clientY < bounds.top ||
-          event.clientY > bounds.bottom
-        )
-          onClose();
-      }}
+      {...backdropDismiss}
     >
       <header className="attempt-review-dialog-header">
         <h2 id={titleId}>{attempt.title}</h2>

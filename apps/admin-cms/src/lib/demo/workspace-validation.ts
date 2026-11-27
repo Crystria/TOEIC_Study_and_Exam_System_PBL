@@ -130,12 +130,6 @@ export function validateRecord<K extends EntityKind>(
     if (!r.word.trim()) e.word = 'Nhập từ vựng.';
     if (!r.meaning.trim()) e.meaning = 'Nhập định nghĩa.';
     if (!state.topics.some((t) => t.id === r.topicId)) e.topicId = 'Chọn chủ đề đang tồn tại.';
-    for (const [field, kind] of [
-      ['audioId', 'audio'],
-      ['imageId', 'image'],
-    ] as const)
-      if (r[field] && !mediaExists(state, r[field], kind))
-        e[field] = 'Media không tồn tại hoặc sai loại.';
   }
   if (kind === 'users') {
     const r = record as EntityMap['users'];

@@ -28,6 +28,10 @@ type Payload = {
   quality?: number;
   firstLearned?: boolean;
   firstLearnedAt?: string | null;
+  source?: 'FLASHCARD' | 'LEGACY';
+  scope?: 'SHARED' | 'PERSONAL';
+  quizScore?: number;
+  quizTotal?: number;
   activityAt?: string;
 };
 type Envelope = {
@@ -59,6 +63,8 @@ export class EventsConsumer implements OnModuleInit {
         'test.submitted.v2',
         'part.practice.submitted.v2',
         'vocabulary.learned.v2',
+        'personal.vocabulary.reviewed.v2',
+        'flashcard.session.completed.v2',
         'lesson.completed.v2',
       ],
       (m) => this.consume(JSON.parse(m.content.toString())),
@@ -79,6 +85,8 @@ export class EventsConsumer implements OnModuleInit {
         'test.submitted.v2',
         'part.practice.submitted.v2',
         'vocabulary.learned.v2',
+        'personal.vocabulary.reviewed.v2',
+        'flashcard.session.completed.v2',
         'lesson.completed.v2',
       ].includes(route)
     )
@@ -121,15 +129,19 @@ export class EventsConsumer implements OnModuleInit {
             ? p.mode === 'FULL'
               ? 'FULL'
               : 'PART'
-            : p.vocabularyId
-              ? 'REVIEW'
-              : 'LESSON',
-          entityId = p.attemptId ?? p.vocabularyId ?? p.lessonId!,
+            : e.eventType === 'FlashcardSessionCompletedEvent.v2'
+              ? 'QUIZ_' + p.source
+              : e.eventType === 'PersonalVocabularyReviewedEvent.v2'
+                ? 'PERSONAL_REVIEW'
+                : p.vocabularyId
+                  ? 'REVIEW'
+                  : 'LESSON',
+          entityId = p.attemptId ?? p.vocabularyId ?? p.lessonId ?? p.sessionId!,
           businessKey = stableHash({
             kind,
             userId: p.userId,
             entityId,
-            ...(kind === 'REVIEW' ? { operationId: p.operationId } : {}),
+            ...(p.vocabularyId ? { operationId: p.operationId } : {}),
           });
         const fingerprint =
           kind === 'LESSON'
@@ -152,7 +164,7 @@ export class EventsConsumer implements OnModuleInit {
           duplicate = prior.payloadHash === fingerprint;
           if (!duplicate) reason = 'BUSINESS_KEY_COLLISION';
         }
-        if (!reason && !duplicate && !isAttempt) {
+        if (!reason && !duplicate && p.revision) {
           const collision = await tx.learningActivityFact.findUnique({
             where: {
               userId_kind_entityId_revision: {
@@ -232,6 +244,10 @@ export class EventsConsumer implements OnModuleInit {
 }
 
 function canonicalPayload(type: string, payload: Payload): Payload {
+  if (type === 'FlashcardSessionCompletedEvent.v2') {
+    const { userId, sessionId, source, scope, quizScore, quizTotal, completedAt } = payload;
+    return { userId, sessionId, source, scope, quizScore, quizTotal, completedAt };
+  }
   const common = [
     'userId',
     'attemptId',
@@ -255,7 +271,7 @@ function canonicalPayload(type: string, payload: Payload): Payload {
         ]
       : type === 'PartPracticeSubmittedEvent.v2'
         ? [...common, 'parts', 'accuracy']
-        : type === 'VocabularyLearnedEvent.v2'
+        : type === 'VocabularyLearnedEvent.v2' || type === 'PersonalVocabularyReviewedEvent.v2'
           ? [
               'userId',
               'vocabularyId',

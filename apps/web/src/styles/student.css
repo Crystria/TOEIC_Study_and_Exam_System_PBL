@@ -222,6 +222,7 @@ main:focus {
   box-shadow: none;
 }
 .student-shell {
+  --student-sidebar-width: 244px;
   min-height: 100vh;
 }
 .desktop-sidebar {
@@ -230,7 +231,7 @@ main:focus {
   inset: 0 auto 0 0;
   display: flex;
   flex-direction: column;
-  width: 244px;
+  width: var(--student-sidebar-width);
   background: #fff;
   border-right: 1px solid var(--color-border);
   z-index: 30;
@@ -336,8 +337,31 @@ main:focus {
   background: #1bb387;
 }
 .student-workspace {
-  margin-left: 244px;
+  margin-left: var(--student-sidebar-width);
   min-width: 0;
+}
+@media (min-width: 1024px) {
+  .desktop-sidebar {
+    transition:
+      transform 200ms ease,
+      visibility 0s;
+  }
+  .student-workspace {
+    transition: margin-left 200ms ease;
+  }
+  :root[data-sidebar='collapsed'] .desktop-sidebar {
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition-delay: 0s, 200ms;
+  }
+  :root[data-sidebar='collapsed'] .student-workspace {
+    margin-left: 0;
+  }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  :root[data-sidebar] .desktop-sidebar {
+    transition: none;
+  }
 }
 .student-header {
   height: 80px;
@@ -402,6 +426,19 @@ main:focus {
   font-size: 12px;
   font-weight: 650;
   border: 3px solid #f6f9ff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.avatar--profile {
+  width: 72px;
+  height: 72px;
+  font-size: 22px;
+}
+.avatar .avatar-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .profile-label {
   font-size: 11px;
@@ -455,7 +492,7 @@ main:focus {
   font-size: 10px;
   color: var(--color-muted);
 }
-.mobile-menu-button {
+.student-header .mobile-menu-button {
   display: none;
 }
 .mobile-drawer {
@@ -814,9 +851,27 @@ main:focus {
 .score-chart {
   margin: 15px -9px 4px;
 }
-.score-chart svg {
+.score-chart > svg {
   width: 100%;
   display: block;
+}
+.score-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0 9px;
+  padding: 0;
+  list-style: none;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+.score-chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.score-chart-legend svg {
+  flex: none;
 }
 .chart-grid-line {
   stroke: #e9edf4;
@@ -1506,9 +1561,11 @@ main:focus {
   .student-workspace {
     margin-left: 0;
   }
-  .mobile-menu-button {
-    display: inline-flex;
-    margin-left: -8px;
+  .header-actions > .sidebar-toggle:not(.mobile-menu-button) {
+    display: none;
+  }
+  .student-header .mobile-menu-button {
+    display: inline-grid;
   }
   .student-header {
     height: 70px;

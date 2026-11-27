@@ -56,7 +56,10 @@ export function ResumeLearning() {
           đánh giá{session.phase === 'quiz' ? ' · Đang làm quiz' : ''}
         </p>
       </div>
-      <Link href={`/study/vocabulary/${session.topicId}`} className={buttonStyles('secondary')}>
+      <Link
+        href={`/study/vocabulary/${session.topicId}?view=session`}
+        className={buttonStyles('secondary')}
+      >
         Tiếp tục
         <Icon name="arrow" width="16" />
       </Link>

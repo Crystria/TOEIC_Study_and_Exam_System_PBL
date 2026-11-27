@@ -30,13 +30,25 @@ export class AdminLessonQuery extends LessonQuery {
 export class ReviewQuery extends PageQuery {
   @IsOptional() @IsUUID() topicId?: string;
 }
-export interface ContentInput {
+export interface VocabularyCreateItem {
+  word: string;
+  phonetic?: string | null;
+  partOfSpeech?: string | null;
+  definition: string;
+  englishDefinition?: string | null;
+  example?: string | null;
+}
+export interface VocabularyBulkInput {
+  topicId: string;
+  items: VocabularyCreateItem[];
+}
+export interface VocabularyImportInput {
+  source: string;
+  lists: { name: string; words: VocabularyCreateItem[] }[];
+}
+export interface ContentInput extends Partial<VocabularyCreateItem> {
   topicName?: string;
   topicId?: string;
-  word?: string;
-  phonetic?: string | null;
-  definition?: string;
-  example?: string | null;
   lessonTitle?: string;
   category?: string;
   contentMarkdown?: string;

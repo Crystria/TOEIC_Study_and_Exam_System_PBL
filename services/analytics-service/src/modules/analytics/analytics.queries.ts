@@ -23,11 +23,11 @@ export class AnalyticsQueries {
     const lo = from ?? new Date('0001-01-01T00:00:00Z');
     const [r] = await tx.$queryRaw<Array<Record<string, bigint>>>`
  SELECT (SELECT count(*) FROM first_learned_entities WHERE user_id=${userId} AND first_at>=${lo} AND first_at<=${asOf}) AS "vocabulariesLearned",
- (SELECT count(*) FROM learning_activity_facts WHERE user_id=${userId} AND kind='REVIEW' AND activity_at>=${lo} AND activity_at<=${asOf}) AS "reviewCount",
+ (SELECT count(*) FROM learning_activity_facts WHERE user_id=${userId} AND kind IN ('REVIEW','PERSONAL_REVIEW') AND activity_at>=${lo} AND activity_at<=${asOf}) AS "reviewCount",
  (SELECT count(*) FROM completed_lesson_entities WHERE user_id=${userId} AND first_at>=${lo} AND first_at<=${asOf}) AS "grammarLessonsCompleted",
  (SELECT count(*) FROM test_score_facts WHERE user_id=${userId} AND completed_at>=${lo} AND completed_at<=${asOf}) AS "mockTestCount",
  (SELECT count(*) FROM practice_facts WHERE user_id=${userId} AND completed_at>=${lo} AND completed_at<=${asOf}) AS "practiceCount",
- (SELECT count(DISTINCT ((activity_at AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Ho_Chi_Minh')::date) FROM learning_activity_facts WHERE user_id=${userId} AND activity_at>=${lo} AND activity_at<=${asOf}) AS "studyDays"`;
+ (SELECT count(DISTINCT ((activity_at AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Ho_Chi_Minh')::date) FROM learning_activity_facts WHERE user_id=${userId} AND kind IN ('PERSONAL_REVIEW','REVIEW','LESSON','FULL','PART') AND activity_at>=${lo} AND activity_at<=${asOf}) AS "studyDays"`;
     return {
       vocabulariesLearned: number(r.vocabulariesLearned),
       reviewCount: number(r.reviewCount),
@@ -37,11 +37,53 @@ export class AnalyticsQueries {
       studyDays: number(r.studyDays),
     };
   }
+  async learningBreakdown(tx: Tx, userId: string, asOf: Date, from: Date | null) {
+    const since = from ?? new Date('0001-01-01T00:00:00Z');
+    const rows = await tx.$queryRaw<
+      Array<{
+        scope: string;
+        learned: number;
+        reviews: number;
+        sessions: number;
+        correct: number;
+        total: number;
+      }>
+    >`
+      SELECT scope,
+      (SELECT count(*)::int FROM first_learned_entities w WHERE w.user_id=${userId} AND w.scope=s.scope AND first_at BETWEEN ${since} AND ${asOf}) AS learned,
+      count(*) FILTER (WHERE kind IN ('REVIEW','PERSONAL_REVIEW'))::int AS reviews,
+      count(*) FILTER (WHERE kind IN ('QUIZ_FLASHCARD','QUIZ_LEGACY'))::int AS sessions,
+      coalesce(sum((payload->>'quizScore')::int),0)::int AS correct,
+      coalesce(sum((payload->>'quizTotal')::int),0)::int AS total
+      FROM (VALUES ('SHARED'),('PERSONAL')) s(scope) LEFT JOIN learning_activity_facts f
+        ON f.user_id=${userId} AND activity_at BETWEEN ${since} AND ${asOf}
+        AND CASE kind WHEN 'REVIEW' THEN 'SHARED' WHEN 'PERSONAL_REVIEW' THEN 'PERSONAL' ELSE payload->>'scope' END=s.scope
+      GROUP BY scope ORDER BY scope`;
+    return Object.fromEntries(rows.map(({ scope, ...counts }) => [scope, counts]));
+  }
   async days(tx: Tx, userId: string, asOf: Date) {
     const rows = await tx.$queryRaw<
-      Array<{ day: Date; count: bigint }>
-    >`SELECT ((activity_at AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Ho_Chi_Minh')::date AS day,count(*) FROM learning_activity_facts WHERE user_id=${userId} AND activity_at<=${asOf} GROUP BY day ORDER BY day`;
-    return rows.map((r) => ({ date: r.day.toISOString().slice(0, 10), count: number(r.count) }));
+      Array<{
+        day: Date;
+        count: bigint;
+        reviews: number;
+        lessons: number;
+        full: number;
+        part: number;
+      }>
+    >`SELECT ((activity_at AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Ho_Chi_Minh')::date AS day,count(*),
+      (count(*) FILTER (WHERE kind IN ('REVIEW','PERSONAL_REVIEW')))::int AS reviews,
+      (count(*) FILTER (WHERE kind='LESSON'))::int AS lessons,
+      (count(*) FILTER (WHERE kind='FULL'))::int AS full,
+      (count(*) FILTER (WHERE kind='PART'))::int AS part FROM learning_activity_facts WHERE user_id=${userId} AND kind IN ('PERSONAL_REVIEW','REVIEW','LESSON','FULL','PART') AND activity_at<=${asOf} GROUP BY day ORDER BY day`;
+    return rows.map((r) => ({
+      date: r.day.toISOString().slice(0, 10),
+      count: number(r.count),
+      reviews: r.reviews,
+      lessons: r.lessons,
+      full: r.full,
+      part: r.part,
+    }));
   }
   async streak(tx: Tx, userId: string, asOf: Date) {
     return streak(

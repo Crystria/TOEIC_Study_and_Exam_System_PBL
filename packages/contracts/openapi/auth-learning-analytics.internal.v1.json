@@ -2757,7 +2757,7 @@
           },
           "reason": {
             "type": "string",
-            "enum": ["LOGOUT", "USER_STATUS_CHANGED", "USER_ROLES_CHANGED"]
+            "enum": ["LOGOUT", "USER_STATUS_CHANGED", "USER_ROLES_CHANGED", "PASSWORD_CHANGED"]
           }
         },
         "required": ["userId", "userVersion", "sessionId", "sessionVersion", "reason"],

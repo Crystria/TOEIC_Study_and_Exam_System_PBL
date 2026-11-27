@@ -9,6 +9,7 @@ import {
 } from '../../lib/integration/personal-learning';
 import { failureMessage, mutationOutcomeUnknown } from '../../lib/integration/client';
 import { LessonMarkdown } from '../learning/lesson-markdown';
+import { useDialogBackdropDismiss } from '../ui/use-dialog-backdrop-dismiss';
 
 export type PersonalEditing =
   | { kind: 'topics'; item?: PersonalTopic }
@@ -33,6 +34,11 @@ export function PersonalDialog({
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
+  function dismiss() {
+    if (!busy) onClose();
+  }
+  const backdropDismiss = useDialogBackdropDismiss(dismiss);
+
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     const node = dialog.current;
@@ -50,8 +56,9 @@ export function PersonalDialog({
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
-        if (!busy) onClose();
+        dismiss();
       }}
+      {...backdropDismiss}
     >
       <h2 id={titleId}>{title}</h2>
       {children}

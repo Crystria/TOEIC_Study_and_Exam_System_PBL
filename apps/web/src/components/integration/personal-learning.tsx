@@ -10,10 +10,18 @@ import {
   type PersonalLesson,
 } from '../../lib/integration/personal-learning';
 import { failureMessage, GatewayError } from '../../lib/integration/client';
+import { FlashcardPracticeSettings } from '../learning/flashcard-practice-settings';
 import { LessonMarkdown } from '../learning/lesson-markdown';
+import { useFlashcardPracticeLimit } from '../learning/use-flashcard-practice-limit';
+import { VocabularyEnglishDefinition } from '../learning/vocabulary-english-definition';
+import { VocabularyFlashcard } from '../learning/vocabulary-flashcard';
+import { VocabularyListCard } from '../learning/vocabulary-list-card';
+import { Icon } from '../ui/icon';
 import { ResourceState, useResource } from './shared';
 import { SearchForm } from './search-form';
 import { LearningLibraryCard } from './learning-library-card';
+import { ServerPagination } from './server-pagination';
+import { flashcardTopicHref, VocabularySessionStart } from './vocabulary-session';
 import {
   PersonalContentEditor,
   PersonalDialog,
@@ -51,6 +59,7 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
   const router = useRouter();
   const path = usePathname();
   const topicId = kind === 'vocabulary' ? search.get('topic') : null;
+  const [limit, setLimit] = useFlashcardPracticeLimit(ownerId);
   const params = new URLSearchParams();
   for (const field of ['keyword', 'page', 'category']) {
     const value = search.get(field);
@@ -75,7 +84,7 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
   const [editing, setEditing] = useState<PersonalEditing | null>(null);
   const [removing, setRemoving] = useState<Removing | null>(null);
   const [viewing, setViewing] = useState<PersonalLesson | null>(null);
-  const [mode, setMode] = useState<'list' | 'cards'>('list');
+  const [mode, setMode] = useState<'list' | 'cards'>('cards');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -97,11 +106,6 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
       topic.reload();
     } else topics.reload();
   };
-  const refreshAfterRemove = () => {
-    if (state.data && state.data.items.length === 1 && state.data.page > 1)
-      update({ page: String(state.data.page - 1) });
-    else refresh();
-  };
   const itemName =
     removing?.kind === 'topics'
       ? removing.item.name
@@ -117,12 +121,12 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
       await personalLearningApi[removing.kind].remove(removing.item.id);
       setRemoving(null);
       setNotice('Đã xóa nội dung cá nhân.');
-      refreshAfterRemove();
+      refresh();
     } catch (cause) {
       if (cause instanceof GatewayError && cause.status === 404) {
         setRemoving(null);
         setNotice('Nội dung này không còn tồn tại. Danh sách đã được cập nhật.');
-        refreshAfterRemove();
+        refresh();
       } else setError(failureMessage(cause));
     } finally {
       lock.current = false;
@@ -143,10 +147,11 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
       </p>
       {topicId && (
         <Link className="personal-learning-back" href="/study/vocabulary?library=personal">
-          ← Chủ đề của tôi
+          ← Danh sách từ vựng của tôi
         </Link>
       )}
       {topicId && <ResourceState {...topic} retry={topic.reload} />}
+      {kind === 'vocabulary' && <FlashcardPracticeSettings limit={limit} onSave={setLimit} />}
       <div className="personal-learning-heading">
         <div>
           <h2>
@@ -154,7 +159,7 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
               ? 'Bài ngữ pháp của tôi'
               : topicId
                 ? (topic.data?.name ?? 'Từ vựng của tôi')
-                : 'Chủ đề của tôi'}
+                : 'Danh sách từ vựng của tôi'}
           </h2>
           <p>
             {pagination
@@ -179,6 +184,9 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
           + {kind === 'grammar' ? 'Thêm bài ngữ pháp' : topicId ? 'Thêm từ vựng' : 'Thêm chủ đề'}
         </button>
       </div>
+      {topicId && topic.data && (
+        <VocabularySessionStart topicId={topicId} scope="PERSONAL" limit={limit} />
+      )}
       <div className="personal-learning-filters">
         <SearchForm
           value={search.get('keyword') ?? ''}
@@ -210,26 +218,23 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
       )}
       <ResourceState {...state} retry={state.reload} empty={pagination?.total === 0} />
       {kind === 'vocabulary' && !topicId && (
-        <div className="api-grid personal-learning-grid">
+        <div className="vocabulary-list-grid">
           {topics.data?.items.map((item) => (
-            <LearningLibraryCard
+            <VocabularyListCard
               key={item.id}
               title={item.name}
-              openLabel={`Mở chủ đề: ${item.name}`}
-              href={`/study/vocabulary?library=personal&topic=${encodeURIComponent(item.id)}`}
-              actions={
+              wordCount={item.wordCount}
+              href={flashcardTopicHref(item.id, 'PERSONAL')}
+              actionLabel="Mở danh sách"
+              cornerActions={
                 <>
-                  <Link
-                    href={`/study/vocabulary?library=personal&topic=${encodeURIComponent(item.id)}`}
-                  >
-                    Mở chủ đề →
-                  </Link>
                   <button
                     type="button"
                     onClick={() => setEditing({ kind: 'topics', item })}
                     aria-label={`Sửa chủ đề ${item.name}`}
+                    title="Sửa chủ đề"
                   >
-                    Sửa
+                    <Icon name="pencil" width="16" height="16" />
                   </button>
                   <button
                     type="button"
@@ -239,14 +244,13 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
                       setRemoving({ kind: 'topics', item });
                     }}
                     aria-label={`Xóa chủ đề ${item.name}`}
+                    title="Xóa chủ đề"
                   >
-                    Xóa
+                    <Icon name="trash" width="16" height="16" />
                   </button>
                 </>
               }
-            >
-              <p>{item.wordCount} từ vựng</p>
-            </LearningLibraryCard>
+            />
           ))}
         </div>
       )}
@@ -260,7 +264,11 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
               Flashcard
             </button>
           </div>
-          <div className="api-grid personal-learning-grid">
+          <div
+            className={
+              mode === 'cards' ? 'vocabulary-flashcard-grid' : 'api-grid personal-learning-grid'
+            }
+          >
             {words.data?.items.map((item) => (
               <PersonalWordCard
                 key={item.id}
@@ -323,27 +331,7 @@ export function PersonalLearningLibrary({ kind, ownerId }: { kind: LibraryKind; 
           ))}
         </div>
       )}
-      {pagination && pagination.total > 0 && (
-        <nav className="api-actions" aria-label="Phân trang nội dung cá nhân">
-          <button
-            type="button"
-            disabled={pagination.page <= 1}
-            onClick={() => update({ page: String(pagination.page - 1) })}
-          >
-            Trang trước
-          </button>
-          <span>
-            Trang {pagination.page} / {Math.max(1, Math.ceil(pagination.total / pagination.size))}
-          </span>
-          <button
-            type="button"
-            disabled={pagination.page * pagination.size >= pagination.total}
-            onClick={() => update({ page: String(pagination.page + 1) })}
-          >
-            Trang sau
-          </button>
-        </nav>
-      )}
+      {pagination && <ServerPagination result={pagination} />}
       {editing && (
         <PersonalContentEditor
           key={`${editing.kind}:${editing.item?.id ?? 'new'}`}
@@ -432,48 +420,58 @@ function PersonalWordCard({
   onEdit: () => void;
   onDelete: () => void;
 }) {
-  const [flipped, setFlipped] = useState(false);
-  return (
-    <article
-      className={`api-card personal-learning-card ${flashcard ? 'personal-learning-flashcard' : ''}`}
-    >
-      <h2>{word.word}</h2>
+  const front = (
+    <>
+      <h2 lang="en">{word.word}</h2>
       {word.pronunciation && (
         <p className="personal-learning-pronunciation">{word.pronunciation}</p>
       )}
-      <div className="personal-learning-definition" aria-live="polite">
-        {!flashcard || flipped ? (
-          <>
-            <p>{word.meaning}</p>
-            {word.example && <p className="personal-learning-example">{word.example}</p>}
-          </>
-        ) : (
-          <p className="personal-learning-hint">Lật thẻ để xem nghĩa và ví dụ.</p>
-        )}
-      </div>
-      <div className="personal-learning-card-actions">
-        {flashcard && (
-          <button
-            type="button"
-            aria-pressed={flipped}
-            onClick={() => setFlipped((v) => !v)}
-            aria-label={`Lật thẻ ${word.word}`}
-          >
-            Lật thẻ
-          </button>
-        )}
-        <button type="button" onClick={onEdit} aria-label={`Sửa từ ${word.word}`}>
-          Sửa
-        </button>
-        <button
-          type="button"
-          className="personal-learning-delete"
-          onClick={onDelete}
-          aria-label={`Xóa từ ${word.word}`}
-        >
-          Xóa
-        </button>
-      </div>
+    </>
+  );
+  const definition = (
+    <div className="personal-learning-definition">
+      <p>{word.meaning}</p>
+      <VocabularyEnglishDefinition definition={word.englishDefinition} />
+      {word.example && <p className="personal-learning-example">{word.example}</p>}
+    </div>
+  );
+  const actions = (
+    <>
+      <button
+        type="button"
+        onClick={onEdit}
+        aria-label={`Sửa từ ${word.word}`}
+        title={flashcard ? 'Sửa từ' : undefined}
+      >
+        {flashcard ? <Icon name="pencil" width="16" height="16" /> : 'Sửa'}
+      </button>
+      <button
+        type="button"
+        className="personal-learning-delete"
+        onClick={onDelete}
+        aria-label={`Xóa từ ${word.word}`}
+        title={flashcard ? 'Xóa từ' : undefined}
+      >
+        {flashcard ? <Icon name="trash" width="16" height="16" /> : 'Xóa'}
+      </button>
+    </>
+  );
+  if (flashcard)
+    return (
+      <VocabularyFlashcard
+        className="personal-vocabulary-flashcard"
+        word={word.word}
+        front={front}
+        back={definition}
+        cornerActions={actions}
+      />
+    );
+
+  return (
+    <article className="api-card personal-learning-card">
+      {front}
+      {definition}
+      <div className="personal-learning-card-actions">{actions}</div>
     </article>
   );
 }

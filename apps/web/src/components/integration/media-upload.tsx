@@ -1,5 +1,8 @@
 'use client';
 import { useRef, useState } from 'react';
+import { AccountAvatar } from '../profile/account-avatar';
+import { ProfileUpdateStatus } from '../profile/profile-update-status';
+import { useAvatarPreview } from '../profile/use-avatar-preview';
 import { gateway, failureMessage } from '../../lib/integration/client';
 import {
   ContractError,
@@ -9,6 +12,27 @@ import {
   segment,
   text,
 } from '../../lib/integration/contracts';
+
+const extensions: Record<string, string[]> = {
+  'audio/mpeg': ['mp3'],
+  'image/png': ['png'],
+  'image/jpeg': ['jpg', 'jpeg'],
+  'image/webp': ['webp'],
+};
+
+function validateMediaFile(file: File, kind: 'AUDIO' | 'IMAGE') {
+  const validType = kind === 'AUDIO' ? file.type === 'audio/mpeg' : file.type.startsWith('image/');
+  if (!validType || file.size <= 0 || file.size > (kind === 'AUDIO' ? 5 : 2) * 1024 * 1024)
+    return kind === 'AUDIO'
+      ? 'Chọn tệp MP3 tối đa 5 MB.'
+      : 'Chọn ảnh PNG, JPEG hoặc WebP tối đa 2 MB.';
+  if (
+    !Object.hasOwn(extensions, file.type) ||
+    !extensions[file.type].includes(file.name.split('.').pop()?.toLowerCase() ?? '')
+  )
+    return 'Phần mở rộng file không khớp định dạng media.';
+  return null;
+}
 
 export function MediaUpload({
   scope,
@@ -21,12 +45,14 @@ export function MediaUpload({
   resourceId: string;
   kind: 'AUDIO' | 'IMAGE';
   writes: boolean;
-  saved: () => void;
+  saved: () => void | Promise<void>;
 }) {
+  const isAvatar = scope === 'avatar';
+  const preview = useAvatarPreview((selected) => validateMediaFile(selected, 'IMAGE'));
   const [file, setFile] = useState<File>(),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
-    [message, setMessage] = useState('');
+    [succeeded, setSucceeded] = useState(false);
   const lock = useRef(false),
     pending = useRef<{
       file: File;
@@ -34,33 +60,25 @@ export function MediaUpload({
       ticket?: Record<string, unknown>;
       uploaded?: boolean;
     }>();
+  const canSubmit =
+    writes &&
+    !busy &&
+    !!file &&
+    (!isAvatar || (!!preview.url && !preview.loading && !preview.error));
   return (
     <form
       className="api-card"
       onSubmit={async (e) => {
         e.preventDefault();
-        if (lock.current || !writes || !file) return;
+        if (lock.current || !canSubmit || !file) return;
+        const form = e.currentTarget;
         lock.current = true;
         setBusy(true);
         setError('');
-        setMessage('');
+        setSucceeded(false);
         try {
-          const types =
-            kind === 'AUDIO' ? ['audio/mpeg'] : ['image/png', 'image/jpeg', 'image/webp'];
-          if (
-            !types.includes(file.type) ||
-            file.size <= 0 ||
-            file.size > (kind === 'AUDIO' ? 5 : 2) * 1024 * 1024
-          )
-            throw new Error('Chọn MP3 tối đa 5 MB hoặc PNG/JPEG/WebP tối đa 2 MB đúng loại media.');
-          const extensions: Record<string, string[]> = {
-            'audio/mpeg': ['mp3'],
-            'image/png': ['png'],
-            'image/jpeg': ['jpg', 'jpeg'],
-            'image/webp': ['webp'],
-          };
-          if (!extensions[file.type]?.includes(file.name.split('.').pop()?.toLowerCase() ?? ''))
-            throw new Error('Phần mở rộng file không khớp loại media.');
+          const issue = validateMediaFile(file, kind);
+          if (issue) throw new Error(issue);
           if (pending.current?.file !== file) pending.current = { file, key: crypto.randomUUID() };
           const p = pending.current!;
           const bank = scope === 'questions' || scope === 'question-groups';
@@ -143,10 +161,14 @@ export function MediaUpload({
             );
             if (!mediaUrl(confirmed.url)) throw new ContractError('confirmed media URL');
           }
-          setMessage('Backend đã xác nhận gắn media.');
+          await saved();
+          setSucceeded(true);
           pending.current = undefined;
           setFile(undefined);
-          saved();
+          if (isAvatar) {
+            form.reset();
+            preview.clear();
+          }
         } catch (e) {
           setError(failureMessage(e));
         } finally {
@@ -163,26 +185,57 @@ export function MediaUpload({
             : 'Gắn / thay ảnh'}
       </h3>
       <label className="api-field">
-        Chọn file
+        {isAvatar ? 'Chọn ảnh đại diện' : 'Chọn file'}
         <input
           disabled={busy || !writes}
           type="file"
           accept={kind === 'AUDIO' ? '.mp3' : '.png,.jpg,.jpeg,.webp'}
+          aria-invalid={isAvatar && !!preview.error}
+          aria-describedby={isAvatar && preview.error ? 'api-avatar-preview-error' : undefined}
           onChange={(e) => {
-            setFile(e.target.files?.[0]);
+            const selected = e.target.files?.[0];
+            setFile(selected);
             setError('');
-            setMessage('');
+            setSucceeded(false);
+            if (isAvatar) {
+              preview.clear();
+              if (selected) void preview.select(selected);
+            }
           }}
         />
       </label>
-      <button disabled={busy || !writes || !file}>
-        {busy ? 'Đang upload và xác nhận…' : 'Upload và gắn media'}
-      </button>
-      {message && <p role="status">{message}</p>}
-      {error && (
-        <p role="alert" className="api-error">
-          {error} Có thể thử lại cùng file; kiểm tra media trước khi đổi file.
+      {isAvatar && preview.loading && <p role="status">Đang mở ảnh xem trước…</p>}
+      {isAvatar && preview.url && (
+        <div className="api-avatar-preview">
+          <AccountAvatar source={preview.url} label="Ảnh đại diện xem trước" large />
+          <span>Ảnh xem trước</span>
+        </div>
+      )}
+      {isAvatar && preview.error && (
+        <p id="api-avatar-preview-error" role="alert" className="api-error">
+          {preview.error}
         </p>
+      )}
+      <button disabled={!canSubmit}>
+        {isAvatar
+          ? busy
+            ? 'Đang lưu ảnh…'
+            : 'Lưu ảnh đại diện'
+          : busy
+            ? 'Đang upload và xác nhận…'
+            : 'Upload và gắn media'}
+      </button>
+      {isAvatar ? (
+        (error || succeeded) && <ProfileUpdateStatus status={error ? 'error' : 'success'} />
+      ) : (
+        <>
+          {succeeded && <p role="status">Backend đã xác nhận gắn media.</p>}
+          {error && (
+            <p role="alert" className="api-error">
+              {error} Có thể thử lại cùng file; kiểm tra media trước khi đổi file.
+            </p>
+          )}
+        </>
       )}
     </form>
   );

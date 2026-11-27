@@ -52,12 +52,30 @@ export class AnalyticsService {
         earliest = from ? vietnamDay(from) : (days[0]?.date ?? today),
         start = Math.max(Date.parse(earliest), Date.parse(today) - 365 * DAY),
         dailyActivity = [];
-      const map = new Map(days.map((r) => [r.date, r.count]));
+      const map = new Map(days.map((r) => [r.date, r]));
       for (let date = start; date <= Date.parse(today); date += DAY) {
         const day = new Date(date).toISOString().slice(0, 10);
-        dailyActivity.push({ date: day, count: map.get(day) ?? 0 });
+        dailyActivity.push(
+          map.get(day) ?? { date: day, count: 0, reviews: 0, lessons: 0, full: 0, part: 0 },
+        );
       }
+      const scoreWhere = { userId, completedAt: { gte: from ?? undefined, lte: asOf } };
+      const latest = await tx.testScoreFact.findFirst({
+        where: scoreWhere,
+        orderBy: [{ completedAt: 'desc' }, { attemptId: 'asc' }],
+        select: { totalScore: true },
+      });
+      const best = await tx.testScoreFact.aggregate({
+        where: scoreWhere,
+        _max: { totalScore: true },
+      });
+      const coverage = await tx.analyticsHistoryCoverage.findUniqueOrThrow({
+        where: { key: 'personal-and-quiz' },
+      });
       return {
+        libraries: await this.queries.learningBreakdown(tx, userId, asOf, from),
+        fullScores: { latest: latest?.totalScore ?? null, best: best._max.totalScore },
+        historyLiveFrom: coverage.liveFrom.toISOString(),
         timeRange: query.timeRange,
         timezone: 'Asia/Ho_Chi_Minh',
         from: from?.toISOString() ?? null,

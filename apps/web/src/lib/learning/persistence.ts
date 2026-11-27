@@ -1,3 +1,4 @@
+import { MAX_FLASHCARD_PRACTICE_LIMIT } from './flashcard-practice';
 import { createVocabularyQuiz } from './study';
 import type { LearningCatalog, LearningProgress, VocabularySession } from './types';
 
@@ -25,9 +26,10 @@ export function parseLearningProgress(
       !record(value.lessons)
     )
       return null;
+    const savedVocabulary = value.vocabulary;
     const wordIds = new Set(catalog.words.map((word) => word.id));
     const lessonIds = new Set(catalog.lessons.map((lesson) => lesson.id));
-    for (const [id, item] of Object.entries(value.vocabulary)) {
+    for (const [id, item] of Object.entries(savedVocabulary)) {
       if (
         !wordIds.has(id) ||
         !record(item) ||
@@ -58,16 +60,27 @@ export function parseLearningProgress(
         session.id.length > 128 ||
         typeof session.topicId !== 'string' ||
         !Array.isArray(session.wordIds) ||
-        session.wordIds.length < 5 ||
-        session.wordIds.length > 10 ||
         new Set(session.wordIds).size !== session.wordIds.length ||
         !record(session.ratings) ||
         !record(session.answers) ||
         !date(session.startedAt) ||
+        (session.quizVersion !== undefined && session.quizVersion !== 2) ||
+        (session.mode !== undefined &&
+          session.mode !== 'quiz' &&
+          session.mode !== 'flashcards' &&
+          session.mode !== 'flashcards-quiz') ||
         !['flashcards', 'quiz', 'completed'].includes(session.phase as string)
       )
         return null;
       const ids = session.wordIds;
+      const flashcardOnly = session.mode === 'flashcards';
+      const savesEachCard = flashcardOnly || session.mode === 'flashcards-quiz';
+      if (
+        ids.length < (savesEachCard ? 1 : 5) ||
+        ids.length > (savesEachCard ? MAX_FLASHCARD_PRACTICE_LIMIT : 10) ||
+        (flashcardOnly && session.phase === 'quiz')
+      )
+        return null;
       if (
         ids.some(
           (id) =>
@@ -92,7 +105,11 @@ export function parseLearningProgress(
         return null;
       if (session.phase === 'flashcards' ? ratingCount >= ids.length : ratingCount !== ids.length)
         return null;
-      const quiz = createVocabularyQuiz(session as unknown as VocabularySession, catalog);
+      if (savesEachCard && Object.keys(session.ratings).some((id) => !(id in savedVocabulary)))
+        return null;
+      const quiz = flashcardOnly
+        ? []
+        : createVocabularyQuiz(session as unknown as VocabularySession, catalog);
       if (
         Object.entries(session.answers).some(
           ([id, answer]) =>
@@ -108,7 +125,7 @@ export function parseLearningProgress(
       if (
         session.phase === 'completed' &&
         (!date(session.completedAt) ||
-          ids.some((id) => !(id in (value.vocabulary as Record<string, unknown>))) ||
+          ids.some((id) => !(id in savedVocabulary)) ||
           quiz.some(
             (question) => !(question.vocabularyId in (session.answers as Record<string, unknown>)),
           ))

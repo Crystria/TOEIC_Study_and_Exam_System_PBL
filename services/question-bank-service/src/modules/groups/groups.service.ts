@@ -57,6 +57,20 @@ export class GroupsService {
   async findById(id: string, admin = false) {
     return this.view(await this.record(id), admin);
   }
+  async details(ids: string[]) {
+    const groups = await this.prisma.questionGroup.findMany({
+      where: { id: { in: ids }, deletedAt: null },
+      include,
+    });
+    const found = new Map(groups.map((group) => [group.id, group]));
+    return {
+      items: ids.flatMap((id) => {
+        const group = found.get(id);
+        return group ? [this.view(group, true)] : [];
+      }),
+      missingIds: ids.filter((id) => !found.has(id)),
+    };
+  }
   async list(query: ListGroupsDto, admin = false) {
     const page = query.page ?? 1,
       size = Math.min(query.size ?? 20, 50);

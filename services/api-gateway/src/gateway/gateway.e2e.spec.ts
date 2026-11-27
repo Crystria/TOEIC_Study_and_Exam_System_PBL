@@ -253,8 +253,16 @@ describe('API Gateway e2e', () => {
     { method: 'post' as const, path: '/api/v1/tests' },
     { method: 'patch' as const, path: '/api/v1/tests/test-1' },
     { method: 'delete' as const, path: '/api/v1/tests/test-1' },
-  ])('test form mutation $method $path', ({ method, path }) => {
-    it('blocks a sole system admin before forwarding to Exam', async () => {
+    { method: 'post' as const, path: '/api/v1/questions' },
+    { method: 'patch' as const, path: '/api/v1/questions/question-1' },
+    { method: 'delete' as const, path: '/api/v1/questions/question-1' },
+    { method: 'post' as const, path: '/api/v1/questions/question-1/media/presign' },
+    { method: 'post' as const, path: '/api/v1/question-groups' },
+    { method: 'patch' as const, path: '/api/v1/question-groups/group-1' },
+    { method: 'delete' as const, path: '/api/v1/question-groups/group-1' },
+    { method: 'post' as const, path: '/api/v1/question-groups/group-1/media/presign' },
+  ])('content mutation $method $path', ({ method, path }) => {
+    it('blocks a sole system admin before forwarding upstream', async () => {
       const app = createTestApp(upstreamUrl, fakeRedis());
       const pending = request(app)[method](path);
       const response = await pending
@@ -279,17 +287,20 @@ describe('API Gateway e2e', () => {
     });
   });
 
-  it.each(['/api/v1/tests', '/api/v1/tests/test-1'])(
-    'keeps system-admin test reads available: %s',
-    async (path) => {
-      const app = createTestApp(upstreamUrl, fakeRedis());
-      const response = await request(app)
-        .get(path)
-        .set('Authorization', `Bearer ${signToken(jwt, { roles: [RoleCode.SYSTEM_ADMIN] })}`);
-      expect(response.status).toBe(200);
-      expect(received?.url).toBe(path);
-    },
-  );
+  it.each([
+    '/api/v1/tests',
+    '/api/v1/tests/test-1',
+    '/api/v1/tests/test-1/parts',
+    '/api/v1/questions/details',
+    '/api/v1/question-groups/details',
+  ])('keeps system-admin exam content reads available: %s', async (path) => {
+    const app = createTestApp(upstreamUrl, fakeRedis());
+    const response = await request(app)
+      .get(path)
+      .set('Authorization', `Bearer ${signToken(jwt, { roles: [RoleCode.SYSTEM_ADMIN] })}`);
+    expect(response.status).toBe(200);
+    expect(received?.url).toBe(path);
+  });
 
   it('does not retain one server-close listener per proxied request', async () => {
     let connections = 0;
@@ -412,6 +423,36 @@ describe('API Gateway e2e', () => {
     expect(chunked.status).toBe(413);
     expect(JSON.parse(chunked.body).code).toBe('PAYLOAD_TOO_LARGE');
     expect(received).toBeUndefined();
+  });
+
+  it('accepts a workbook payload above 1 MiB only on the content-admin import route', async () => {
+    const app = createTestApp(upstreamUrl, fakeRedis());
+    const path = '/api/v1/learning/admin/vocabularies/import';
+    const body = JSON.stringify({ example: 'đ'.repeat(600_000) });
+    const denied = await request(app)
+      .post(path)
+      .set('Authorization', `Bearer ${signToken(jwt)}`)
+      .set('Content-Type', 'application/json')
+      .send(body);
+    expect(denied.status).toBe(403);
+    expect(received).toBeUndefined();
+
+    const authorization = `Bearer ${signToken(jwt, { roles: [RoleCode.CONTENT_ADMIN] })}`;
+    const accepted = await request(app)
+      .post(path)
+      .set('Authorization', authorization)
+      .set('Content-Type', 'application/json')
+      .set('Idempotency-Key', 'workbook-import')
+      .send(body);
+    expect(accepted.status).toBe(200);
+    expect(received?.body).toBe(body);
+
+    const oversized = await request(app)
+      .post(path)
+      .set('Authorization', authorization)
+      .set('Content-Type', 'application/json')
+      .set('Content-Length', String(4 * 1024 * 1024 + 1));
+    expect(oversized.status).toBe(413);
   });
 
   it('forwards a chunked PATCH body byte-for-byte and preserves query strings', async () => {

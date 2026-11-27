@@ -11,6 +11,7 @@ export class ActivationMailService implements OnModuleInit, OnModuleDestroy {
   private readonly key: Buffer;
   private readonly mailpit: string;
   private readonly activationUrl: string;
+  private readonly passwordResetUrl: string;
   private readonly logger = new Logger(ActivationMailService.name);
   private timer?: ReturnType<typeof setInterval>;
   private active?: Promise<void>;
@@ -29,7 +30,9 @@ export class ActivationMailService implements OnModuleInit, OnModuleDestroy {
     this.mailpit = config.get<string>('MAILPIT_URL') || 'http://localhost:8025';
     this.activationUrl =
       config.get<string>('AUTH_ACTIVATION_URL') || 'http://localhost:3006/verify-email';
-    for (const value of [this.mailpit, this.activationUrl])
+    this.passwordResetUrl =
+      config.get<string>('AUTH_PASSWORD_RESET_URL') || 'http://localhost:3006/reset-password';
+    for (const value of [this.mailpit, this.activationUrl, this.passwordResetUrl])
       if (!['http:', 'https:'].includes(new URL(value).protocol))
         throw new Error('Invalid activation mail URL');
   }
@@ -59,7 +62,7 @@ export class ActivationMailService implements OnModuleInit, OnModuleDestroy {
       data: { consumedAt: new Date() },
     });
     await tx.emailDelivery.updateMany({
-      where: { userId, deliveredAt: null },
+      where: { userId, deliveredAt: null, purpose: 'ACTIVATION' },
       data: { deliveredAt: new Date(), encryptedToken: null },
     });
     await tx.emailActivation.create({
@@ -69,9 +72,15 @@ export class ActivationMailService implements OnModuleInit, OnModuleDestroy {
       data: { userId, encryptedToken: this.encrypt(token), expiresAt },
     });
   }
+  async enqueuePasswordReset(tx: IdentityTx, userId: string, token: string, expiresAt: Date) {
+    await tx.emailDelivery.create({
+      data: { userId, purpose: 'PASSWORD_RESET', encryptedToken: this.encrypt(token), expiresAt },
+    });
+  }
   async onModuleInit() {
-    // Fail fast on an unapplied P2 schema, before advertising healthy startup.
-    await this.prisma.emailDelivery.count();
+    // Check both ticket and delivery schema before starting the worker.
+    await this.prisma.passwordReset.count();
+    await this.prisma.emailDelivery.count({ where: { purpose: 'ACTIVATION' } });
     this.timer = setInterval(() => {
       void this.drain().catch(() => this.logger.error('Activation mail polling failed'));
     }, 500);
@@ -89,26 +98,41 @@ export class ActivationMailService implements OnModuleInit, OnModuleDestroy {
     for (let n = 0; n < 20 && !this.closing; n++) {
       const owner = randomUUID();
       const rows = await this.prisma.$queryRaw<
-        Array<{ id: string; user_id: string; encrypted_token: string; expires_at: Date }>
+        Array<{
+          id: string;
+          user_id: string;
+          encrypted_token: string;
+          expires_at: Date;
+          purpose: string;
+        }>
       >`
         WITH pending AS (SELECT id FROM email_deliveries WHERE delivered_at IS NULL
           AND next_attempt_at<=timezone('UTC',now()) AND (lease_until IS NULL OR lease_until<now())
           ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1)
         UPDATE email_deliveries e SET lease_owner=${owner},lease_until=now()+interval '30 seconds'
-        FROM pending WHERE e.id=pending.id RETURNING e.id,e.user_id,e.encrypted_token,e.expires_at`;
+        FROM pending WHERE e.id=pending.id RETURNING e.id,e.user_id,e.encrypted_token,e.expires_at,e.purpose`;
       const job = rows[0];
       if (!job) return;
       try {
         const user = await this.prisma.user.findUnique({ where: { id: job.user_id } });
-        if (user?.status === 'INACTIVE' && job.expires_at > new Date() && job.encrypted_token) {
+        const reset = job.purpose === 'PASSWORD_RESET';
+        if (
+          user?.status === (reset ? 'ACTIVE' : 'INACTIVE') &&
+          (!reset || user.passwordHash) &&
+          job.expires_at > new Date() &&
+          job.encrypted_token
+        ) {
           const token = this.decrypt(job.encrypted_token);
-          // A newer resend/verification can supersede a claimed job. Never deliver a stale token intentionally.
-          const activation = await this.prisma.emailActivation.findUnique({
-            where: { tokenHash: tokenHash(token) },
-          });
-          if (activation && !activation.consumedAt) {
-            const link = new URL(this.activationUrl);
-            link.searchParams.set('token', token);
+          const where = { tokenHash: tokenHash(token) };
+          const ticket = reset
+            ? await this.prisma.passwordReset.findFirst({
+                where: { ...where, authorizationVersion: user.authorizationVersion },
+              })
+            : await this.prisma.emailActivation.findUnique({ where });
+          if (ticket && !ticket.consumedAt && ticket.expiresAt > new Date()) {
+            const link = new URL(reset ? this.passwordResetUrl : this.activationUrl);
+            if (reset) link.hash = new URLSearchParams({ token }).toString();
+            else link.searchParams.set('token', token);
             const result = await fetch(new URL('/api/v1/send', this.mailpit), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -120,8 +144,10 @@ export class ActivationMailService implements OnModuleInit, OnModuleDestroy {
                   Name: 'TOEIC',
                 },
                 To: [{ Email: user.email }],
-                Subject: 'Activate your TOEIC account',
-                Text: `Activate your account: ${link.toString()}`,
+                Subject: reset ? 'Reset your TOEIC password' : 'Activate your TOEIC account',
+                Text: reset
+                  ? `Reset your password: ${link.toString()}`
+                  : `Activate your account: ${link.toString()}`,
               }),
             });
             await result.body?.cancel();

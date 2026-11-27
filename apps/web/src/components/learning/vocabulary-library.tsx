@@ -1,17 +1,31 @@
 'use client';
 
-import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
-import { isDue, normalizeSearch } from '@/lib/learning/study';
+import {
+  isDue,
+  normalizeSearch,
+  selectFlashcardPracticeWords,
+  startVocabularySession,
+} from '@/lib/learning/study';
+import type { FlashcardStudyMode } from '@/lib/learning/types';
 
-import { Button, buttonStyles } from '../ui/button';
-import { Badge, EmptyState, Progress } from '../ui/feedback';
+import { Button } from '../ui/button';
+import { EmptyState } from '../ui/feedback';
 import { Field } from '../ui/field';
 import { Icon, type IconName } from '../ui/icon';
+import { NumberedPagination } from '../ui/numbered-pagination';
 import { Panel } from '../ui/panel';
+import { useDialogBackdropDismiss } from '../ui/use-dialog-backdrop-dismiss';
+import { useLocalPagination } from '../ui/use-local-pagination';
+import { FlashcardPracticeSettings } from './flashcard-practice-settings';
 import { useLearning } from './learning-provider';
-import { LearningHeading, ResumeLearning } from './learning-shared';
+import { ResumeLearning } from './learning-shared';
+import { useFlashcardPracticeLimit } from './use-flashcard-practice-limit';
+import { VocabularyListCard } from './vocabulary-list-card';
+
+const PAGE_SIZE = 6;
 
 export const topicIcons: Record<string, IconName> = {
   'business-office': 'briefcase',
@@ -19,94 +33,173 @@ export const topicIcons: Record<string, IconName> = {
   'shopping-services': 'bag',
 };
 
+function PracticeDialog({
+  lists,
+  limit,
+  onDismiss,
+}: {
+  lists: { id: string; title: string; due: number; newWords: number }[];
+  limit: number;
+  onDismiss: () => void;
+}) {
+  const { catalog, progress, update } = useLearning();
+  const router = useRouter();
+  const search = useSearchParams();
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [topicId, setTopicId] = useState('');
+  const [mode, setMode] = useState<FlashcardStudyMode>('NEW');
+  const list = lists.find((item) => item.id === topicId);
+  const count = list ? (mode === 'NEW' ? list.newWords : list.due) : 0;
+  const active =
+    progress.session && progress.session.phase !== 'completed' ? progress.session : null;
+  const dismiss = () => {
+    dialog.current?.close();
+    onDismiss();
+  };
+  const backdrop = useDialogBackdropDismiss(dismiss);
+  useEffect(() => {
+    const element = dialog.current;
+    element?.showModal();
+    return () => element?.close();
+  }, []);
+
+  function begin() {
+    if (!count) return;
+    const now = new Date().toISOString();
+    const started = update((current) => {
+      const selected = selectFlashcardPracticeWords(catalog, current, topicId, now, mode, limit);
+      return selected.length
+        ? startVocabularySession(current, selected, crypto.randomUUID(), now, 'flashcards-quiz')
+        : current;
+    });
+    if (!started) return;
+    const params = new URLSearchParams(search.toString());
+    params.set('view', 'session');
+    dismiss();
+    router.push(`/study/vocabulary/${topicId}?${params}`);
+  }
+
+  return (
+    <dialog
+      className="learning-confirm"
+      ref={dialog}
+      aria-labelledby="flashcard-practice-title"
+      onCancel={(event) => {
+        event.preventDefault();
+        dismiss();
+      }}
+      {...backdrop}
+    >
+      <h2 id="flashcard-practice-title">Luyện tập bằng flashcard</h2>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          begin();
+        }}
+      >
+        <div className="learning-select-field">
+          <label htmlFor="flashcard-practice-mode">Loại phiên</label>
+          <select
+            id="flashcard-practice-mode"
+            value={mode}
+            onChange={(event) => setMode(event.target.value as FlashcardStudyMode)}
+          >
+            <option value="NEW">Học từ mới</option>
+            <option value="REVIEW">Ôn từ đến hạn</option>
+          </select>
+        </div>
+        {lists.length > 0 ? (
+          <div className="learning-select-field">
+            <label htmlFor="flashcard-practice-list">Danh sách từ vựng</label>
+            <select
+              id="flashcard-practice-list"
+              autoFocus
+              required
+              value={topicId}
+              onChange={(event) => setTopicId(event.target.value)}
+            >
+              <option value="">Chọn danh sách</option>
+              {lists.map(({ id, title, due, newWords }) => (
+                <option key={id} value={id}>
+                  {title} ({mode === 'NEW' ? `${newWords} từ mới` : `${due} từ đến hạn`})
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <p>Chưa có danh sách từ vựng để luyện tập.</p>
+        )}
+        {list && (
+          <p className="learning-small" aria-live="polite">
+            {count
+              ? `Phiên luyện tập có ${Math.min(count, limit)} thẻ.`
+              : mode === 'NEW'
+                ? 'Danh sách này chưa có từ mới.'
+                : 'Danh sách này chưa có từ đến hạn ôn.'}
+            {active &&
+              count > 0 &&
+              ' Phiên đang học sẽ được thay thế. Lịch ôn đã lưu vẫn được giữ.'}
+          </p>
+        )}
+        <div className="learning-actions">
+          <Button variant="secondary" onClick={dismiss}>
+            Đóng
+          </Button>
+          <Button type="submit" disabled={!count}>
+            Bắt đầu flashcard → quiz
+          </Button>
+        </div>
+      </form>
+    </dialog>
+  );
+}
+
 export function VocabularyLibrary() {
   const { catalog, progress } = useLearning();
+  const [limit, setLimit] = useFlashcardPracticeLimit('demo');
+  const [practiceOpen, setPracticeOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const now = new Date().toISOString();
-  const dueWords = catalog.words.filter((word) => isDue(progress.vocabulary[word.id], now));
-  const reviewed = catalog.words.filter((word) => Boolean(progress.vocabulary[word.id])).length;
   const query = normalizeSearch(search);
-  const visible = catalog.topics.filter((topic) => {
+  const lists = catalog.topics.map((topic) => {
     const words = catalog.words.filter((word) => word.topicId === topic.id);
-    const due = words.some((word) => isDue(progress.vocabulary[word.id], now));
-    const fresh = words.some((word) => !progress.vocabulary[word.id]);
-    return (
-      (filter === 'all' || (filter === 'due' && due) || (filter === 'new' && fresh)) &&
+    return {
+      topic,
+      words,
+      due: words.filter((word) => isDue(progress.vocabulary[word.id], now)).length,
+      reviewed: words.filter((word) => progress.vocabulary[word.id]).length,
+    };
+  });
+  const practiceLists = lists.map(({ topic, words, due, reviewed }) => ({
+    id: topic.id,
+    title: topic.title,
+    due,
+    newWords: words.length - reviewed,
+  }));
+  const visible = lists.filter(
+    ({ topic, words, due, reviewed }) =>
+      (filter === 'all' ||
+        (filter === 'due' && due > 0) ||
+        (filter === 'new' && reviewed < words.length)) &&
       normalizeSearch(
         `${topic.title} ${topic.label} ${words.map((word) => `${word.word} ${word.definition}`).join(' ')}`,
-      ).includes(query)
-    );
-  });
+      ).includes(query),
+  );
+  const { page, totalPages, setPage, items } = useLocalPagination(visible, PAGE_SIZE);
 
   return (
     <div className="learning-page">
-      <LearningHeading
-        title="Từ vựng & Flashcard"
-        description="Khám phá chủ đề, lật thẻ và củng cố bằng một bài quiz ngắn."
-        eyebrow="MỖI NGÀY THÊM MỘT CHÚT TỰ TIN"
-      />
+      <div className="page-heading learning-heading">
+        <h1>Từ vựng & Flashcard</h1>
+        <div className="learning-actions">
+          <FlashcardPracticeSettings limit={limit} onSave={setLimit} />
+          <Button aria-haspopup="dialog" onClick={() => setPracticeOpen(true)}>
+            Luyện tập bằng flashcard
+          </Button>
+        </div>
+      </div>
       <ResumeLearning />
-      <section className="learning-hero" aria-labelledby="vocabulary-hero-title">
-        <div>
-          <Badge tone="blue">LẶP LẠI NGẮT QUÃNG · SM-2</Badge>
-          <h2 id="vocabulary-hero-title">
-            Học đúng lúc.
-            <br />
-            <strong>Nhớ lâu hơn.</strong>
-          </h2>
-          <p>
-            {dueWords.length
-              ? `Có ${dueWords.length} từ đến hạn ôn trong dữ liệu mẫu. Bắt đầu với những từ cần bạn nhất hôm nay.`
-              : 'Chọn một chủ đề để học từ mới hoặc củng cố những từ đã gặp.'}
-          </p>
-          {catalog.topics.length > 0 && (
-            <Link
-              href={`/study/vocabulary/${dueWords[0]?.topicId ?? catalog.topics[0].id}`}
-              className={buttonStyles('primary')}
-            >
-              {dueWords.length ? 'Ôn tập hôm nay' : 'Khám phá chủ đề'}
-              <Icon name="arrow" width="18" />
-            </Link>
-          )}
-        </div>
-        <div className="learning-hero-art" aria-hidden="true">
-          <span className="learning-art-card learning-art-card--back" />
-          <span className="learning-art-card">
-            <Icon name="layers" width="33" height="33" />
-            <strong>small steps</strong>
-            <span>/smɔːl steps/</span>
-            <span>những bước tiến nhỏ</span>
-          </span>
-          <span className="learning-art-check">
-            <Icon name="check" />
-          </span>
-        </div>
-      </section>
-      <div className="learning-stats">
-        <div>
-          <Icon name="layers" />
-          <strong>{catalog.words.length}</strong>
-          <span>từ trong thư viện mẫu</span>
-        </div>
-        <div>
-          <Icon name="calendar" />
-          <strong>{dueWords.length}</strong>
-          <span>từ đến hạn ôn</span>
-        </div>
-        <div>
-          <Icon name="check" />
-          <strong>{reviewed}</strong>
-          <span>từ đã ôn</span>
-        </div>
-      </div>
-      <div className="learning-section-title">
-        <div>
-          <h2>Chọn chủ đề của bạn</h2>
-          <p>Học theo ngữ cảnh để dùng từ tự nhiên hơn.</p>
-        </div>
-        <span>{visible.length} chủ đề</span>
-      </div>
       <div className="learning-filters">
         <Field
           id="topic-search"
@@ -115,14 +208,20 @@ export function VocabularyLibrary() {
           placeholder="Ví dụ: công việc, appointment…"
           type="search"
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={(event) => {
+            setSearch(event.target.value);
+            setPage(1);
+          }}
         />
         <div className="learning-select-field">
           <label htmlFor="topic-filter">Trạng thái học</label>
           <select
             id="topic-filter"
             value={filter}
-            onChange={(event) => setFilter(event.target.value)}
+            onChange={(event) => {
+              setFilter(event.target.value);
+              setPage(1);
+            }}
           >
             <option value="all">Tất cả chủ đề</option>
             <option value="due">Có từ đến hạn</option>
@@ -131,43 +230,23 @@ export function VocabularyLibrary() {
         </div>
       </div>
       <div aria-live="polite" className="sr-only">
-        Tìm thấy {visible.length} chủ đề.
+        Tìm thấy {visible.length} danh sách.
+      </div>
+      <div className="learning-section-title">
+        <h2>Danh sách từ vựng</h2>
       </div>
       {visible.length ? (
-        <div className="learning-topic-grid">
-          {visible.map((topic) => {
-            const words = catalog.words.filter((word) => word.topicId === topic.id);
-            const done = words.filter((word) => progress.vocabulary[word.id]).length;
-            const due = words.filter((word) => isDue(progress.vocabulary[word.id], now)).length;
-            return (
-              <Panel key={topic.id} className="topic-panel">
-                <div className={`topic-illustration topic-illustration--${topic.tone}`}>
-                  <Icon name={topicIcons[topic.id] ?? 'layers'} width="42" height="42" />
-                  <span>{topic.label}</span>
-                  {due > 0 && <Badge tone="amber">{due} từ đến hạn</Badge>}
-                </div>
-                <div className="topic-copy">
-                  <div className="topic-meta">
-                    <span>{words.length} từ vựng</span>
-                    <span>Flashcard + quiz 5 câu</span>
-                  </div>
-                  <h3>{topic.title}</h3>
-                  <p>{topic.description}</p>
-                  <div className="topic-progress-label">
-                    <span>Đã ôn</span>
-                    <strong>
-                      {done}/{words.length} từ
-                    </strong>
-                  </div>
-                  <Progress value={done} max={words.length} label={`Tiến độ ${topic.title}`} />
-                  <Link className="topic-open" href={`/study/vocabulary/${topic.id}`}>
-                    Khám phá chủ đề
-                    <Icon name="arrow" width="17" />
-                  </Link>
-                </div>
-              </Panel>
-            );
-          })}
+        <div className="vocabulary-list-grid">
+          {items.map(({ topic, words, due, reviewed }) => (
+            <VocabularyListCard
+              key={topic.id}
+              title={topic.title}
+              href={`/study/vocabulary/${topic.id}`}
+              wordCount={words.length}
+              reviewDue={due}
+              reviewed={reviewed}
+            />
+          ))}
         </div>
       ) : (
         <Panel>
@@ -190,6 +269,7 @@ export function VocabularyLibrary() {
                 onClick={() => {
                   setSearch('');
                   setFilter('all');
+                  setPage(1);
                 }}
               >
                 Xóa bộ lọc
@@ -198,10 +278,18 @@ export function VocabularyLibrary() {
           </EmptyState>
         </Panel>
       )}
+      <NumberedPagination page={page} totalPages={totalPages} onPage={setPage} />
       <p className="learning-footnote">
         <Icon name="info" width="15" />
         Đánh giá ghi nhớ và lịch ôn là mô phỏng. Tiến độ học thử chưa cập nhật thống kê tài khoản.
       </p>
+      {practiceOpen && (
+        <PracticeDialog
+          lists={practiceLists}
+          limit={limit}
+          onDismiss={() => setPracticeOpen(false)}
+        />
+      )}
     </div>
   );
 }

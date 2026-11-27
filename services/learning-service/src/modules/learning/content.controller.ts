@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Headers,
-  HttpCode,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -19,6 +18,8 @@ import { ContentService } from './content.service';
 import {
   ContentInput,
   SearchQuery,
+  VocabularyBulkInput,
+  VocabularyImportInput,
   VocabularyQuery,
   LessonQuery,
   AdminLessonQuery,
@@ -59,6 +60,13 @@ export class ContentAdminController {
   ) {
     return this.content.remove('topics', id, actor, cid(req));
   }
+  @Delete('vocabulary-topics/:id/vocabularies') deleteTopicVocabulary(
+    @CurrentUser('sub') actor: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Req() req: Request,
+  ) {
+    return this.content.removeTopicVocabulary(id, actor, cid(req));
+  }
   @Get('vocabularies') listvocabularies(@Query() q: VocabularyQuery) {
     return this.content.list('vocabularies', q, true);
   }
@@ -72,6 +80,22 @@ export class ContentAdminController {
     @Req() req: Request,
   ) {
     return this.content.create('vocabularies', body, actor, key, cid(req));
+  }
+  @Post('vocabularies/bulk') createVocabularyBulk(
+    @CurrentUser('sub') actor: string,
+    @Headers('idempotency-key') key: string,
+    @Body(new ContractPipe('VocabularyBulkCreate')) body: VocabularyBulkInput,
+    @Req() req: Request,
+  ) {
+    return this.content.createVocabularyBulk(body, actor, key, cid(req));
+  }
+  @Post('vocabularies/import') importVocabulary(
+    @CurrentUser('sub') actor: string,
+    @Headers('idempotency-key') key: string,
+    @Body(new ContractPipe('VocabularyImportCreate')) body: VocabularyImportInput,
+    @Req() req: Request,
+  ) {
+    return this.content.importVocabulary(body, actor, key, cid(req));
   }
   @Patch('vocabularies/:id') patchvocabularies(
     @CurrentUser('sub') actor: string,

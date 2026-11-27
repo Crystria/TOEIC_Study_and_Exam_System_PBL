@@ -10,6 +10,10 @@ import {
   segment,
   text,
 } from './contracts';
+
+export type FlashcardScope = 'SHARED' | 'PERSONAL';
+export type FlashcardMode = 'NEW' | 'REVIEW';
+
 export function parseQuizResult(value: unknown) {
   const r = record(value);
   if (r.status !== 'COMPLETED') throw new ContractError('quiz.status');
@@ -47,6 +51,7 @@ export function parseVocabularySession(value: unknown) {
         id: id(q.questionId),
         wordId: id(q.vocabularyId),
         prompt: text(q.prompt),
+        confirmsMeaning: q.direction === 'MEANING_CONFIRMATION',
         options: list(q.options, (value) => {
           const o = record(value);
           return { code: text(o.code), text: text(o.text) };
@@ -62,56 +67,63 @@ export function parseVocabularySession(value: unknown) {
     result: status === 'COMPLETED' ? parseQuizResult(r.result) : null,
   };
 }
-export const vocabularySessions = {
-  async cancel(id: string) {
-    if (
-      record(
-        await gateway(`learning/vocabulary-sessions/${segment(id)}/cancel`, { method: 'POST' }),
-      ).success !== true
-    )
-      throw new ContractError('session.cancel');
-  },
-  async start(topicId: string, mode: 'NEW' | 'REVIEW', idempotencyKey: string) {
-    const s = parseVocabularySession(
-      await gateway('learning/vocabulary-sessions', {
-        method: 'POST',
-        idempotencyKey,
-        body: { topicId, mode },
-      }),
-    );
-    if (s.topicId !== topicId) throw new ContractError('session.topicId');
-    return s;
-  },
-  async read(id: string, signal?: AbortSignal) {
-    const s = parseVocabularySession(
-      await gateway(`learning/vocabulary-sessions/${segment(id)}`, { signal }),
-    );
-    if (s.id !== id) throw new ContractError('session.id');
-    return s;
-  },
-  async reviews(id: string, reviews: { vocabularyId: string; quality: number }[]) {
-    if (
-      record(
-        await gateway(`learning/vocabulary-sessions/${segment(id)}/reviews`, {
-          method: 'POST',
-          body: { reviews },
-        }),
-      ).success !== true
-    )
-      throw new ContractError('reviews');
-  },
-  async submit(
-    id: string,
-    body: {
-      operationId: string;
-      reviews: { vocabularyId: string; quality: number }[];
-      answers: { questionId: string; selectedOption: string }[];
+function vocabularySessionApi(resource: 'vocabulary-sessions' | 'flashcard-sessions') {
+  const route = `learning/${resource}`;
+  return {
+    async cancel(id: string) {
+      if (
+        record(await gateway(`${route}/${segment(id)}/cancel`, { method: 'POST' })).success !== true
+      )
+        throw new ContractError('session.cancel');
     },
-  ) {
-    const r = parseQuizResult(
-      await gateway(`learning/vocabulary-sessions/${segment(id)}/submit`, { method: 'POST', body }),
-    );
-    if (r.sessionId !== id) throw new ContractError('quiz.sessionId');
-    return r;
-  },
-};
+    async start(
+      topicId: string,
+      mode: FlashcardMode,
+      idempotencyKey: string,
+      practice?: { scope: FlashcardScope; limit: number },
+    ) {
+      const s = parseVocabularySession(
+        await gateway(route, {
+          method: 'POST',
+          idempotencyKey,
+          body: { topicId, mode, ...practice },
+        }),
+      );
+      if (s.topicId !== topicId) throw new ContractError('session.topicId');
+      return s;
+    },
+    async read(id: string, signal?: AbortSignal) {
+      const s = parseVocabularySession(await gateway(`${route}/${segment(id)}`, { signal }));
+      if (s.id !== id) throw new ContractError('session.id');
+      return s;
+    },
+    async reviews(id: string, reviews: { vocabularyId: string; quality: number }[]) {
+      if (
+        record(
+          await gateway(`${route}/${segment(id)}/reviews`, {
+            method: 'POST',
+            body: { reviews },
+          }),
+        ).success !== true
+      )
+        throw new ContractError('reviews');
+    },
+    async submit(
+      id: string,
+      body: {
+        operationId: string;
+        reviews: { vocabularyId: string; quality: number }[];
+        answers: { questionId: string; selectedOption: string }[];
+      },
+    ) {
+      const r = parseQuizResult(
+        await gateway(`${route}/${segment(id)}/submit`, { method: 'POST', body }),
+      );
+      if (r.sessionId !== id) throw new ContractError('quiz.sessionId');
+      return r;
+    },
+  };
+}
+
+export const vocabularySessions = vocabularySessionApi('vocabulary-sessions');
+export const flashcardSessions = vocabularySessionApi('flashcard-sessions');

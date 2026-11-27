@@ -25,6 +25,15 @@ describe('route policy', () => {
 
   it('allows public auth and health paths only', () => {
     expect(isPublicPath('/api/v1/auth/login')).toBe(true);
+    for (const path of ['/api/v1/auth/forgot-password', '/api/v1/auth/reset-password']) {
+      expect(isPublicPath(path, 'POST')).toBe(true);
+      expect(isPublicPath(path, 'GET')).toBe(false);
+      expect(ipRateLimitPolicy('POST', path, false)?.bucket).toBe('password-recovery');
+    }
+    expect(isPublicPath('/api/v1/auth/change-password', 'POST')).toBe(false);
+    expect(userRateLimitPolicy('POST', '/api/v1/auth/change-password').bucket).toBe(
+      'change-password',
+    );
     expect(isPublicPath('/api/v1/auth/me')).toBe(false);
     expect(isPublicPath('/health')).toBe(true);
     expect(isPublicPath('/status/')).toBe(true);
@@ -37,18 +46,10 @@ describe('route policy', () => {
     expect(requiredRoles('POST', '/api/v1/tests/t1/part-attempts')).toEqual([]);
   });
 
-  it('requires admin roles for content writes', () => {
-    expect(requiredRoles('POST', '/api/v1/questions')).toEqual([
-      RoleCode.CONTENT_ADMIN,
-      RoleCode.SYSTEM_ADMIN,
-    ]);
-    expect(requiredRoles('PATCH', '/api/v1/question-groups/g1')).toEqual([
-      RoleCode.CONTENT_ADMIN,
-      RoleCode.SYSTEM_ADMIN,
-    ]);
-    expect(requiredRoles('POST', '/api/v1/tests')).toEqual([RoleCode.CONTENT_ADMIN]);
-    expect(requiredRoles('GET', '/api/v1/tests')).toEqual([]);
+  it('keeps user administration and search reindexing with system admins', () => {
     expect(requiredRoles('GET', '/api/v1/admin/users')).toEqual([RoleCode.SYSTEM_ADMIN]);
+    expect(requiredRoles('GET', '/api/v1/admin/users/1')).toEqual([RoleCode.SYSTEM_ADMIN]);
+    expect(requiredRoles('POST', '/api/v1/questions/reindex')).toEqual([RoleCode.SYSTEM_ADMIN]);
   });
 
   it('reserves all test mutations for content admins while keeping test reads available', () => {
@@ -79,9 +80,17 @@ describe('route policy', () => {
     expect(userRateLimitPolicy('GET', '/api/v1/tests').bucket).toBe('read');
   });
 
-  it('uses a longer timeout only for submit', () => {
+  it('uses longer timeouts for attempt submit, workbook import and topic vocabulary deletion', () => {
     expect(isSubmitPath('POST', '/api/v1/attempts/a1/submit')).toBe(true);
     expect(proxyTimeoutMs('POST', '/api/v1/attempts/a1/submit')).toBe(15_000);
+    const importPath = '/api/v1/learning/admin/vocabularies/import';
+    expect(proxyTimeoutMs('POST', importPath)).toBe(30_000);
+    expect(proxyTimeoutMs('GET', importPath)).toBe(5_000);
+    expect(requiredRoles('POST', importPath)).toEqual([RoleCode.CONTENT_ADMIN]);
+    const clearTopicPath = '/api/v1/learning/admin/vocabulary-topics/t1/vocabularies';
+    expect(proxyTimeoutMs('DELETE', clearTopicPath)).toBe(30_000);
+    expect(proxyTimeoutMs('GET', clearTopicPath)).toBe(5_000);
+    expect(requiredRoles('DELETE', clearTopicPath)).toEqual([RoleCode.CONTENT_ADMIN]);
     expect(proxyTimeoutMs('POST', '/api/v1/tests')).toBe(5_000);
   });
 });

@@ -1,13 +1,19 @@
 import { RequestHandler } from 'express';
 import { sendGatewayError } from './http-error';
 import { Request } from 'express';
+import { isVocabularyImportPath } from './route-policy';
 
 export type BufferedRequest = Request & { rawBody?: Buffer };
 
 export const DEFAULT_BODY_LIMIT_BYTES = 1024 * 1024;
 
-export function createBodyLimitMiddleware(maxBytes = DEFAULT_BODY_LIMIT_BYTES): RequestHandler {
+export function createBodyLimitMiddleware(
+  defaultMaxBytes = DEFAULT_BODY_LIMIT_BYTES,
+): RequestHandler {
   return (req, res, next) => {
+    const maxBytes = isVocabularyImportPath(req.method, req.path)
+      ? 4 * 1024 * 1024
+      : defaultMaxBytes;
     const rawLength = req.headers['content-length'];
     const contentLength = Number(rawLength);
     if (Number.isFinite(contentLength) && contentLength > maxBytes) {

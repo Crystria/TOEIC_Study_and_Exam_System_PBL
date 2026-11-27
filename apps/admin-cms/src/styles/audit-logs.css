@@ -18,13 +18,13 @@
 .audit-intro p,
 .audit-demo-note {
   font-size: 13px;
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
 }
 .audit-demo-note {
   padding: 12px 15px;
   margin: 20px 0;
   border-left: 3px solid #93c5fd;
-  background: #f1f5f9;
+  background: var(--cms-surface-muted);
   border-radius: 0 8px 8px 0;
 }
 .audit-demo-note p + p {
@@ -49,7 +49,7 @@
   margin-bottom: 6px;
   font-size: 12px;
   font-weight: 650;
-  color: #334155;
+  color: light-dark(#334155, var(--cms-ink));
 }
 .audit-field :is(input, select),
 .audit-preview-body select,
@@ -58,10 +58,10 @@
   min-width: 0;
   min-height: 44px;
   padding: 9px 11px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--cms-control-line);
   border-radius: 8px;
-  color: #334155;
-  background: white;
+  color: light-dark(#334155, var(--cms-ink));
+  background: var(--cms-surface);
   font-size: 13px;
 }
 .audit-filter-footer {
@@ -74,7 +74,7 @@
 .audit-filter-footer > p {
   max-width: 410px;
   font-size: 11px;
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
 }
 .audit-filter-footer > div {
   display: flex;
@@ -93,7 +93,7 @@
 .audit-preview-controls {
   margin: 18px 0 26px;
   font-size: 12px;
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
 }
 .audit-preview-controls > summary {
   width: fit-content;
@@ -106,9 +106,9 @@
   gap: 10px 16px;
   padding: 16px;
   margin-top: 8px;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--cms-control-line);
   border-radius: 10px;
-  background: white;
+  background: var(--cms-surface);
 }
 .audit-preview-body label {
   margin: 0;
@@ -121,8 +121,8 @@
   margin: 16px 0;
   padding: 12px;
   border-radius: 8px;
-  background: #fffbeb;
-  color: #854d0e;
+  background: light-dark(#fffbeb, #382c18);
+  color: light-dark(#854d0e, #f9dc91);
   font-size: 12px;
 }
 .audit-results-header {
@@ -150,7 +150,7 @@
 .audit-result-status {
   margin: 10px 0 16px;
   font-size: 12px;
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
   min-height: 20px;
 }
 .audit-list-heading,
@@ -162,34 +162,34 @@
 }
 .audit-list-heading {
   padding: 12px 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--cms-line);
   border-radius: 10px 10px 0 0;
-  background: #f1f5f9;
+  background: var(--cms-surface-muted);
   font-size: 11px;
   font-weight: 650;
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
 }
 .audit-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--cms-line);
   border-top: 0;
-  background: white;
+  background: var(--cms-surface);
   border-radius: 0 0 10px 10px;
   overflow: hidden;
 }
 .audit-list > li {
   padding: 18px 20px;
-  border-top: 1px solid #edf2f7;
+  border-top: 1px solid light-dark(#edf2f7, var(--cms-line));
   font-size: 12px;
-  color: #334155;
+  color: light-dark(#334155, var(--cms-ink));
 }
 .audit-list > li:first-child {
   border-top: 0;
 }
 .audit-list > li:hover {
-  background: #fafcff;
+  background: light-dark(#fafcff, var(--cms-surface));
 }
 .audit-list > li > div {
   min-width: 0;
@@ -198,7 +198,7 @@
 .audit-code {
   display: block;
   margin-bottom: 5px;
-  color: #64748b;
+  color: light-dark(#64748b, var(--cms-muted));
   font-size: 10px;
   letter-spacing: 0.035em;
 }
@@ -213,12 +213,12 @@
 .audit-name h3 {
   font-size: 13px;
   font-weight: 550;
-  color: #1e293b;
+  color: light-dark(#1e293b, var(--cms-ink));
   line-height: 1.65;
 }
 .audit-summary,
 .audit-pagination-note {
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
   font-size: 11px;
   line-height: 1.7;
   margin-top: 8px;
@@ -226,7 +226,7 @@
 .audit-target-label {
   display: block;
   margin-top: 8px;
-  color: #64748b;
+  color: light-dark(#64748b, var(--cms-muted));
   font-size: 10px;
 }
 .audit-pagination {
@@ -238,7 +238,7 @@
 }
 .audit-pagination > p {
   font-size: 11px;
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
 }
 .audit-pagination > div {
   display: flex;
@@ -247,11 +247,11 @@
 }
 .audit-pagination [aria-current] {
   font-size: 11px;
-  color: #334155;
+  color: light-dark(#334155, var(--cms-ink));
 }
 .audit-bottom-note {
   margin-top: 24px;
-  color: #64748b;
+  color: light-dark(#64748b, var(--cms-muted));
   font-size: 11px;
 }
 .audit-state {
@@ -268,17 +268,17 @@
   font-size: 13px;
   max-width: 470px;
   margin: 0 auto 20px;
-  color: #526177;
+  color: light-dark(#526177, var(--cms-muted));
 }
 .audit-loading {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--cms-line);
   border-radius: 12px;
   padding: 0 20px;
-  background: white;
+  background: var(--cms-surface);
 }
 .audit-loading > div {
   padding: 23px 0;
-  border-top: 1px solid #edf2f7;
+  border-top: 1px solid light-dark(#edf2f7, var(--cms-line));
 }
 .audit-loading > div:first-child {
   border-top: 0;
@@ -286,7 +286,7 @@
 .audit-loading span {
   display: block;
   border-radius: 5px;
-  background: #e8eef5;
+  background: light-dark(#e8eef5, var(--cms-surface-muted));
   height: 12px;
   max-width: 75%;
 }
@@ -336,12 +336,12 @@
     grid-template-columns: 1fr;
     gap: 16px 12px;
     padding: 18px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--cms-line);
     border-radius: 12px;
-    background: white;
+    background: var(--cms-surface);
   }
   .audit-list > li:first-child {
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--cms-line);
   }
   .audit-name {
     grid-column: 1 / -1;
@@ -355,7 +355,7 @@
     display: block;
     margin-bottom: 4px;
     font-size: 10px;
-    color: #64748b;
+    color: light-dark(#64748b, var(--cms-muted));
   }
   .audit-pagination {
     flex-direction: column;

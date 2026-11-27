@@ -12,6 +12,7 @@ import {
   parseWord,
   record,
   count,
+  date,
   text,
   boolean,
   segment,
@@ -90,7 +91,7 @@ export const learningApi = {
     );
     const p = result.progress.find((p) => p.entityId === id && p.entityType === 'VOCABULARY');
     if (result.operationId !== operationId || !p) throw new ContractError('review');
-    return p;
+    return { ...p, nextReviewAt: date(p.nextReviewAt) };
   },
   async complete(id: string, revision: string, operationId: string) {
     const result = parseOperation(
@@ -187,6 +188,28 @@ export const examApi = {
   },
 };
 export const analyticsApi = {
+  history: async (mode: 'FULL' | 'PART', pageNumber: number, signal?: AbortSignal) =>
+    page(
+      await gateway(
+        'analytics/' +
+          (mode === 'FULL' ? 'scores' : 'practices') +
+          '?page=' +
+          pageNumber +
+          '&size=10',
+        { signal },
+      ),
+      (value) => {
+        const v = record(value);
+        return {
+          attemptId: text(v.attemptId),
+          completedAt: date(v.completedAt),
+          result:
+            mode === 'FULL'
+              ? count(v.totalScore) + ' điểm'
+              : count(v.correctCount) + '/' + count(v.totalQuestions) + ' câu đúng',
+        };
+      },
+    ),
   progress: async (range: string, signal?: AbortSignal, cursor?: string) => {
     const r = parseAnalyticsProgress(
       await gateway(

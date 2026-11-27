@@ -241,10 +241,7 @@ async function confirmDelete() {
     await edit();
     await field('name', `QA topic renamed ${width}`);
     await save();
-    await page.getByRole('button', { name: 'Xóa demo', exact: true }).click();
-    await page.getByRole('dialog').getByRole('button', { name: 'Xác nhận demo' }).click();
-    await page.locator('.ws-root [role=alert]').waitFor();
-    assert.ok(await page.locator('.ws-error').textContent());
+    assert.ok(await page.getByRole('button', { name: 'Xóa demo', exact: true }).isDisabled());
     await page.getByRole('link', { name: `QA term ${width}`, exact: true }).click();
     await page.getByRole('link', { name: `QA topic renamed ${width}`, exact: true }).waitFor();
     await edit();

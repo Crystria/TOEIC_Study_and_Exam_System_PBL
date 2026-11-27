@@ -2,9 +2,9 @@
 
 Gateway listens on port 3000 and forwards versioned routes to the configured
 service URLs. Access JWTs require the shared secret, issuer, audience and access
-token type. Question/group writes require CONTENT_ADMIN/SYSTEM_ADMIN. Test form
-writes require CONTENT_ADMIN; SYSTEM_ADMIN can read tests. Reindex requires
-SYSTEM_ADMIN. Caller-supplied user identity headers are stripped.
+token type. Question, group and test content writes require `CONTENT_ADMIN`.
+`SYSTEM_ADMIN` can read test contents and run search reindexing.
+Caller-supplied user identity headers are stripped.
 
 JSON bodies are buffered once with a size limit and replayed unchanged through
 one shared HTTP proxy. Connect timeout is 2 seconds; response timeout is 5 seconds

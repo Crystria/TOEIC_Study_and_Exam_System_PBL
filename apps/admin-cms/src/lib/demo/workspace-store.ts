@@ -3,6 +3,9 @@ import { canManage, type EntityKind, type EntityMap, type WorkspaceState } from 
 import { createWorkspaceSeed } from './workspace-seed';
 import { validateRecord } from './workspace-validation';
 
+type TestDeletionStorage = Pick<Storage, 'getItem' | 'setItem'>;
+const deletedTestKey = (id: string) => `toeic-cms-demo-deleted-test:${id}`;
+
 function freeze<T>(value: T): T {
   if (value && typeof value === 'object') {
     for (const child of Object.values(value)) freeze(child);
@@ -13,6 +16,8 @@ function freeze<T>(value: T): T {
 export function createWorkspaceStore(seed: WorkspaceState = createWorkspaceSeed()) {
   let state = freeze(structuredClone(seed));
   let serial = 0;
+  const seededTestIds = new Set(seed.tests.map((test) => test.id));
+  let testDeletionStorage: TestDeletionStorage | undefined;
   const listeners = new Set<() => void>();
   const publish = (next: WorkspaceState) => {
     state = freeze(next);
@@ -25,6 +30,18 @@ export function createWorkspaceStore(seed: WorkspaceState = createWorkspaceSeed(
       return () => {
         listeners.delete(listener);
       };
+    },
+    restoreTestDeletions(storage: TestDeletionStorage) {
+      testDeletionStorage = storage;
+      let tests: WorkspaceState['tests'];
+      try {
+        tests = state.tests.filter(
+          (test) => !seededTestIds.has(test.id) || storage.getItem(deletedTestKey(test.id)) !== '1',
+        );
+      } catch {
+        return;
+      }
+      if (tests.length < state.tests.length) publish({ ...state, tests });
     },
     save<K extends EntityKind>(kind: K, input: EntityMap[K], role: DemoRole, members?: string[]) {
       if (!canManage(kind, role)) throw new Error('Thao tác ngoài persona demo hiện tại.');
@@ -62,6 +79,15 @@ export function createWorkspaceStore(seed: WorkspaceState = createWorkspaceSeed(
       publish(next);
       return record.id;
     },
+    removeTopicVocabulary(topicId: string, role: DemoRole) {
+      if (!canManage('topics', role)) throw new Error('Thao tác ngoài persona demo hiện tại.');
+      if (!state.topics.some((topic) => topic.id === topicId))
+        throw new Error('Không tìm thấy chủ đề demo.');
+      const vocabulary = state.vocabulary.filter((word) => word.topicId !== topicId);
+      const count = state.vocabulary.length - vocabulary.length;
+      if (count) publish({ ...state, vocabulary });
+      return count;
+    },
     remove(kind: EntityKind, id: string, role: DemoRole) {
       if (!canManage(kind, role) || kind === 'users')
         throw new Error('Không hỗ trợ thao tác này trong persona demo.');
@@ -95,6 +121,13 @@ export function createWorkspaceStore(seed: WorkspaceState = createWorkspaceSeed(
       // Each array is replaced on a cloned state; fixture objects are never edited.
       for (const key of Object.keys(next) as EntityKind[])
         if (key === kind) next[key] = next[key].filter((r) => r.id !== id) as never;
+      if (kind === 'tests' && seededTestIds.has(id) && testDeletionStorage) {
+        try {
+          testDeletionStorage.setItem(deletedTestKey(id), '1');
+        } catch {
+          throw new Error('Trình duyệt không lưu được thao tác xóa đề thi demo.');
+        }
+      }
       publish(next);
     },
   };

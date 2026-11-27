@@ -1,8 +1,9 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- Snapshot media URLs are validated by the API adapter. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { AttemptChoices, ServerAttempt } from '../../lib/integration/attempt-contract';
 import { formatPassageBlanks } from '../../lib/exams/passage';
+import { buildListeningAudioTracks } from '../../lib/exams/listening-audio';
 import { LessonMarkdown } from '../learning/lesson-markdown';
 import { ExamToolbar, useExamHighlights } from '../exams/exam-toolbar';
 import { ExamMobileBar } from '../exams/exam-mobile-bar';
@@ -21,12 +22,12 @@ export function ServerExamTaking({
   uncertain,
   message,
   error,
+  navigationBlocked,
   onAnswer,
   onFlag,
   onSave,
   onReload,
   onSubmit,
-  onExit,
 }: {
   attempt: ServerAttempt;
   choices: AttemptChoices;
@@ -39,12 +40,12 @@ export function ServerExamTaking({
   uncertain: boolean;
   message: string;
   error: string;
+  navigationBlocked: boolean;
   onAnswer: (id: string, option: string | null) => void;
   onFlag: (id: string) => void;
   onSave: () => void;
   onReload: () => void;
   onSubmit: () => void;
-  onExit: () => void;
 }) {
   const parts = [...new Set(a.questions.map((q) => q.part))].sort((x, y) => x - y);
   const [part, setPart] = useState(parts[0] ?? 1);
@@ -55,20 +56,10 @@ export function ServerExamTaking({
   const pendingScroll = useRef<string | null>(null);
   const { onMouseUp } = useExamHighlights(highlightEnabled);
   const partQuestions = a.questions.filter((q) => q.part === part);
-  const current = partQuestions.find((q) => q.id === currentId) ?? partQuestions[0];
-  const audioGroup = a.groups.find((g) => g.id === current?.groupId);
-  const audioSource =
-    current?.audioUrl ??
-    audioGroup?.audioUrl ??
-    audioGroup?.assets.find((asset) => asset.kind === 'AUDIO')?.url;
-  const audioQuestions = audioGroup
-    ? partQuestions.filter((q) => q.groupId === audioGroup.id)
-    : current
-      ? [current]
-      : [];
-  const audioLabel = audioQuestions.length
-    ? `Audio câu ${audioQuestions[0].orderNo}${audioQuestions.length > 1 ? `–${audioQuestions[audioQuestions.length - 1].orderNo}` : ''}`
-    : 'Audio bài nghe';
+  const audioTracks = useMemo(
+    () => buildListeningAudioTracks(a.questions, a.groups),
+    [a.questions, a.groups],
+  );
   const groups = [...new Set(partQuestions.map((q) => q.groupId ?? q.id))].map((key) => ({
     key,
     group: a.groups.find((g) => g.id === key),
@@ -166,15 +157,18 @@ export function ServerExamTaking({
     <div className="reference-exam">
       <header className="reference-exam-header">
         <h1 className="reference-exam-title">{a.title}</h1>
-        <button type="button" className="reference-exam-exit" disabled={busy} onClick={onExit}>
-          Thoát
-        </button>
       </header>
+      {navigationBlocked && (
+        <p className="reference-exam-status" role="status">
+          Bạn cần nộp bài trước khi rời bài thi. Các đáp án và thời gian làm bài vẫn được giữ.
+        </p>
+      )}
       <div className="reference-exam-layout">
         <section className="reference-exam-main" aria-label={`Nội dung Part ${part}`}>
           <ExamToolbar
-            audioSource={part <= 4 ? audioSource : undefined}
-            audioLabel={audioLabel}
+            audioTracks={audioTracks}
+            audioLabel="Audio toàn bộ phần nghe"
+            showAudio={part <= 4}
             highlightEnabled={highlightEnabled}
             onHighlightChange={() => setHighlightEnabled((v) => !v)}
             locked={seconds === 0}

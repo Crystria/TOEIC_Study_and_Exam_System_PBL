@@ -145,12 +145,16 @@ export class LearningMediaService implements OnModuleInit, OnModuleDestroy {
     });
   }
   async garbage(tx: Tx, objectKey: string) {
-    if (!objectKey.startsWith('learning/') || objectKey.includes('..'))
+    await this.garbageMany(tx, [objectKey]);
+  }
+  async garbageMany(tx: Tx, objectKeys: string[]) {
+    if (!objectKeys.length) return;
+    if (objectKeys.some((key) => !key.startsWith('learning/') || key.includes('..')))
       fail(503, 'INVALID_STORED_MEDIA_KEY');
-    await tx.learningStorageGarbage.upsert({
-      where: { objectKey },
-      create: { objectKey, deleteAfter: new Date(Date.now() + 86400000) },
-      update: {},
+    const deleteAfter = new Date(Date.now() + 86400000);
+    await tx.learningStorageGarbage.createMany({
+      data: Array.from(new Set(objectKeys), (objectKey) => ({ objectKey, deleteAfter })),
+      skipDuplicates: true,
     });
   }
   onModuleInit() {

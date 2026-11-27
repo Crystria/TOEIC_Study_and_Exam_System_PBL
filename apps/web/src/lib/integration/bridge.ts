@@ -1,7 +1,12 @@
 import { createHash } from 'node:crypto';
 import { ContractError, parseTokens, parseUser } from './contracts';
 import { isExamMutation } from './exam-access';
-import { isCmsContentMutation } from './cms-access';
+import {
+  isCmsContentMutation,
+  isTopicVocabularyDeletion,
+  MAX_VOCABULARY_IMPORT_BYTES,
+  vocabularyWorkbookImportPath,
+} from './cms-access';
 import { isPersonalLearningMutation, isPersonalLearningRoute } from './personal-learning-access';
 
 export interface BridgeConfig {
@@ -29,8 +34,25 @@ class HttpFailure extends Error {
 const rotating = new Map<string, { task: Promise<Tokens>; expires: number }>();
 const writeMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
+function isFlashcardReview(path: string, method: string) {
+  return method === 'POST' && /^learning\/flashcards\/[^/]+\/review$/.test(path);
+}
+
+function isFlashcardSession(path: string, method: string) {
+  if (method === 'GET') return /^learning\/flashcard-sessions\/[^/]+$/.test(path);
+  return (
+    method === 'POST' &&
+    /^learning\/flashcard-sessions(?:\/[^/]+\/(?:reviews|submit|cancel))?$/.test(path)
+  );
+}
+
 function permitted(app: BridgeConfig['app'], path: string, method: string): boolean {
+  if (path === 'learning/admin/vocabularies/bulk' || path === vocabularyWorkbookImportPath)
+    return app === 'cms' && method === 'POST';
+  if (isTopicVocabularyDeletion(path, method)) return app === 'cms';
   if (app === 'web' && isPersonalLearningRoute(path, method)) return true;
+  if (app === 'web' && (isFlashcardReview(path, method) || isFlashcardSession(path, method)))
+    return true;
   if (method === 'GET') {
     if (app === 'web' && path === 'sync/users/me') return true;
     if (/^users\/me$/.test(path)) return true;
@@ -49,7 +71,10 @@ function permitted(app: BridgeConfig['app'], path: string, method: string): bool
     )
       return true;
     if (app === 'cms' && /^tests\/cms-metadata(?:\/[^/]+)?$/.test(path)) return true;
-    if (app === 'cms' && /^(questions(?:\/[^/]+)?|admin\/(users|audit-logs))$/.test(path))
+    if (
+      app === 'cms' &&
+      /^(questions(?:\/[^/]+)?|admin\/(users(?:\/[^/]+)?|audit-logs))$/.test(path)
+    )
       return true;
     return (
       app === 'web' &&
@@ -77,11 +102,7 @@ function permitted(app: BridgeConfig['app'], path: string, method: string): bool
       (method === 'PUT' && /^attempts\/[^/]+\/(draft|answers\/[^/]+)$/.test(path)))
   )
     return true;
-  if (
-    app === 'web' &&
-    method === 'POST' &&
-    /^learning\/(flashcards\/[^/]+\/review|lessons\/[^/]+\/complete)$/.test(path)
-  )
+  if (app === 'web' && method === 'POST' && /^learning\/lessons\/[^/]+\/complete$/.test(path))
     return true;
   if (app !== 'cms') return false;
   if (
@@ -102,10 +123,10 @@ export function requiredRoles(path: string, method: string): readonly string[] {
   if (path.startsWith('admin/')) return ['SYSTEM_ADMIN'];
   if (path.startsWith('learning/admin/') || /^learning\/vocabularies\/[^/]+\/media\//.test(path))
     return ['CONTENT_ADMIN'];
-  if (path.startsWith('question-groups')) return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
+  if (/^(questions|question-groups)(?:\/|$)/.test(path))
+    return writeMethods.has(method) ? ['CONTENT_ADMIN'] : ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   if (path.startsWith('tests/cms-metadata')) return ['CONTENT_ADMIN'];
   if (/^tests(?:\/[^/]+)?$/.test(path) && writeMethods.has(method)) return ['CONTENT_ADMIN'];
-  if (path.startsWith('questions')) return ['CONTENT_ADMIN', 'SYSTEM_ADMIN'];
   return [];
 }
 
@@ -147,7 +168,10 @@ export async function handleBridge(
   } catch {
     return respond({ code: 'INVALID_LOCAL_TEST_GATEWAY' }, 503);
   }
-  if (writeMethods.has(method) && request.headers.get('origin') !== url.origin)
+  // Next dev can normalize request.url to localhost even when the browser used 127.0.0.1.
+  const host = request.headers.get('host');
+  const origin = host ? `${url.protocol}//${host.toLowerCase()}` : url.origin;
+  if (writeMethods.has(method) && request.headers.get('origin') !== origin)
     return respond({ code: 'ORIGIN_REJECTED' }, 403);
   if (
     !parts.length ||
@@ -196,11 +220,15 @@ export async function handleBridge(
     body?: unknown,
     access = tokens.accessToken,
   ): Promise<unknown> {
+    const longContentOperation =
+      target === `${path}${url.search}` &&
+      ((path === vocabularyWorkbookImportPath && verb === 'POST') ||
+        isTopicVocabularyDeletion(path, verb));
     const response = await fetcher(`${upstream.href.replace(/\/$/, '')}/${target}`, {
       method: verb,
       redirect: 'error',
       cache: 'no-store',
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(longContentOperation ? 35_000 : 20_000),
       headers: {
         Accept: 'application/json',
         ...(request.headers.has('idempotency-key') && target === `${path}${url.search}`
@@ -254,10 +282,14 @@ export async function handleBridge(
   try {
     let body: unknown;
     if (writeMethods.has(method)) {
-      if (Number(request.headers.get('content-length') ?? 0) > 1_048_576)
+      const bodyLimit =
+        config.app === 'cms' && path === vocabularyWorkbookImportPath && method === 'POST'
+          ? MAX_VOCABULARY_IMPORT_BYTES
+          : 1_048_576;
+      if (Number(request.headers.get('content-length') ?? 0) > bodyLimit)
         return respond({ code: 'BODY_TOO_LARGE' }, 413);
       const source = await request.text();
-      if (source.length > 1_048_576) return respond({ code: 'BODY_TOO_LARGE' }, 413);
+      if (Buffer.byteLength(source) > bodyLimit) return respond({ code: 'BODY_TOO_LARGE' }, 413);
       try {
         body = source ? JSON.parse(source) : undefined;
       } catch {
@@ -303,6 +335,26 @@ export async function handleBridge(
       }
       return respond({ success: true });
     }
+    if (
+      config.app === 'web' &&
+      method === 'POST' &&
+      ['auth/forgot-password', 'auth/reset-password'].includes(path)
+    ) {
+      const result = await call(path, method, body, '');
+      return respond(result, path === 'auth/forgot-password' ? 202 : 200);
+    }
+    if (path === 'auth/change-password' && method === 'POST') {
+      const user = await me();
+      if (user.status !== 'ACTIVE') {
+        clear();
+        return respond({ code: 'ACCOUNT_NOT_ACTIVE' }, 403);
+      }
+      const result = await call(path, method, body);
+      if ((result as { success?: unknown })?.success !== true)
+        throw new ContractError('passwordChange.success');
+      clear();
+      return respond({ success: true });
+    }
     if (path === 'auth/refresh' && method === 'POST') {
       await rotate();
       const user = await me();
@@ -326,7 +378,10 @@ export async function handleBridge(
     const canWrite =
       config.app === 'cms' && isCmsContentMutation(path, method)
         ? (config.contentWritesEnabled ?? config.writesEnabled)
-        : config.app === 'web' && isPersonalLearningMutation(path, method)
+        : config.app === 'web' &&
+            (isPersonalLearningMutation(path, method) ||
+              isFlashcardReview(path, method) ||
+              isFlashcardSession(path, method))
           ? true
           : config.app === 'web' && isExamMutation(path, method)
             ? (config.examWritesEnabled ?? config.writesEnabled)

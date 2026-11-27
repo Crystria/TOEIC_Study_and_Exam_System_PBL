@@ -16,6 +16,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "clean": "rimraf dist",
     "test:p5": "node test/run-p5.cjs",
+    "history": "node scripts/recover-history.cjs",
     "rebuild": "node dist/rebuild.js"
   },
   "dependencies": {

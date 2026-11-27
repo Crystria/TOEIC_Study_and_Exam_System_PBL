@@ -2,13 +2,14 @@
 import Link from 'next/link';
 import type { LocalExamSession } from '@/lib/exams/session-types';
 import { localResultHref, localSummary } from '@/lib/exams/results';
-import { formatDuration, selectionQuery } from '@/lib/exams/selection';
+import { formatDuration } from '@/lib/exams/selection';
 import { buttonStyles } from '../ui/button';
 import { Alert, Badge, Progress } from '../ui/feedback';
 import { Panel } from '../ui/panel';
 import { HistoryNotice, ResultHeading } from './exam-result-shared';
 import { useExamHistory } from './exam-history-provider';
 import { useExamSession } from './exam-session-provider';
+import { ExamRetake } from './exam-retake';
 
 export function ExamResult({ session }: { session: LocalExamSession }) {
   const { test, answered, unanswered, elapsedSeconds, toeicEligible } = localSummary(session);
@@ -115,12 +116,7 @@ export function ExamResult({ session }: { session: LocalExamSession }) {
           <Link href="/history" className={buttonStyles('secondary')}>
             Lịch sử demo
           </Link>
-          <Link
-            href={`/exam/${test.id}/prepare?${selectionQuery(session.selection)}`}
-            className={buttonStyles('secondary')}
-          >
-            Chuẩn bị phiên mới
-          </Link>
+          <ExamRetake test={test} previous={session} />
         </div>
         <p className="result-muted">
           {archived

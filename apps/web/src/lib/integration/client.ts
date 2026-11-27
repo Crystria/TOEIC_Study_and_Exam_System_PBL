@@ -19,13 +19,19 @@ export function mutationOutcomeUnknown(error: unknown): boolean {
 }
 export async function gateway(
   path: string,
-  options: { method?: string; body?: unknown; signal?: AbortSignal; idempotencyKey?: string } = {},
+  options: {
+    method?: string;
+    body?: unknown;
+    signal?: AbortSignal;
+    idempotencyKey?: string;
+    timeoutMs?: number;
+  } = {},
 ): Promise<unknown> {
   const controller = new AbortController();
   const cancel = () => controller.abort();
   options.signal?.addEventListener('abort', cancel, { once: true });
   if (options.signal?.aborted) controller.abort();
-  const timer = setTimeout(() => controller.abort(), 25_000);
+  const timer = setTimeout(() => controller.abort(), options.timeoutMs ?? 25_000);
   try {
     const response = await fetch(`/api/frontend/${path}`, {
       method: options.method ?? 'GET',

@@ -52,6 +52,46 @@
   {
     "service": "auth",
     "method": "post",
+    "path": "/auth/forgot-password",
+    "operationId": "forgotPassword",
+    "access": "PUBLIC",
+    "request": "ForgotPasswordRequest",
+    "response": "MessageResponse",
+    "status": 202
+  },
+  {
+    "service": "auth",
+    "method": "post",
+    "path": "/auth/reset-password",
+    "operationId": "resetPassword",
+    "access": "PUBLIC",
+    "request": "ResetPasswordRequest",
+    "response": "Success",
+    "status": 200
+  },
+  {
+    "service": "auth",
+    "method": "post",
+    "path": "/auth/change-password",
+    "operationId": "changePassword",
+    "access": "AUTHENTICATED",
+    "request": "ChangePasswordRequest",
+    "response": "Success",
+    "status": 200
+  },
+  {
+    "service": "auth",
+    "method": "get",
+    "path": "/admin/users/{id}",
+    "operationId": "getAdminUser",
+    "access": "SYSTEM_ADMIN",
+    "request": null,
+    "response": "User",
+    "status": 200
+  },
+  {
+    "service": "auth",
+    "method": "post",
     "path": "/auth/logout",
     "operationId": "logout",
     "access": "AUTHENTICATED",
@@ -253,6 +293,16 @@
   },
   {
     "service": "learning",
+    "method": "delete",
+    "path": "/learning/admin/vocabulary-topics/{id}/vocabularies",
+    "operationId": "archiveTopicVocabulary",
+    "access": "CONTENT_ADMIN",
+    "request": null,
+    "response": "VocabularyBulkDeleted",
+    "status": 200
+  },
+  {
+    "service": "learning",
     "method": "get",
     "path": "/learning/vocabularies",
     "operationId": "listvocabularies",
@@ -303,6 +353,28 @@
     "access": "CONTENT_ADMIN",
     "request": "VocabularyCreate",
     "response": "Vocabulary",
+    "status": 201,
+    "idempotency": true
+  },
+  {
+    "service": "learning",
+    "method": "post",
+    "path": "/learning/admin/vocabularies/bulk",
+    "operationId": "createVocabularyBulk",
+    "access": "CONTENT_ADMIN",
+    "request": "VocabularyBulkCreate",
+    "response": "VocabularyBulkCreated",
+    "status": 201,
+    "idempotency": true
+  },
+  {
+    "service": "learning",
+    "method": "post",
+    "path": "/learning/admin/vocabularies/import",
+    "operationId": "importVocabularyWorkbook",
+    "access": "CONTENT_ADMIN",
+    "request": "VocabularyImportCreate",
+    "response": "VocabularyImportResult",
     "status": 201,
     "idempotency": true
   },
@@ -511,6 +583,57 @@
     "method": "post",
     "path": "/learning/vocabulary-sessions/{id}/cancel",
     "operationId": "cancelVocabularySession",
+    "access": "AUTHENTICATED",
+    "request": null,
+    "response": "Success",
+    "status": 200
+  },
+  {
+    "service": "learning",
+    "method": "post",
+    "path": "/learning/flashcard-sessions",
+    "operationId": "createFlashcardSession",
+    "access": "AUTHENTICATED",
+    "request": "FlashcardSessionCreate",
+    "response": "FlashcardSession",
+    "status": 201,
+    "idempotency": true
+  },
+  {
+    "service": "learning",
+    "method": "get",
+    "path": "/learning/flashcard-sessions/{id}",
+    "operationId": "getFlashcardSession",
+    "access": "AUTHENTICATED",
+    "request": null,
+    "response": "FlashcardSession",
+    "status": 200
+  },
+  {
+    "service": "learning",
+    "method": "post",
+    "path": "/learning/flashcard-sessions/{id}/reviews",
+    "operationId": "saveFlashcardSessionReviews",
+    "access": "AUTHENTICATED",
+    "request": "FlashcardSessionDraft",
+    "response": "Success",
+    "status": 200
+  },
+  {
+    "service": "learning",
+    "method": "post",
+    "path": "/learning/flashcard-sessions/{id}/submit",
+    "operationId": "submitFlashcardSession",
+    "access": "AUTHENTICATED",
+    "request": "FlashcardSessionSubmit",
+    "response": "FlashcardSessionResult",
+    "status": 200
+  },
+  {
+    "service": "learning",
+    "method": "post",
+    "path": "/learning/flashcard-sessions/{id}/cancel",
+    "operationId": "cancelFlashcardSession",
     "access": "AUTHENTICATED",
     "request": null,
     "response": "Success",

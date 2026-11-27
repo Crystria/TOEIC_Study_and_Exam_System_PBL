@@ -48,6 +48,17 @@ export class QuestionsService {
       include: questionInclude,
     });
   }
+  async details(ids: string[]) {
+    const questions = await this.findByIds(ids);
+    const found = new Map(questions.map((question) => [question.id, question]));
+    return {
+      items: ids.flatMap((id) => {
+        const question = found.get(id);
+        return question ? [publicQuestion(question, true, (key) => this.media.url(key))] : [];
+      }),
+      missingIds: ids.filter((id) => !found.has(id)),
+    };
+  }
   async getAnswerKey(ids: string[]) {
     const questions = await this.findByIds(ids);
     return questions.map((q) => ({

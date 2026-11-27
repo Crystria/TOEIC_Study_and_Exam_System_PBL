@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   gateway,
   failureMessage,
@@ -11,7 +11,11 @@ import {
 import { parseSessionUser, record, type User } from '../../lib/integration/contracts';
 import { Icon } from '../ui/icon';
 
-export function useResource<T>(key: string, loader: (signal: AbortSignal) => Promise<T>) {
+export function useResource<T>(
+  key: string,
+  loader: (signal: AbortSignal) => Promise<T>,
+  refreshVersion = 0,
+) {
   const ref = useRef(loader);
   ref.current = loader;
   const [revision, setRevision] = useState(0);
@@ -21,7 +25,9 @@ export function useResource<T>(key: string, loader: (signal: AbortSignal) => Pro
   });
   useEffect(() => {
     const abort = new AbortController();
-    setState({ key, loading: true });
+    setState((previous) =>
+      previous.key === key && previous.data !== undefined ? previous : { key, loading: true },
+    );
     Promise.resolve()
       .then(() => ref.current(abort.signal))
       .then((data) => {
@@ -31,7 +37,7 @@ export function useResource<T>(key: string, loader: (signal: AbortSignal) => Pro
         if (!abort.signal.aborted) setState({ key, error: failureMessage(error), loading: false });
       });
     return () => abort.abort();
-  }, [key, revision]);
+  }, [key, revision, refreshVersion]);
   const reload = useCallback(() => {
     setState({ key, loading: true });
     setRevision((n) => n + 1);
@@ -167,6 +173,7 @@ export function ApiAuth({
 }) {
   const inPanel = embedded;
   const Container = inPanel ? 'div' : 'main';
+  const passwordUpdated = useSearchParams().get('password') === 'updated';
   const [ready, setReady] = useState(false);
   const [registered, setRegistered] = useState(false);
   useEffect(() => setReady(true), []);
@@ -206,6 +213,9 @@ export function ApiAuth({
           ? 'Đăng nhập để quản lý nội dung và vận hành TOEIC Master.'
           : 'Dùng tài khoản của môi trường kiểm thử đã cấu hình.'}
       </p>
+      {!register && passwordUpdated && (
+        <p role="status">Mật khẩu đã được cập nhật. Hãy đăng nhập lại.</p>
+      )}
       <form
         ref={form}
         noValidate
@@ -259,7 +269,7 @@ export function ApiAuth({
             router.push(
               cms
                 ? user.roles.includes('CONTENT_ADMIN')
-                  ? '/questions'
+                  ? '/tests'
                   : user.roles.includes('SYSTEM_ADMIN')
                     ? '/users'
                     : '/login?denied=1'
@@ -423,6 +433,12 @@ export function ApiAuth({
       {!cms && (
         <p className="api-auth-support">
           <Link href="/verify-email">Kích hoạt email / gửi lại email</Link>
+          {!register && (
+            <>
+              {' '}
+              · <Link href="/forgot-password">Quên mật khẩu</Link>
+            </>
+          )}
         </p>
       )}
       {register && (

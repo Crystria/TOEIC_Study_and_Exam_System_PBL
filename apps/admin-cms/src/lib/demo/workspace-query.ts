@@ -3,6 +3,7 @@ import { readQuestionParams, questionHref, selectQuestionPage } from '../questio
 import { readVocabularyParams, vocabularyHref, selectVocabularyPage } from '../vocabulary/query';
 import { readTestParams, testHref, selectTestPage } from '../tests/query';
 import { readUserParams, userHref, selectUserPage } from '../users/query';
+import { ACCOUNT_PAGE_SIZE } from '../users/types';
 import { parseDemoRole } from './cms-fixtures';
 import type { EntityKind, WorkspaceState } from './workspace-model';
 
@@ -76,11 +77,13 @@ export function workspacePage(kind: EntityKind, state: WorkspaceState, params: U
       break;
     }
     case 'users': {
-      const p = readUserParams(params);
+      const userParams = new URLSearchParams(params);
+      userParams.delete('size');
+      const p = readUserParams(userParams);
       preview = p.preview;
       const catalog = state.users.map((u) => ({ ...u, status: u.status || null }));
-      result = selectUserPage(catalog, p.query);
-      canonical = userHref(params, { ...p.query, page: result.page }, p.preview);
+      result = selectUserPage(catalog, { ...p.query, size: ACCOUNT_PAGE_SIZE });
+      canonical = userHref(userParams, { ...p.query, page: result.page }, p.preview);
       break;
     }
     default: {
@@ -112,6 +115,10 @@ export function workspaceHref(
   id?: string,
   edit = false,
 ) {
-  const query = workspacePage(kind, state, params).canonical.split('?')[1];
+  const query = new URLSearchParams(workspacePage(kind, state, params).canonical.split('?')[1]);
+  const fromTest = params.get('fromTest')?.trim();
+  if (kind === 'questions' && id && id !== 'new' && fromTest) query.set('fromTest', fromTest);
+  const fromTopic = params.get('fromTopic')?.trim();
+  if (kind === 'vocabulary' && id && fromTopic) query.set('fromTopic', fromTopic);
   return `/${kind}${id ? `/${encodeURIComponent(id)}` : ''}${edit ? '/edit' : ''}?${query}`;
 }

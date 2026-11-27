@@ -7,9 +7,13 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import type { User } from '@/lib/integration/contracts';
 import { LogoutButton } from '../integration/shared';
+import { AccountAvatar } from '../profile/account-avatar';
 
 import { Badge } from '../ui/feedback';
 import { Icon, type IconName } from '../ui/icon';
+import { SidebarToggle } from '../ui/sidebar-toggle';
+import { ThemeToggle } from '../ui/theme-toggle';
+import { useDialogBackdropDismiss } from '../ui/use-dialog-backdrop-dismiss';
 import { Brand } from './brand';
 
 const navigation: Array<{ href: string; label: string; icon: IconName }> = [
@@ -20,8 +24,6 @@ const navigation: Array<{ href: string; label: string; icon: IconName }> = [
   { href: '/exam', label: 'Thi thử TOEIC', icon: 'clipboard' },
   { href: '/history', label: 'Lịch sử làm bài', icon: 'clock' },
   { href: '/analytics', label: 'Thống kê tiến độ', icon: 'chart' },
-  { href: '/ai-chat', label: 'Trợ lý học tập AI', icon: 'sparkles' },
-  { href: '/settings', label: 'Cài đặt học tập', icon: 'user' },
   { href: '/profile', label: 'Hồ sơ học viên', icon: 'user' },
 ];
 
@@ -73,9 +75,19 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
   );
 }
 
-export function StudentShell({ children, apiAccount }: { children: ReactNode; apiAccount?: User }) {
+export function StudentShell({
+  children,
+  apiAccount,
+  activeSection,
+}: {
+  children: ReactNode;
+  apiAccount?: User;
+  activeSection?: string;
+}) {
   const pathname = usePathname();
+  const navigationPath = activeSection ?? pathname;
   const drawer = useRef<HTMLDialogElement>(null);
+  const backdropDismiss = useDialogBackdropDismiss(() => drawer.current?.close());
   const menu = useRef<HTMLDetailsElement>(null);
   const isStandalone =
     pathname === '/' ||
@@ -83,8 +95,9 @@ export function StudentShell({ children, apiAccount }: { children: ReactNode; ap
     pathname === '/register' ||
     /^\/exam\/[^/]+\/take$/.test(pathname);
   const title =
-    navigation.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))
-      ?.label ?? 'Trang chủ';
+    navigation.find(
+      (item) => navigationPath === item.href || navigationPath.startsWith(`${item.href}/`),
+    )?.label ?? 'Trang chủ';
 
   useEffect(() => {
     drawer.current?.close();
@@ -121,16 +134,15 @@ export function StudentShell({ children, apiAccount }: { children: ReactNode; ap
       <Link className="skip-link" href="#main-content">
         Đến nội dung chính
       </Link>
-      <aside className="desktop-sidebar">
-        <SidebarContent pathname={pathname} />
+      <aside className="desktop-sidebar" id="student-desktop-sidebar">
+        <SidebarContent pathname={navigationPath} />
       </aside>
       <dialog
         ref={drawer}
+        id="student-mobile-menu"
         className="mobile-drawer"
         aria-label="Menu học tập"
-        onClick={(event) => {
-          if (event.target === drawer.current) drawer.current?.close();
-        }}
+        {...backdropDismiss}
       >
         <div className="mobile-drawer-content">
           <button
@@ -141,29 +153,36 @@ export function StudentShell({ children, apiAccount }: { children: ReactNode; ap
           >
             <Icon name="close" />
           </button>
-          <SidebarContent pathname={pathname} onNavigate={() => drawer.current?.close()} />
+          <SidebarContent pathname={navigationPath} onNavigate={() => drawer.current?.close()} />
         </div>
       </dialog>
       <div className="student-workspace">
         <header className="student-header">
           <div className="header-location">
-            <button
-              className="icon-button mobile-menu-button"
-              type="button"
-              onClick={() => drawer.current?.showModal()}
-              aria-label="Mở menu học tập"
-              aria-haspopup="dialog"
-            >
-              <Icon name="menu" />
-            </button>
             <span className="header-breadcrumb">
               Không gian học tập <span>/</span>
             </span>
             <strong>{title}</strong>
           </div>
           <div className="header-actions">
-            <Badge tone="amber">{apiAccount ? 'API · Local / test' : 'Bản xem thử'}</Badge>
-            <span className="header-divider" />
+            {!apiAccount && (
+              <>
+                <Badge tone="amber">Bản xem thử</Badge>
+                <span className="header-divider" />
+              </>
+            )}
+            <SidebarToggle controls="student-desktop-sidebar" />
+            <button
+              className="sidebar-toggle mobile-menu-button"
+              type="button"
+              onClick={() => drawer.current?.showModal()}
+              aria-label="Mở menu học tập"
+              aria-controls="student-mobile-menu"
+              aria-haspopup="dialog"
+            >
+              <Icon name="sidebarOpen" />
+            </button>
+            <ThemeToggle />
             <details
               className="profile-menu"
               ref={menu}
@@ -175,7 +194,7 @@ export function StudentShell({ children, apiAccount }: { children: ReactNode; ap
               }}
             >
               <summary aria-label={`Menu tài khoản — ${apiAccount?.fullName ?? 'Khách xem thử'}`}>
-                <span className="avatar">HV</span>
+                <AccountAvatar source={apiAccount?.avatarUrl} name={apiAccount?.fullName} />
                 <span className="profile-label">
                   {apiAccount?.fullName ?? 'Khách xem thử'}
                   <small>{apiAccount?.roles.join(', ') ?? 'Học viên · USER'}</small>
@@ -186,9 +205,6 @@ export function StudentShell({ children, apiAccount }: { children: ReactNode; ap
                 <p>{apiAccount?.email ?? 'Chưa đăng nhập tài khoản'}</p>
                 <Link href="/profile">
                   <Icon name="user" width="17" /> Hồ sơ học viên{!apiAccount && ' demo'}
-                </Link>
-                <Link href="/settings">
-                  <Icon name="book" width="17" /> Cài đặt học tập{!apiAccount && ' demo'}
                 </Link>
                 {apiAccount ? (
                   <LogoutButton />

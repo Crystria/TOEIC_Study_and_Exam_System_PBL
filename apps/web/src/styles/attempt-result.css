@@ -46,7 +46,7 @@
   gap: 10px;
   margin-top: 20px;
 }
-.api-root a.attempt-result-button {
+.api-root :is(a, button).attempt-result-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -59,13 +59,14 @@
   color: #36527d;
   font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
 }
-.api-root a.attempt-result-button.is-primary {
+.api-root :is(a, button).attempt-result-button.is-primary {
   background: #315bd6;
   border-color: #315bd6;
   color: #fff;
 }
-.api-root a.attempt-result-button:hover {
+.api-root :is(a, button).attempt-result-button:hover:not(:disabled) {
   box-shadow: 0 2px 6px rgb(30 60 100 / 12%);
 }
 .attempt-result-overview {

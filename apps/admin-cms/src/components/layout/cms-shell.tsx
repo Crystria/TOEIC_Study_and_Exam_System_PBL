@@ -3,11 +3,21 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { DEMO_PERSONAS, demoHref, parseDemoRole, type DemoRole } from '@/lib/demo/cms-fixtures';
+import {
+  DEMO_PERSONAS,
+  canViewDemoDestination,
+  demoHref,
+  parseDemoRole,
+  type DemoRole,
+} from '@/lib/demo/cms-fixtures';
 import { resolveCmsDestination } from '@/lib/demo/cms-destination';
 import { Sidebar } from './sidebar';
 import type { User } from '../../../../web/src/lib/integration/contracts';
 import { LogoutButton } from '../../../../web/src/components/integration/shared';
+import { Icon } from '../../../../web/src/components/ui/icon';
+import { SidebarToggle } from '../../../../web/src/components/ui/sidebar-toggle';
+import { ThemeToggle } from '../../../../web/src/components/ui/theme-toggle';
+import { useDialogBackdropDismiss } from '../../../../web/src/components/ui/use-dialog-backdrop-dismiss';
 
 export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAccount?: User }) {
   const pathname = usePathname();
@@ -24,9 +34,12 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
     apiAccount && /^\/(groups|topics)(?:\/|$)/.test(pathname)
       ? `/${pathname.split('/')[1]}`
       : undefined;
-  const activePath = apiSection ?? destination?.href ?? pathname;
-  const sectionLabel =
-    apiSection === '/groups'
+  const questionId = pathname.startsWith('/questions/') ? pathname.split('/')[2] : undefined;
+  const questionFromTest = questionId && questionId !== 'new' && search.get('fromTest')?.trim();
+  const activePath = questionFromTest ? '/tests' : (apiSection ?? destination?.href ?? pathname);
+  const sectionLabel = questionFromTest
+    ? 'Câu hỏi'
+    : apiSection === '/groups'
       ? 'Nhóm câu hỏi'
       : apiSection === '/topics'
         ? 'Chủ đề từ vựng'
@@ -37,6 +50,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
   const previousLocation = useRef(`${pathname}:${role}`);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const drawerBackdropDismiss = useDialogBackdropDismiss(closeDrawer);
 
   function closeDrawer() {
     drawer.current?.close();
@@ -88,7 +102,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
 
   function switchRole(next: DemoRole) {
     const target =
-      destination?.role === next || destination?.href === '/tests'
+      destination && !destination.hiddenFromNavigation && canViewDemoDestination(destination, next)
         ? destination.href
         : DEMO_PERSONAS[next].home;
     router.push(demoHref(target, next));
@@ -99,7 +113,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
       <Link href="#cms-main" className="cms-skip">
         Đến nội dung chính
       </Link>
-      <aside className="cms-desktop-sidebar">
+      <aside id="cms-desktop-sidebar" className="cms-desktop-sidebar">
         <Sidebar pathname={activePath} role={role} roles={apiAccount?.roles} />
       </aside>
       <dialog
@@ -123,9 +137,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
             first?.focus();
           }
         }}
-        onClick={(event) => {
-          if (event.target === drawer.current) closeDrawer();
-        }}
+        {...drawerBackdropDismiss}
       >
         <div className="cms-drawer-content">
           <button
@@ -147,9 +159,16 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
       <div className="cms-workspace">
         <header className="cms-header">
           <div className="cms-header-start">
+            <div>
+              <span className="cms-eyebrow">KHÔNG GIAN QUẢN TRỊ</span>
+              <p>{sectionLabel}</p>
+            </div>
+          </div>
+          <div className="cms-header-end">
+            <SidebarToggle controls="cms-desktop-sidebar" />
             <button
               type="button"
-              className="cms-icon-button cms-menu-trigger"
+              className="sidebar-toggle cms-menu-trigger"
               aria-label="Mở menu quản trị"
               aria-expanded={drawerOpen}
               aria-controls="cms-mobile-menu"
@@ -159,54 +178,49 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
                 setDrawerOpen(true);
               }}
             >
-              ☰
+              <Icon name="sidebarOpen" />
             </button>
-            <div>
-              <span className="cms-eyebrow">KHÔNG GIAN QUẢN TRỊ</span>
-              <p>{sectionLabel}</p>
-            </div>
+            <ThemeToggle />
+            <details
+              ref={account}
+              className="cms-account"
+              onKeyDown={(event) => {
+                if (event.key === 'Escape' && account.current?.open) {
+                  event.preventDefault();
+                  account.current.open = false;
+                  account.current.querySelector('summary')?.focus();
+                }
+              }}
+            >
+              <summary aria-label={apiAccount ? 'Tài khoản quản trị' : 'Tài khoản demo'}>
+                <span className="cms-avatar" aria-hidden="true">
+                  {apiAccount ? apiAccount.fullName.slice(0, 2).toUpperCase() : persona.initials}
+                </span>
+                <span className="cms-account-text">
+                  {apiAccount?.fullName ?? 'Nhân vật demo'}
+                  <small>{apiAccount?.roles.join(', ') ?? persona.label}</small>
+                </span>
+                <span aria-hidden="true">⌄</span>
+              </summary>
+              <div className="cms-account-panel">
+                <strong>{apiAccount?.email ?? persona.name}</strong>
+                <p>{apiAccount?.roles.join(', ') ?? role}</p>
+                {apiAccount ? (
+                  <>
+                    <Link href="/account/password">Đổi mật khẩu</Link>
+                    <LogoutButton />
+                  </>
+                ) : (
+                  <>
+                    <p>Nhân vật minh họa, chưa đăng nhập tài khoản.</p>
+                    <Link href="/login">Thoát không gian xem thử</Link>
+                  </>
+                )}
+              </div>
+            </details>
           </div>
-          <details
-            ref={account}
-            className="cms-account"
-            onKeyDown={(event) => {
-              if (event.key === 'Escape' && account.current?.open) {
-                event.preventDefault();
-                account.current.open = false;
-                account.current.querySelector('summary')?.focus();
-              }
-            }}
-          >
-            <summary aria-label={apiAccount ? 'Tài khoản quản trị' : 'Tài khoản demo'}>
-              <span className="cms-avatar" aria-hidden="true">
-                {apiAccount ? apiAccount.fullName.slice(0, 2).toUpperCase() : persona.initials}
-              </span>
-              <span className="cms-account-text">
-                {apiAccount?.fullName ?? 'Nhân vật demo'}
-                <small>{apiAccount?.roles.join(', ') ?? persona.label}</small>
-              </span>
-              <span aria-hidden="true">⌄</span>
-            </summary>
-            <div className="cms-account-panel">
-              <strong>{apiAccount?.email ?? persona.name}</strong>
-              <p>{apiAccount?.roles.join(', ') ?? role}</p>
-              {apiAccount ? (
-                <LogoutButton />
-              ) : (
-                <>
-                  <p>Nhân vật minh họa, chưa đăng nhập tài khoản.</p>
-                  <Link href="/login">Thoát không gian xem thử</Link>
-                </>
-              )}
-            </div>
-          </details>
         </header>
-        {apiAccount ? (
-          <div className="cms-demo-toolbar">
-            <span className="cms-badge">API · Local / test</span>
-            <p>Quyền từ backend · Không dùng persona demo. Server kiểm tra từng yêu cầu.</p>
-          </div>
-        ) : (
+        {!apiAccount && (
           <div className="cms-demo-toolbar">
             <div>
               <span className="cms-badge">CMS DEMO</span>
@@ -232,9 +246,7 @@ export function CmsShell({ children, apiAccount }: { children: ReactNode; apiAcc
           </div>
         )}
         <main ref={main} id="cms-main" tabIndex={-1} className="cms-main">
-          {apiAccount ||
-          destination?.role === role ||
-          (role === 'SYSTEM_ADMIN' && destination?.href === '/tests') ? (
+          {apiAccount || (destination && canViewDemoDestination(destination, role)) ? (
             children
           ) : (
             <section className="cms-route-intro">

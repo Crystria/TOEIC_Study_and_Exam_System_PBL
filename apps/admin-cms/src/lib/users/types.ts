@@ -1,11 +1,13 @@
 // Minimal CMS read model, not an auth entity, authoring DTO or server response.
-export const USER_STATUSES = ['ACTIVE', 'LOCKED', 'DISABLED', 'PENDING'] as const;
+export const ACCOUNT_PAGE_SIZE = 9;
+export const EDITABLE_USER_STATUSES = ['ACTIVE', 'LOCKED', 'DISABLED'] as const;
+export const USER_STATUSES = [...EDITABLE_USER_STATUSES, 'PENDING'] as const;
 export type UserStatus = (typeof USER_STATUSES)[number];
 export type UserRoleCode = 'SYSTEM_ADMIN' | 'CONTENT_ADMIN' | 'USER';
 export const USER_STATUS_LABELS: Record<UserStatus, string> = {
   ACTIVE: 'Hoạt động',
-  LOCKED: 'Bị khóa',
-  DISABLED: 'Vô hiệu hóa',
+  LOCKED: 'Tạm khóa',
+  DISABLED: 'Vô hiệu',
   PENDING: 'Chờ xử lý',
 };
 export const USER_ROLE_LABELS: Record<UserRoleCode, string> = {
