@@ -1,0 +1,14 @@
+$kind: collection
+name: API-033 - GET /attempts lịch sử đúng user
+description: |-
+  GET /attempts lịch sử đúng user
+  Procedure: 1. Tạo vài bài của A/B.
+  2. Gọi history bằng từng token.
+  3. So IDs/count và kết quả vừa nộp.
+  Expected: 200; chỉ attempt của user token; bài đã nộp xuất hiện, điểm/trạng thái nhất quán; không rò bài của user khác.
+  Preconditions: Dataset A/B ổn định, biết số bản ghi.
+  Execution note: Ưu tiên: High.
+  Risk: R-01,R-03.
+  Nguồn: Software Test Documentation.docx §1.1.c; 2.4 R-03.
+  User A (qa-demo-3) tạo nhiều attempt FULL/PART; User B (qa-demo-4) giữ một lịch sử riêng. Gọi GET /attempts với từng token, đối chiếu IDs/count/status/result; không được trả attempt của user còn lại. Nên chạy testcase này sau khi đã tạo dữ liệu A/B có chủ đích.
+order: 34000

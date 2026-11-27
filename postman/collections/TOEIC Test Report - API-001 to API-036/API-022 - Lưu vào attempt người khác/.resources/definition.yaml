@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  Lưu vào attempt người khác
+  Procedure: 1. Dùng B gọi single-answer và batch-draft của A.
+  2. Đọc lại bằng A.
+  Expected: 403; draft của A không thay đổi, không lộ dữ liệu cá nhân.
+  Preconditions: Attempt A còn hạn, biết draft ban đầu.
+  Execution note: Ưu tiên: High.
+  Risk: R-03.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-03.
+  A tạo attempt IN_PROGRESS và có draft ban đầu đã ghi nhận. B dùng token B gọi cả single-answer và batch-draft vào attempt của A. Kỳ vọng 403; sau đó A GET lại để xác nhận draft không thay đổi. Lưu hai response và ảnh/JSON đối soát đã khử token.
+order: 23000

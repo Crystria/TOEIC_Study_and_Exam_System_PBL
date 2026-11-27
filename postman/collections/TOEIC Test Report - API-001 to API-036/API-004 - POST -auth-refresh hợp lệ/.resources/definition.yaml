@@ -1,0 +1,12 @@
+$kind: collection
+name: API-004 - POST /auth/refresh hợp lệ
+description: |-
+  POST /auth/refresh hợp lệ
+  Procedure: 1. Login lấy refresh token.
+  2. Refresh; dùng access token mới gọi API.
+  Expected: 200; đúng user/phiên; token/rotation đúng contract đã chốt.
+  Preconditions: Refresh token còn hạn/chưa bị thu hồi.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.a.
+  Fixture: refresh token mới lấy từ login thành công của qa-demo-3. Gọi POST /auth/refresh, lưu response mới; dùng access token mới gọi GET /users/me hoặc endpoint bảo vệ tương đương. Nếu contract bật refresh rotation, cập nhật refresh token mới và kiểm tra token cũ theo chính sách đã chốt; không giả định token cũ còn dùng được.
+order: 5000

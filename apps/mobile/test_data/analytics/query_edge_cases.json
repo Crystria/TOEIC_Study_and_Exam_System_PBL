@@ -1,0 +1,49 @@
+{
+  "supportedTimeRanges": [
+    "LAST_7_DAYS",
+    "LAST_30_DAYS",
+    "ALL_TIME"
+  ],
+  "paginationConstraints": {
+    "minimumPage": 1,
+    "minimumSize": 1,
+    "maximumSize": 50
+  },
+  "scenarios": [
+    {
+      "id": "ANALYTICS-01",
+      "page": 1,
+      "size": 20,
+      "expected": "Valid."
+    },
+    {
+      "id": "ANALYTICS-02",
+      "page": 0,
+      "size": 20,
+      "expected": "ArgumentError; page must be >= 1."
+    },
+    {
+      "id": "ANALYTICS-03",
+      "page": 1,
+      "size": 0,
+      "expected": "ArgumentError; size must be >= 1."
+    },
+    {
+      "id": "ANALYTICS-04",
+      "page": 1,
+      "size": 51,
+      "expected": "ArgumentError; size must be <= 50."
+    },
+    {
+      "id": "ANALYTICS-05",
+      "page": 2,
+      "size": 20,
+      "expected": "Empty page with totalPages=1 for the current five-item demo list."
+    },
+    {
+      "id": "ANALYTICS-06",
+      "state": "no-current-user-in-API-mode",
+      "expected": "ApiAnalyticsRepository rejects unauthorized access; demo repo is independent of Backend identity."
+    }
+  ]
+}

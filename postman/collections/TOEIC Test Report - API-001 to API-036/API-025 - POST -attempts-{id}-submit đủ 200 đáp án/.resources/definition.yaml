@@ -1,0 +1,14 @@
+$kind: collection
+name: API-025 - POST /attempts/{id}/submit đủ 200 đáp án
+description: |-
+  POST /attempts/{id}/submit đủ 200 đáp án
+  Procedure: 1. Nộp bộ đáp án expected 200 câu.
+  2. GET kết quả và lịch sử.
+  3. Đối chiếu từng lựa chọn/điểm.
+  Expected: 201 theo controller; hoàn tất đúng attempt; số đúng/điểm L/R/tổng khớp bảng độc lập; không mất câu.
+  Preconditions: Attempt mới, còn hạn; answer key/score table đã rà soát.
+  Execution note: Ưu tiên: High.
+  Risk: R-01.
+  Nguồn: Software Test Documentation.docx §1.1.b–c; 2.4 R-01.
+  Fixture: đề QA 200 câu; tạo FULL attempt mới. Bộ synthetic fixture dùng correctOption=A cho toàn bộ câu, nên gửi 200 đáp án A là dataset all-correct. Submit; GET result/history; kiểm tra total/correct count, score Listening/Reading và tổng điểm bằng bảng quy đổi độc lập, không chỉ dựa trên response của chính API.
+order: 26000

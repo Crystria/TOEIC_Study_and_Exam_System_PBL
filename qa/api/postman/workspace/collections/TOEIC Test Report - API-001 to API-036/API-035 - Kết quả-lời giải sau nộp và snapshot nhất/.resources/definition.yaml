@@ -1,0 +1,13 @@
+$kind: collection
+name: API-035 - Kết quả/lời giải sau nộp và snapshot nhất quán
+description: |-
+  Kết quả/lời giải sau nộp và snapshot nhất quán
+  Procedure: 1. GET attempt đã hoàn tất.
+  2. So response với bài nộp, history, expected và snapshot.
+  Expected: 200; score/scoreListening/scoreReading/correctCount đúng; từng selectedOption/correctOption/explanation đúng; không lấy nhầm nội dung của attempt khác.
+  Preconditions: Answer key/bảng điểm/snapshot được rà soát.
+  Execution note: Ưu tiên: High.
+  Risk: R-01,R-03.
+  Nguồn: Software Test Documentation.docx §1.1.c; 3.4 EX-06.
+  Tạo FULL attempt và submit. Với fixture synthetic, correctOption/explanation mẫu được tạo cho từng câu; trước submit chúng phải bị ẩn, sau submit mới đối chiếu selectedOption/correctOption/explanation/transcript và snapshot. So sánh kết quả giữa GET attempt và history, đồng thời xác nhận không lẫn question/group từ attempt khác.
+order: 36000

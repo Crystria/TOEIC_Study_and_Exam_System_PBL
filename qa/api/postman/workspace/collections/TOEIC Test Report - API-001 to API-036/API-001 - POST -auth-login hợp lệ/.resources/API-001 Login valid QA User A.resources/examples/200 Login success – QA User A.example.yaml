@@ -1,0 +1,46 @@
+$kind: http-example
+name: '200 Login success – QA User A'
+request:
+  method: POST
+  url: '{{baseUrl}}/auth/login'
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: '{{$guid}}'
+  body:
+    type: json
+    content: |-
+      {
+        "email": "{{qaUserAEmail}}",
+        "password": "{{qaUserAPassword}}",
+        "deviceId": "{{deviceId}}"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: 'application/json; charset=utf-8'
+  body:
+    type: json
+    content: |-
+      {
+        "user": {
+          "userId": "424714f1-8b16-44ad-b7e8-6cc703c60467",
+          "email": "qa-demo-3@example.test",
+          "fullName": "QA 3",
+          "phoneNumber": null,
+          "avatarKey": null,
+          "avatarUrl": null,
+          "status": "ACTIVE",
+          "roles": ["USER"],
+          "createdAt": "2026-11-16T03:36:03.850Z",
+          "updatedAt": "2026-11-16T05:28:24.915Z"
+        },
+        "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "tokenType": "Bearer",
+        "expiresIn": 900,
+        "refreshToken": "0b86b77e-4d98-45cd-9608-6cdff4e306e3",
+        "refreshExpiresIn": 604800
+      }

@@ -1,0 +1,584 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/analytics/progress?cursor=string&limit=50&timeRange=LAST_30_DAYS"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    cursor: string
+    limit: "50"
+    timeRange: LAST_30_DAYS
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "timeRange": "LAST_30_DAYS",
+        "timezone": "",
+        "from": "Z",
+        "asOf": "Z",
+        "lifetime": {
+          "vocabulariesLearned": 1510747198,
+          "reviewCount": 1161531180,
+          "grammarLessonsCompleted": 1896407175,
+          "mockTestCount": 424094578,
+          "practiceCount": 1179786935,
+          "studyDays": 384886891
+        },
+        "inRange": {
+          "vocabulariesLearned": 331796731,
+          "reviewCount": 149988191,
+          "grammarLessonsCompleted": 817554397,
+          "mockTestCount": 1744862703,
+          "practiceCount": 696337541,
+          "studyDays": 805251867
+        },
+        "learningStreakDays": 528859678,
+        "longestStreak": 663734897,
+        "vocabulariesLearned": 691464001,
+        "grammarLessonsCompleted": 1776290371,
+        "mockTestCount": 593829543,
+        "practiceCount": 563289662,
+        "scoreTrend": [
+          {
+            "attemptId": "8995970f-9641-4797-8d75-90b0635808a4",
+            "completedAt": "Z",
+            "scoreListening": 470,
+            "scoreReading": 285,
+            "totalScore": 455
+          },
+          {
+            "attemptId": "81f3efe4-371a-4a0c-b515-af1b27a50c71",
+            "completedAt": "Z",
+            "scoreListening": 390,
+            "scoreReading": 255,
+            "totalScore": 860
+          },
+          {
+            "attemptId": "4ca178c5-b6d4-4872-b429-86927c10432b",
+            "completedAt": "Z",
+            "scoreListening": 410,
+            "scoreReading": 460,
+            "totalScore": 575
+          },
+          {
+            "attemptId": "aa58df36-c339-4b0e-8ec4-753d978e9675",
+            "completedAt": "Z",
+            "scoreListening": 435,
+            "scoreReading": 345,
+            "totalScore": 955
+          },
+          {
+            "attemptId": "b56ecc02-45f2-4929-b6f3-099780aecca3",
+            "completedAt": "Z",
+            "scoreListening": 220,
+            "scoreReading": 370,
+            "totalScore": 425
+          },
+          {
+            "attemptId": "984ac399-8709-4512-a5d3-9ea2856d9f71",
+            "completedAt": "Z",
+            "scoreListening": 305,
+            "scoreReading": 335,
+            "totalScore": 775
+          },
+          {
+            "attemptId": "c0555e8d-ed54-4e06-b663-973029ce369a",
+            "completedAt": "Z",
+            "scoreListening": 260,
+            "scoreReading": 80,
+            "totalScore": 665
+          },
+          {
+            "attemptId": "c8d8dfdf-cb36-4bce-bd74-6e929341d728",
+            "completedAt": "Z",
+            "scoreListening": 465,
+            "scoreReading": 40,
+            "totalScore": 585
+          },
+          {
+            "attemptId": "ac108355-834c-420d-b44d-203e39cca8c9",
+            "completedAt": "Z",
+            "scoreListening": 485,
+            "scoreReading": 145,
+            "totalScore": 560
+          },
+          {
+            "attemptId": "b2992b69-88d7-4952-b883-b8ac979fb748",
+            "completedAt": "Z",
+            "scoreListening": 285,
+            "scoreReading": 210,
+            "totalScore": 940
+          },
+          {
+            "attemptId": "b3673a27-a6b2-4afa-a63b-3e1593f43081",
+            "completedAt": "Z",
+            "scoreListening": 180,
+            "scoreReading": 245,
+            "totalScore": 575
+          },
+          {
+            "attemptId": "44d33b25-84f7-44ad-a7b4-b6b61e48f7fc",
+            "completedAt": "Z",
+            "scoreListening": 240,
+            "scoreReading": 300,
+            "totalScore": 745
+          },
+          {
+            "attemptId": "92fbdeee-8d07-48b4-8f8c-6e44af1501cd",
+            "completedAt": "Z",
+            "scoreListening": 270,
+            "scoreReading": 320,
+            "totalScore": 445
+          },
+          {
+            "attemptId": "04858887-c2c7-43d1-8688-b5c8e22f3ce9",
+            "completedAt": "Z",
+            "scoreListening": 465,
+            "scoreReading": 390,
+            "totalScore": 625
+          },
+          {
+            "attemptId": "73eca146-4deb-4f46-bda8-bac303535a0a",
+            "completedAt": "Z",
+            "scoreListening": 180,
+            "scoreReading": 185,
+            "totalScore": 170
+          },
+          {
+            "attemptId": "44786de7-f2c3-410b-88bc-a9ac78538e28",
+            "completedAt": "Z",
+            "scoreListening": 150,
+            "scoreReading": 450,
+            "totalScore": 505
+          },
+          {
+            "attemptId": "4b8d6387-9520-42f4-8651-3b5a01b5e424",
+            "completedAt": "Z",
+            "scoreListening": 70,
+            "scoreReading": 205,
+            "totalScore": 110
+          },
+          {
+            "attemptId": "86e72c23-5b76-4fb5-8313-cfe2ddb32993",
+            "completedAt": "Z",
+            "scoreListening": 110,
+            "scoreReading": 340,
+            "totalScore": 80
+          },
+          {
+            "attemptId": "1377e1e8-2e72-4ed7-beb4-2133232022ee",
+            "completedAt": "Z",
+            "scoreListening": 50,
+            "scoreReading": 265,
+            "totalScore": 985
+          },
+          {
+            "attemptId": "19f9684d-541a-4223-8f51-f279370883e6",
+            "completedAt": "Z",
+            "scoreListening": 65,
+            "scoreReading": 285,
+            "totalScore": 220
+          }
+        ],
+        "scoreTrendNextCursor": null,
+        "predictedToeicScore": 720,
+        "weakAreas": [
+          {
+            "part": 3,
+            "status": "AVAILABLE",
+            "correct": 254053623,
+            "total": 1826498049,
+            "weaknessScore": 0.0983626195073517,
+            "isWeak": true,
+            "calculatedAt": "Z"
+          },
+          {
+            "part": 1,
+            "status": "AVAILABLE",
+            "correct": 2041116003,
+            "total": 39669766,
+            "weaknessScore": null,
+            "isWeak": true,
+            "calculatedAt": "Z"
+          },
+          {
+            "part": 1,
+            "status": "AVAILABLE",
+            "correct": 1042407039,
+            "total": 1924121659,
+            "weaknessScore": 0.6557389251386511,
+            "isWeak": true,
+            "calculatedAt": "Z"
+          },
+          {
+            "part": 2,
+            "status": "AVAILABLE",
+            "correct": 1498351308,
+            "total": 311519778,
+            "weaknessScore": 0.38996249906246916,
+            "isWeak": null,
+            "calculatedAt": "Z"
+          },
+          {
+            "part": 1,
+            "status": "AVAILABLE",
+            "correct": 688271974,
+            "total": 1780695319,
+            "weaknessScore": 0.16056170660516988,
+            "isWeak": true,
+            "calculatedAt": "Z"
+          },
+          {
+            "part": 6,
+            "status": "INSUFFICIENT_DATA",
+            "correct": 754282740,
+            "total": 2039288845,
+            "weaknessScore": null,
+            "isWeak": null,
+            "calculatedAt": "Z"
+          },
+          {
+            "part": 5,
+            "status": "INSUFFICIENT_DATA",
+            "correct": 109148188,
+            "total": 1889389269,
+            "weaknessScore": null,
+            "isWeak": null,
+            "calculatedAt": "Z"
+          }
+        ],
+        "updatedAt": "Z"
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "timeRange": {
+            "type": "string",
+            "enum": [
+              "LAST_7_DAYS",
+              "LAST_30_DAYS",
+              "ALL_TIME"
+            ]
+          },
+          "from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "asOf": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "lifetime": {
+            "type": "object",
+            "properties": {
+              "vocabulariesLearned": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "reviewCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "grammarLessonsCompleted": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "mockTestCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "practiceCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "studyDays": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              }
+            },
+            "required": [
+              "vocabulariesLearned",
+              "reviewCount",
+              "grammarLessonsCompleted",
+              "mockTestCount",
+              "practiceCount",
+              "studyDays"
+            ]
+          },
+          "inRange": {
+            "type": "object",
+            "properties": {
+              "vocabulariesLearned": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "reviewCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "grammarLessonsCompleted": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "mockTestCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "practiceCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "studyDays": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              }
+            },
+            "required": [
+              "vocabulariesLearned",
+              "reviewCount",
+              "grammarLessonsCompleted",
+              "mockTestCount",
+              "practiceCount",
+              "studyDays"
+            ]
+          },
+          "learningStreakDays": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "longestStreak": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "vocabulariesLearned": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "grammarLessonsCompleted": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "mockTestCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "practiceCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "scoreTrend": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attemptId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "completedAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                },
+                "scoreListening": {
+                  "type": "integer",
+                  "minimum": 5,
+                  "maximum": 495
+                },
+                "scoreReading": {
+                  "type": "integer",
+                  "minimum": 5,
+                  "maximum": 495
+                },
+                "totalScore": {
+                  "type": "integer",
+                  "minimum": 10,
+                  "maximum": 990
+                }
+              },
+              "required": [
+                "attemptId",
+                "completedAt",
+                "scoreListening",
+                "scoreReading",
+                "totalScore"
+              ]
+            }
+          },
+          "scoreTrendNextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "predictedToeicScore": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "weakAreas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "part": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 7
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "AVAILABLE",
+                    "INSUFFICIENT_DATA"
+                  ]
+                },
+                "correct": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                },
+                "weaknessScore": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "isWeak": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "calculatedAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                }
+              },
+              "required": [
+                "part",
+                "status",
+                "correct",
+                "total",
+                "weaknessScore",
+                "isWeak",
+                "calculatedAt"
+              ]
+            }
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "timeRange",
+          "timezone",
+          "from",
+          "asOf",
+          "lifetime",
+          "inRange",
+          "learningStreakDays",
+          "longestStreak",
+          "vocabulariesLearned",
+          "grammarLessonsCompleted",
+          "mockTestCount",
+          "practiceCount",
+          "scoreTrend",
+          "scoreTrendNextCursor",
+          "predictedToeicScore",
+          "weakAreas",
+          "updatedAt"
+        ]
+      }
+order: 1000

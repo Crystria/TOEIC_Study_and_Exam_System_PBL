@@ -1,0 +1,252 @@
+{
+  "timeRange": "LAST_30_DAYS",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "asOf": "2026-11-11T09:10:00+00:00",
+  "lifetime": {
+    "vocabulariesLearned": 248,
+    "reviewCount": 420,
+    "grammarLessonsCompleted": 14,
+    "mockTestCount": 5,
+    "practiceCount": 12,
+    "studyDays": 34
+  },
+  "inRange": {
+    "vocabulariesLearned": 52,
+    "reviewCount": 166,
+    "grammarLessonsCompleted": 5,
+    "mockTestCount": 3,
+    "practiceCount": 8,
+    "studyDays": 18
+  },
+  "learningStreakDays": 12,
+  "longestStreak": 18,
+  "scoreTrend": [
+    {
+      "scoreListening": 295,
+      "scoreReading": 295,
+      "totalScore": 590,
+      "attemptId": "2772d85d-b8c7-526a-a538-26e2b925f603",
+      "completedAt": "2026-10-16T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 305,
+      "scoreReading": 310,
+      "totalScore": 615,
+      "attemptId": "3d13fcd4-8d48-5c8c-95d0-52ae72a1872e",
+      "completedAt": "2026-10-22T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 315,
+      "scoreReading": 315,
+      "totalScore": 630,
+      "attemptId": "508d0715-18ce-5802-a878-ab18fa82ebed",
+      "completedAt": "2026-10-29T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 320,
+      "scoreReading": 330,
+      "totalScore": 650,
+      "attemptId": "b99d4129-5b4a-5fd8-a82f-fde4f974ebf5",
+      "completedAt": "2026-11-04T09:10:00+00:00"
+    },
+    {
+      "scoreListening": 335,
+      "scoreReading": 350,
+      "totalScore": 685,
+      "attemptId": "0e990487-5e85-5a0e-b335-dce48fefcbc6",
+      "completedAt": "2026-11-10T09:10:00+00:00"
+    }
+  ],
+  "scoreTrendNextCursor": null,
+  "predictedToeicScore": 685,
+  "weakAreas": [
+    {
+      "part": 1,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 12,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 2,
+      "status": "AVAILABLE",
+      "correct": 42,
+      "total": 60,
+      "weaknessScore": 0.3,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 3,
+      "status": "AVAILABLE",
+      "correct": 68,
+      "total": 100,
+      "weaknessScore": 0.32,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 4,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 14,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 5,
+      "status": "AVAILABLE",
+      "correct": 62,
+      "total": 100,
+      "weaknessScore": 0.38,
+      "isWeak": true,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 6,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 10,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    },
+    {
+      "part": 7,
+      "status": "AVAILABLE",
+      "correct": 71,
+      "total": 100,
+      "weaknessScore": 0.29,
+      "isWeak": false,
+      "calculatedAt": "2026-11-11T09:10:00+00:00"
+    }
+  ],
+  "dailyActivity": [
+    {
+      "date": "2026-10-13",
+      "count": 1
+    },
+    {
+      "date": "2026-10-14",
+      "count": 3
+    },
+    {
+      "date": "2026-10-15",
+      "count": 0
+    },
+    {
+      "date": "2026-10-16",
+      "count": 4
+    },
+    {
+      "date": "2026-10-17",
+      "count": 2
+    },
+    {
+      "date": "2026-10-18",
+      "count": 5
+    },
+    {
+      "date": "2026-10-19",
+      "count": 1
+    },
+    {
+      "date": "2026-10-20",
+      "count": 0
+    },
+    {
+      "date": "2026-10-21",
+      "count": 3
+    },
+    {
+      "date": "2026-10-22",
+      "count": 2
+    },
+    {
+      "date": "2026-10-23",
+      "count": 4
+    },
+    {
+      "date": "2026-10-24",
+      "count": 1
+    },
+    {
+      "date": "2026-10-25",
+      "count": 2
+    },
+    {
+      "date": "2026-10-26",
+      "count": 0
+    },
+    {
+      "date": "2026-10-27",
+      "count": 3
+    },
+    {
+      "date": "2026-10-28",
+      "count": 1
+    },
+    {
+      "date": "2026-10-29",
+      "count": 3
+    },
+    {
+      "date": "2026-10-30",
+      "count": 0
+    },
+    {
+      "date": "2026-10-31",
+      "count": 4
+    },
+    {
+      "date": "2026-11-01",
+      "count": 2
+    },
+    {
+      "date": "2026-11-02",
+      "count": 5
+    },
+    {
+      "date": "2026-11-03",
+      "count": 1
+    },
+    {
+      "date": "2026-11-04",
+      "count": 0
+    },
+    {
+      "date": "2026-11-05",
+      "count": 3
+    },
+    {
+      "date": "2026-11-06",
+      "count": 2
+    },
+    {
+      "date": "2026-11-07",
+      "count": 4
+    },
+    {
+      "date": "2026-11-08",
+      "count": 1
+    },
+    {
+      "date": "2026-11-09",
+      "count": 2
+    },
+    {
+      "date": "2026-11-10",
+      "count": 0
+    },
+    {
+      "date": "2026-11-11",
+      "count": 4
+    }
+  ],
+  "dailyActivityTruncated": false,
+  "updatedAt": "2026-11-11T09:10:00+00:00",
+  "from": "2026-10-13T09:10:00+00:00"
+}

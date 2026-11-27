@@ -1,0 +1,276 @@
+/// Application environments used to load environment-specific settings.
+enum AppEnvironment {
+  development,
+  staging,
+  production;
+
+  /// Parses an environment name supplied through a build-time define.
+  static AppEnvironment parse(String value) {
+    switch (value.trim().toLowerCase()) {
+      case 'development':
+      case 'dev':
+        return AppEnvironment.development;
+      case 'staging':
+      case 'stage':
+        return AppEnvironment.staging;
+      case 'production':
+      case 'prod':
+        return AppEnvironment.production;
+      default:
+        throw FormatException(
+          'Unsupported APP_ENV "$value". Use development, staging, or '
+          'production.',
+        );
+    }
+  }
+}
+
+/// Immutable application configuration loaded from Flutter build-time defines.
+///
+/// The API is disabled by default so the existing mock/local application flow
+/// continues to work until a feature is explicitly connected to the backend.
+/// No secret (API key, password, or signing credential) should be stored here:
+/// values passed with --dart-define are bundled into the application.
+class AppConfig {
+  AppConfig({
+    required this.environment,
+    required String baseUrl,
+    this.apiEnabled = false,
+    this.authApiEnabled,
+    this.learningApiEnabled,
+    this.mockTestApiEnabled,
+    this.analyticsApiEnabled,
+    this.connectTimeout = const Duration(seconds: 15),
+    this.sendTimeout = const Duration(seconds: 20),
+    this.receiveTimeout = const Duration(seconds: 20),
+  }) : baseUrl = _normalizeBaseUrl(baseUrl) {
+    _validate();
+  }
+
+  /// Loads configuration from compile-time values passed to Flutter.
+  ///
+  /// Supported defines:
+  /// - APP_ENV: development | staging | production
+  /// - API_ENABLED: legacy global fallback (true | false)
+  /// - API_AUTH_ENABLED: Auth/Profile API override
+  /// - API_LEARNING_ENABLED: Learning API override
+  /// - API_MOCK_TEST_ENABLED: Mock Test API override
+  /// - API_ANALYTICS_ENABLED: Analytics API override
+  /// Feature flags accept true/false (or 1/0); omitted values inherit API_ENABLED.
+  /// - API_BASE_URL: absolute HTTP(S) URL, normally ending in /api/v1
+  /// - CONNECT_TIMEOUT_MS: connection timeout in milliseconds
+  /// - SEND_TIMEOUT_MS: request-send timeout in milliseconds
+  /// - RECEIVE_TIMEOUT_MS: response-receive timeout in milliseconds
+  factory AppConfig.fromEnvironment() {
+    const globalApiEnabled = bool.fromEnvironment(
+      'API_ENABLED',
+      defaultValue: false,
+    );
+    return AppConfig(
+      environment: AppEnvironment.parse(
+        const String.fromEnvironment('APP_ENV', defaultValue: 'development'),
+      ),
+      baseUrl: const String.fromEnvironment('API_BASE_URL'),
+      apiEnabled: globalApiEnabled,
+      authApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_AUTH_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_AUTH_ENABLED',
+      ),
+      learningApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_LEARNING_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_LEARNING_ENABLED',
+      ),
+      mockTestApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_MOCK_TEST_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_MOCK_TEST_ENABLED',
+      ),
+      analyticsApiEnabled: _parseFeatureFlag(
+        const String.fromEnvironment('API_ANALYTICS_ENABLED'),
+        fallback: globalApiEnabled,
+        name: 'API_ANALYTICS_ENABLED',
+      ),
+      connectTimeout: Duration(
+        milliseconds: const int.fromEnvironment(
+          'CONNECT_TIMEOUT_MS',
+          defaultValue: 15000,
+        ),
+      ),
+      sendTimeout: Duration(
+        milliseconds: const int.fromEnvironment(
+          'SEND_TIMEOUT_MS',
+          defaultValue: 20000,
+        ),
+      ),
+      receiveTimeout: Duration(
+        milliseconds: const int.fromEnvironment(
+          'RECEIVE_TIMEOUT_MS',
+          defaultValue: 20000,
+        ),
+      ),
+    );
+  }
+
+  final AppEnvironment environment;
+  final String baseUrl;
+
+  /// Legacy switch retained for existing launch commands. Feature-specific
+  /// flags override this value when supplied.
+  final bool apiEnabled;
+  final bool? authApiEnabled;
+  final bool? learningApiEnabled;
+  final bool? mockTestApiEnabled;
+  final bool? analyticsApiEnabled;
+
+  bool get isAuthApiEnabled => authApiEnabled ?? apiEnabled;
+  bool get isLearningApiEnabled => learningApiEnabled ?? apiEnabled;
+  bool get isMockTestApiEnabled => mockTestApiEnabled ?? apiEnabled;
+  bool get isAnalyticsApiEnabled => analyticsApiEnabled ?? apiEnabled;
+  bool get isAnyApiEnabled =>
+      isAuthApiEnabled ||
+      isLearningApiEnabled ||
+      isMockTestApiEnabled ||
+      isAnalyticsApiEnabled;
+
+  final Duration connectTimeout;
+  final Duration sendTimeout;
+  final Duration receiveTimeout;
+
+  bool get isDevelopment => environment == AppEnvironment.development;
+  bool get isStaging => environment == AppEnvironment.staging;
+  bool get isProduction => environment == AppEnvironment.production;
+
+  /// Returns null when API mode is disabled and no base URL is configured.
+  Uri? get baseUri => baseUrl.isEmpty ? null : Uri.parse(baseUrl);
+
+  /// Validates that the dedicated Release entry point cannot start with
+  /// Development/Test Data configuration or a partially disabled API graph.
+  /// AI Chat is intentionally excluded: its independent security gate keeps it
+  /// unavailable until Backend conversation ownership is approved.
+  void validateForRelease() {
+    if (!isProduction) {
+      throw StateError(
+        'Release entry point requires APP_ENV=production. '
+        'Use lib/main.dart for Development.',
+      );
+    }
+
+    final disabledFeatures = <String>[
+      if (!isAuthApiEnabled) 'API_AUTH_ENABLED',
+      if (!isLearningApiEnabled) 'API_LEARNING_ENABLED',
+      if (!isMockTestApiEnabled) 'API_MOCK_TEST_ENABLED',
+      if (!isAnalyticsApiEnabled) 'API_ANALYTICS_ENABLED',
+    ];
+    if (disabledFeatures.isNotEmpty) {
+      throw StateError(
+        'Release cannot use Test Data. Enable all approved API features: '
+        '${disabledFeatures.join(', ')}.',
+      );
+    }
+
+    final uri = baseUri;
+    if (uri == null || uri.scheme != 'https') {
+      throw StateError('Release requires an absolute HTTPS API_BASE_URL.');
+    }
+  }
+
+  void _validate() {
+    final hasProtectedFeatureApi =
+        isLearningApiEnabled || isMockTestApiEnabled || isAnalyticsApiEnabled;
+    if (hasProtectedFeatureApi && !isAuthApiEnabled) {
+      throw ArgumentError(
+        'Auth API phải được bật khi bật Learning, Mock Test hoặc Analytics API.',
+      );
+    }
+
+    if (isAnyApiEnabled && baseUrl.isEmpty) {
+      throw ArgumentError.value(
+        baseUrl,
+        'baseUrl',
+        'API_BASE_URL is required when any Backend API feature is enabled.',
+      );
+    }
+
+    if (connectTimeout.inMicroseconds <= 0) {
+      throw ArgumentError.value(
+        connectTimeout,
+        'connectTimeout',
+        'Timeout must be greater than zero.',
+      );
+    }
+
+    if (sendTimeout.inMicroseconds <= 0) {
+      throw ArgumentError.value(
+        sendTimeout,
+        'sendTimeout',
+        'Timeout must be greater than zero.',
+      );
+    }
+
+    if (receiveTimeout.inMicroseconds <= 0) {
+      throw ArgumentError.value(
+        receiveTimeout,
+        'receiveTimeout',
+        'Timeout must be greater than zero.',
+      );
+    }
+
+    if (isAnyApiEnabled && isProduction && baseUri?.scheme != 'https') {
+      throw ArgumentError.value(
+        baseUrl,
+        'baseUrl',
+        'Production API_BASE_URL must use HTTPS.',
+      );
+    }
+  }
+
+  static bool _parseFeatureFlag(
+    String value, {
+    required bool fallback,
+    required String name,
+  }) {
+    switch (value.trim().toLowerCase()) {
+      case '':
+        return fallback;
+      case 'true':
+      case '1':
+        return true;
+      case 'false':
+      case '0':
+        return false;
+      default:
+        throw FormatException(
+          '$name phải là true hoặc false nếu được khai báo.',
+        );
+    }
+  }
+
+  static String _normalizeBaseUrl(String value) {
+    final trimmedValue = value.trim();
+    if (trimmedValue.isEmpty) {
+      return '';
+    }
+
+    final uri = Uri.tryParse(trimmedValue);
+    if (uri == null ||
+        !uri.hasScheme ||
+        !uri.hasAuthority ||
+        uri.host.isEmpty ||
+        (uri.scheme != 'http' && uri.scheme != 'https') ||
+        uri.userInfo.isNotEmpty ||
+        uri.hasQuery ||
+        uri.hasFragment) {
+      throw ArgumentError.value(
+        value,
+        'baseUrl',
+        'Expected an absolute HTTP(S) URL without credentials, query, or '
+            'fragment.',
+      );
+    }
+
+    final normalizedPath = uri.path.replaceFirst(RegExp(r'/+$'), '');
+    return uri.replace(path: normalizedPath).toString();
+  }
+}

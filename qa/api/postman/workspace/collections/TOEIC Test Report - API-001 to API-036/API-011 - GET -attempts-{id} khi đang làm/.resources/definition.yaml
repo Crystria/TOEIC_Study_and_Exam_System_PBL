@@ -1,0 +1,14 @@
+$kind: collection
+name: API-011 - GET /attempts/{id} khi đang làm
+description: |-
+  GET /attempts/{id} khi đang làm
+  Procedure: 1. Lưu vài lựa chọn.
+  2. GET attempt đang làm.
+  3. Duyệt fields câu/nhóm.
+  Expected: 200; draft/deadline đúng; không có correctOption/explanation/transcript nhạy cảm trước kết thúc; score chưa công bố.
+  Preconditions: Attempt IN_PROGRESS và snapshot có lời giải nội bộ.
+  Execution note: Ưu tiên: High.
+  Risk: R-03.
+  Nguồn: Software Test Documentation.docx §1.1.b–c.
+  Tạo attempt mới theo API-010, lưu một vài đáp án rồi GET attempt bằng đúng owner token. Đối chiếu draft, deadline và snapshot. Quét toàn bộ response, kể cả object lồng nhau, để xác nhận chưa có correctOption, explanation hoặc transcript nhạy cảm trước submit.
+order: 12000

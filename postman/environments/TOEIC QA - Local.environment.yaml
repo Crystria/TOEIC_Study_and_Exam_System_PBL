@@ -1,0 +1,8 @@
+name: TOEIC QA - Local
+values:
+  - key: baseUrl
+    value: ''
+  - key: refreshToken
+    value: ''
+  - key: accessToken
+    value: ''

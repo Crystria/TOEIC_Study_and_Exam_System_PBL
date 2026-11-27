@@ -1,0 +1,14 @@
+$kind: collection
+name: API-017 - Question thuộc đề/attempt khác
+description: |-
+  Question thuộc đề/attempt khác
+  Procedure: 1. Lưu hoặc submit với questionId ngoài snapshot.
+  2. Kiểm tra phản hồi và dữ liệu.
+  Expected: 400; không ghi dữ liệu sang attempt/câu khác hoặc chấm một phần payload sai.
+  Preconditions: Hai snapshot độc lập; token của owner hiện tại.
+  Execution note: Ưu tiên: High.
+  Risk: R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.1.
+  Cần một UUID question hợp lệ nhưng không thuộc snapshot đang kiểm tra; tốt nhất tạo một test/question fixture thứ hai độc lập bằng tài khoản CONTENT_ADMIN hoặc lấy ID từ fixture QA khác. Bộ QA Demo 200 Questions hiện chỉ sinh một test; không dùng questionId thuộc chính snapshot. Xác nhận 400 và không thay đổi draft. Không dùng chuỗi ID giả sai định dạng vì sẽ kiểm tra nhầm validator UUID.
+  Requires a second test/question fixture supplied by backend/content admin. No fabricated or synthetic question ID is used.
+order: 18000

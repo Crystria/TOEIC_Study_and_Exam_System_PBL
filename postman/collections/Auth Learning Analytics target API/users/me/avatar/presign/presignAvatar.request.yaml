@@ -1,0 +1,81 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/users/me/avatar/presign"
+method: PATCH
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Idempotency-Key
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "contentType": "image/png",
+      "sizeBytes": 1386549,
+      "kind": ""
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string",
+          "enum": [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+          ]
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2097152
+        }
+      },
+      "required": [
+        "contentType",
+        "sizeBytes",
+        "kind"
+      ]
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/presignAvatar.resources/examples
+order: 1000

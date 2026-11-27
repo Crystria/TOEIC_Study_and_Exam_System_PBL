@@ -1,0 +1,75 @@
+{
+  "classification": "MODEL_CONTRACT_REFERENCE_NOT_SENT_TO_BACKEND",
+  "grammarLesson": {
+    "source_type": "grammar_lesson",
+    "lesson": {
+      "id": "g1",
+      "title": "Giới từ chỉ thời gian: in, on, at, by",
+      "category": "Giới từ",
+      "summary": "Phân biệt cách dùng các giới từ thường gặp trong thông báo và lịch làm việc.",
+      "content": "IN — khoảng thời gian\nDùng in với tháng, năm, mùa và các khoảng thời gian dài.\n\nON — ngày cụ thể\nDùng on với thứ trong tuần và ngày tháng cụ thể.\n\nAT — thời điểm cụ thể\nDùng at với giờ, thời điểm hoặc một mốc thời gian xác định.\n\nBY — không muộn hơn một mốc\nDùng by để diễn tả hạn chót: một việc phải hoàn tất trước hoặc tại thời điểm được nêu.",
+      "key_takeaway": "IN = khoảng thời gian; ON = ngày; AT = thời điểm; BY = hạn chót."
+    }
+  },
+  "mockTestSummary": {
+    "source_type": "mock_test_summary",
+    "test": {
+      "id": "11111111-1111-4111-8111-000000000005",
+      "title": "ETS 2026 Test 05",
+      "mode": "full",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "result": {
+      "total_questions": 200,
+      "answered_count": 199,
+      "correct_count": 150,
+      "incorrect_count": 49,
+      "unanswered_count": 1,
+      "accuracy": 0.75
+    }
+  },
+  "mockTestQuestion": {
+    "source_type": "mock_test_question",
+    "test": {
+      "id": "11111111-1111-4111-8111-000000000005",
+      "title": "ETS 2026 Test 05"
+    },
+    "question": {
+      "id": "mock-question-031",
+      "part": 5,
+      "number": 31,
+      "type": "TEXT_COMPLETION",
+      "text": "The report must be submitted _____ Friday afternoon.",
+      "options": [
+        {
+          "code": "A",
+          "text": "by"
+        },
+        {
+          "code": "B",
+          "text": "during"
+        },
+        {
+          "code": "C",
+          "text": "since"
+        },
+        {
+          "code": "D",
+          "text": "from"
+        }
+      ],
+      "selected_option": "A",
+      "correct_option": "A",
+      "explanation": "By expresses a deadline."
+    }
+  },
+  "compatibility": "AiChatContext.toApiPayload is an extended proposed schema. Do not enable Backend integration based on these examples; ai_chat_dependencies.dart keeps backendIntegrationSafetyPassed=false."
+}

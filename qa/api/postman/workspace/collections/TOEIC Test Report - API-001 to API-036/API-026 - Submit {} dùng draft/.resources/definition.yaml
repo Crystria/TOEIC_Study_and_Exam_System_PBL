@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  Submit {} dùng draft
+  Procedure: 1. Lưu một số đáp án, xác nhận đọc lại.
+  2. Submit body {}.
+  3. So kết quả với draft.
+  Expected: 201; đúng các đáp án đã lưu, còn lại trống; không reset draft do thiếu answers.
+  Preconditions: Không gửi answers=[] để thay nghĩa; fixture có expected.
+  Execution note: Ưu tiên: High.
+  Risk: R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-02; 3.4 EX-06.
+  Tạo attempt IN_PROGRESS; lưu trước một tập đáp án (có ít nhất một câu bỏ trống nếu cần); GET để xác nhận draft; POST submit body {}. Không gửi { "answers": [] }. GET kết quả và so sánh với đúng draft trước submit: đáp án đã lưu giữ nguyên, câu khác bỏ trống.
+order: 27000

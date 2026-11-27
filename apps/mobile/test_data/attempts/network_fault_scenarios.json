@@ -1,0 +1,26 @@
+{
+  "purpose": "Manual test design reference; not injectable into current offline app.",
+  "scenarios": [
+    {
+      "id": "NET-01",
+      "when": "Before saving answer",
+      "action": "Enable airplane mode, choose answer",
+      "expected": "Do not claim server save; UI should show offline/pending state if implemented",
+      "offlineMode": "BLOCKED for API persistence assertion"
+    },
+    {
+      "id": "NET-02",
+      "when": "After tapping save but before response",
+      "action": "Cut connection or simulate timeout at proxy",
+      "expected": "Retry policy must not create conflicting answer state; reuse request identity where idempotency is required",
+      "offlineMode": "BLOCKED; API_ENABLED=false bypasses network"
+    },
+    {
+      "id": "NET-03",
+      "when": "Before submit",
+      "action": "Disable network, submit attempt, restore network",
+      "expected": "No false submitted-success before acknowledgement; recovery behavior follows agreed retry policy",
+      "offlineMode": "BLOCKED; local mock submit does not perform HTTP"
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "source": "ReviewSelectWordsProvider._wordsByTopic in app(3).zip",
+  "warning": "This selector mock uses separate IDs v1-v9 and topic IDs office/marketing. It is not the same catalogue as VocabularyProvider IDs t1-v1 etc.",
+  "topics": [
+    {
+      "id": "office",
+      "name": "Office & Business"
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing"
+    }
+  ],
+  "items": [
+    {
+      "id": "v1",
+      "word": "negotiate",
+      "meaning": "thương lượng",
+      "mastery": null,
+      "phonetic": "/nɪˈɡoʊʃieɪt/",
+      "example": "We need to negotiate the contract terms.",
+      "audioUrl": "",
+      "selected": true,
+      "topicId": "office",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "v2",
+      "word": "contract",
+      "meaning": "hợp đồng",
+      "mastery": null,
+      "phonetic": "/ˈkɒntrækt/",
+      "example": "Please read the contract carefully.",
+      "audioUrl": "",
+      "selected": false,
+      "topicId": "office",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "v3",
+      "word": "invoice",
+      "meaning": "hóa đơn",
+      "mastery": null,
+      "phonetic": "/ˈɪnvɔɪs/",
+      "example": "The invoice is due next Monday.",
+      "audioUrl": "",
+      "selected": true,
+      "topicId": "office",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "v4",
+      "word": "deadline",
+      "meaning": "hạn chót",
+      "mastery": null,
+      "phonetic": "/ˈdedlaɪn/",
+      "example": "We must meet the deadline.",
+      "audioUrl": "",
+      "selected": false,
+      "topicId": "office",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "v5",
+      "word": "client",
+      "meaning": "khách hàng",
+      "mastery": null,
+      "phonetic": "/ˈklaɪənt/",
+      "example": "The client approved our proposal.",
+      "audioUrl": "",
+      "selected": false,
+      "topicId": "office",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "v6",
+      "word": "proposal",
+      "meaning": "đề xuất",
+      "mastery": null,
+      "phonetic": "/prəˈpoʊzəl/",
+      "example": "She submitted a new proposal.",
+      "audioUrl": "",
+      "selected": true,
+      "topicId": "office",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "v7",
+      "word": "campaign",
+      "meaning": "chiến dịch",
+      "mastery": null,
+      "phonetic": "/kæmˈpeɪn/",
+      "example": "The campaign starts next week.",
+      "audioUrl": "",
+      "selected": true,
+      "topicId": "marketing",
+      "topicName": "Marketing"
+    },
+    {
+      "id": "v8",
+      "word": "advertise",
+      "meaning": "quảng cáo",
+      "mastery": null,
+      "phonetic": "/ˈædvərtaɪz/",
+      "example": "They advertise the product online.",
+      "audioUrl": "",
+      "selected": false,
+      "topicId": "marketing",
+      "topicName": "Marketing"
+    },
+    {
+      "id": "v9",
+      "word": "audience",
+      "meaning": "đối tượng khán giả",
+      "mastery": null,
+      "phonetic": "/ˈɔːdiəns/",
+      "example": "The audience responded positively.",
+      "audioUrl": "",
+      "selected": false,
+      "topicId": "marketing",
+      "topicName": "Marketing"
+    }
+  ]
+}

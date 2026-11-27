@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  Xóa đáp án bằng null
+  Procedure: 1. Lưu A.
+  2. PUT selectedOption=null.
+  3. GET và submit {}.
+  Expected: 200; câu trở thành bỏ trống; không chấm A; điểm đúng bộ expected.
+  Preconditions: Đúng owner; còn hạn.
+  Execution note: Ưu tiên: High.
+  Risk: R-01,R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b.
+  Dùng attempt riêng. PUT A trước, sau đó PUT selectedOption: null; GET để xác nhận câu trở thành unanswered. Thực hiện submit {} ở một request riêng để kiểm tra hệ thống dùng draft đã lưu; không thay {} bằng { "answers": [] }..
+order: 15000

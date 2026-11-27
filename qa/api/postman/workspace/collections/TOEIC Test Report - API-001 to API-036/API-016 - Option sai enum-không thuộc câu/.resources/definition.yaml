@@ -1,0 +1,14 @@
+$kind: collection
+name: API-016 - Option sai enum/không thuộc câu
+description: |-
+  Option sai enum/không thuộc câu
+  Procedure: 1. Gửi X hoặc số thay option.
+  2. Với câu chỉ A/B/C, gửi D.
+  3. Đọc lại draft.
+  Expected: 400; không ghi/chấm dữ liệu sai, draft trước đó giữ nguyên.
+  Preconditions: Fixture câu có ba option; dữ liệu trước test đã biết.
+  Execution note: Ưu tiên: High.
+  Risk: R-01,R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.1.
+  QA fixture có Part 2 chỉ gồm option A/B/C. Lấy questionId Part 2 từ snapshot; gửi lần lượt option X, kiểu số và option D (không tồn tại ở Part 2). Mỗi payload chạy riêng; kỳ vọng 400 và draft trước đó không đổi.
+order: 17000

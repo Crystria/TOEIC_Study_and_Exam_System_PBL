@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/tests/{{testId}}/part-attempts"
+method: POST
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{accessTokenA}}
+  X-Correlation-ID: "{{$guid}}"
+  Idempotency-Key: "{{$guid}}"
+body:
+  type: json
+  content: |-
+    {
+      "parts": [
+        2
+      ],
+      "durationSeconds": 300
+    }
+scripts:
+  - type: beforeRequest
+    code: 'console.warn("SKIP: exact deadline -1ms / at / +1ms needs a Backend-defined QA clock-control endpoint. No assumed route or direct DB timestamp manipulation is allowed."); pm.execution.skipRequest();'
+    language: text/javascript
+order: 1000

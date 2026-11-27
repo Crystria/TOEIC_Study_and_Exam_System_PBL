@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  Đọc attempt người khác
+  Procedure: 1. Tạo attempt của A.
+  2. GET bằng token B ở trạng thái đang làm/đã nộp.
+  Expected: 403 theo triển khai hiện tại; không trả nội dung bài, điểm hoặc lời giải của A.
+  Preconditions: A/B độc lập; trước/sau nộp fixtures.
+  Execution note: Ưu tiên: High.
+  Risk: R-03.
+  Nguồn: Software Test Documentation.docx §1.1.c; 2.4 R-03.
+  Fixture A/B: qa-demo-3 là owner A, qa-demo-4 là user B. A tạo attempt; B gọi GET attempt bằng token B ở trạng thái IN_PROGRESS, sau đó lặp với một attempt đã submit. Kỳ vọng 403 theo contract/triển khai được chốt; không trả questions, draft, score hoặc explanation của A.
+  Requires two independently seeded active QA accounts A/B.
+order: 22000

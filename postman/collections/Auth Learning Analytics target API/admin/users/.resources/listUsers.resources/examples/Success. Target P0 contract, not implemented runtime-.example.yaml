@@ -1,0 +1,459 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/admin/users?page=1&size=20&keyword=string&status=INACTIVE&role=CONTENT_ADMIN"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    page: "1"
+    size: "20"
+    keyword: string
+    status: INACTIVE
+    role: CONTENT_ADMIN
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "items": [
+          {
+            "userId": "4e985c9c-1a0e-42a1-8a77-7af12f5394b8",
+            "email": "HFOT07REKnNE@XPSYerktQsTsWTVd.egxl",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": "string",
+            "avatarUrl": null,
+            "status": "SUSPENDED",
+            "roles": [
+              "SYSTEM_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "64b6bea6-cf1e-4185-9f1d-e56963118f9f",
+            "email": "WER8TFT@gEoZjVcjKKsubxrGHi.eqqp",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": null,
+            "avatarUrl": "https://zYVaBnhiH.smmd",
+            "status": "INACTIVE",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "a8a87b5a-ac60-4701-8f12-75ea02d79d92",
+            "email": "qMpxODHHAVC@BCJtAjlMMwzfRgriFYQOtBiwsDRNmxhz.bl",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": "http://wuAEFQEbQUiSaKZOuHlFMllP.yzyX01aWywrLoOFTZ9ltdSBOIw-ejzePw6Vka+kkpsKjsm0+LXCRIL",
+            "status": "ACTIVE",
+            "roles": [
+              "SYSTEM_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "cadfc301-d8f4-4a8c-bd98-155bcba3c9ff",
+            "email": "9Q-08Nc-8@daNPzxMGDhlhoPTXRYlKP.qxz",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": "string",
+            "avatarUrl": null,
+            "status": "INACTIVE",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "a4137fa7-2c55-4aed-a18b-cf42df363735",
+            "email": "F2RnKuCIzex7xPU@v.rvrp",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": "http://HADGOBrECpicbHszQOvTxWkE.wdzaEVGvrbPVP5NBc,S5fKlxOxN+ekyo5qar8IdGMvyzVWXK+GhO8",
+            "status": "SUSPENDED",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "49867d6b-88c3-4447-9326-73e081db528f",
+            "email": "nAQNe6Gqndsqtn@kXSYCAMbYLkKTZaYsLSAVKyRDmPmON.gwun",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": "https://goIuoOlpVyeIOMCIzOhmsBXObWQPr.rcrARke9V2qHGF+ZzZB5OtZgoKOdWRIaEYCLwSYjRxX9O64lPGbo2p",
+            "status": "SUSPENDED",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "f2f89c07-12fc-43a2-b727-eacf171fbab8",
+            "email": "9Y6XgsuddXkMPgp@ZBcMTCBsUvsXa.zz",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": "http://EAWeqm.swvXTmGEneb4Jhmyp-uiU4Thb6qJxeGv3zsjH,9UWQ4FRLTw9NpP2U",
+            "status": "INACTIVE",
+            "roles": [
+              "USER"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "05268245-0523-443b-a18e-1c68c5a7696f",
+            "email": "lVDfbyl-Nu223f@ojYH.zz",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": "https://QLYmGkMXOEg.nxeMxp2tHPkgcFZiv2KLm7YgaQgZW1T281",
+            "status": "SUSPENDED",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "f4bec72d-a881-4ec8-b916-53cd51d68451",
+            "email": "MLLk@Kqcz.gm",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": null,
+            "avatarUrl": null,
+            "status": "SUSPENDED",
+            "roles": [
+              "USER"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "ce65ae92-7297-4c60-8bd4-3a0df6e7f328",
+            "email": "cHZhijlG@xdjpYVEvMAyFnYFKNJigtsC.bc",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": "string",
+            "avatarUrl": "https://HWSToVSutPZkPYIyBEuwLaLMqKO.lknodoRAkr5QhCTrWPoftBoORPPPxa8rT45OC5yoe3DEtL5d3KKQVWg",
+            "status": "SUSPENDED",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "baaf66e0-f177-4f0a-9538-1f04887b5dd8",
+            "email": "iRSv3@wEgInUwUmnWyWdyydTZGOYZUHIdT.hrfc",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": null,
+            "avatarUrl": "https://UrDmbYAZCGSRFmKSNaregytcLeKpRgi.invyLopKa7zjMHc1nksYeoaa9hnjeqq+,5ZuVRhCWnMTJkrXb4ndSlchOlevNnqlgxUP",
+            "status": "ACTIVE",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "fa71d067-f47e-43e5-b26e-503d32d62323",
+            "email": "fR1zmcsyTHzzE4@NZevNZTpiwVURNZAUx.tz",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": null,
+            "avatarUrl": "https://ijv.vtbbZMcnCoAUV0QThWbWTmCW6+e3nVCh3VHRIVFi.nfPao009bGI7p",
+            "status": "ACTIVE",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "3c53c710-b9ed-43a7-b740-aad71e70ab9b",
+            "email": "MJnnJ@SgNxpjHBcrQvGdTQcupDRT.zkgw",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": null,
+            "avatarUrl": null,
+            "status": "INACTIVE",
+            "roles": [
+              "USER"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "2b88434a-a1ae-48fc-a58a-f6bdfe95c2c4",
+            "email": "YIGd9m1IQ6X@dfZHQGcGTVftaKNTtfoGCkQomEZHZs.pui",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": null,
+            "status": "ACTIVE",
+            "roles": [
+              "SYSTEM_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "641543e8-e258-4b29-ad05-f90d6fe489d9",
+            "email": "ddeYSd@FlyfKK.uy",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": null,
+            "avatarUrl": "http://AqJiGlREyJHmXdDFqNHgBYwe.vwifuFbxMmJhiAg56k8znK3bhiUZFbL8ayWP+vah3yMW0FarFyG92waaSyqHlS",
+            "status": "ACTIVE",
+            "roles": [
+              "CONTENT_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "bb120c01-29b2-4b7c-b902-df3d12963c29",
+            "email": "aJQ15@kBEtJHeUiWrDMck.xpo",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": null,
+            "status": "INACTIVE",
+            "roles": [
+              "USER"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "9d06319b-6951-4ee3-a76c-87eaf041b5b6",
+            "email": "M2M@HVydfhHuPKRXdTxzjJDXD.st",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": null,
+            "status": "INACTIVE",
+            "roles": [
+              "SYSTEM_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "98452f38-34e8-44c4-a755-92ffe886e499",
+            "email": "n0HwsePIYQJu@DP.lxsw",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": "string",
+            "avatarUrl": "http://fSCrNywPqR.rsaTNWQiW5oGUY7YWEKSpW-O7mhi5aN",
+            "status": "ACTIVE",
+            "roles": [
+              "USER"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "165f286a-9465-4031-a0c1-f8bc910b9612",
+            "email": "cE8USP@jXjcMgBmXekbXcXEJIhkpUEtUbGcHapr.hco",
+            "fullName": "string",
+            "phoneNumber": "string",
+            "avatarKey": "string",
+            "avatarUrl": "http://lQyNaZZdWmTgnYCxNmqEQfHEnPCZS.fjjYmomaSzwfjUn1KwPr9vbsHQ76uBKs3,kbcQ7GXvaxyxHqwhy6yqWJNoOsf4QRFhx",
+            "status": "ACTIVE",
+            "roles": [
+              "SYSTEM_ADMIN"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "userId": "ef8bdd67-f31e-48f9-995d-6a93ad350d22",
+            "email": "aoRHvue@fWyVtRJWgPtWnVqvPLmyzeGQrE.bit",
+            "fullName": "string",
+            "phoneNumber": null,
+            "avatarKey": null,
+            "avatarUrl": null,
+            "status": "ACTIVE",
+            "roles": [
+              "USER"
+            ],
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          }
+        ],
+        "total": 996967607,
+        "page": 388427424,
+        "size": 42,
+        "totalPages": 25136471
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "email": {
+                  "type": "string",
+                  "maxLength": 320,
+                  "format": "email"
+                },
+                "fullName": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 255
+                },
+                "phoneNumber": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "avatarKey": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "avatarUrl": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "ACTIVE",
+                    "SUSPENDED",
+                    "INACTIVE"
+                  ]
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                }
+              },
+              "required": [
+                "userId",
+                "email",
+                "fullName",
+                "phoneNumber",
+                "avatarKey",
+                "avatarUrl",
+                "status",
+                "roles",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size",
+          "totalPages"
+        ]
+      }
+order: 1000

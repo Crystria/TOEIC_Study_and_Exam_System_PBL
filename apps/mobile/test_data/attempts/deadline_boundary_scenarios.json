@@ -1,0 +1,21 @@
+{
+  "id": "DEADLINE-BOUNDARY-01",
+  "points": [
+    {
+      "case": "before_deadline",
+      "offsetSeconds": -1,
+      "expected": "Attempt remains editable"
+    },
+    {
+      "case": "at_deadline",
+      "offsetSeconds": 0,
+      "expected": "Attempt becomes final according to agreed server-time rule"
+    },
+    {
+      "case": "after_deadline",
+      "offsetSeconds": 1,
+      "expected": "Attempt is read-only/final; later answer changes are rejected"
+    }
+  ],
+  "offlineLimitation": "The current local mock uses device DateTime and a 7,200-second FULL attempt. This JSON does not alter the app clock or deadline; use a dedicated test clock/fixture hook for deterministic boundary tests."
+}

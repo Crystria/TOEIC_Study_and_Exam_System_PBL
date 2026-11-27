@@ -1,0 +1,244 @@
+{
+  "source": "MockAnalyticsRepository.getProgress in app(3).zip",
+  "isDemoData": true,
+  "timeRange": "ALL_TIME",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "relativeAsOf": "runtime-now",
+  "lifetime": {
+    "vocabulariesLearned": 248,
+    "reviewCount": 420,
+    "grammarLessonsCompleted": 14,
+    "mockTestCount": 5,
+    "practiceCount": 12,
+    "studyDays": 34
+  },
+  "inRange": {
+    "vocabulariesLearned": 248,
+    "reviewCount": 420,
+    "grammarLessonsCompleted": 14,
+    "mockTestCount": 5,
+    "practiceCount": 12,
+    "studyDays": 34
+  },
+  "learningStreakDays": 12,
+  "longestStreak": 18,
+  "predictedToeicScore": 685,
+  "scoreTrend": [
+    {
+      "daysAgo": 26,
+      "attemptId": "demo-full-26",
+      "scoreListening": 295,
+      "scoreReading": 295,
+      "totalScore": 590
+    },
+    {
+      "daysAgo": 20,
+      "attemptId": "demo-full-20",
+      "scoreListening": 305,
+      "scoreReading": 310,
+      "totalScore": 615
+    },
+    {
+      "daysAgo": 13,
+      "attemptId": "demo-full-13",
+      "scoreListening": 315,
+      "scoreReading": 315,
+      "totalScore": 630
+    },
+    {
+      "daysAgo": 7,
+      "attemptId": "demo-full-7",
+      "scoreListening": 320,
+      "scoreReading": 330,
+      "totalScore": 650
+    },
+    {
+      "daysAgo": 1,
+      "attemptId": "demo-full-1",
+      "scoreListening": 335,
+      "scoreReading": 350,
+      "totalScore": 685
+    }
+  ],
+  "weakAreas": [
+    {
+      "part": 1,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 12,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null
+    },
+    {
+      "part": 2,
+      "status": "AVAILABLE",
+      "correct": 42,
+      "total": 60,
+      "weaknessScore": 0.3,
+      "isWeak": true
+    },
+    {
+      "part": 3,
+      "status": "AVAILABLE",
+      "correct": 68,
+      "total": 100,
+      "weaknessScore": 0.32,
+      "isWeak": true
+    },
+    {
+      "part": 4,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 14,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null
+    },
+    {
+      "part": 5,
+      "status": "AVAILABLE",
+      "correct": 62,
+      "total": 100,
+      "weaknessScore": 0.38,
+      "isWeak": true
+    },
+    {
+      "part": 6,
+      "status": "INSUFFICIENT_DATA",
+      "correct": 10,
+      "total": 18,
+      "weaknessScore": null,
+      "isWeak": null
+    },
+    {
+      "part": 7,
+      "status": "AVAILABLE",
+      "correct": 71,
+      "total": 100,
+      "weaknessScore": 0.29,
+      "isWeak": false
+    }
+  ],
+  "dailyActivity": [
+    {
+      "relativeDaysAgo": 29,
+      "count": 1
+    },
+    {
+      "relativeDaysAgo": 28,
+      "count": 3
+    },
+    {
+      "relativeDaysAgo": 27,
+      "count": 0
+    },
+    {
+      "relativeDaysAgo": 26,
+      "count": 4
+    },
+    {
+      "relativeDaysAgo": 25,
+      "count": 2
+    },
+    {
+      "relativeDaysAgo": 24,
+      "count": 5
+    },
+    {
+      "relativeDaysAgo": 23,
+      "count": 1
+    },
+    {
+      "relativeDaysAgo": 22,
+      "count": 0
+    },
+    {
+      "relativeDaysAgo": 21,
+      "count": 3
+    },
+    {
+      "relativeDaysAgo": 20,
+      "count": 2
+    },
+    {
+      "relativeDaysAgo": 19,
+      "count": 4
+    },
+    {
+      "relativeDaysAgo": 18,
+      "count": 1
+    },
+    {
+      "relativeDaysAgo": 17,
+      "count": 2
+    },
+    {
+      "relativeDaysAgo": 16,
+      "count": 0
+    },
+    {
+      "relativeDaysAgo": 15,
+      "count": 3
+    },
+    {
+      "relativeDaysAgo": 14,
+      "count": 1
+    },
+    {
+      "relativeDaysAgo": 13,
+      "count": 3
+    },
+    {
+      "relativeDaysAgo": 12,
+      "count": 0
+    },
+    {
+      "relativeDaysAgo": 11,
+      "count": 4
+    },
+    {
+      "relativeDaysAgo": 10,
+      "count": 2
+    },
+    {
+      "relativeDaysAgo": 9,
+      "count": 5
+    },
+    {
+      "relativeDaysAgo": 8,
+      "count": 1
+    },
+    {
+      "relativeDaysAgo": 7,
+      "count": 0
+    },
+    {
+      "relativeDaysAgo": 6,
+      "count": 3
+    },
+    {
+      "relativeDaysAgo": 5,
+      "count": 2
+    },
+    {
+      "relativeDaysAgo": 4,
+      "count": 4
+    },
+    {
+      "relativeDaysAgo": 3,
+      "count": 1
+    },
+    {
+      "relativeDaysAgo": 2,
+      "count": 2
+    },
+    {
+      "relativeDaysAgo": 1,
+      "count": 0
+    },
+    {
+      "relativeDaysAgo": 0,
+      "count": 4
+    }
+  ],
+  "dailyActivityTruncated": false
+}

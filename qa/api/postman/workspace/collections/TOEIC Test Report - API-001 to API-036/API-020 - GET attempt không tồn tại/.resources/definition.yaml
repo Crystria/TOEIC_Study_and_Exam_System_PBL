@@ -1,0 +1,11 @@
+$kind: collection
+description: |-
+  GET attempt không tồn tại
+  Procedure: 1. Gọi GET với UUID không tồn tại.
+  2. Thử save/submit cùng ID trong lượt riêng.
+  Expected: 404 theo contract; không tạo attempt từ ID lạ hoặc lộ dữ liệu khác.
+  Preconditions: UUID đúng định dạng, không tồn tại.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.b–c; 2.1.
+  Sinh UUID hợp lệ ngẫu nhiên, không tồn tại trong attempts. Dùng UUID đó gọi GET attempt; ở request riêng thử save và submit. Kỳ vọng 404; kiểm tra không tạo row/không lộ attempt khác. Không dùng UUID sai định dạng cho testcase này.
+order: 21000

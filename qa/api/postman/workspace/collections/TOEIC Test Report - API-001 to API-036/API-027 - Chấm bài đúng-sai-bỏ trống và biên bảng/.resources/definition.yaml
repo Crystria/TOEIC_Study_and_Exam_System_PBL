@@ -1,0 +1,14 @@
+$kind: collection
+name: API-027 - Chấm bài đúng/sai/bỏ trống và biên bảng điểm
+description: |-
+  Chấm bài đúng/sai/bỏ trống và biên bảng điểm
+  Procedure: 1. Tạo attempt mới cho mỗi dataset all-correct/all-wrong/all-blank/mixed và mốc đổi điểm.
+  2. Submit; so kết quả.
+  Expected: Số đúng và điểm theo bảng cấu hình độc lập; tổng=L+R; bỏ trống không tính đúng. Không giả định 0 câu đúng bằng 0 điểm TOEIC.
+  Preconditions: Expected độc lập; version bảng điểm cố định.
+  Execution note: Ưu tiên: High.
+  Risk: R-01.
+  Nguồn: Software Test Documentation.docx §1.1.b–c; 2.4 R-01.
+  Dùng nhiều FULL attempt độc lập trên cùng đề: all-correct (200 A), all-wrong (200 B), all-blank (200 null/không gửi), mixed và các mốc biên của bảng điểm. Fixture synthetic có answer key A nên số câu đúng kỳ vọng xác định được. Đối chiếu raw correctCount và bảng quy đổi version cố định; không giả định 0 câu đúng đồng nghĩa 0 TOEIC point.
+  Score-point assertions require an independent approved TOEIC conversion table/version. Raw correct counts are checked; configure expectedScore* variables before comparing point totals.
+order: 28000

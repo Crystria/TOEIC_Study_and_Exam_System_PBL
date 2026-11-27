@@ -1,0 +1,14 @@
+$kind: collection
+name: API-006 - POST /auth/logout và dùng lại phiên
+description: |-
+  POST /auth/logout và dùng lại phiên
+  Procedure: 1. Login.
+  2. Logout theo contract.
+  3. Dùng lại token/refresh của phiên theo cơ chế vô hiệu hóa đã chốt.
+  Expected: Logout 200; phiên bị thu hồi không được tiếp tục truy cập theo contract; không thu hồi nhầm user khác.
+  Preconditions: Claims và refresh cùng user/session; quy tắc revoke đã chốt.
+  Execution note: Ưu tiên: High.
+  Risk: R-03.
+  Nguồn: Software Test Documentation.docx §1.1.a.
+  Fixture: login riêng cho User A, giữ access token + refresh token của cùng session/device. Gọi logout với Bearer access token và body refresh token đúng contract; sau đó thử lại refresh/access của session đã logout. Dùng User B để xác nhận session khác không bị thu hồi. Trước đây chỉ quan sát request logout thiếu Bearer trả 401; đó không phải kết quả logout thành công.
+order: 7000

@@ -1,0 +1,12 @@
+$kind: collection
+name: API-019 - Payload draft/submit sai schema
+description: |-
+  Payload draft/submit sai schema
+  Procedure: 1. Gửi answers sai kiểu, thiếu questionId, UUID sai hoặc thiếu selectedOption.
+  2. Kiểm tra từng response.
+  Expected: 400 theo DTO/contract; không 5xx; không sửa draft/kết quả. Submit {} hợp lệ được kiểm ở ca riêng.
+  Preconditions: DTO hiện hành; tách từng dataset và fixture.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §2.1 Test API; 3.4 Entry.
+  Không cần fixture dữ liệu mới; cần attempt active cho trường hợp kiểm tra trạng thái không đổi. Gửi từng payload sai: answers sai kiểu, thiếu questionId, UUID không hợp lệ, selectedOption sai kiểu/thiếu field. Mỗi response cần theo DTO/validator và không 5xx. Giữ {} cho API-026 vì đó là trường hợp submit hợp lệ theo thiết kế.
+order: 20000

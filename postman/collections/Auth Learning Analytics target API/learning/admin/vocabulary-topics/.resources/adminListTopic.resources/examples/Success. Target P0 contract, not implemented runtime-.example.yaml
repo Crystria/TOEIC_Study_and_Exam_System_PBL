@@ -1,0 +1,267 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/learning/admin/vocabulary-topics?page=1&size=20&keyword=string"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    page: "1"
+    size: "20"
+    keyword: string
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "items": [
+          {
+            "topicId": "c5820133-f80c-4bae-ad9e-fb2d43a7ff01",
+            "topicName": "string",
+            "vocabularyCount": 1004612545,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "07887427-9059-41cf-9197-5f3fd9b74e2c",
+            "topicName": "string",
+            "vocabularyCount": 1749865314,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "44c8eb6c-888c-4644-ad7b-408408df4104",
+            "topicName": "string",
+            "vocabularyCount": 1067365456,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "8ce6aa25-64d3-4f10-9c38-e562c7c60cad",
+            "topicName": "string",
+            "vocabularyCount": 2119081653,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "f66334c6-7717-4f79-ab35-db1b2d12587f",
+            "topicName": "string",
+            "vocabularyCount": 271967158,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "87150e15-570d-4c5e-a1aa-f0a5351d01ba",
+            "topicName": "string",
+            "vocabularyCount": 1360632347,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "08ebb09b-8a12-47cf-8d98-75e0a8770f25",
+            "topicName": "string",
+            "vocabularyCount": 1585081715,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "6fc6c6a7-1ae0-429f-948e-887c0ee02030",
+            "topicName": "string",
+            "vocabularyCount": 1249223804,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "96dcd629-496b-4894-a979-d4b3f6b11400",
+            "topicName": "string",
+            "vocabularyCount": 978012599,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "db7dc720-7141-4800-91e6-622f89f8406f",
+            "topicName": "string",
+            "vocabularyCount": 1618954657,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "195c4ffd-559d-40ec-a32b-4d853c21b86c",
+            "topicName": "string",
+            "vocabularyCount": 2077970892,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "b853f928-72d7-4f39-bb28-53c71aef2c3a",
+            "topicName": "string",
+            "vocabularyCount": 50821969,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "80539ae1-c87e-48d2-8d18-875719c52c65",
+            "topicName": "string",
+            "vocabularyCount": 1271410659,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "5fde140e-4661-4496-87f1-de090c33e16b",
+            "topicName": "string",
+            "vocabularyCount": 804879920,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "54704e60-d0d8-48db-9b8c-3c4b332567eb",
+            "topicName": "string",
+            "vocabularyCount": 1072424154,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "4c49fde9-488f-4698-8cfd-6184bc8b2c79",
+            "topicName": "string",
+            "vocabularyCount": 703779762,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "5dbb0d45-d687-4b47-8567-4c0a84192f40",
+            "topicName": "string",
+            "vocabularyCount": 1502448035,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "597416c0-beb8-4236-807a-6ff860adfefd",
+            "topicName": "string",
+            "vocabularyCount": 1814146901,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "42b3fe96-d274-418a-99fb-3267d1b3bbc0",
+            "topicName": "string",
+            "vocabularyCount": 1807867818,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          },
+          {
+            "topicId": "a5546d64-6957-4a4f-88e3-5ef19af90bec",
+            "topicName": "string",
+            "vocabularyCount": 1660959420,
+            "createdAt": "Z",
+            "updatedAt": "Z"
+          }
+        ],
+        "total": 1094649663,
+        "page": 711561955,
+        "size": 48,
+        "totalPages": 448427794
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "topicId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "topicName": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "vocabularyCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                },
+                "createdAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                }
+              },
+              "required": [
+                "topicId",
+                "topicName",
+                "vocabularyCount",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size",
+          "totalPages"
+        ]
+      }
+order: 1000

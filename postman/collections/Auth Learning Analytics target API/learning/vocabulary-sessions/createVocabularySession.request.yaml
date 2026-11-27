@@ -1,0 +1,77 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/learning/vocabulary-sessions"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Idempotency-Key
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "topicId": "8303a33d-1afb-4f79-8539-23cc0f3ce901",
+      "mode": "REVIEW"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "NEW",
+            "REVIEW"
+          ]
+        }
+      },
+      "required": [
+        "topicId",
+        "mode"
+      ]
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/createVocabularySession.resources/examples
+order: 1000
