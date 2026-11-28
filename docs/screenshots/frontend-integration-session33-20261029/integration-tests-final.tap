@@ -1,0 +1,42 @@
+Γ£ö API cannot run implicitly or target production (28.2017ms)
+Γ£ö CSRF origin and encoded path traversal are rejected before fetch (1.4353ms)
+Γ£ö opaque IDs are encoded as one upstream segment without changing their value (1.8869ms)
+Γ£ö successful login stores HttpOnly cookies and returns no tokens (1.5767ms)
+Γ£ö CMS cannot register and login never accepts a non-active account (1.5651ms)
+Γ£ö session restoration verifies roles from me, not a client persona (2.0251ms)
+Γ£ö concurrent 401 session reads rotate once and propagate fresh cookies (13.0916ms)
+Γ£ö failed refresh expires cookies; network failure preserves session for retry (0.8223ms)
+Γ£ö logout clears local cookies even if Gateway revocation fails (0.4822ms)
+Γ£ö mutations are disabled until isolated test writes are explicitly configured (0.5884ms)
+Γ£ö a 401 mutation is sent once and never replayed or silently refreshed (0.9778ms)
+Γ£ö backend errors retain validation payload without forwarding cookies or auth headers (1.4083ms)
+Γ£ö CMS multi-role access uses arrays and backend rules, metadata stays locked (1.2566ms)
+Γ£ö unsafe attempts, AI ownership and media lifecycle cannot be enabled by an arbitrary path (0.7788ms)
+Γ£ö user adapters distinguish backend role objects from sanitized session arrays (0.4419ms)
+Γ£ö vocabulary nullable media and topic counts use source field names (0.2608ms)
+Γ£ö pagination is validated and never inferred from current page length (0.2714ms)
+Γ£ö query allowlists omit demo URL controls and enforce request enums (0.3243ms)
+Γ£ö result adapter excludes placeholder score and hides grading while in progress (0.1797ms)
+Γ£ö test metadata uses source Full/Mini and real structure, never synthesizes questions (0.2019ms)
+Γ£ö question detail and audit fields follow Prisma source, not list/demo projection (0.1769ms)
+Γ£ö media URLs are never built from keys and dangerous protocols are rejected (0.1621ms)
+Γ£ö completion acknowledgement requires the actual status and timestamp (0.0924ms)
+Γ£ö shared Markdown supports tables/code and never emits HTML or unsafe links (0.4419ms)
+Γ£ö CMS question/test writes use allowlisted DTOs without losing stored structure (0.8508ms)
+Γ£ö server validation maps only allowed fields and does not expose arbitrary server details (0.1515ms)
+Γ£ö timeout is explicit and does not clear a recoverable session (0.2523ms)
+Γ£ö registration is a real write and stays blocked before isolation is enabled (0.484ms)
+Γ£ö explicit refresh rejects a locked or unknown account after rotation (1.8372ms)
+Γ£ö network, timeout, invalid acknowledgements stop uncertain creates; validation allows correction (0.2221ms)
+Γ£ö an in-progress result with premature grading never exposes correct-count or correctness (0.0927ms)
+Γ£ö entity acknowledgement must match the requested ID (0.0665ms)
+Γ£ö repositories reject mismatched entity, attempt, review and analytics-range responses (1.6931ms)
+Γ£ö unavailable contract and write flags produce specific Vietnamese client errors (0.557ms)
+Γä╣ tests 34
+Γä╣ suites 0
+Γä╣ pass 34
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 175.6309

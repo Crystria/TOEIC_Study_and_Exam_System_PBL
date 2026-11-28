@@ -1,0 +1,1400 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Read-only original Part5, explicit B, four labeled options, demo/grading distinction, no unimplemented actions",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All three catalog IDs direct/reload, exact authored answers B/C/A",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "List page2 size1 keyword/Part -> keyboard detail -> Back/Forward/reload -> return restores query, main focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All actual filters, custom size and list preview survive; only three supported rows link",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown ID vs existing unsupported ID; long and HTML-like ID rendered as safe wrapped text",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing fields never infer answer; long stem/options/explanation wrap and escape HTML; UI-only empty scenario",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Retry exact current ID/query; Enter moves focus only after removed control; tool focus preserved; reload/error scope reset",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Slow dynamic ID switch and Back/Forward discard stale reads",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Invalid/repeated params safely canonicalize; external/internal returnTo ignored; Unicode literal query survives reload",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "CONTENT_ADMIN details; SYSTEM_ADMIN explanatory shell, default/invalid/duplicate persona unchanged, menu and history",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "No storage writes/cookies/IndexedDB; isolated fresh context",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Read-only original Part5, explicit B, four labeled options, demo/grading distinction, no unimplemented actions",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "All three catalog IDs direct/reload, exact authored answers B/C/A",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "List page2 size1 keyword/Part -> keyboard detail -> Back/Forward/reload -> return restores query, main focus",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "All actual filters, custom size and list preview survive; only three supported rows link",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown ID vs existing unsupported ID; long and HTML-like ID rendered as safe wrapped text",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing fields never infer answer; long stem/options/explanation wrap and escape HTML; UI-only empty scenario",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Retry exact current ID/query; Enter moves focus only after removed control; tool focus preserved; reload/error scope reset",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Slow dynamic ID switch and Back/Forward discard stale reads",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Invalid/repeated params safely canonicalize; external/internal returnTo ignored; Unicode literal query survives reload",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "CONTENT_ADMIN details; SYSTEM_ADMIN explanatory shell, default/invalid/duplicate persona unchanged, menu and history",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "No storage writes/cookies/IndexedDB; isolated fresh context",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Read-only original Part5, explicit B, four labeled options, demo/grading distinction, no unimplemented actions",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "All three catalog IDs direct/reload, exact authored answers B/C/A",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "List page2 size1 keyword/Part -> keyboard detail -> Back/Forward/reload -> return restores query, main focus",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "All actual filters, custom size and list preview survive; only three supported rows link",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown ID vs existing unsupported ID; long and HTML-like ID rendered as safe wrapped text",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing fields never infer answer; long stem/options/explanation wrap and escape HTML; UI-only empty scenario",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Retry exact current ID/query; Enter moves focus only after removed control; tool focus preserved; reload/error scope reset",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Slow dynamic ID switch and Back/Forward discard stale reads",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Invalid/repeated params safely canonicalize; external/internal returnTo ignored; Unicode literal query survives reload",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "CONTENT_ADMIN details; SYSTEM_ADMIN explanatory shell, default/invalid/duplicate persona unchanged, menu and history",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "No storage writes/cookies/IndexedDB; isolated fresh context",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Read-only original Part5, explicit B, four labeled options, demo/grading distinction, no unimplemented actions",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "All three catalog IDs direct/reload, exact authored answers B/C/A",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "List page2 size1 keyword/Part -> keyboard detail -> Back/Forward/reload -> return restores query, main focus",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "All actual filters, custom size and list preview survive; only three supported rows link",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown ID vs existing unsupported ID; long and HTML-like ID rendered as safe wrapped text",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing fields never infer answer; long stem/options/explanation wrap and escape HTML; UI-only empty scenario",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Retry exact current ID/query; Enter moves focus only after removed control; tool focus preserved; reload/error scope reset",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Slow dynamic ID switch and Back/Forward discard stale reads",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Invalid/repeated params safely canonicalize; external/internal returnTo ignored; Unicode literal query survives reload",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "CONTENT_ADMIN details; SYSTEM_ADMIN explanatory shell, default/invalid/duplicate persona unchanged, menu and history",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "No storage writes/cookies/IndexedDB; isolated fresh context",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "loading-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "detail-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "state-tool-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "stem-options-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "answer-explanation-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "demo-q-018-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "demo-q-019-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "restored-page-filter-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "unsupported-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "not-found-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-id-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "missing-options-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "missing-answer-explanation-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-stem-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-options-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-explanation-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "simulated-empty-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "error-retry-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "normalized-url-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "system-persona-panel-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "loading-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "detail-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "state-tool-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "stem-options-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "answer-explanation-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "demo-q-018-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "demo-q-019-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "restored-page-filter-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "unsupported-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "not-found-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-id-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "missing-options-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "missing-answer-explanation-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-stem-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-options-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-explanation-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "simulated-empty-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "error-retry-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "normalized-url-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "system-persona-panel-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "mobile-menu-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "loading-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "detail-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "state-tool-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "stem-options-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "answer-explanation-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "demo-q-018-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "demo-q-019-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "restored-page-filter-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "unsupported-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "not-found-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-id-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "missing-options-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "missing-answer-explanation-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-stem-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-options-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-explanation-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "simulated-empty-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "error-retry-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "normalized-url-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "system-persona-panel-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "mobile-menu-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "loading-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "detail-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "state-tool-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "stem-options-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "answer-explanation-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "demo-q-018-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "demo-q-019-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "restored-page-filter-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "unsupported-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "not-found-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-id-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "missing-options-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "missing-answer-explanation-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-stem-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-options-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-explanation-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "simulated-empty-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "error-retry-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "normalized-url-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "system-persona-panel-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "mobile-menu-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "storageWrites": [],
+  "browser": "156.0.8078.48",
+  "completed": true
+}

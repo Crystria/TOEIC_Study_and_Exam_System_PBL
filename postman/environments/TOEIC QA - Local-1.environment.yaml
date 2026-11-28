@@ -1,0 +1,47 @@
+name: TOEIC QA - Local
+values:
+  - key: gatewayOrigin
+    value: 'http://localhost:3000'
+  - key: baseUrl
+    value: 'http://localhost:3000/api/v1'
+  - key: qaUserAEmail
+    value: 'qa-demo-3@example.test'
+  - key: qaUserAId
+    value: '424714f1-8b16-44ad-b7e8-6cc703c60467'
+  - key: qaUserAPassword
+    value: 'QA-Local-2026!'
+  - key: qaUserBEmail
+    value: 'qa-demo-4@example.test'
+  - key: qaUserBId
+    value: '54aa72b6-e5e9-4dce-bbdc-1f2858ffb843'
+  - key: qaUserBPassword
+    value: 'QA-Local-2026!'
+  - key: accessToken
+    secret: true
+  - key: refreshToken
+    value: ''
+  - key: accessTokenB
+    secret: true
+  - key: refreshTokenB
+    value: ''
+  - key: deviceId
+    value: 'postman-qa-device-a'
+  - key: deviceIdB
+    value: 'postman-qa-device-b'
+  - key: qaTestId
+    value: 'e987a414-56cd-4eec-972d-9267fd96bd1a'
+  - key: examTitle
+    value: 'QA Demo 200 Questions'
+  - key: qaReadyConfirmed
+    value: 'true'
+  - key: accessTokenA
+    secret: true
+  - key: refreshTokenA
+    value: ''
+  - key: in
+    value: ''
+  - key: userAId
+    value: '424714f1-8b16-44ad-b7e8-6cc703c60467'
+  - key: revokedRefreshTokenA
+    value: ''
+color: 0

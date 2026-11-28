@@ -1,0 +1,72 @@
+name: P3 Learning E2E
+on:
+  pull_request:
+    paths:
+      [
+        'packages/**',
+        'services/**',
+        'scripts/**',
+        'package*.json',
+        'docker-compose*.yml',
+        '.github/workflows/p3-learning.yml',
+      ]
+  push:
+    branches: [BE, main, develop]
+    paths:
+      [
+        'packages/**',
+        'services/**',
+        'scripts/**',
+        'package*.json',
+        'docker-compose*.yml',
+        '.github/workflows/p3-learning.yml',
+      ]
+jobs:
+  learning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: toeic
+          POSTGRES_PASSWORD: toeic
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U toeic" --health-interval 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['7379:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-retries 10
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: toeic
+          RABBITMQ_DEFAULT_PASS: toeic
+        ports: ['5772:5672']
+        options: --health-cmd "rabbitmq-diagnostics -q ping" --health-interval 5s --health-retries 20
+      minio:
+        image: bitnamilegacy/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_API_PORT_NUMBER: '9000'
+        ports: ['19000:9000']
+        options: --health-cmd "mc ready local" --health-interval 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @toeic/common
+      - run: npm run prisma:generate -w @toeic/auth-service
+      - run: npm run prisma:generate -w @toeic/learning-service
+      - run: npm run build -w @toeic/learning-service
+      - run: npm run test -w @toeic/learning-service -- --runInBand sm2.spec.ts
+      - run: node scripts/init-learning-media.mjs
+      - name: Rehearse migration and exercise Learning through Gateway
+        env:
+          P3_POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          P3_POSTGRES_URL: postgresql://toeic:toeic@localhost:5432/postgres
+        run: npm run test:p3 -w @toeic/learning-service

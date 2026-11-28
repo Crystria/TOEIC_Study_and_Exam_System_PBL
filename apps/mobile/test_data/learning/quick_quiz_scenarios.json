@@ -1,0 +1,180 @@
+{
+  "source": "QuickQuizProvider: exactly 5 questions from unique words studied on local day",
+  "questionCount": 5,
+  "eligibility": {
+    "minimumDistinctWordsStudiedToday": 5,
+    "dailyGoalMustBeCompleted": true,
+    "dailyGoalIsConfigurableMin5Max100Step5": true
+  },
+  "note": "With current local catalog six words, set daily goal to 5 to make this local quiz flow reachable. Default goal 20 cannot be completed from the six-word local catalog.",
+  "fixtures": [
+    {
+      "id": "QUIZ-01",
+      "name": "Eligible set",
+      "dailyGoal": 5,
+      "studiedTodayWordIds": [
+        "t1-v1",
+        "t1-v2",
+        "t1-v3",
+        "t2-v1",
+        "t2-v2"
+      ],
+      "questions": [
+        {
+          "wordId": "t1-v1",
+          "word": "negotiate",
+          "phonetic": "/nɪˈɡoʊʃieɪt/",
+          "options": [
+            "thương lượng, đàm phán",
+            "hóa đơn",
+            "việc mua sắm, thu mua",
+            "lịch trình"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "wordId": "t1-v2",
+          "word": "invoice",
+          "phonetic": "/ˈɪnvɔɪs/",
+          "options": [
+            "thương lượng, đàm phán",
+            "việc mua sắm, thu mua",
+            "lịch trình",
+            "hóa đơn"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "wordId": "t1-v3",
+          "word": "procurement",
+          "phonetic": "/prəˈkjʊrmənt/",
+          "options": [
+            "hóa đơn",
+            "lịch trình",
+            "việc mua sắm, thu mua",
+            "thương lượng, đàm phán"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "wordId": "t2-v1",
+          "word": "itinerary",
+          "phonetic": "/aɪˈtɪnəreri/",
+          "options": [
+            "việc mua sắm, thu mua",
+            "lịch trình",
+            "thương lượng, đàm phán",
+            "hóa đơn"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "wordId": "t2-v2",
+          "word": "boarding pass",
+          "phonetic": "/ˈbɔːrdɪŋ pæs/",
+          "options": [
+            "thẻ lên máy bay",
+            "thương lượng, đàm phán",
+            "hóa đơn",
+            "việc mua sắm, thu mua"
+          ],
+          "correctIndex": 0
+        }
+      ],
+      "expectedStatus": "loaded"
+    },
+    {
+      "id": "QUIZ-02",
+      "name": "Only four distinct words",
+      "dailyGoal": 5,
+      "studiedTodayWordIds": [
+        "t1-v1",
+        "t1-v2",
+        "t1-v3",
+        "t2-v1"
+      ],
+      "expectedStatus": "unavailable",
+      "message": "Bạn cần học ít nhất 5 từ khác nhau hôm nay để tạo Quiz."
+    },
+    {
+      "id": "QUIZ-03",
+      "name": "All correct answers",
+      "dailyGoal": 5,
+      "studiedTodayWordIds": [
+        "t1-v1",
+        "t1-v2",
+        "t1-v3",
+        "t2-v1",
+        "t2-v2"
+      ],
+      "selectedOptionIndexes": [
+        0,
+        3,
+        2,
+        1,
+        0
+      ],
+      "expectedCorrectCount": 5
+    },
+    {
+      "id": "QUIZ-04",
+      "name": "All wrong answers",
+      "dailyGoal": 5,
+      "studiedTodayWordIds": [
+        "t1-v1",
+        "t1-v2",
+        "t1-v3",
+        "t2-v1",
+        "t2-v2"
+      ],
+      "selectedOptionIndexes": [
+        1,
+        0,
+        3,
+        2,
+        1
+      ],
+      "expectedCorrectCount": 0
+    },
+    {
+      "id": "QUIZ-05",
+      "name": "Partial result",
+      "dailyGoal": 5,
+      "studiedTodayWordIds": [
+        "t1-v1",
+        "t1-v2",
+        "t1-v3",
+        "t2-v1",
+        "t2-v2"
+      ],
+      "selectedOptionIndexes": [
+        0,
+        0,
+        2,
+        2,
+        0
+      ],
+      "expectedCorrectCount": 3
+    },
+    {
+      "id": "QUIZ-06",
+      "name": "Retake question ordering",
+      "dailyGoal": 5,
+      "firstAttemptWordIds": [
+        "t1-v1",
+        "t1-v2",
+        "t1-v3",
+        "t2-v1",
+        "t2-v2"
+      ],
+      "retakeWordIds": [
+        "t1-v2",
+        "t1-v3",
+        "t2-v1",
+        "t2-v2",
+        "t1-v1"
+      ],
+      "expected": "A retry must not reuse the exact previous question sequence when five eligible words are available."
+    }
+  ]
+}

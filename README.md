@@ -20,6 +20,7 @@ Chi tiết quyết định kiến trúc: xem `docs/` (tài liệu thiết kế).
 ```
 apps/
   web/                     Next.js (end-user)
+  mobile/                  Flutter (mobile app)
   admin-cms/               Next.js (admin)
 services/
   api-gateway/             NestJS (edge)
@@ -56,6 +57,8 @@ docker-compose.apps.yml    full-stack dev (backend + frontend, hot-reload)
 
 ## Cài đặt
 
+Hướng dẫn ngắn cho người mới: [Chạy Backend local (PowerShell)](docs/backend-quickstart.md).
+
 ```bash
 npm install
 npm run setup:env     # copy .env.example -> .env (root + từng service + app)
@@ -91,6 +94,44 @@ npm run apps:down
 ```
 
 > Chạy full-stack cần Docker Compose >= 2.22 (Compose Watch).
+
+QA P4 qua Gateway, chạy backend đã build trên Docker và bốn DB riêng:
+
+```bash
+npm run qa:build
+npm run qa:up
+# Generate bốn Prisma client trên host trước lần chạy đầu (xem scripts/qa/README.md).
+npm run qa:e2e        # E2E + smoke p95, tự dọn fixture
+npm run qa:seed       # Giữ lại đề demo 200 câu để thử API
+npm run qa:stop
+```
+
+Xem [hướng dẫn QA](scripts/qa/README.md) về namespace, tài khoản demo, healthcheck,
+migration và cách đọc báo cáo `artifacts/qa/latest.json`. Overlay QA dùng cùng
+cổng với dev; dừng backend đang chạy trước khi chuyển chế độ.
+
+## Mobile App (Flutter)
+
+Ứng dụng Flutter nằm tại `apps/mobile/`.
+
+```powershell
+cd apps/mobile
+flutter pub get
+flutter run
+```
+
+Kiểm tra mã nguồn:
+
+```powershell
+flutter analyze
+flutter test
+```
+
+Build APK debug:
+
+```powershell
+flutter build apk --debug
+```
 
 ## Script gốc
 
@@ -131,3 +172,18 @@ uv run uvicorn app.main:app --reload
 - Commit theo Conventional Commits; scope giới hạn trong `commitlint.config.js`.
 - Mỗi service có pipeline CI riêng theo path-filter (xem `.github/workflows/`).
 - Không commit secret; dùng biến môi trường / secret manager.
+
+## Frontend demo và API local/test
+
+Web: <http://localhost:3006>; CMS: <http://localhost:3007>. Mặc định DEMO; API dùng opt-in rõ ràng theo README của từng app, cookie HttpOnly và Gateway. Không chuyển sang fixture khi API lỗi, không tự chấm/đổi điểm. Thao tác ghi chỉ bật trên dataset local/test cô lập.
+
+**Cập nhật lượt 37, 03/11/2026:** Gateway và năm service đã chạy trên database test; Auth/Learning, Full/Part, CMS/media và Analytics đã có bằng chứng HTTP/browser thật. Đã kiểm tra storage, offline/mất phản hồi, request timeout, deadline 300 giây thật và sửa lỗi frontend. REVIEW còn chờ lịch backend; Settings, AI ownership, media catalog/delete và admin user detail còn giới hạn. Xem [ma trận đủ 8 task, bằng chứng và bàn giao lượt 37](docs/frontend-integration-session37.md), [lượt 36](docs/frontend-integration-session36.md), [README web](apps/web/README.md), [README CMS](apps/admin-cms/README.md). Các báo cáo trước giữ giá trị lịch sử.
+
+Build frontend trong bản sao cô lập, giữ cache dev gốc:
+
+```powershell
+$buildRun = 'tmp/frontend-build-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff')
+node scripts/qa/frontend-integration-build.cjs --api --evidence-dir "$buildRun/evidence" --build-dir "$buildRun/build"
+```
+
+Lệnh khởi chạy BE/FE trên manifest database test có sẵn, URL và index/reindex nằm trong [lượt 37](docs/frontend-integration-session37.md#chạy-lại-dự-án). [Lượt 39](docs/frontend-integration-session39.md) hoàn tất nghiệm thu UI đổi role/status, revoke phiên và audit trên tài khoản test mới; sửa stale success notice và bổ sung reconcile khi mất acknowledgment. REVIEW vẫn due0 ngày03/11, nextReviewDate04/11; bốn API/ownership còn thiếu chưa có source mới. Có script chỉ đọc `frontend-review-preflight.cjs` để kiểm tra điều kiện REVIEW. Stack do lượt39 tạo đã dừng sau nghiệm thu; luôn kiểm tra listener trước khi chạy lại, không seed/reset hoặc chạy migration cutover để làm kiểm thử đạt. [Lượt 38](docs/frontend-integration-session38.md) giữ bằng chứng preflight trước đó.

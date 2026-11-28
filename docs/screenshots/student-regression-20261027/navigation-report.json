@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "url": "http://localhost:3006/dashboard#main-content",
+      "title": "Chào Minh Anh,",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/study/grammar/present-perfect#lesson-section-1",
+      "title": "Thì hiện tại hoàn thành",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/study/grammar/present-perfect#lesson-section-1",
+      "title": "Thì hiện tại hoàn thành",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/dashboard#main-content",
+      "title": "Chào Minh Anh,",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/study/grammar/present-perfect#lesson-section-1",
+      "title": "Thì hiện tại hoàn thành",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/study/grammar/present-perfect#lesson-section-1",
+      "title": "Thì hiện tại hoàn thành",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/dashboard#main-content",
+      "title": "Chào Minh Anh,",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/study/grammar/present-perfect#lesson-section-1",
+      "title": "Thì hiện tại hoàn thành",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "url": "http://localhost:3006/study/grammar/present-perfect#lesson-section-1",
+      "title": "Thì hiện tại hoàn thành",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    }
+  ],
+  "errors": [],
+  "apiRequests": [],
+  "base": "http://localhost:3006",
+  "browser": "156.0.8078.47",
+  "completed": true
+}

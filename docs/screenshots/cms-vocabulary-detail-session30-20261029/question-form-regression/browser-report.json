@@ -1,0 +1,945 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Static new route opens a blank draft without ID, answer or difficulty defaults",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Per-field validation retains input and focuses stem, difficulty, missing option and answer",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Native radio arrow keys, sequential Tab, visible focus, optional explanation and preview heading focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long unbroken text and HTML stay literal without overflow; stale preview is clearly labeled",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Clear draft removes input/preview; reload starts a new blank RAM draft",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "List → create → fixed return preserves pagination and catalog; Back discards draft",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Detail → edit copy → preview/reset/reload → original/list preserves every filter and original content",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Only 017 links to editing; existing out-of-scope and unknown IDs have distinct panels",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Outbound links remove returnTo, detail tools and unknown params through existing allowlist",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "SYSTEM_ADMIN gets existing explanatory shell panel on both form routes",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Form remains in question navigation; mobile Escape restores focus; all stores and cookies empty",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Static new route opens a blank draft without ID, answer or difficulty defaults",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Per-field validation retains input and focuses stem, difficulty, missing option and answer",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Native radio arrow keys, sequential Tab, visible focus, optional explanation and preview heading focus",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long unbroken text and HTML stay literal without overflow; stale preview is clearly labeled",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Clear draft removes input/preview; reload starts a new blank RAM draft",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "List → create → fixed return preserves pagination and catalog; Back discards draft",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Detail → edit copy → preview/reset/reload → original/list preserves every filter and original content",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Only 017 links to editing; existing out-of-scope and unknown IDs have distinct panels",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Outbound links remove returnTo, detail tools and unknown params through existing allowlist",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "SYSTEM_ADMIN gets existing explanatory shell panel on both form routes",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Form remains in question navigation; mobile Escape restores focus; all stores and cookies empty",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Static new route opens a blank draft without ID, answer or difficulty defaults",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Per-field validation retains input and focuses stem, difficulty, missing option and answer",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Native radio arrow keys, sequential Tab, visible focus, optional explanation and preview heading focus",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long unbroken text and HTML stay literal without overflow; stale preview is clearly labeled",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Clear draft removes input/preview; reload starts a new blank RAM draft",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "List → create → fixed return preserves pagination and catalog; Back discards draft",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Detail → edit copy → preview/reset/reload → original/list preserves every filter and original content",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Only 017 links to editing; existing out-of-scope and unknown IDs have distinct panels",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Outbound links remove returnTo, detail tools and unknown params through existing allowlist",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "SYSTEM_ADMIN gets existing explanatory shell panel on both form routes",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Form remains in question navigation; mobile Escape restores focus; all stores and cookies empty",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Static new route opens a blank draft without ID, answer or difficulty defaults",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Per-field validation retains input and focuses stem, difficulty, missing option and answer",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Native radio arrow keys, sequential Tab, visible focus, optional explanation and preview heading focus",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long unbroken text and HTML stay literal without overflow; stale preview is clearly labeled",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Clear draft removes input/preview; reload starts a new blank RAM draft",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "List → create → fixed return preserves pagination and catalog; Back discards draft",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Detail → edit copy → preview/reset/reload → original/list preserves every filter and original content",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Only 017 links to editing; existing out-of-scope and unknown IDs have distinct panels",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Outbound links remove returnTo, detail tools and unknown params through existing allowlist",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "SYSTEM_ADMIN gets existing explanatory shell panel on both form routes",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Form remains in question navigation; mobile Escape restores focus; all stores and cookies empty",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "new-empty-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "validation-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "keyboard-focus-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "preview-valid-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-literal-preview-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-literal-explanation-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "edit-preview-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "edit-restored-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-018-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-001-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "not-found-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "system-persona-panel-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "new-empty-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "validation-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "keyboard-focus-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "preview-valid-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-literal-preview-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-literal-explanation-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "edit-preview-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "edit-restored-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-018-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-001-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "not-found-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "system-persona-panel-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "new-empty-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "validation-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "keyboard-focus-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "preview-valid-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-literal-preview-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-literal-explanation-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "edit-preview-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "edit-restored-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-018-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-001-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "not-found-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "system-persona-panel-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "new-empty-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "validation-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "keyboard-focus-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "preview-valid-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-literal-preview-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-literal-explanation-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "edit-preview-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "edit-restored-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-018-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "out-of-scope-demo-q-001-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "not-found-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "system-persona-panel-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "storageWrites": [],
+  "browser": "156.0.8078.48",
+  "completed": true
+}

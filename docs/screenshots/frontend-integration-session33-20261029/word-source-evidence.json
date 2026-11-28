@@ -1,0 +1,687 @@
+{
+  "SRS.docx": {
+    "sha256": "e1e3d2dfaac745e9b75e79769da6b945aa79d388cdac2f0e0bcd25a59f0d83fe",
+    "paragraphs": [
+      {
+        "paragraph": 115,
+        "text": "–          Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung."
+      },
+      {
+        "paragraph": 161,
+        "text": "HTTP 201 (Created): Trả về đối tượng User gồm user_id (UUIDv4), email, full_name, role (USER), status (INACTIVE), created_at."
+      },
+      {
+        "paragraph": 166,
+        "text": "Tài khoản mới mặc định ở trạng thái INACTIVE; hệ thống gửi email kích hoạt và tự động chuyển sang ACTIVE sau khi người dùng xác thực liên kết. Tự động gán vai trò mặc định là USER cho mọi tài khoản đăng ký mới."
+      },
+      {
+        "paragraph": 177,
+        "text": "Tài khoản ở trạng thái SUSPENDED hoặc INACTIVE không thể đăng nhập."
+      },
+      {
+        "paragraph": 183,
+        "text": "Đối với Học viên: full_name (Chuỗi), avatar_key (Chuỗi), phone_number (Chuỗi)."
+      },
+      {
+        "paragraph": 184,
+        "text": "Đối với System Admin: user_id (UUIDv4), status (Enum: ACTIVE, SUSPENDED, INACTIVE), roles (Mảng Enum: SYSTEM_ADMIN, CONTENT_ADMIN, USER)."
+      },
+      {
+        "paragraph": 194,
+        "text": "Dữ liệu đầu vào (Inputs): user_id (lấy từ JWT), client_device_id (Chuỗi), version (Số nguyên monotonic), state_payload (JSON Object)."
+      },
+      {
+        "paragraph": 208,
+        "text": "File ghi âm (.mp3, tối đa 5MB) và ảnh (.png/.jpg/.webp, tối đa 2MB) tải lên qua S3 Presigned URL trực tiếp từ Client để giải phóng băng thông Gateway."
+      },
+      {
+        "paragraph": 224,
+        "text": "Dữ liệu đầu vào (Inputs): test_title (Chuỗi), test_type (Enum: FULL_TEST, MINI_TEST), duration_seconds (Số nguyên: 7200 giây cho Full Test 120 phút; 1800 giây cho Mini Test 30 phút), question_ids (Mảng UUID câu hỏi)."
+      },
+      {
+        "paragraph": 231,
+        "text": "Dữ liệu đầu vào (Inputs): test_id (UUIDv4), user_id (lấy từ JWT), user_answers (Mảng JSON: [{question_id, selected_option}])."
+      },
+      {
+        "paragraph": 242,
+        "text": "Bắt buộc kiểm tra quyền sở hữu bản ghi: Học viên chỉ được phép xem bài làm của chính mình (attempt.user_id === jwt.user_id)."
+      },
+      {
+        "paragraph": 257,
+        "text": "Dữ liệu đầu vào (Inputs): lesson_title (Chuỗi), category (Chuỗi), content_markdown (Văn bản định dạng Markdown chứa cấu trúc bài học và ví dụ)."
+      },
+      {
+        "paragraph": 260,
+        "text": "content_markdown bắt buộc tuân thủ chuẩn Markdown để các ứng dụng Client (Next.js/Flutter) render giao diện chuẩn xác."
+      },
+      {
+        "paragraph": 263,
+        "text": "Mô tả chức năng: Học viên học từ vựng qua Flashcard (áp dụng thuật toán SM-2), làm bài trắc nghiệm nhanh 5 câu và đọc bài giảng ngữ pháp."
+      },
+      {
+        "paragraph": 267,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) kèm thông số SM-2 mới (interval, easinessFactor, nextReviewDate)."
+      },
+      {
+        "paragraph": 269,
+        "text": "Thuật toán SuperMemo-2 (SM-2)."
+      },
+      {
+        "paragraph": 278,
+        "text": "Dữ liệu đầu vào (Inputs): user_id (lấy từ JWT), time_range (Enum: LAST_7_DAYS, LAST_30_DAYS, ALL_TIME)."
+      },
+      {
+        "paragraph": 282,
+        "text": "Thuật toán dự đoán điểm TOEIC: Chỉ kích hoạt tính toán khi học viên làm tối thiểu 3 bài thi thử trong 30 ngày gần nhất."
+      },
+      {
+        "paragraph": 291,
+        "text": "Trọng số theo độ mới: w = [0.5, 0.3, 0.2] (bài mới nhất w=0.5)."
+      },
+      {
+        "paragraph": 293,
+        "text": "Chỉ kích hoạt khi có ≥3 bài trong 30 ngày gần nhất; nếu chưa đủ → trả null/không hiển thị."
+      },
+      {
+        "paragraph": 302,
+        "text": "Dữ liệu đầu vào (Inputs): user_id (lấy từ JWT), message_content (Chuỗi, max 1000 ký tự), context_question_id (UUIDv4, tùy chọn)."
+      },
+      {
+        "paragraph": 328,
+        "text": "Kích hoạt"
+      },
+      {
+        "paragraph": 339,
+        "text": "Hệ thống (API Gateway & Test/Exam Service) xác thực quyền truy cập, tải cấu trúc đề thi, gọi Question Bank Service qua gRPC để lấy danh sách câu hỏi và kích hoạt đồng hồ đếm ngược thời gian làm bài thực tế."
+      },
+      {
+        "paragraph": 361,
+        "text": "2. Tự động gom toàn bộ các câu trả lời học viên đã thực hiện tính tới thời điểm hiện tại và tự động kích hoạt tiến trình gửi bài nộp về Server."
+      },
+      {
+        "paragraph": 388,
+        "text": "Kích hoạt"
+      },
+      {
+        "paragraph": 419,
+        "text": "1. Bộ ngắt mạch (Circuit Breaker) của AI Chatbox Service kích hoạt sau 10 giây không có phản hồi."
+      },
+      {
+        "paragraph": 440,
+        "text": "Kích hoạt"
+      },
+      {
+        "paragraph": 441,
+        "text": "Học viên mở ứng dụng trên thiết bị mới, hoặc thiết bị định kỳ (mỗi 5 phút) tự động kích hoạt kiểm tra đồng bộ dữ liệu với máy chủ."
+      },
+      {
+        "paragraph": 451,
+        "text": "Ứng dụng ghi nhận tiến trình vào bộ nhớ cục bộ, đồng thời đóng gói payload JSON chứa user_id, client_device_id, version (khóa so sánh LWW) và dữ liệu trạng thái mới để gửi lên API Gateway."
+      },
+      {
+        "paragraph": 493,
+        "text": "Quản trị viên tiến hành thêm, sửa đổi, hoặc xóa câu hỏi trong hệ thống CMS quản trị. Để tối ưu băng thông API Gateway, các tệp âm thanh nghe (.mp3) và hình ảnh minh họa (.png) được tải trực tiếp lên Object Storage (S3/MinIO) thông qua cơ chế Presigned URL. Sau khi ghi nhận dữ liệu câu hỏi thành công, hệ thống sử dụng Transactional Outbox để đồng bộ bất đồng bộ sang module Search (trong Question Bank Service) nhằm cập nhật chỉ mục tìm kiếm gần thời gian thực."
+      },
+      {
+        "paragraph": 496,
+        "text": "Kích hoạt"
+      },
+      {
+        "paragraph": 507,
+        "text": "Giao diện tự động kích hoạt tiến trình gửi yêu cầu tạo Presigned URL lên Question Bank Service thông qua API Gateway."
+      },
+      {
+        "paragraph": 510,
+        "text": "Question Bank Service gọi API Object Storage (S3/MinIO) để lấy đường dẫn tải tệp trực tiếp (Presigned URL) có thời gian hết hạn ngắn (5 phút), phản hồi về cho Client kèm token bảo mật."
+      },
+      {
+        "paragraph": 513,
+        "text": "Ứng dụng Client thực hiện gửi yêu cầu HTTP PUT trực tiếp lên Object Storage bằng Presigned URL để upload file, nhận mã HTTP 200 (OK) báo upload thành công."
+      },
+      {
+        "paragraph": 533,
+        "text": "1. Question Bank Service kích hoạt tiến trình dọn dẹp (Cleanup) tự động xóa tệp đã upload lên Object Storage để tránh lãng phí bộ nhớ."
+      },
+      {
+        "paragraph": 554,
+        "text": "Học viên tiến hành học từ vựng mới và ôn tập từ cũ theo từng chủ đề thông qua Flashcard thông minh. Hệ thống tự động phát âm giọng đọc chuẩn của từ vựng từ Object Storage (CDN) và hỗ trợ học viên tự đánh giá mức độ ghi nhớ của mình. Dựa trên đánh giá đó, hệ thống áp dụng Thuật toán lặp lại ngắt quãng SuperMemo-2 (SM-2) để tự động tính toán thời điểm và khoảng cách ngày ôn tập tối ưu tiếp theo cho từ vựng đó. Sau khi hoàn thành thẻ học, học viên thực hiện một bài trắc nghiệm nhanh 5 câu để củng cố và ghi nhận tiến độ."
+      },
+      {
+        "paragraph": 557,
+        "text": "Kích hoạt"
+      },
+      {
+        "paragraph": 582,
+        "text": "Hệ thống áp dụng thuật toán SM-2, lưu trữ và đồng bộ."
+      },
+      {
+        "paragraph": 656,
+        "text": "1. Hệ thống gửi email kích hoạt tài khoản thành công trong vòng 5 giây sau khi nhấn đăng ký."
+      },
+      {
+        "paragraph": 659,
+        "text": "1. Gửi yêu cầu đăng ký trên giao diện người dùng, sử dụng đồng hồ đo thời gian thực để đo độ trễ gửi email kích hoạt."
+      },
+      {
+        "paragraph": 689,
+        "text": "2. Chạy bộ Unit Test tích hợp để kiểm chứng thuật toán tính điểm dự đoán dựa trên trọng số [0.5, 0.3, 0.2] theo 3 bài thi gần nhất hoạt động đúng thiết kế toán học."
+      },
+      {
+        "paragraph": 696,
+        "text": "2. Gửi liên tục 21 tin nhắn trong ngày để kiểm tra cơ chế chặn Rate Limiter tại API Gateway. Giả lập lỗi timeout của LLM ngoài để kiểm tra bộ ngắt mạch (Circuit Breaker) có kích hoạt trả về kết quả fallback mặc định hay không."
+      },
+      {
+        "paragraph": 707,
+        "text": "2. Sử dụng cơ chế Presigned URL để upload file trực tiếp, và đồng bộ bất đồng bộ thành công sang module Search qua Outbox Pattern."
+      },
+      {
+        "paragraph": 709,
+        "text": "1. Sử dụng công cụ giám sát mạng (Chrome DevTools Network), xác nhận file âm thanh được upload trực tiếp từ client lên S3/MinIO bằng Presigned URL thành công mà không đi qua payload REST chính của API Gateway."
+      }
+    ]
+  },
+  "tai_lieu_thiet_ke_CSDL.docx": {
+    "sha256": "a6d70a829ef84efbc67c42d1386c756ecd55875389ab61d3d4590276122dba13",
+    "paragraphs": [
+      {
+        "paragraph": 47,
+        "text": "Chủ đề, từ vựng, bài ngữ pháp, SM-2, phiên học, quiz nhanh, outbox"
+      },
+      {
+        "paragraph": 221,
+        "text": "Tài khoản và hồ sơ: user_id UUID, email varchar(320), password_hash varchar(60), full_name varchar(255), avatar_key text, phone_number varchar(32), status, failed_login_count, locked_until, timestamps"
+      },
+      {
+        "paragraph": 222,
+        "text": "PK user_id; candidate key email; email, full_name bắt buộc khi đăng ký; avatar, phone, locked_until NULL; status mặc định INACTIVE; failed count mặc định 0"
+      },
+      {
+        "paragraph": 229,
+        "text": "Gán nhiều vai trò cho một User: user_id, role_code, assigned_at"
+      },
+      {
+        "paragraph": 230,
+        "text": "PK ghép (user_id, role_code)"
+      },
+      {
+        "paragraph": 237,
+        "text": "Liên kết Google Facebook: provider, provider_subject, user_id"
+      },
+      {
+        "paragraph": 245,
+        "text": "Trạng thái hợp nhất LWW: user_id, client_device_id, state_payload JSONB, client_timestamp, server_updated_at, version BIGINT"
+      },
+      {
+        "paragraph": 246,
+        "text": "PK (user_id, client_device_id); version BIGINT monotonic dùng làm khóa LWW; các trường đồng bộ bắt buộc"
+      },
+      {
+        "paragraph": 285,
+        "text": "Đề thi: test_id, title, type FULL_TEST/MINI_TEST, duration_seconds, timestamps, deleted_at"
+      },
+      {
+        "paragraph": 287,
+        "text": "FULL_TEST 120 phút và 200 câu; MINI_TEST 30 phút"
+      },
+      {
+        "paragraph": 293,
+        "text": "Một lần thi: attempt_id, test_id, user_id logic, status, started/submitted/completed timestamps, điểm và số câu đúng"
+      },
+      {
+        "paragraph": 319,
+        "text": "Bài ngữ pháp: lesson_id, lesson_title, category, content_markdown, timestamps, deleted_at"
+      },
+      {
+        "paragraph": 323,
+        "text": "Trạng thái SM-2 theo user và từ: user_id, vocabulary_id, quality, interval_days, easiness_factor, repetition_number, next_review_date, updated_at"
+      },
+      {
+        "paragraph": 324,
+        "text": "PK ghép (user_id, vocabulary_id); user_id là logic xuyên service"
+      },
+      {
+        "paragraph": 325,
+        "text": "quality 0-5; SM-2; mỗi user-từ chỉ một trạng thái hiện hành"
+      },
+      {
+        "paragraph": 327,
+        "text": "Trạng thái bài học: user_id, lesson_id, status COMPLETED, completed_at"
+      },
+      {
+        "paragraph": 328,
+        "text": "PK ghép (user_id, lesson_id)"
+      },
+      {
+        "paragraph": 331,
+        "text": "Phiên flashcard/quiz: session_id, user_id, topic_id, idempotency_key, status, quiz_score, quiz_total, timestamps"
+      },
+      {
+        "paragraph": 337,
+        "text": "Chứng cứ đầu vào cho SM-2 và kết quả phiên"
+      },
+      {
+        "paragraph": 353,
+        "text": "Bản chiếu TestSubmittedEvent: attempt_id, user_id, score_listening, score_reading, total_score, completed_at"
+      },
+      {
+        "paragraph": 357,
+        "text": "VocabularyLearned/LessonCompleted: event_id, user_id, activity_type, entity_id, occurred_at"
+      },
+      {
+        "paragraph": 361,
+        "text": "Tổng hợp hiện hành: user_id, streak, learned count, lesson count, test count, predicted score, updated_at"
+      },
+      {
+        "paragraph": 362,
+        "text": "PK user_id"
+      },
+      {
+        "paragraph": 365,
+        "text": "Vùng yếu của user: user_id, area_code, weakness_score, calculated_at"
+      },
+      {
+        "paragraph": 366,
+        "text": "PK ghép (user_id, area_code)"
+      },
+      {
+        "paragraph": 375,
+        "text": "Hội thoại: conversation_id, user_id logic, created/updated"
+      },
+      {
+        "paragraph": 376,
+        "text": "PK conversation_id; user_id bắt buộc"
+      },
+      {
+        "paragraph": 383,
+        "text": "Bộ đếm user/ngày: user_id, usage_date, used_count, updated_at"
+      },
+      {
+        "paragraph": 384,
+        "text": "PK ghép (user_id, usage_date); count mặc định 0"
+      },
+      {
+        "paragraph": 425,
+        "text": "actor_user_id xác định quản trị viên thực hiện thao tác."
+      },
+      {
+        "paragraph": 432,
+        "text": "target_user_id xác định tài khoản bị tác động."
+      },
+      {
+        "paragraph": 474,
+        "text": "user_id là Logical Reference và quyền sở hữu được kiểm tra tại Backend."
+      },
+      {
+        "paragraph": 523,
+        "text": "user_id là Logical Reference xuyên Service."
+      },
+      {
+        "paragraph": 627,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 651,
+        "text": "avatar_key"
+      },
+      {
+        "paragraph": 656,
+        "text": "Thuộc tính avatar key theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "paragraph": 723,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 753,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 793,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 838,
+        "text": "actor_user_id"
+      },
+      {
+        "paragraph": 844,
+        "text": "target_user_id"
+      },
+      {
+        "paragraph": 883,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 1282,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 1579,
+        "text": "content_markdown"
+      },
+      {
+        "paragraph": 1612,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 1669,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 1713,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 1892,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 1943,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 1976,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2033,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2071,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2149,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2184,
+        "text": "user_id, expires_at"
+      },
+      {
+        "paragraph": 2186,
+        "text": "UNIQUE (provider, provider_subject); index user_id"
+      },
+      {
+        "paragraph": 2190,
+        "text": "PK (user_id, client_device_id); không unique client_timestamp; khóa so sánh LWW = version"
+      },
+      {
+        "paragraph": 2201,
+        "text": "‘INACTIVE’"
+      },
+      {
+        "paragraph": 2383,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2385,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2399,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2401,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2407,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2409,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2415,
+        "text": "actor_user_id"
+      },
+      {
+        "paragraph": 2417,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2423,
+        "text": "target_user_id"
+      },
+      {
+        "paragraph": 2425,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2431,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2433,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 2564,
+        "text": "PK đã cover user_id nên chỉ cần chiều ngược"
+      },
+      {
+        "paragraph": 2591,
+        "text": "(user_id, completed_at DESC)"
+      },
+      {
+        "paragraph": 2600,
+        "text": "(user_id,next_review_date)"
+      }
+    ]
+  },
+  "Thiet_ke_kien_truc_Storage.docx": {
+    "sha256": "d6e3d72a58b6262e2724c636c5acca7071b975c9a64b9c94e55395d392d89bc3",
+    "paragraphs": [
+      {
+        "paragraph": 1,
+        "text": "Tài liệu kiến trúc xác định MinIO là Object Storage self-hosted, đồng thời client sẽ xin Presigned URL từ backend rồi upload trực tiếp lên S3/MinIO, tránh đi qua API Gateway. Tài liệu database cũng dùng các trường avatar_key, audio_key, image_key để tham chiếu đến object trên MinIO."
+      },
+      {
+        "paragraph": 3,
+        "text": "Điểm quan trọng của kiến trúc:- File không đi qua NestJS/API Gateway.- Backend chỉ chịu trách nhiệm: Xác thực user, kiểm tra quyền, sinh object key, sinh Presigned URL, và lưu audio_key/image_key/avatar_key vào PostgreSQL.- Client upload (Presigned) trực tiếp lên MinIO; download media công khai qua CDN."
+      },
+      {
+        "paragraph": 13,
+        "text": "Avatar, file riêng của user"
+      },
+      {
+        "paragraph": 14,
+        "text": "Không (private, presigned)"
+      },
+      {
+        "paragraph": 21,
+        "text": "3.3 Avatar"
+      },
+      {
+        "paragraph": 22,
+        "text": "Avatar: avatars/{user_id}/avatar.jpg"
+      },
+      {
+        "paragraph": 27,
+        "text": "1. Frontend gọi API POST /api/v1/questions/{id}/media/presign2. Backend (Question Service) xác thực, sinh object key và Presigned URL trả về cho Frontend.3. Frontend PUT trực tiếp file lên MinIO bằng URL vừa nhận.4. Backend cập nhật audio_key/image_key vào database. Avatar: PATCH /api/v1/users/me/avatar/presign (bucket toeic-user). Vocabulary audio: POST /api/v1/learning/vocabularies/{id}/media/presign (bucket toeic-media)."
+      },
+      {
+        "paragraph": 31,
+        "text": "- toeic-media: Public-read = ON (phục vụ qua CDN). toeic-user: Private (chỉ truy cập qua Presigned URL).- Phân quyền theo Microservice (IAM policy theo bucket/prefix; object key lưu trong DB không kèm bucket): "
+      },
+      {
+        "paragraph": 34,
+        "text": "Auth Service trên toeic-user/avatars/*. Các service còn lại (Exam, Analytics, AI) không sở hữu prefix media và không truy cập trực tiếp bucket."
+      },
+      {
+        "paragraph": 43,
+        "text": "5 MB"
+      },
+      {
+        "paragraph": 47,
+        "text": "2 MB"
+      },
+      {
+        "paragraph": 51,
+        "text": "2 MB"
+      },
+      {
+        "paragraph": 55,
+        "text": "5 MB"
+      },
+      {
+        "paragraph": 56,
+        "text": "Avatar"
+      },
+      {
+        "paragraph": 59,
+        "text": "2 MB"
+      },
+      {
+        "paragraph": 66,
+        "text": "Kết luận thiết kế:- PostgreSQL = metadata + business data.- MinIO = binary/object data.- Presigned URL = upload; download/play qua CDN (media công khai) hoặc Presigned (file riêng tư).- toeic-media = public-read qua CDN; toeic-user = private.- Microservice sở hữu prefix/domain của mình."
+      }
+    ]
+  },
+  "Thiết kế Event.docx": {
+    "sha256": "c1bc6bb143bdaaa871bf0c07716baf0ba19ed2e25a16e535b2e4d8c86a3c734d",
+    "paragraphs": [
+      {
+        "paragraph": 7,
+        "text": "Điều kiện kích hoạt (Trigger): Phát ra sau khi hệ thống lưu attempt (kết quả làm"
+      },
+      {
+        "paragraph": 24,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 60,
+        "text": "Điều kiện kích hoạt (Trigger): Phát ra khi dữ liệu ở các bảng questions, question_options, và tags được ghi/thay đổi trong cùng một transaction."
+      },
+      {
+        "paragraph": 85,
+        "text": "Điều kiện kích hoạt (Trigger): Phát ra khi đánh dấu hoàn thành bài học ngữ pháp hoặc khi đạt điều kiện nghiệp vụ trong thuật toán Spaced Repetition (SM-2) lúc ôn tập từ vựng."
+      },
+      {
+        "paragraph": 101,
+        "text": "user_id"
+      },
+      {
+        "paragraph": 118,
+        "text": "Điều kiện kích hoạt (Trigger): Kích hoạt sau khi tiến trình đồng bộ trạng thái đa thiết bị được ghi nhận thành công theo cơ chế Last-Write-Wins."
+      },
+      {
+        "paragraph": 131,
+        "text": "user_id"
+      }
+    ]
+  },
+  "Thiết kế hệ thống.docx": {
+    "sha256": "c766590ca504f42d54205f5c09182aae8003aa47916db8e6bb9988c354f14ecb",
+    "paragraphs": [
+      {
+        "paragraph": 8,
+        "text": "id, email, password_hash, full_name, avatar_key, phone_number, status, failed_login_count, locked_until, created_at, updated_at"
+      },
+      {
+        "paragraph": 14,
+        "text": "user_id, role_code"
+      },
+      {
+        "paragraph": 17,
+        "text": "id, user_id, token_hash, expires_at, revoked_at, created_at"
+      },
+      {
+        "paragraph": 20,
+        "text": "audit_id, actor_user_id, target_user_id, action, before_data, after_data, occurred_at"
+      },
+      {
+        "paragraph": 23,
+        "text": "user_id, client_device_id, state_payload, client_timestamp, server_updated_at, version"
+      },
+      {
+        "paragraph": 56,
+        "text": "Khóa/kích hoạt tài khoản."
+      },
+      {
+        "paragraph": 113,
+        "text": "/api/v1/questions/{id}/media/presign"
+      },
+      {
+        "paragraph": 114,
+        "text": "Tạo presigned URL để upload media trực tiếp lên S3/MinIO."
+      },
+      {
+        "paragraph": 134,
+        "text": "attempt_id, test_id, user_id, started_at, submitted_at, completed_at, status, score_listening, score_reading, total_score, correct_listening_count, correct_reading_count"
+      },
+      {
+        "paragraph": 177,
+        "text": "Mục đích: cung cấp nội dung học từ vựng, flashcard, bài học ngữ pháp và lưu tiến độ học. Đây cũng là nơi thực hiện thuật toán Spaced Repetition SM-2 theo SRS."
+      },
+      {
+        "paragraph": 189,
+        "text": "lesson_id, lesson_title, category, content_markdown"
+      },
+      {
+        "paragraph": 192,
+        "text": "user_id, vocabulary_id, quality, interval_days, easiness_factor, repetition_number, next_review_date, updated_at"
+      },
+      {
+        "paragraph": 193,
+        "text": "Trạng thái SM-2 theo từng user-vocabulary."
+      },
+      {
+        "paragraph": 195,
+        "text": "user_id, lesson_id, status, completed_at, updated_at"
+      },
+      {
+        "paragraph": 198,
+        "text": "session_id, user_id, topic_id, idempotency_key, status, quiz_score, quiz_total, started_at, completed_at"
+      },
+      {
+        "paragraph": 222,
+        "text": "Gửi chất lượng nhớ q và cập nhật SM-2."
+      },
+      {
+        "paragraph": 240,
+        "text": "SRS yêu cầu SM-2. Với chất lượng trả lời q từ 0 đến 5, hệ số dễ nhớ được cập nhật theo công thức:"
+      },
+      {
+        "paragraph": 253,
+        "text": "user_id, learning_streak_days, longest_streak, vocabularies_learned, grammar_lessons_completed, mock_test_count, predicted_toeic_score, updated_at"
+      },
+      {
+        "paragraph": 259,
+        "text": "attempt_id, user_id, test_id, score_listening, score_reading, total_score, completed_at"
+      },
+      {
+        "paragraph": 262,
+        "text": "event_id, user_id, activity_type, entity_id, occurred_at"
+      },
+      {
+        "paragraph": 265,
+        "text": "user_id, area_code, weakness_score, calculated_at"
+      },
+      {
+        "paragraph": 293,
+        "text": "Thuật toán dự đoán kích hoạt khi user có tối thiểu 3 bài thi thử trong 30 ngày gần nhất. Công thức: lấy tối đa 3 bài gần nhất với trọng số [0.5, 0.3, 0.2] (bài mới nhất 0.5). predicted_toeic_score = clamp(round5(Σ(wᵢ·total_scoreᵢ)/Σwᵢ), 10, 990)."
+      },
+      {
+        "paragraph": 301,
+        "text": "conversation_id, user_id, created_at, updated_at"
+      },
+      {
+        "paragraph": 307,
+        "text": "user_id, usage_date, used_count, updated_at"
+      },
+      {
+        "paragraph": 334,
+        "text": "1. API nhận user_id từ JWT, message_content tối đa 1000 ký tự và context_question_id tùy chọn."
+      },
+      {
+        "paragraph": 345,
+        "text": "Tải tệp Đa phương tiện (Presigned URL): Khi tải lên các tệp audio .mp3 hoặc ảnh .png (Part 1-4, Flashcard), Client xin cấp Presigned URL từ dịch vụ backend, sau đó đẩy trực tiếp dữ liệu lên AWS S3/MinIO nhằm tránh nghẽn băng thông tại API Gateway."
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/learning/admin/lessons"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Idempotency-Key
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "lessonTitle": "string",
+      "category": "string",
+      "contentMarkdown": "string",
+      "status": "PUBLISHED"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "lessonTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "contentMarkdown": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "DRAFT",
+            "PUBLISHED"
+          ]
+        }
+      },
+      "required": [
+        "lessonTitle",
+        "category",
+        "contentMarkdown",
+        "status"
+      ]
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/createLesson.resources/examples
+order: 2000

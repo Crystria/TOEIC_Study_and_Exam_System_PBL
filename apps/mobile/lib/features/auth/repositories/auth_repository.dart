@@ -1,0 +1,79 @@
+import '../../../shared/models/app_user.dart';
+import '../models/email_action_ticket.dart';
+import '../models/registration_result.dart';
+import '../models/auth_repository_exception.dart';
+
+export '../models/auth_repository_exception.dart';
+
+/// Feature boundary for Auth/Profile data.
+///
+/// Test Data and API implementations share this contract. Methods not supported by
+/// the current Backend deliberately fail instead of pretending to succeed.
+abstract class AuthRepository {
+  /// Capabilities are owned by the configured implementation, not the UI.
+  bool get supportsProfileUpdates => false;
+  bool get supportsAvatarUpload => false;
+  bool get supportsPasswordChange => false;
+
+  /// Whether the configured implementation accepts a username as well as email.
+  bool get supportsUsernameLogin => false;
+
+  /// Whether the configured implementation supports the password-reset flow.
+  bool get supportsPasswordReset => false;
+
+  Future<AppUser> login({required String identifier, required String password});
+
+  Future<RegistrationResult> register({
+    required String fullName,
+    required String email,
+    required String password,
+    required String confirmPassword,
+  });
+
+  Future<EmailActionTicket> requestPasswordReset({required String email});
+
+  Future<EmailActionTicket> requestEmailVerification({required String email});
+
+  Future<void> resetPassword({
+    required String token,
+    required String newPassword,
+  });
+
+  Future<void> changePassword({
+    required String userId,
+    required String currentPassword,
+    required String newPassword,
+  });
+
+  /// Backend verify-email returns a message, not an AppUser or session.
+  Future<void> verifyEmail({required String token});
+
+  /// Test Data repository has no persistent session; API repository overrides this.
+  Future<AppUser?> restoreSession() async => null;
+
+  /// Returns whether server-side logout was confirmed.
+  Future<bool> logout() async => true;
+
+  Future<AppUser> updateProfile({
+    required String userId,
+    required String fullName,
+    required String? phoneNumber,
+  }) async {
+    throw const AuthRepositoryException(
+      'Repository hiện chưa hỗ trợ cập nhật hồ sơ.',
+    );
+  }
+
+  /// Uploads an avatar through the Backend presign -> object storage PUT ->
+  /// confirm flow. [imageBytes] are supplied by the presentation layer; the
+  /// repository does not depend on a device file-picker package.
+  Future<AppUser> updateAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String contentType,
+  }) async {
+    throw const AuthRepositoryException(
+      'Repository hiện chưa hỗ trợ cập nhật ảnh đại diện.',
+    );
+  }
+}

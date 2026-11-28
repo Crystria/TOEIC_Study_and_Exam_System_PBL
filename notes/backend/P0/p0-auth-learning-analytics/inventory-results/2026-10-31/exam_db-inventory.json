@@ -1,0 +1,77 @@
+{
+  "checks": {
+    "archivedTests": 0,
+    "orphanAttemptParts": 0,
+    "invalidCorrectCounts": 0,
+    "orphanAttemptAnswers": 0,
+    "invalidPracticeAccuracy": 0,
+    "invalidAttemptPartCounts": 0,
+    "completedAttemptsWithoutTime": 0,
+    "completedPartWithScaledScore": 0,
+    "newFullCompletedInvalidScoreFields": 0,
+    "legacyAttemptsWithoutSnapshotVersion": 0,
+    "terminalAttemptsWithRawScoreEqualityNotProofOfPlaceholder": 0
+  },
+  "outbox": {
+    "unpublished": 0,
+    "deadLettered": 0,
+    "v2NamedEvents": 0,
+    "oldestUnpublishedAt": null,
+    "payloadWithEnvelopeVersion2": 0,
+    "payloadWithScoringProvenance": 0
+  },
+  "database": "exam_db",
+  "isolation": "repeatable read",
+  "rowCounts": {
+    "tests": 0,
+    "attempts": 0,
+    "attempt_parts": 0,
+    "outbox_events": 0,
+    "test_questions": 0,
+    "attempt_answers": 0,
+    "attempt_start_requests": 0,
+    "attempt_group_snapshots": 0,
+    "attempt_question_snapshots": 0
+  },
+  "capturedAt": "2026-10-31T22:17:38.262857+07:00",
+  "migrations": [
+    {
+      "name": "20261012084039_init",
+      "checksum": "2d19f44f99e037e7cc44a6d93295acc6bf3d42849eef77eba0150b540e1b3fe5",
+      "finishedAt": "2026-10-12T15:40:39.166145+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    },
+    {
+      "name": "20261027090100_p0_attempt_mode_snapshot",
+      "checksum": "060edf92e15634ce5891cd5e936c3fd2684f52122b0b637200e014d6a6e768ad",
+      "finishedAt": "2026-10-27T06:38:21.906285+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    },
+    {
+      "name": "20261027090300_p0_drop_legacy_attempt_indexes",
+      "checksum": "30e3c01d8fb2f1188eb8d19fbd35ac06e61e28bedad8d3215e25a34b13316309",
+      "finishedAt": "2026-10-27T06:38:58.457604+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    },
+    {
+      "name": "20261027110000_p3_attempt_workflow",
+      "checksum": "8f4bdf223c1e2a9ac8470b18c014461d62fd7b229dec2ded6dd3445594f73797",
+      "finishedAt": "2026-10-27T08:44:05.985863+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    },
+    {
+      "name": "20261027111000_p3_snapshot_position",
+      "checksum": "71a4f11ecf11b974f24d625920bf7dab46d0a84e25a8bd850624809c4b2a4883",
+      "finishedAt": "2026-10-27T08:44:06.015917+07:00",
+      "appliedSteps": 1,
+      "rolledBackAt": null
+    }
+  ],
+  "attemptGroups": [],
+  "outboxEventGroups": [],
+  "transactionReadOnly": "on"
+}

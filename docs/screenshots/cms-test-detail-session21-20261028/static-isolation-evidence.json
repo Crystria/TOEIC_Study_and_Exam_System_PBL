@@ -1,0 +1,85 @@
+{
+  "files": [
+    {
+      "file": "apps/admin-cms/src/lib/tests/detail-types.ts",
+      "sha256": "62bcd2cc3e718003f3140a7df5353196dc57e2779678ae673333b245fd95d24c",
+      "imports": [
+        "./types"
+      ],
+      "forbiddenIO": false
+    },
+    {
+      "file": "apps/admin-cms/src/lib/tests/detail-availability.ts",
+      "sha256": "f6a990d2ead9f125e2f190c27584252881cc43511ba7e103515df0e79ec06164",
+      "imports": [],
+      "forbiddenIO": false
+    },
+    {
+      "file": "apps/admin-cms/src/lib/tests/detail-fixtures.ts",
+      "sha256": "1ead10ad23df4c672dc2b7c268c81541e88e61daa2ed678d8b021986bf5474a8",
+      "imports": [
+        "./fixtures",
+        "./detail-availability",
+        "./detail-types"
+      ],
+      "forbiddenIO": false
+    },
+    {
+      "file": "apps/admin-cms/src/lib/tests/detail-navigation.ts",
+      "sha256": "cd9769a2e9073b962308008b911c2a3e7e2b8ddaf5838dece5a9b13f75cb6e21",
+      "imports": [
+        "./query",
+        "./detail-types"
+      ],
+      "forbiddenIO": false
+    },
+    {
+      "file": "apps/admin-cms/src/lib/tests/detail-repository.ts",
+      "sha256": "c83c1644d62dfe243c969feb816cd691c423d9fe85d11428ce2114e097264eac",
+      "imports": [
+        "./fixtures",
+        "./detail-fixtures",
+        "./detail-types"
+      ],
+      "forbiddenIO": false
+    },
+    {
+      "file": "apps/admin-cms/src/components/tests/test-detail.tsx",
+      "sha256": "7734d2ed8f4648188945f42c1e61ee7d15f5668f0f9260f88aa43bcd2c6e57cb",
+      "imports": [
+        "next/link",
+        "next/navigation",
+        "react",
+        "@/components/ui/button",
+        "@/components/ui/card",
+        "@/lib/tests/detail-navigation",
+        "@/lib/tests/detail-repository",
+        "@/lib/tests/detail-types",
+        "./test-detail-content"
+      ],
+      "forbiddenIO": false
+    },
+    {
+      "file": "apps/admin-cms/src/components/tests/test-detail-content.tsx",
+      "sha256": "329e9537ea0ac9704314ce1c21494e4e1c528c51d504907173d0df567fe3b756",
+      "imports": [
+        "@/components/ui/card",
+        "@/lib/tests/detail-types",
+        "@/lib/tests/types"
+      ],
+      "forbiddenIO": false
+    },
+    {
+      "file": "apps/admin-cms/src/app/(dashboard)/tests/[testId]/page.tsx",
+      "sha256": "a7b73c30406d8a2a08f33dced69c9668f8eebab3c3325e1d88799c951b40f849",
+      "imports": [
+        "react",
+        "@/components/tests/test-detail",
+        "@/lib/tests/detail-navigation"
+      ],
+      "forbiddenIO": false
+    }
+  ],
+  "allPassed": true,
+  "scope": "Static restricted import/I-O scan plus browser instrumentation; not a backend security audit."
+}

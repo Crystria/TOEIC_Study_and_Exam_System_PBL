@@ -1,0 +1,3 @@
+$kind: collection
+description: Run first. No API test is allowed to execute unless local Gateway GET /ready confirms qa=true, status=ready and matching local base URL. Never run against production.
+order: 1000

@@ -1,0 +1,7 @@
+{
+  "storageKeyPrefix": "toeic.vocabulary.progress.v2.user.",
+  "legacyStorageKey": "toeic.vocabulary.progress.v1",
+  "unassignedLegacyStorageKey": "toeic.vocabulary.progress.legacy.unassigned.v1",
+  "shapeSource": "VocabularyProgressSnapshot.toJson/fromJson + StoredVocabularyWord.toJson/fromJson",
+  "important": "The snapshot is per-user. The key suffix is Uri.encodeComponent(userId). Do not write raw password/token data into SharedPreferences fixtures."
+}

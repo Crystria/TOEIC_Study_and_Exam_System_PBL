@@ -1,0 +1,643 @@
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --background: #101722;
+  --foreground: #edf2fa;
+  --color-text: var(--foreground);
+  --color-muted: #afbdd0;
+  --color-border: #39495e;
+  --color-surface: #182332;
+  --color-success: #75ddb2;
+  --shadow-panel: none;
+  --theme-raised: #202e40;
+  --theme-hover: #28394f;
+  --theme-control-border: #657b98;
+  --theme-accent-surface: #243755;
+  --theme-accent-border: #5478ad;
+  --theme-link: #a6c9ff;
+  --theme-purple: #d5baff;
+  --theme-purple-surface: #352c4b;
+  --theme-success-surface: #19382e;
+  --theme-success-border: #3b7960;
+  --theme-danger: #ffa7b6;
+  --theme-danger-surface: #422634;
+  --theme-danger-border: #975770;
+  --theme-warning: #f8d28b;
+  --theme-warning-surface: #42341f;
+  --theme-warning-border: #8c6c36;
+}
+
+:root[data-theme='dark'] :is(.api-root, .api-login) {
+  --api-ink: var(--color-text);
+  --api-blue: var(--theme-link);
+}
+
+:root[data-theme='dark'] :focus-visible {
+  outline-color: var(--theme-link);
+}
+
+:root[data-theme='dark']
+  :is(
+    .desktop-sidebar,
+    .student-header,
+    .mobile-drawer,
+    .profile-dropdown,
+    .skip-link,
+    .api-card,
+    .api-exam-timer,
+    .personal-learning-dialog,
+    .personal-learning-tabs,
+    .learning-confirm,
+    .exam-dialog,
+    .player-header,
+    .attempt-result-overview,
+    .attempt-result-answers,
+    .attempt-review-dialog,
+    .auth-layout,
+    .student-auth-card,
+    .home-study-board
+  ) {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+:root[data-theme='dark']
+  :is(
+    .sidebar-tip,
+    .demo-notice,
+    .api-state,
+    .personal-learning-preview,
+    .learning-preview-notice,
+    .exam-demo-notice,
+    .exam-scoring-note,
+    .player-demo-note,
+    .player-media-missing,
+    .player-audio,
+    .player-passage h3,
+    .review-solution,
+    .daily-goal-symbol,
+    .attempt-result-notice,
+    .attempt-result-empty,
+    .chat-demo-note,
+    .chat-composer,
+    .home-board-bottom
+  ) {
+  background: var(--theme-raised);
+  border-color: var(--color-border);
+  color: var(--color-muted);
+}
+
+:root[data-theme='dark']
+  :is(
+    .brand:not(.brand--light),
+    .student-auth-dialog,
+    .daily-goal-item strong,
+    .field label,
+    .lesson-markdown,
+    .lesson-markdown h2,
+    .lesson-markdown h3,
+    .lesson-markdown strong,
+    .api-root .attempt-result,
+    .attempt-result-facts strong,
+    .attempt-result-part h3,
+    .attempt-review-dialog .attempt-review-dialog-header h2,
+    .attempt-review-dialog .attempt-review-dialog-question-heading h3
+  ) {
+  color: var(--color-text);
+}
+
+:root[data-theme='dark']
+  :is(
+    .nav-link,
+    .daily-goal-item > div:first-child,
+    .stat-top,
+    .field-icon,
+    .password-toggle,
+    .personal-learning-intro,
+    .personal-learning-hint,
+    .personal-learning-heading p,
+    .personal-learning-example,
+    .personal-learning-pronunciation,
+    .personal-learning-excerpt,
+    .api-root .personal-learning-tabs a,
+    .learning-select-field label,
+    .learning-steps li,
+    .lesson-toc nav a,
+    .lesson-mobile-toc nav a,
+    .review-options .review-option-label,
+    .exam-card-metrics,
+    .exam-skill-group h3,
+    .exam-library-hero p,
+    .exam-hero-stats span,
+    .attempt-result-meta,
+    .attempt-result-eyebrow,
+    .attempt-result-stat small,
+    .attempt-result-scores small,
+    .attempt-result-facts,
+    .attempt-result-disclaimer,
+    .attempt-result-legend,
+    .attempt-answer-outcome.is-unknown,
+    .api-root a.attempt-result-back,
+    .attempt-review-dialog .attempt-review-dialog-answer-state,
+    .attempt-review-dialog .attempt-review-dialog-close,
+    .attempt-review-dialog .attempt-review-dialog-details-content > p,
+    .attempt-review-dialog .attempt-review-dialog-footer > span,
+    .home-lead,
+    .home-mode,
+    .home-board-top small,
+    .home-study-board li p,
+    .home-study-board li > span:last-child,
+    .home-footer
+  ) {
+  color: var(--color-muted);
+}
+
+:root[data-theme='dark']
+  :is(
+    .text-link,
+    .skip-link,
+    .sidebar-tip a,
+    .demo-notice a,
+    .greeting-dot,
+    .panel-bottom-link a,
+    .weak-area:hover h3,
+    .focus-footer,
+    .activity-row:hover strong,
+    .password-toggle:hover,
+    .auth-top-link a:hover,
+    .auth-switch a,
+    .vocabulary-list-open,
+    .learning-back:hover,
+    .flashcard-progress strong,
+    .word-audio .button,
+    .grammar-category,
+    .grammar-lesson-card h3 a:hover,
+    .grammar-card-footer > a,
+    .lesson-toc nav a:hover,
+    .lesson-markdown a,
+    .lesson-mobile-toc summary,
+    .exam-card h3 a:hover,
+    .exam-prepare-total,
+    .exam-library-hero h2 strong,
+    .exam-hero-stats strong,
+    .attempt-answer-pair strong,
+    .attempt-answer-detail,
+    .attempt-result-stat.is-accuracy,
+    .api-root a.attempt-result-back:hover,
+    .chat-suggestion-topic,
+    .chat-quota > div,
+    .home-eyebrow,
+    .home-hero h1 em,
+    .home-board-bottom strong
+  ) {
+  color: var(--theme-link);
+}
+
+:root[data-theme='dark']
+  :is(
+    .button--secondary,
+    .api-root button:not([class]),
+    .api-login button,
+    .api-nav a,
+    .api-root .player-audio-actions button,
+    .api-root .personal-learning-card-actions button,
+    .api-root .personal-learning-view button,
+    .api-root .personal-learning-dialog button,
+    .api-root :is(a, button).attempt-result-button,
+    .chat-suggestions > button,
+    .student-auth-close,
+    .attempt-review-dialog .attempt-review-dialog-details,
+    .attempt-review-dialog .attempt-review-dialog-footer,
+    .attempt-review-dialog .attempt-review-dialog-options > li
+  ) {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+:root[data-theme='dark']
+  :is(
+    .api-field :is(input:not([type='checkbox'], [type='radio'], [type='range']), select, textarea),
+    .api-root :is(input:not([type='checkbox'], [type='radio'], [type='range']), select),
+    .field-control input,
+    .range-select,
+    .learning-select-field select,
+    .exam-select-field select,
+    .player-audio select,
+    .player-map-filter select,
+    .result-filters select,
+    .analytics-filters select,
+    .chat-composer textarea
+  ) {
+  background: var(--theme-raised);
+  border-color: var(--theme-control-border);
+  color: var(--color-text);
+}
+
+:root[data-theme='dark'] :is(select, optgroup, option) {
+  color-scheme: dark;
+}
+
+:root[data-theme='dark']
+  :is(
+    .api-root .api-primary,
+    .api-login .api-primary,
+    .api-root :is(a, button).attempt-result-button.is-primary
+  ) {
+  background: #315bd6;
+  border-color: #315bd6;
+  color: #fff;
+}
+
+:root[data-theme='dark']
+  :is(
+    .button--secondary:hover:not(:disabled),
+    .button--ghost:hover:not(:disabled),
+    .nav-link:hover,
+    .icon-button:hover,
+    .profile-dropdown a:hover,
+    .vocabulary-list-open:hover,
+    .vocabulary-list-open:focus-visible,
+    .player-option:hover,
+    .history-entry-link:hover,
+    .attempt-answer-detail:hover,
+    .attempt-review-dialog .attempt-review-dialog-close:hover,
+    .attempt-review-dialog .attempt-review-dialog-footer > button:hover:enabled,
+    .student-auth-close:hover:not(:disabled),
+    .chat-suggestions > button:hover:not(:disabled)
+  ) {
+  background: var(--theme-hover);
+  color: var(--theme-link);
+}
+
+:root[data-theme='dark']
+  :is(
+    .nav-link--active,
+    .api-label,
+    .alert,
+    .api-nav a[aria-current='page'],
+    .api-root .personal-learning-tabs a[aria-current='page'],
+    .api-root .personal-learning-view button[aria-pressed='true'],
+    .api-exam-map button[aria-current='step'],
+    .personal-learning-category,
+    .vocabulary-flashcard-back,
+    .exam-step-active > span,
+    .exam-choice.is-selected,
+    .exam-part-row.is-selected,
+    .player-option.is-selected,
+    .player-option.is-selected .player-option-key,
+    .history-entry-link:active,
+    .attempt-review-dialog .attempt-review-dialog-part,
+    .attempt-review-dialog .attempt-review-dialog-details summary,
+    .attempt-review-dialog .attempt-review-dialog-footer > button
+  ) {
+  background: var(--theme-accent-surface);
+  border-color: var(--theme-accent-border);
+  color: var(--theme-link);
+}
+
+:root[data-theme='dark']
+  :is(
+    .avatar,
+    .sidebar-tip-icon,
+    .stat-icon--blue,
+    .activity-icon,
+    .empty-state-icon,
+    .badge--blue,
+    .topic-illustration--blue,
+    .flashcard-example,
+    .grammar-overview-icon,
+    .grammar-lesson-number,
+    .lesson-markdown blockquote,
+    .learning-table-wrap thead,
+    .exam-card-icon,
+    .player-timer,
+    .player-closed-icon,
+    .attempt-answer-number,
+    .analytics-panel-icon,
+    .settings-section-icon,
+    .profile-portrait,
+    .profile-avatar-preview,
+    .chat-avatar,
+    .chat-message--student p,
+    .home-board-icon,
+    .home-step
+  ) {
+  background: var(--theme-accent-surface);
+  border-color: var(--theme-accent-border);
+  color: var(--theme-link);
+}
+
+:root[data-theme='dark']
+  :is(
+    .badge--neutral,
+    .skeleton,
+    .progress,
+    .exam-part-tags span,
+    .exam-part-row.is-unavailable,
+    .exam-steps li > span,
+    .learning-steps li > span,
+    .player-option-key,
+    .player-map-grid button,
+    .review-map-button,
+    .result-example-link,
+    .analytics-table-scroll thead th,
+    .profile-fields input[readonly],
+    .lesson-markdown pre,
+    .lesson-markdown :not(pre) > code,
+    .chat-message-body .lesson-markdown code,
+    .chat-avatar--student,
+    .chat-composer textarea:disabled,
+    .home-board-bottom span
+  ) {
+  background: var(--theme-raised);
+  border-color: var(--color-border);
+  color: var(--color-muted);
+}
+
+:root[data-theme='dark']
+  :is(
+    .api-error,
+    .alert--error,
+    .api-root button.personal-learning-delete,
+    .player-timer.is-urgent,
+    .review-map-button.review-incorrect,
+    .attempt-review-dialog .attempt-review-dialog-options > li.is-wrong
+  ) {
+  background: var(--theme-danger-surface);
+  border-color: var(--theme-danger-border);
+  color: var(--theme-danger);
+}
+
+:root[data-theme='dark']
+  :is(
+    .vocabulary-list-due,
+    .field-error,
+    .rating-button--1,
+    .quiz-review-wrong,
+    .player-audio-status[role='alert'],
+    .attempt-result .is-wrong,
+    .attempt-review-dialog .attempt-review-dialog-answer-state.is-wrong,
+    .profile-avatar-controls .field-error,
+    .chat-composer-footer .chat-count--invalid
+  ) {
+  color: var(--theme-danger);
+}
+
+:root[data-theme='dark']
+  :is(
+    .badge--green,
+    .alert--success,
+    .stat-icon--green,
+    .activity-icon--exam,
+    .personal-learning-notice,
+    .topic-illustration--green,
+    .learning-step--done > span,
+    .learning-result-icon,
+    .exam-card-icon--mini,
+    .player-map .is-answered,
+    .review-map-button.review-correct,
+    .review-options .review-correct,
+    .attempt-result-tip,
+    .attempt-review-dialog .attempt-review-dialog-options > li.is-correct,
+    .settings-announcement
+  ) {
+  background: var(--theme-success-surface);
+  border-color: var(--theme-success-border);
+  color: var(--color-success);
+}
+
+:root[data-theme='dark']
+  :is(
+    .learning-result-score,
+    .quiz-review-correct,
+    .rating-button--5,
+    .grammar-overview-progress strong,
+    .player-save-state,
+    .attempt-result .is-correct,
+    .attempt-review-dialog .attempt-review-dialog-answer-state.is-correct,
+    .attempt-review-dialog .attempt-review-dialog-correct-answer:not(.is-unavailable)
+  ) {
+  color: var(--color-success);
+}
+
+:root[data-theme='dark']
+  :is(
+    .badge--amber,
+    .stat-icon--orange,
+    .api-blocked,
+    .learning-resume,
+    .learning-resume-icon,
+    .player-flag.is-flagged,
+    .player-paragraph.is-highlighted
+  ) {
+  background: var(--theme-warning-surface);
+  border-color: var(--theme-warning-border);
+  color: var(--theme-warning);
+}
+
+:root[data-theme='dark']
+  :is(
+    .learning-resume p,
+    .rating-button--3,
+    .player-map-grid button span,
+    .review-map-button span
+  ) {
+  color: var(--theme-warning);
+}
+
+:root[data-theme='dark']
+  :is(
+    .learning-steps .learning-step--current,
+    .exam-steps .exam-step-active,
+    .flashcard-example > span,
+    .player-highlight:hover:not(:disabled)
+  ) {
+  color: var(--theme-link);
+}
+
+:root[data-theme='dark'] .learning-steps .learning-step--current > span {
+  background: #315bd6;
+  color: #fff;
+}
+
+:root[data-theme='dark']
+  :is(.stat-icon--purple, .activity-icon--lesson, .topic-illustration--purple) {
+  background: var(--theme-purple-surface);
+  color: var(--theme-purple);
+}
+
+:root[data-theme='dark'] .api-root .vocabulary-card-corner-actions > button:not([class]) {
+  background: var(--theme-raised);
+  color: var(--color-muted);
+}
+
+:root[data-theme='dark']
+  :is(
+    .vocabulary-list-card:is(:hover, :focus-within),
+    .vocabulary-flashcard-scene:is(:hover, :focus-within) .vocabulary-flashcard-rotation > div
+  ) {
+  border-color: var(--theme-accent-border);
+}
+
+:root[data-theme='dark'] .profile-avatar-controls input::file-selector-button {
+  background: var(--theme-accent-surface);
+  border-color: var(--theme-accent-border);
+  color: var(--theme-link);
+}
+
+:root[data-theme='dark'] :is(.field-control--invalid input, .api-field [aria-invalid='true']) {
+  border-color: var(--theme-danger-border);
+}
+
+:root[data-theme='dark'] .auth-separator::before,
+:root[data-theme='dark'] .auth-separator::after {
+  background: var(--color-border);
+}
+
+:root[data-theme='dark'] :is(input, textarea)::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+
+:root[data-theme='dark']
+  :is(
+    .mobile-drawer,
+    .personal-learning-dialog,
+    .learning-confirm,
+    .exam-dialog,
+    .attempt-review-dialog,
+    .student-auth-dialog
+  )::backdrop {
+  background: rgb(3 7 18 / 70%);
+}
+
+:root[data-theme='dark']
+  :is(
+    .api-root .api-exam-card:hover,
+    .api-root .api-exam-card:active,
+    .api-root .api-exam-card:focus-visible,
+    .api-root .learning-library-card:hover
+  ) {
+  background: var(--theme-hover);
+  border-color: var(--theme-accent-border);
+}
+
+:root[data-theme='dark']
+  :is(
+    .api-table :is(th, td),
+    .learning-table-wrap :is(th, td),
+    .api-root .lesson-markdown pre,
+    .attempt-review-dialog .attempt-review-dialog-details summary
+  ) {
+  border-color: var(--color-border);
+}
+
+:root[data-theme='dark'] :is(.home-page, .reference-exam) {
+  background: var(--background);
+  color: var(--color-text);
+}
+
+:root[data-theme='dark'] :is(.exam-library-hero, .grammar-overview, .analytics-prediction) {
+  background: var(--theme-raised);
+  border-color: var(--color-border);
+}
+
+:root[data-theme='dark'] .reference-exam {
+  --exam-blue: var(--theme-link);
+  --exam-pale-blue: var(--theme-accent-surface);
+  --exam-line: var(--color-border);
+}
+
+:root[data-theme='dark']
+  .reference-exam
+  :is(
+    .reference-exam-main,
+    .reference-exam-aside,
+    .reference-exam-audio-menu,
+    .reference-exam-audio-menu select,
+    .reference-exam-save button,
+    .reference-exam-submit,
+    .reference-exam-filter select,
+    .reference-exam-mobile-bar,
+    .reference-exam-mobile-bar button,
+    .reference-exam-map-grid button
+  ) {
+  background: var(--color-surface);
+  border-color: var(--exam-line);
+  color: var(--color-text);
+}
+
+:root[data-theme='dark']
+  .reference-exam-group:is([data-part='1'], [data-part='3'], [data-part='4'])
+  > .reference-exam-passage {
+  background: var(--color-surface);
+}
+
+:root[data-theme='dark']
+  .reference-exam
+  :is(
+    .reference-exam-passage,
+    .reference-exam-tabs button,
+    .reference-exam-options label:hover,
+    .reference-exam-map-grid button:hover,
+    .player-demo-note
+  ) {
+  background: var(--theme-raised);
+  color: var(--color-text);
+}
+
+:root[data-theme='dark']
+  .reference-exam
+  :is(
+    .reference-exam-audio,
+    .reference-exam-audio-note,
+    .reference-exam-group-media figcaption,
+    .reference-exam-save p,
+    .reference-exam-progress,
+    .reference-exam-status,
+    .reference-exam-filter,
+    .reference-exam-footer > span
+  ) {
+  color: var(--color-muted);
+}
+
+:root[data-theme='dark']
+  .reference-exam
+  :is(
+    .reference-exam-tabs button.is-active,
+    .reference-exam-tabs button[aria-selected='true'],
+    .reference-exam-map-grid .is-answered,
+    .reference-exam-map-grid .is-current
+  ) {
+  background: var(--theme-accent-surface);
+  border-color: var(--theme-accent-border);
+  color: var(--theme-link);
+}
+
+:root[data-theme='dark']
+  .reference-exam
+  :is(.reference-exam-audio-error, .reference-exam-timer.is-urgent, .reference-exam-save) {
+  color: var(--theme-danger);
+}
+
+:root[data-theme='dark'] .reference-exam :is(.reference-exam-number.is-flagged, .is-highlighted) {
+  background-color: var(--theme-warning-surface);
+  color: var(--theme-warning);
+}
+
+:root[data-theme='dark']
+  .reference-exam
+  :is(.reference-exam-review-note, .reference-exam-map-grid button span) {
+  color: var(--theme-warning);
+}
+
+:root[data-theme='dark'] .reference-exam .reference-exam-mobile-bar .reference-exam-mobile-submit {
+  background: #315bd6;
+  border-color: #315bd6;
+  color: #fff;
+}
+
+:root[data-theme='dark'] .reference-exam .reference-exam-switch[aria-checked='true'] {
+  background: #315bd6;
+}

@@ -1,0 +1,70 @@
+ M apps/admin-cms/README.md
+ M apps/admin-cms/src/app/(auth)/login/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/audit-logs/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/layout.tsx
+ M apps/admin-cms/src/app/(dashboard)/lessons/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/questions/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/tests/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/users/page.tsx
+ M apps/admin-cms/src/app/(dashboard)/vocabulary/page.tsx
+ M apps/admin-cms/src/app/globals.css
+ M apps/admin-cms/src/app/layout.tsx
+ M apps/admin-cms/src/app/page.tsx
+ M apps/admin-cms/src/components/layout/sidebar.tsx
+ M docs/frontend-design-review.md
+ M packages/contracts/openapi/openapi.yaml
+ M services/exam-service/src/modules/tests/tests.module.ts
+?? apps/admin-cms/src/app/(dashboard)/lessons/[lessonId]/
+?? apps/admin-cms/src/app/(dashboard)/questions/[questionId]/
+?? apps/admin-cms/src/app/(dashboard)/questions/new/
+?? apps/admin-cms/src/app/(dashboard)/tests/[testId]/
+?? apps/admin-cms/src/components/audit-logs/
+?? apps/admin-cms/src/components/auth/
+?? apps/admin-cms/src/components/layout/cms-route-preview.tsx
+?? apps/admin-cms/src/components/layout/cms-shell.tsx
+?? apps/admin-cms/src/components/lessons/
+?? apps/admin-cms/src/components/questions/
+?? apps/admin-cms/src/components/tests/
+?? apps/admin-cms/src/components/users/
+?? apps/admin-cms/src/components/vocabulary/
+?? apps/admin-cms/src/lib/audit-logs/
+?? apps/admin-cms/src/lib/demo/
+?? apps/admin-cms/src/lib/lessons/
+?? apps/admin-cms/src/lib/questions/
+?? apps/admin-cms/src/lib/tests/
+?? apps/admin-cms/src/lib/users/
+?? apps/admin-cms/src/lib/vocabulary/
+?? apps/admin-cms/src/styles/
+?? apps/admin-cms/tests/
+?? apps/admin-cms/tsconfig.tests.json
+?? docs/cms-test-metadata-contract-review.md
+?? docs/screenshots/cms-audit-logs-20261028/
+?? docs/screenshots/cms-lesson-detail-session29-20261029/
+?? docs/screenshots/cms-lessons-20261027/
+?? docs/screenshots/cms-question-detail-session20-20261028/
+?? docs/screenshots/cms-question-form-session28-20261029/
+?? docs/screenshots/cms-questions-20261027/
+?? docs/screenshots/cms-shell-20261027/
+?? docs/screenshots/cms-test-detail-session21-20261028/
+?? docs/screenshots/cms-tests-20261027/
+?? docs/screenshots/cms-users-20261027/
+?? docs/screenshots/cms-vocabulary-20261027/
+?? scripts/qa/cms-audit-logs.cjs
+?? scripts/qa/cms-lesson-detail.cjs
+?? scripts/qa/cms-lessons.cjs
+?? scripts/qa/cms-question-detail.cjs
+?? scripts/qa/cms-question-form.cjs
+?? scripts/qa/cms-questions.cjs
+?? scripts/qa/cms-shell.cjs
+?? scripts/qa/cms-test-detail.cjs
+?? scripts/qa/cms-tests.cjs
+?? scripts/qa/cms-users.cjs
+?? scripts/qa/cms-vocabulary.cjs
+?? services/api-gateway/src/gateway/cms-test-metadata-routing.spec.ts
+?? services/api-gateway/src/gateway/jwt.middleware.spec.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata-roles.guard.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.controller.spec.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.controller.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.service.spec.ts
+?? services/exam-service/src/modules/tests/cms-test-metadata.service.ts
+?? services/exam-service/src/modules/tests/dto/cms-test-metadata-response.dto.ts

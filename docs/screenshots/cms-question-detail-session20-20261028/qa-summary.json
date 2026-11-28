@@ -1,0 +1,118 @@
+{
+  "reports": [
+    {
+      "name": "detail",
+      "file": "browser-report.json",
+      "completed": true,
+      "checks": 44,
+      "screenshots": 83,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "shell",
+      "file": "shell-regression/browser-report.json",
+      "completed": true,
+      "checks": 35,
+      "screenshots": 46,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "questions",
+      "file": "questions-regression/browser-report.json",
+      "completed": true,
+      "checks": 25,
+      "screenshots": 27,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "tests",
+      "file": "tests-regression/browser-report.json",
+      "completed": true,
+      "checks": 25,
+      "screenshots": 30,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "lessons",
+      "file": "lessons-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 44,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "vocabulary",
+      "file": "vocabulary-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 52,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "users",
+      "file": "users-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 60,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "audit-logs",
+      "file": "audit-logs-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 60,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    }
+  ],
+  "totalChecks": 257,
+  "totalScreenshots": 402,
+  "allPassed": true,
+  "unitTests": {
+    "total": 48,
+    "passed": 48
+  },
+  "visualReview": {
+    "viewports": [
+      1440,
+      768,
+      390,
+      320
+    ],
+    "height": 900,
+    "deviceScaleFactor": 1,
+    "originalPngReviewed": true
+  }
+}

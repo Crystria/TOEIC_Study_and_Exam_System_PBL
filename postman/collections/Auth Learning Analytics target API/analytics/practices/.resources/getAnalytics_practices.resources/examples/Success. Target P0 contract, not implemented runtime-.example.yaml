@@ -1,0 +1,573 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/analytics/practices?page=1&size=20"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    page: "1"
+    size: "20"
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "items": [
+          {
+            "attemptId": "febefb7e-cb42-45e9-b92a-68277e608701",
+            "userId": "a6db601b-cfde-46ea-870f-6f6a3fcb743d",
+            "testId": "3a935dc2-a824-4bed-bf35-4d93b879bdbc",
+            "mode": "",
+            "parts": [
+              1
+            ],
+            "correctCount": 119,
+            "totalQuestions": 57,
+            "accuracy": 0.5806464828622591,
+            "partStats": [
+              {
+                "part": 1,
+                "correct": 82,
+                "total": 45
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "980c57dd-f58b-4c7a-bea1-3a42b7dfe105",
+            "userId": "3deb54c1-d3e5-4445-b2a2-ef92b18e2ed6",
+            "testId": "588fefc9-a8b0-4c04-93af-d002412b24e7",
+            "mode": "",
+            "parts": [
+              6
+            ],
+            "correctCount": 124,
+            "totalQuestions": 32,
+            "accuracy": 0.9579949820157437,
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 33,
+                "total": 89
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "300bf494-d180-4c0c-bf51-c46a893c2ce3",
+            "userId": "adbe38e4-1c7c-4a1a-951a-231ccf0fc3bb",
+            "testId": "5e71be19-b033-4b7e-a3d8-031ec871e95d",
+            "mode": "",
+            "parts": [
+              2
+            ],
+            "correctCount": 121,
+            "totalQuestions": 177,
+            "accuracy": 0.7998953643330016,
+            "partStats": [
+              {
+                "part": 5,
+                "correct": 95,
+                "total": 40
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "f8b01bc7-33a6-43a9-8318-de21d915e45b",
+            "userId": "a62a8413-c5ab-447d-b17b-9e4624f6a6c0",
+            "testId": "29ae3971-9ce8-47ca-8c08-7b6f3f8a215d",
+            "mode": "",
+            "parts": [
+              3
+            ],
+            "correctCount": 24,
+            "totalQuestions": 74,
+            "accuracy": 0.9317847361405437,
+            "partStats": [
+              {
+                "part": 3,
+                "correct": 51,
+                "total": 74
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "f7db9f41-1435-4dc8-9f42-afa0c5bc75d9",
+            "userId": "ce86508b-5d17-4e6f-bb30-c4ddb7187093",
+            "testId": "804d6b39-40cd-4ef0-93f2-12be102d932e",
+            "mode": "",
+            "parts": [
+              6
+            ],
+            "correctCount": 30,
+            "totalQuestions": 197,
+            "accuracy": 0.8558271067049579,
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 63,
+                "total": 46
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "8dfdbb52-d34a-4bea-87fe-e17b4f83bc8a",
+            "userId": "ee0041b7-d0bb-4002-94f9-452b1acda1f6",
+            "testId": "8a404a43-08b1-4a7e-8d20-49c64cf176bf",
+            "mode": "",
+            "parts": [
+              6
+            ],
+            "correctCount": 70,
+            "totalQuestions": 181,
+            "accuracy": 0.5046392520411911,
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 91,
+                "total": 12
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "3f874a70-1788-4f24-8d86-40606af4be61",
+            "userId": "e4182d05-020f-438c-b4c1-7d80cf2d5281",
+            "testId": "8c5bd5ae-8287-455b-897d-7538397b6500",
+            "mode": "",
+            "parts": [
+              2
+            ],
+            "correctCount": 110,
+            "totalQuestions": 194,
+            "accuracy": 0.5520913736254995,
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 77,
+                "total": 99
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "23dd0406-04e9-41fe-b328-2d61bf112771",
+            "userId": "453e237b-1b23-4ba0-9253-2f71682fa218",
+            "testId": "263344df-26fd-44b0-8b15-e88e91344c71",
+            "mode": "",
+            "parts": [
+              2
+            ],
+            "correctCount": 95,
+            "totalQuestions": 65,
+            "accuracy": 0.9928554781152066,
+            "partStats": [
+              {
+                "part": 1,
+                "correct": 81,
+                "total": 52
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "1a3faf80-7048-49b3-8fed-a2db1398ca44",
+            "userId": "d196c0db-7b36-4e81-a953-244ff3c25240",
+            "testId": "5a859964-ccb6-4b52-ac33-e172563daaaa",
+            "mode": "",
+            "parts": [
+              4
+            ],
+            "correctCount": 146,
+            "totalQuestions": 155,
+            "accuracy": 0.23593437972311693,
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 65,
+                "total": 19
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "5a4e2c80-ecd0-4944-8668-2a9ce934a0d9",
+            "userId": "61c1965f-84db-4be2-aec6-4c259f3f8af2",
+            "testId": "afd7e363-5e53-4fbf-b263-999742abc8bf",
+            "mode": "",
+            "parts": [
+              5
+            ],
+            "correctCount": 114,
+            "totalQuestions": 59,
+            "accuracy": 0.09180225556442478,
+            "partStats": [
+              {
+                "part": 6,
+                "correct": 96,
+                "total": 56
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "b36cf12e-c458-48ed-ad39-d8c931189215",
+            "userId": "b60cf3ce-67d6-4b6f-aa42-d636f55866d5",
+            "testId": "b38b109a-1b9a-4a5b-b416-673d81603f4d",
+            "mode": "",
+            "parts": [
+              5
+            ],
+            "correctCount": 41,
+            "totalQuestions": 149,
+            "accuracy": 0.465052296473326,
+            "partStats": [
+              {
+                "part": 1,
+                "correct": 20,
+                "total": 6
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "458ee791-93cb-4698-9411-2e30a9ddfa12",
+            "userId": "4670ed4b-1e24-4adf-91a7-c373564a3de5",
+            "testId": "5fafeff5-1cad-47cd-9071-2a96276ab219",
+            "mode": "",
+            "parts": [
+              1
+            ],
+            "correctCount": 40,
+            "totalQuestions": 15,
+            "accuracy": 0.6744837879280955,
+            "partStats": [
+              {
+                "part": 5,
+                "correct": 73,
+                "total": 73
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "08bb0267-45e6-433b-ba79-839853ba694e",
+            "userId": "81796550-ca0c-468f-85ee-60b597dd45b3",
+            "testId": "718eb96c-a1de-4202-94fa-ca2a11fbddb2",
+            "mode": "",
+            "parts": [
+              6
+            ],
+            "correctCount": 44,
+            "totalQuestions": 72,
+            "accuracy": 0.08568807501649078,
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 58,
+                "total": 2
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "9b9ad961-f2b0-462f-9e00-fa23365fdeb1",
+            "userId": "af8c2ff2-6100-44b5-827c-0536ea4740f8",
+            "testId": "f3c71a0b-6ee3-49a7-b150-b08ae25a6c8d",
+            "mode": "",
+            "parts": [
+              1
+            ],
+            "correctCount": 92,
+            "totalQuestions": 66,
+            "accuracy": 0.2773366290146574,
+            "partStats": [
+              {
+                "part": 1,
+                "correct": 18,
+                "total": 18
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "608bf541-7bec-42b5-84f9-abb6771f83fb",
+            "userId": "b145a33b-a481-48b8-9f82-240cae15073e",
+            "testId": "c87590cb-b6ad-43ba-9ee1-33e4a41174ab",
+            "mode": "",
+            "parts": [
+              3
+            ],
+            "correctCount": 105,
+            "totalQuestions": 55,
+            "accuracy": 0.7296277705842193,
+            "partStats": [
+              {
+                "part": 2,
+                "correct": 80,
+                "total": 94
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "13539da7-f633-4652-944a-99369f94083f",
+            "userId": "dc3cd65c-95b6-42ab-90ed-a46dfca68b83",
+            "testId": "e8e12347-5d4c-4d1a-8e66-b1c0c47b5705",
+            "mode": "",
+            "parts": [
+              5
+            ],
+            "correctCount": 167,
+            "totalQuestions": 124,
+            "accuracy": 0.655196864388416,
+            "partStats": [
+              {
+                "part": 5,
+                "correct": 34,
+                "total": 83
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "fa09b5a6-5a54-47ea-b174-b180832b84c7",
+            "userId": "2ef7ad15-2632-443d-8097-86fed0f5233d",
+            "testId": "d27739fd-ed3f-46b2-8cae-d672315a2937",
+            "mode": "",
+            "parts": [
+              1
+            ],
+            "correctCount": 12,
+            "totalQuestions": 67,
+            "accuracy": 0.38563109472965473,
+            "partStats": [
+              {
+                "part": 1,
+                "correct": 37,
+                "total": 41
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "4b13f730-a9e6-4496-9951-c6f344a4d15b",
+            "userId": "c85be82d-cd5f-4e3d-ad9a-ee42dba366a5",
+            "testId": "a5465085-52a8-4d0b-9358-85fd8b6fd078",
+            "mode": "",
+            "parts": [
+              6
+            ],
+            "correctCount": 75,
+            "totalQuestions": 32,
+            "accuracy": 0.5261842558198311,
+            "partStats": [
+              {
+                "part": 2,
+                "correct": 33,
+                "total": 44
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "b9854193-e3da-44de-8007-5cf7152660b9",
+            "userId": "c2dff66c-f865-44f2-a146-5f661a3ab897",
+            "testId": "ad7f8a4c-35ed-4f6e-a928-35feb2daddd8",
+            "mode": "",
+            "parts": [
+              6
+            ],
+            "correctCount": 143,
+            "totalQuestions": 173,
+            "accuracy": 0.2537623276734756,
+            "partStats": [
+              {
+                "part": 3,
+                "correct": 24,
+                "total": 66
+              }
+            ],
+            "completedAt": "Z"
+          },
+          {
+            "attemptId": "2a9bc649-7e17-4d31-aba3-b7548f7116b9",
+            "userId": "650331a2-33a6-49c8-8cb5-249a99afe7b5",
+            "testId": "436c5531-4ed2-4ab9-8775-ac5dd8f59764",
+            "mode": "",
+            "parts": [
+              2
+            ],
+            "correctCount": 173,
+            "totalQuestions": 176,
+            "accuracy": 0.9930445981540327,
+            "partStats": [
+              {
+                "part": 4,
+                "correct": 20,
+                "total": 8
+              }
+            ],
+            "completedAt": "Z"
+          }
+        ],
+        "total": 455454712,
+        "page": 1820312619,
+        "size": 49,
+        "totalPages": 1847450063
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attemptId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "userId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "testId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "parts": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "correctCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 200
+                },
+                "totalQuestions": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 200
+                },
+                "accuracy": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "partStats": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "part": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 7
+                      },
+                      "correct": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "total": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100
+                      }
+                    },
+                    "required": [
+                      "part",
+                      "correct",
+                      "total"
+                    ]
+                  }
+                },
+                "completedAt": {
+                  "type": "string",
+                  "pattern": "Z$",
+                  "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+                }
+              },
+              "required": [
+                "attemptId",
+                "userId",
+                "testId",
+                "mode",
+                "parts",
+                "correctCount",
+                "totalQuestions",
+                "accuracy",
+                "partStats",
+                "completedAt"
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size",
+          "totalPages"
+        ]
+      }
+order: 1000

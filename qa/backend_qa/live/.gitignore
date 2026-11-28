@@ -1,0 +1,4 @@
+# Generated live ID registries are local QA output
+*.json
+!manifest.json
+!*.template.json

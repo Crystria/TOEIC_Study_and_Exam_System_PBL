@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  Không sửa sau khi nộp
+  Procedure: 1. Submit xong.
+  2. Gọi save single/batch bằng owner.
+  3. GET lại kết quả.
+  Expected: 409 theo triển khai; lựa chọn/điểm không đổi; không mở lại quyền sửa.
+  Preconditions: Attempt đã nộp và expected cố định.
+  Execution note: Ưu tiên: High.
+  Risk: R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b; 3.4 EX-06.
+  Tạo và submit attempt thành công. Sau khi nhận final result, gọi PUT single-answer và PUT batch-draft bằng owner token; kỳ vọng 409 theo triển khai và không thay đổi selectedOption, correctCount, score hoặc history. Lưu result trước/sau để đối chiếu.
+order: 33000

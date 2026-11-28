@@ -1,0 +1,12 @@
+$kind: collection
+name: API-003 - Login thiếu/sai kiểu dữ liệu
+description: |-
+  Login thiếu/sai kiểu dữ liệu
+  Procedure: 1. Bỏ từng field bắt buộc; gửi email sai, password/deviceId sai kiểu.
+  2. Kiểm tra từng response.
+  Expected: 400 theo contract/validator; error schema hợp lệ, không 5xx hoặc cấp token.
+  Preconditions: LoginRequest và các giới hạn hiện hành đã rà soát.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.a; 2.1.
+  Không cần fixture bổ sung. Chạy riêng từng payload: thiếu email/password/deviceId; email sai định dạng; password hoặc deviceId sai kiểu dữ liệu. Đối chiếu HTTP status/error schema theo DTO hiện hành; không gộp nhiều lỗi vào một request.
+order: 4000

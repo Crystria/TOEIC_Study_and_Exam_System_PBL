@@ -1,0 +1,12 @@
+{
+  "source": "apps/admin-cms",
+  "copy": "tmp/frontend-cms-question-detail-build-20261028",
+  "files": 67,
+  "mismatch": [],
+  "buildId": "qcMhVI_7LCx1lFsQtDiBB",
+  "standalone": true,
+  "eslintSource": "8.57.1",
+  "eslintCopy": "8.57.1",
+  "configurationUnchanged": true,
+  "lintAndTypecheckEnabled": true
+}

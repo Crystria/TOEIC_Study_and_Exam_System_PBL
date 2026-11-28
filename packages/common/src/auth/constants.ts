@@ -6,7 +6,11 @@ export enum RoleCode {
 
 export interface JwtPayload {
   sub: string;
-  email: string;
+  email?: string;
+  sid?: string;
+  userVersion?: string;
+  sessionVersion?: string;
+  jti?: string;
   roles: RoleCode[];
   type?: 'access' | 'refresh';
 }
@@ -19,3 +23,5 @@ export interface AuthenticatedUser {
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const ROLES_KEY = 'roles';
+export const DEFAULT_JWT_ISSUER = 'toeic-auth';
+export const DEFAULT_JWT_AUDIENCE = 'toeic-api';

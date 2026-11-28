@@ -1,0 +1,19 @@
+{
+  "baselineFiles": 1397,
+  "unchanged": 1393,
+  "changed": [
+    "apps/admin-cms/README.md",
+    "apps/admin-cms/tsconfig.tests.json",
+    "apps/admin-cms/src/app/(dashboard)/users/page.tsx",
+    "docs/frontend-design-review.md"
+  ],
+  "missing": [],
+  "expectedChanges": [
+    "apps/admin-cms/README.md",
+    "apps/admin-cms/src/app/(dashboard)/users/page.tsx",
+    "apps/admin-cms/tsconfig.tests.json",
+    "docs/frontend-design-review.md"
+  ],
+  "unexpectedChanges": [],
+  "previousReportContentUnchanged": true
+}

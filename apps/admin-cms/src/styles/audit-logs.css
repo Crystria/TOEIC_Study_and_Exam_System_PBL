@@ -1,0 +1,391 @@
+.audit-library {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.audit-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+}
+.audit-intro h1 {
+  margin: 8px 0 10px;
+}
+.audit-intro > .cms-badge {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+.audit-intro p,
+.audit-demo-note {
+  font-size: 13px;
+  color: light-dark(#526177, var(--cms-muted));
+}
+.audit-demo-note {
+  padding: 12px 15px;
+  margin: 20px 0;
+  border-left: 3px solid #93c5fd;
+  background: var(--cms-surface-muted);
+  border-radius: 0 8px 8px 0;
+}
+.audit-demo-note p + p {
+  margin-top: 8px;
+}
+.audit-filter-card {
+  padding: 22px;
+  border-radius: 12px;
+}
+.audit-filters {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr) minmax(180px, 1fr);
+  gap: 16px;
+}
+.audit-field {
+  min-width: 0;
+}
+.audit-field label,
+.audit-preview-body label,
+.audit-page-size label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 650;
+  color: light-dark(#334155, var(--cms-ink));
+}
+.audit-field :is(input, select),
+.audit-preview-body select,
+.audit-page-size select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid var(--cms-control-line);
+  border-radius: 8px;
+  color: light-dark(#334155, var(--cms-ink));
+  background: var(--cms-surface);
+  font-size: 13px;
+}
+.audit-filter-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 18px;
+}
+.audit-filter-footer > p {
+  max-width: 410px;
+  font-size: 11px;
+  color: light-dark(#526177, var(--cms-muted));
+}
+.audit-filter-footer > div {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.audit-filter-footer button,
+.audit-pagination button,
+.audit-state button {
+  min-height: 44px;
+  height: auto;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.audit-preview-controls {
+  margin: 18px 0 26px;
+  font-size: 12px;
+  color: light-dark(#526177, var(--cms-muted));
+}
+.audit-preview-controls > summary {
+  width: fit-content;
+  padding: 5px 0;
+}
+.audit-preview-body {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 260px);
+  align-items: center;
+  gap: 10px 16px;
+  padding: 16px;
+  margin-top: 8px;
+  border: 1px dashed var(--cms-control-line);
+  border-radius: 10px;
+  background: var(--cms-surface);
+}
+.audit-preview-body label {
+  margin: 0;
+}
+.audit-preview-body p {
+  grid-column: 1 / -1;
+  font-size: 11px;
+}
+.audit-normalization {
+  margin: 16px 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: light-dark(#fffbeb, #382c18);
+  color: light-dark(#854d0e, #f9dc91);
+  font-size: 12px;
+}
+.audit-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.audit-results-header h2 {
+  font-size: 17px;
+  font-weight: 700;
+}
+.audit-page-size {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.audit-page-size label {
+  margin: 0;
+  font-size: 11px;
+}
+.audit-page-size select {
+  width: 75px;
+}
+.audit-result-status {
+  margin: 10px 0 16px;
+  font-size: 12px;
+  color: light-dark(#526177, var(--cms-muted));
+  min-height: 20px;
+}
+.audit-list-heading,
+.audit-list > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.4fr) minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 14px;
+  align-items: center;
+}
+.audit-list-heading {
+  padding: 12px 20px;
+  border: 1px solid var(--cms-line);
+  border-radius: 10px 10px 0 0;
+  background: var(--cms-surface-muted);
+  font-size: 11px;
+  font-weight: 650;
+  color: light-dark(#526177, var(--cms-muted));
+}
+.audit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--cms-line);
+  border-top: 0;
+  background: var(--cms-surface);
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+.audit-list > li {
+  padding: 18px 20px;
+  border-top: 1px solid light-dark(#edf2f7, var(--cms-line));
+  font-size: 12px;
+  color: light-dark(#334155, var(--cms-ink));
+}
+.audit-list > li:first-child {
+  border-top: 0;
+}
+.audit-list > li:hover {
+  background: light-dark(#fafcff, var(--cms-surface));
+}
+.audit-list > li > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.audit-code {
+  display: block;
+  margin-bottom: 5px;
+  color: light-dark(#64748b, var(--cms-muted));
+  font-size: 10px;
+  letter-spacing: 0.035em;
+}
+.audit-cell-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.audit-name h3 {
+  font-size: 13px;
+  font-weight: 550;
+  color: light-dark(#1e293b, var(--cms-ink));
+  line-height: 1.65;
+}
+.audit-summary,
+.audit-pagination-note {
+  color: light-dark(#526177, var(--cms-muted));
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 8px;
+}
+.audit-target-label {
+  display: block;
+  margin-top: 8px;
+  color: light-dark(#64748b, var(--cms-muted));
+  font-size: 10px;
+}
+.audit-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+.audit-pagination > p {
+  font-size: 11px;
+  color: light-dark(#526177, var(--cms-muted));
+}
+.audit-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.audit-pagination [aria-current] {
+  font-size: 11px;
+  color: light-dark(#334155, var(--cms-ink));
+}
+.audit-bottom-note {
+  margin-top: 24px;
+  color: light-dark(#64748b, var(--cms-muted));
+  font-size: 11px;
+}
+.audit-state {
+  padding: 42px 24px;
+  text-align: center;
+  border-radius: 12px;
+}
+.audit-state h3 {
+  font-size: 17px;
+  font-weight: 650;
+  margin: 0 0 8px;
+}
+.audit-state p {
+  font-size: 13px;
+  max-width: 470px;
+  margin: 0 auto 20px;
+  color: light-dark(#526177, var(--cms-muted));
+}
+.audit-loading {
+  border: 1px solid var(--cms-line);
+  border-radius: 12px;
+  padding: 0 20px;
+  background: var(--cms-surface);
+}
+.audit-loading > div {
+  padding: 23px 0;
+  border-top: 1px solid light-dark(#edf2f7, var(--cms-line));
+}
+.audit-loading > div:first-child {
+  border-top: 0;
+}
+.audit-loading span {
+  display: block;
+  border-radius: 5px;
+  background: light-dark(#e8eef5, var(--cms-surface-muted));
+  height: 12px;
+  max-width: 75%;
+}
+.audit-loading span + span {
+  margin-top: 12px;
+  max-width: 40%;
+  height: 9px;
+}
+@media (max-width: 1199px) {
+  .audit-filter-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .audit-pagination {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 767px) {
+  .audit-intro {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .audit-intro > .cms-badge {
+    margin-top: 0;
+  }
+  .audit-filter-card {
+    padding: 18px;
+  }
+  .audit-filters {
+    grid-template-columns: 1fr;
+  }
+  .audit-keyword {
+    grid-column: 1 / -1;
+  }
+  .audit-list-heading {
+    display: none;
+  }
+  .audit-list {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+    display: grid;
+    gap: 12px;
+  }
+  .audit-list > li {
+    grid-template-columns: 1fr;
+    gap: 16px 12px;
+    padding: 18px;
+    border: 1px solid var(--cms-line);
+    border-radius: 12px;
+    background: var(--cms-surface);
+  }
+  .audit-list > li:first-child {
+    border-top: 1px solid var(--cms-line);
+  }
+  .audit-name {
+    grid-column: 1 / -1;
+  }
+  .audit-cell-label {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    white-space: normal;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    color: light-dark(#64748b, var(--cms-muted));
+  }
+  .audit-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .audit-pagination > div {
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .audit-preview-body {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 399px) {
+  .audit-filters {
+    grid-template-columns: 1fr;
+  }
+  .audit-filter-footer > div {
+    flex-direction: column;
+    width: 100%;
+  }
+  .audit-results-header {
+    flex-wrap: wrap;
+  }
+  .audit-page-size {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .audit-pagination button {
+    padding: 9px;
+    font-size: 11px;
+  }
+}

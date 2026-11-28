@@ -1,0 +1,205 @@
+{
+  "checks": [
+    {
+      "width": 1440,
+      "name": "Grammar create/validation/safe Markdown/stale preview/update/filter/history/cancel focus"
+    },
+    {
+      "width": 1440,
+      "name": "Media rejects format/oversize/corrupt files; decodes PNG and MP3; audio plays locally"
+    },
+    {
+      "width": 1440,
+      "name": "Topics/words create/edit/join/preview; used-topic deletion blocks; media detaches"
+    },
+    {
+      "width": 1440,
+      "name": "All seven Part forms create/validate/preview; shared stimuli/media inheritance and edit"
+    },
+    {
+      "width": 1440,
+      "name": "Test adds questions/whole groups, sorts/reorders, validates duration/full count, previews and updates structure"
+    },
+    {
+      "width": 1440,
+      "name": "Question deletion protects test references"
+    },
+    {
+      "width": 1440,
+      "name": "Media deletion removes all references and exposes missing required data"
+    },
+    {
+      "width": 1440,
+      "name": "Test removes a question and deletes; word/topic/group/lesson delete confirmations update lists and references"
+    },
+    {
+      "width": 1440,
+      "name": "Reload resets RAM and created IDs become explicit not-found"
+    },
+    {
+      "width": 1440,
+      "name": "User details/read-only identity, roles/status validation, cancel/confirm and filtered list consistency"
+    },
+    {
+      "width": 1440,
+      "name": "Keyboard field order, mobile menu Escape/focus and login validation regression"
+    },
+    {
+      "width": 1440,
+      "name": "Audit stays read-only, persona routing, error/retry/empty/slow, no storage/API/auth writes"
+    },
+    {
+      "width": 768,
+      "name": "Grammar create/validation/safe Markdown/stale preview/update/filter/history/cancel focus"
+    },
+    {
+      "width": 768,
+      "name": "Media rejects format/oversize/corrupt files; decodes PNG and MP3; audio plays locally"
+    },
+    {
+      "width": 768,
+      "name": "Topics/words create/edit/join/preview; used-topic deletion blocks; media detaches"
+    },
+    {
+      "width": 768,
+      "name": "All seven Part forms create/validate/preview; shared stimuli/media inheritance and edit"
+    },
+    {
+      "width": 768,
+      "name": "Test adds questions/whole groups, sorts/reorders, validates duration/full count, previews and updates structure"
+    },
+    {
+      "width": 768,
+      "name": "Question deletion protects test references"
+    },
+    {
+      "width": 768,
+      "name": "Media deletion removes all references and exposes missing required data"
+    },
+    {
+      "width": 768,
+      "name": "Test removes a question and deletes; word/topic/group/lesson delete confirmations update lists and references"
+    },
+    {
+      "width": 768,
+      "name": "Reload resets RAM and created IDs become explicit not-found"
+    },
+    {
+      "width": 768,
+      "name": "User details/read-only identity, roles/status validation, cancel/confirm and filtered list consistency"
+    },
+    {
+      "width": 768,
+      "name": "Keyboard field order, mobile menu Escape/focus and login validation regression"
+    },
+    {
+      "width": 768,
+      "name": "Audit stays read-only, persona routing, error/retry/empty/slow, no storage/API/auth writes"
+    },
+    {
+      "width": 390,
+      "name": "Grammar create/validation/safe Markdown/stale preview/update/filter/history/cancel focus"
+    },
+    {
+      "width": 390,
+      "name": "Media rejects format/oversize/corrupt files; decodes PNG and MP3; audio plays locally"
+    },
+    {
+      "width": 390,
+      "name": "Topics/words create/edit/join/preview; used-topic deletion blocks; media detaches"
+    },
+    {
+      "width": 390,
+      "name": "All seven Part forms create/validate/preview; shared stimuli/media inheritance and edit"
+    },
+    {
+      "width": 390,
+      "name": "Test adds questions/whole groups, sorts/reorders, validates duration/full count, previews and updates structure"
+    },
+    {
+      "width": 390,
+      "name": "Question deletion protects test references"
+    },
+    {
+      "width": 390,
+      "name": "Media deletion removes all references and exposes missing required data"
+    },
+    {
+      "width": 390,
+      "name": "Test removes a question and deletes; word/topic/group/lesson delete confirmations update lists and references"
+    },
+    {
+      "width": 390,
+      "name": "Reload resets RAM and created IDs become explicit not-found"
+    },
+    {
+      "width": 390,
+      "name": "User details/read-only identity, roles/status validation, cancel/confirm and filtered list consistency"
+    },
+    {
+      "width": 390,
+      "name": "Keyboard field order, mobile menu Escape/focus and login validation regression"
+    },
+    {
+      "width": 390,
+      "name": "Audit stays read-only, persona routing, error/retry/empty/slow, no storage/API/auth writes"
+    },
+    {
+      "width": 320,
+      "name": "Grammar create/validation/safe Markdown/stale preview/update/filter/history/cancel focus"
+    },
+    {
+      "width": 320,
+      "name": "Media rejects format/oversize/corrupt files; decodes PNG and MP3; audio plays locally"
+    },
+    {
+      "width": 320,
+      "name": "Topics/words create/edit/join/preview; used-topic deletion blocks; media detaches"
+    },
+    {
+      "width": 320,
+      "name": "All seven Part forms create/validate/preview; shared stimuli/media inheritance and edit"
+    },
+    {
+      "width": 320,
+      "name": "Test adds questions/whole groups, sorts/reorders, validates duration/full count, previews and updates structure"
+    },
+    {
+      "width": 320,
+      "name": "Question deletion protects test references"
+    },
+    {
+      "width": 320,
+      "name": "Media deletion removes all references and exposes missing required data"
+    },
+    {
+      "width": 320,
+      "name": "Test removes a question and deletes; word/topic/group/lesson delete confirmations update lists and references"
+    },
+    {
+      "width": 320,
+      "name": "Reload resets RAM and created IDs become explicit not-found"
+    },
+    {
+      "width": 320,
+      "name": "User details/read-only identity, roles/status validation, cancel/confirm and filtered list consistency"
+    },
+    {
+      "width": 320,
+      "name": "Keyboard field order, mobile menu Escape/focus and login validation regression"
+    },
+    {
+      "width": 320,
+      "name": "Audit stays read-only, persona routing, error/retry/empty/slow, no storage/API/auth writes"
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "screenshots": [
+    "grammar-preview-1440.png",
+    "vocabulary-media-768.png",
+    "question-part7-390.png",
+    "test-structure-320.png"
+  ],
+  "completed": true
+}

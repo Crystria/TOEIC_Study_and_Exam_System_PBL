@@ -1,0 +1,234 @@
+.account-management {
+  margin: 16px 0;
+}
+
+.account-bulk {
+  margin: 20px 0 26px;
+  padding: 16px;
+  border: 1px solid light-dark(#dbe6fa, var(--cms-line));
+  border-radius: 12px;
+  background: light-dark(#f6f9ff, var(--cms-surface));
+}
+
+.account-bulk h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.account-toolbar,
+.account-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-toolbar {
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: light-dark(#254475, #c2d5ef);
+  font-size: 14px;
+}
+
+.account-toolbar p,
+.account-email {
+  margin: 0;
+}
+
+.account-select,
+.api-root .account-select {
+  width: max-content;
+  max-width: 100%;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid light-dark(#bdcadd, var(--cms-control-line));
+  border-radius: 7px;
+  background: var(--cms-surface);
+  color: light-dark(#263d59, var(--cms-ink));
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.account-select:disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+
+.account-select[data-role='USER'] {
+  background: light-dark(#f2f5f9, var(--cms-surface-muted));
+}
+
+.account-select[data-role='CONTENT_ADMIN'] {
+  border-color: light-dark(#b9daea, #315e73);
+  background: light-dark(#edf8fd, #153644);
+  color: light-dark(#17577a, #a5e3fa);
+}
+
+.account-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid light-dark(#dce4ef, var(--cms-line));
+  border-radius: 12px;
+  background: var(--cms-surface);
+}
+
+.account-bulk-scroll {
+  max-height: 240px;
+  overflow: auto;
+}
+
+.account-bulk-scroll th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.account-bulk-note {
+  margin: 0 0 10px;
+  color: light-dark(#536681, var(--cms-muted));
+  font-size: 13px;
+}
+
+.account-table {
+  min-width: 560px;
+  font-size: 14px;
+}
+
+.account-table th,
+.account-table td {
+  padding: 13px 16px;
+  vertical-align: middle;
+}
+
+.account-table th {
+  background: light-dark(#f6f8fc, var(--cms-surface-muted));
+  color: light-dark(#465b76, var(--cms-muted));
+  font-weight: 650;
+}
+
+.account-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.account-table tbody tr:hover {
+  background: light-dark(#f9fbff, var(--cms-surface-muted));
+}
+
+.account-table tr[data-selected='true'] {
+  background: light-dark(#eef4ff, #253b5e);
+}
+
+.account-table .account-select-cell {
+  width: 44px;
+  padding-right: 0;
+}
+
+.account-table .account-apply-cell {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.account-select-cell input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+  accent-color: #2563eb;
+}
+
+.account-name {
+  color: light-dark(#2454bd, var(--cms-link));
+  font-weight: 650;
+}
+
+.account-name:hover {
+  color: light-dark(#173b90, #bfdbfe);
+}
+
+.account-email {
+  color: light-dark(#536681, var(--cms-muted));
+  font-size: 13px;
+}
+
+.account-role-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.account-role-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 8px;
+  border: 1px solid light-dark(#dce4ee, var(--cms-line));
+  border-radius: 5px;
+  background: light-dark(#f2f5f9, var(--cms-surface-muted));
+  color: light-dark(#334155, var(--cms-ink));
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.account-role-box[data-role='SYSTEM_ADMIN'] {
+  border-color: light-dark(#dbe2ff, #535a8e);
+  background: light-dark(#eef1ff, #292f54);
+  color: light-dark(#393f8c, #c6cbff);
+}
+
+.account-role-box[data-role='CONTENT_ADMIN'] {
+  border-color: light-dark(#cae7f3, #315e73);
+  background: light-dark(#edf8fd, #153644);
+  color: light-dark(#17577a, #a5e3fa);
+}
+
+.account-editor-field {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.account-editor-field legend {
+  margin-bottom: 8px;
+  font-weight: 650;
+}
+
+.account-current-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: light-dark(#f2f5f9, var(--cms-surface-muted));
+  color: light-dark(#4b5c72, var(--cms-muted));
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.account-current-status[data-status='ACTIVE'] {
+  background: light-dark(#edf9f2, #183728);
+  color: light-dark(#166343, #bbf7d0);
+}
+
+.account-current-status:is([data-status='SUSPENDED'], [data-status='LOCKED']) {
+  background: light-dark(#fff5e8, #3b2d20);
+  color: light-dark(#804718, #fbd6aa);
+}
+
+.account-success {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: light-dark(#edf9f2, #183728);
+  color: light-dark(#166343, #bbf7d0);
+}
+
+.account-management [role='alert'] {
+  margin-bottom: 10px;
+}

@@ -1,0 +1,85 @@
+{
+  "source": "VocabularyProvider._defaultCatalog in the lib(4).zip baseline; six local mock records rechecked against the assembled mobile source for Phase N (2026-11-11).",
+  "topicCountsDeclaredByVocabularyTopicsProvider": [
+    {
+      "id": "t1",
+      "name": "Office & Business",
+      "total": 20
+    },
+    {
+      "id": "t2",
+      "name": "Travel & Transport",
+      "total": 24
+    }
+  ],
+  "catalogCount": 6,
+  "items": [
+    {
+      "id": "t1-v1",
+      "word": "negotiate",
+      "phonetic": "/nɪˈɡoʊʃieɪt/",
+      "definition": "thương lượng, đàm phán",
+      "example": "We need to negotiate the contract terms.",
+      "audioUrl": "",
+      "masteryGrade": 5,
+      "topicId": "t1",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "t1-v2",
+      "word": "invoice",
+      "phonetic": "/ˈɪnvɔɪs/",
+      "definition": "hóa đơn",
+      "example": "Please send the invoice by Friday.",
+      "audioUrl": "",
+      "masteryGrade": 3,
+      "topicId": "t1",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "t1-v3",
+      "word": "procurement",
+      "phonetic": "/prəˈkjʊrmənt/",
+      "definition": "việc mua sắm, thu mua",
+      "example": "Procurement approved the order.",
+      "audioUrl": "",
+      "masteryGrade": 1,
+      "topicId": "t1",
+      "topicName": "Office & Business"
+    },
+    {
+      "id": "t2-v1",
+      "word": "itinerary",
+      "phonetic": "/aɪˈtɪnəreri/",
+      "definition": "lịch trình",
+      "example": "Please check the travel itinerary.",
+      "audioUrl": "",
+      "masteryGrade": 5,
+      "topicId": "t2",
+      "topicName": "Travel & Transport"
+    },
+    {
+      "id": "t2-v2",
+      "word": "boarding pass",
+      "phonetic": "/ˈbɔːrdɪŋ pæs/",
+      "definition": "thẻ lên máy bay",
+      "example": "Show your boarding pass at the gate.",
+      "audioUrl": "",
+      "masteryGrade": 3,
+      "topicId": "t2",
+      "topicName": "Travel & Transport"
+    },
+    {
+      "id": "t2-v3",
+      "word": "destination",
+      "phonetic": "/ˌdestɪˈneɪʃn/",
+      "definition": "điểm đến",
+      "example": "Our final destination is Seoul.",
+      "audioUrl": "",
+      "masteryGrade": 1,
+      "topicId": "t2",
+      "topicName": "Travel & Transport"
+    }
+  ],
+  "knownLimit": "The local provider catalog has six words even though topic cards display totals 20 and 24. This JSON exports current source data only; no automatic importer exists."
+}

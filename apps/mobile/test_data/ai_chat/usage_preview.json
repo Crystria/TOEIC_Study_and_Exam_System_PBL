@@ -1,0 +1,9 @@
+{
+  "source": "AiChatUsage.preview() defaults; persisted in the Development user-scoped snapshot",
+  "limit": 20,
+  "used": 3,
+  "remaining": 17,
+  "isAuthoritative": false,
+  "resetAt": "next local midnight",
+  "warning": "Simulated, non-authoritative usage. Development may persist this preview per user on-device; Production requires an approved Backend quota response."
+}

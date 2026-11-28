@@ -1,0 +1,71 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/auth/register"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "test@example.com",
+      "password": "Crystal-0407",
+      "confirmPassword": "Crystal-0407",
+      "fullName": "usertest"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "maxLength": 320,
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72,
+          "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[\\s\\S]+$"
+        },
+        "confirmPassword": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 72
+        },
+        "fullName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 255
+        }
+      },
+      "required": [
+        "email",
+        "password",
+        "confirmPassword",
+        "fullName"
+      ]
+    }
+auth:
+  type: noauth
+settings: {}
+examples: ./.resources/register.resources/examples
+order: 1000

@@ -1,10 +1,19 @@
-import { Sidebar } from '@/components/layout/sidebar';
+import { Suspense } from 'react';
+import { CmsShell } from '@/components/layout/cms-shell';
+import { WorkspaceProvider } from '@/components/demo/workspace-provider';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto">{children}</main>
-    </div>
+    <Suspense
+      fallback={
+        <p className="cms-pending" role="status">
+          Đang chuẩn bị giao diện xem thử…
+        </p>
+      }
+    >
+      <WorkspaceProvider>
+        <CmsShell>{children}</CmsShell>
+      </WorkspaceProvider>
+    </Suspense>
   );
 }

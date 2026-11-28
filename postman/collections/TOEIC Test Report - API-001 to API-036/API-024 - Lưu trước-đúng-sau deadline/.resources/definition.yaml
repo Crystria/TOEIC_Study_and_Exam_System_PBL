@@ -1,0 +1,15 @@
+$kind: collection
+name: API-024 - Lưu trước/đúng/sau deadline
+description: |-
+  Lưu trước/đúng/sau deadline
+  Procedure: 1. Dùng clock QA/fixture hợp lệ kiểm soát thời gian.
+  2. Lưu ở deadline−1ms, deadline, deadline+1ms.
+  3. Đối soát lựa chọn.
+  Expected: Trước hạn lưu được; đúng/sau hạn không nhận đáp án mới (409 theo triển khai); không kéo dài deadline.
+  Preconditions: EN-01 chốt ranh giới; không dựa sleep ngẫu nhiên để kết luận sát biên.
+  Execution note: Ưu tiên: High.
+  Risk: R-05.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-05; 3.4 EX-06.
+  qa:seed không tạo fixture thời gian hoặc chức năng time-travel. Có thể thử ranh giới thô bằng PART attempt durationSeconds=300, nhưng không đủ độ chính xác để khẳng định deadline−1ms/đúng deadline/deadline+1ms. Cần Backend/QA cung cấp clock injection hoặc fixture thời gian có kiểm soát; không sửa timestamp trực tiếp trong DB để kết luận.
+  Exact -1ms/at/+1ms is not simulated. Do not modify DB timestamps or service clocks directly.
+order: 25000

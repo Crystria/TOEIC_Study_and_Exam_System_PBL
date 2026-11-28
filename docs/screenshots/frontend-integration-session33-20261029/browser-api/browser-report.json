@@ -1,0 +1,2328 @@
+{
+  "kind": "frontend UI contract stubs; NOT real Gateway/backend E2E",
+  "checks": [
+    {
+      "width": 1440,
+      "name": "authentication form cannot submit before hydration"
+    },
+    {
+      "width": 1440,
+      "name": "home / focus / no overflow"
+    },
+    {
+      "width": 1440,
+      "name": "login validation / error / retained input"
+    },
+    {
+      "width": 1440,
+      "name": "server-shaped dashboard totals / no demo metrics"
+    },
+    {
+      "width": 1440,
+      "name": "flashcard ack / duplicate click / missing media"
+    },
+    {
+      "width": 1440,
+      "name": "server review schedule refresh / empty state"
+    },
+    {
+      "width": 1440,
+      "name": "grammar retry / safe Markdown / completion ack"
+    },
+    {
+      "width": 1440,
+      "name": "exam list/detail / mode choices / no unsafe start"
+    },
+    {
+      "width": 1440,
+      "name": "Back / Forward / reload preserve server ID without creating attempts"
+    },
+    {
+      "width": 1440,
+      "name": "history/result / no placeholder TOEIC score"
+    },
+    {
+      "width": 1440,
+      "name": "analytics filtering / lifetime labels / prediction withheld"
+    },
+    {
+      "width": 1440,
+      "name": "profile server validation / retained input / ack"
+    },
+    {
+      "width": 1440,
+      "name": "wrong profile acknowledgement retains input without success"
+    },
+    {
+      "width": 1440,
+      "name": "inactive-account response removes private UI and retry restores validated session"
+    },
+    {
+      "width": 1440,
+      "name": "settings / AI explicit blocked UI"
+    },
+    {
+      "width": 1440,
+      "name": "CMS list / union of backend roles"
+    },
+    {
+      "width": 1440,
+      "name": "CMS responsive menu / Escape / focus restoration"
+    },
+    {
+      "width": 1440,
+      "name": "CMS API question editor / server error retains draft"
+    },
+    {
+      "width": 1440,
+      "name": "network loss blocks duplicate create and retains draft"
+    },
+    {
+      "width": 1440,
+      "name": "existing metadata transport remains locked"
+    },
+    {
+      "width": 1440,
+      "name": "current account cannot self-change roles"
+    },
+    {
+      "width": 1440,
+      "name": "audit read-only / source field mapping"
+    },
+    {
+      "width": 1440,
+      "name": "remaining CMS domains / blocked contracts / responsive"
+    },
+    {
+      "width": 1440,
+      "name": "CMS navigation revalidates revoked backend roles"
+    },
+    {
+      "width": 1440,
+      "name": "expired session / no private or demo view"
+    },
+    {
+      "width": 1440,
+      "name": "session retry succeeds without reloading or showing stale private data"
+    },
+    {
+      "width": 1440,
+      "name": "API empty response never becomes fixture catalog"
+    },
+    {
+      "width": 1440,
+      "name": "API never writes demo learning/session/history storage"
+    },
+    {
+      "width": 768,
+      "name": "home / focus / no overflow"
+    },
+    {
+      "width": 768,
+      "name": "login validation / error / retained input"
+    },
+    {
+      "width": 768,
+      "name": "server-shaped dashboard totals / no demo metrics"
+    },
+    {
+      "width": 768,
+      "name": "flashcard ack / duplicate click / missing media"
+    },
+    {
+      "width": 768,
+      "name": "server review schedule refresh / empty state"
+    },
+    {
+      "width": 768,
+      "name": "grammar retry / safe Markdown / completion ack"
+    },
+    {
+      "width": 768,
+      "name": "exam list/detail / mode choices / no unsafe start"
+    },
+    {
+      "width": 768,
+      "name": "Back / Forward / reload preserve server ID without creating attempts"
+    },
+    {
+      "width": 768,
+      "name": "history/result / no placeholder TOEIC score"
+    },
+    {
+      "width": 768,
+      "name": "analytics filtering / lifetime labels / prediction withheld"
+    },
+    {
+      "width": 768,
+      "name": "profile server validation / retained input / ack"
+    },
+    {
+      "width": 768,
+      "name": "wrong profile acknowledgement retains input without success"
+    },
+    {
+      "width": 768,
+      "name": "inactive-account response removes private UI and retry restores validated session"
+    },
+    {
+      "width": 768,
+      "name": "settings / AI explicit blocked UI"
+    },
+    {
+      "width": 768,
+      "name": "CMS list / union of backend roles"
+    },
+    {
+      "width": 768,
+      "name": "CMS responsive menu / Escape / focus restoration"
+    },
+    {
+      "width": 768,
+      "name": "CMS API question editor / server error retains draft"
+    },
+    {
+      "width": 768,
+      "name": "network loss blocks duplicate create and retains draft"
+    },
+    {
+      "width": 768,
+      "name": "existing metadata transport remains locked"
+    },
+    {
+      "width": 768,
+      "name": "current account cannot self-change roles"
+    },
+    {
+      "width": 768,
+      "name": "audit read-only / source field mapping"
+    },
+    {
+      "width": 768,
+      "name": "remaining CMS domains / blocked contracts / responsive"
+    },
+    {
+      "width": 768,
+      "name": "CMS navigation revalidates revoked backend roles"
+    },
+    {
+      "width": 768,
+      "name": "expired session / no private or demo view"
+    },
+    {
+      "width": 768,
+      "name": "session retry succeeds without reloading or showing stale private data"
+    },
+    {
+      "width": 768,
+      "name": "API empty response never becomes fixture catalog"
+    },
+    {
+      "width": 768,
+      "name": "API never writes demo learning/session/history storage"
+    },
+    {
+      "width": 390,
+      "name": "home / focus / no overflow"
+    },
+    {
+      "width": 390,
+      "name": "login validation / error / retained input"
+    },
+    {
+      "width": 390,
+      "name": "server-shaped dashboard totals / no demo metrics"
+    },
+    {
+      "width": 390,
+      "name": "flashcard ack / duplicate click / missing media"
+    },
+    {
+      "width": 390,
+      "name": "server review schedule refresh / empty state"
+    },
+    {
+      "width": 390,
+      "name": "grammar retry / safe Markdown / completion ack"
+    },
+    {
+      "width": 390,
+      "name": "exam list/detail / mode choices / no unsafe start"
+    },
+    {
+      "width": 390,
+      "name": "Back / Forward / reload preserve server ID without creating attempts"
+    },
+    {
+      "width": 390,
+      "name": "history/result / no placeholder TOEIC score"
+    },
+    {
+      "width": 390,
+      "name": "analytics filtering / lifetime labels / prediction withheld"
+    },
+    {
+      "width": 390,
+      "name": "profile server validation / retained input / ack"
+    },
+    {
+      "width": 390,
+      "name": "wrong profile acknowledgement retains input without success"
+    },
+    {
+      "width": 390,
+      "name": "inactive-account response removes private UI and retry restores validated session"
+    },
+    {
+      "width": 390,
+      "name": "settings / AI explicit blocked UI"
+    },
+    {
+      "width": 390,
+      "name": "CMS list / union of backend roles"
+    },
+    {
+      "width": 390,
+      "name": "CMS responsive menu / Escape / focus restoration"
+    },
+    {
+      "width": 390,
+      "name": "CMS API question editor / server error retains draft"
+    },
+    {
+      "width": 390,
+      "name": "network loss blocks duplicate create and retains draft"
+    },
+    {
+      "width": 390,
+      "name": "existing metadata transport remains locked"
+    },
+    {
+      "width": 390,
+      "name": "current account cannot self-change roles"
+    },
+    {
+      "width": 390,
+      "name": "audit read-only / source field mapping"
+    },
+    {
+      "width": 390,
+      "name": "remaining CMS domains / blocked contracts / responsive"
+    },
+    {
+      "width": 390,
+      "name": "CMS navigation revalidates revoked backend roles"
+    },
+    {
+      "width": 390,
+      "name": "expired session / no private or demo view"
+    },
+    {
+      "width": 390,
+      "name": "session retry succeeds without reloading or showing stale private data"
+    },
+    {
+      "width": 390,
+      "name": "API empty response never becomes fixture catalog"
+    },
+    {
+      "width": 390,
+      "name": "API never writes demo learning/session/history storage"
+    },
+    {
+      "width": 320,
+      "name": "home / focus / no overflow"
+    },
+    {
+      "width": 320,
+      "name": "login validation / error / retained input"
+    },
+    {
+      "width": 320,
+      "name": "server-shaped dashboard totals / no demo metrics"
+    },
+    {
+      "width": 320,
+      "name": "flashcard ack / duplicate click / missing media"
+    },
+    {
+      "width": 320,
+      "name": "server review schedule refresh / empty state"
+    },
+    {
+      "width": 320,
+      "name": "grammar retry / safe Markdown / completion ack"
+    },
+    {
+      "width": 320,
+      "name": "exam list/detail / mode choices / no unsafe start"
+    },
+    {
+      "width": 320,
+      "name": "Back / Forward / reload preserve server ID without creating attempts"
+    },
+    {
+      "width": 320,
+      "name": "history/result / no placeholder TOEIC score"
+    },
+    {
+      "width": 320,
+      "name": "analytics filtering / lifetime labels / prediction withheld"
+    },
+    {
+      "width": 320,
+      "name": "profile server validation / retained input / ack"
+    },
+    {
+      "width": 320,
+      "name": "wrong profile acknowledgement retains input without success"
+    },
+    {
+      "width": 320,
+      "name": "inactive-account response removes private UI and retry restores validated session"
+    },
+    {
+      "width": 320,
+      "name": "settings / AI explicit blocked UI"
+    },
+    {
+      "width": 320,
+      "name": "CMS list / union of backend roles"
+    },
+    {
+      "width": 320,
+      "name": "CMS responsive menu / Escape / focus restoration"
+    },
+    {
+      "width": 320,
+      "name": "CMS API question editor / server error retains draft"
+    },
+    {
+      "width": 320,
+      "name": "network loss blocks duplicate create and retains draft"
+    },
+    {
+      "width": 320,
+      "name": "existing metadata transport remains locked"
+    },
+    {
+      "width": 320,
+      "name": "current account cannot self-change roles"
+    },
+    {
+      "width": 320,
+      "name": "audit read-only / source field mapping"
+    },
+    {
+      "width": 320,
+      "name": "remaining CMS domains / blocked contracts / responsive"
+    },
+    {
+      "width": 320,
+      "name": "CMS navigation revalidates revoked backend roles"
+    },
+    {
+      "width": 320,
+      "name": "expired session / no private or demo view"
+    },
+    {
+      "width": 320,
+      "name": "session retry succeeds without reloading or showing stale private data"
+    },
+    {
+      "width": 320,
+      "name": "API empty response never becomes fixture catalog"
+    },
+    {
+      "width": 320,
+      "name": "API never writes demo learning/session/history storage"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/login",
+      "method": "POST"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/flashcards/qa-word-01/review",
+      "method": "POST"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/review-today",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01/complete",
+      "method": "POST"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/scores",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "attempts/qa-attempt-01",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "questions",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "admin/audit-logs",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/lessons",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 1440,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/login",
+      "method": "POST"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/flashcards/qa-word-01/review",
+      "method": "POST"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/review-today",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01/complete",
+      "method": "POST"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/scores",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "attempts/qa-attempt-01",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "questions",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "admin/audit-logs",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/lessons",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 768,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/login",
+      "method": "POST"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/flashcards/qa-word-01/review",
+      "method": "POST"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/review-today",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01/complete",
+      "method": "POST"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/scores",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "attempts/qa-attempt-01",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "questions",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "admin/audit-logs",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/lessons",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 390,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/login",
+      "method": "POST"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/flashcards/qa-word-01/review",
+      "method": "POST"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/review-today",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/lessons/qa-lesson-01/complete",
+      "method": "POST"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "tests",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "tests/qa-test-01",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/scores",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "attempts/qa-attempt-01",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/weak-areas",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/prediction",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "users/me",
+      "method": "PATCH"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "questions",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "questions",
+      "method": "POST"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "admin/users",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "admin/audit-logs",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/lessons",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/vocabularies",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "analytics/streak",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "auth/session",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/progress",
+      "method": "GET"
+    },
+    {
+      "width": 320,
+      "app": "web",
+      "path": "learning/vocabulary-topics",
+      "method": "GET"
+    }
+  ],
+  "screenshots": [
+    "home-1440.png",
+    "cms-768.png",
+    "learning-390.png",
+    "result-320.png"
+  ],
+  "unavailableEngines": [
+    "Firefox",
+    "WebKit/Safari"
+  ],
+  "humanPronunciation": "NOT ACCEPTED",
+  "completed": true
+}

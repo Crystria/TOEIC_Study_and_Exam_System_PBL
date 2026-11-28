@@ -1,0 +1,82 @@
+{
+  "notice": "Reference templates only. Current mock attempt repository is in-memory; these JSON records are not automatically imported by the app.",
+  "templates": [
+    {
+      "attemptId": "qa-attempt-in-progress-001",
+      "userRef": "QA-USER-A",
+      "testId": "11111111-1111-4111-8111-000000000005",
+      "mode": "FULL",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "status": "IN_PROGRESS",
+      "startedAt": "2026-11-09T08:00:00+07:00",
+      "deadlineAt": "2026-11-09T10:00:00+07:00",
+      "durationSeconds": 7200,
+      "answerSet": "first_50_answered_correct"
+    },
+    {
+      "attemptId": "qa-attempt-submitted-001",
+      "userRef": "QA-USER-A",
+      "testId": "11111111-1111-4111-8111-000000000005",
+      "mode": "FULL",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "status": "SUBMITTED",
+      "startedAt": "2026-11-08T08:00:00+07:00",
+      "completedAt": "2026-11-08T09:45:00+07:00",
+      "deadlineAt": "2026-11-08T10:00:00+07:00",
+      "durationSeconds": 7200,
+      "answerSet": "balanced_100_correct_100_wrong"
+    },
+    {
+      "attemptId": "qa-attempt-expired-001",
+      "userRef": "QA-USER-A",
+      "testId": "11111111-1111-4111-8111-000000000005",
+      "mode": "FULL",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "status": "EXPIRED",
+      "startedAt": "2026-11-07T08:00:00+07:00",
+      "completedAt": "2026-11-07T10:00:00+07:00",
+      "deadlineAt": "2026-11-07T10:00:00+07:00",
+      "durationSeconds": 7200,
+      "answerSet": "first_50_answered_correct"
+    },
+    {
+      "attemptId": "qa-attempt-part5-001",
+      "userRef": "QA-USER-B",
+      "testId": "11111111-1111-4111-8111-000000000005",
+      "mode": "PART",
+      "parts": [
+        5
+      ],
+      "status": "SUBMITTED",
+      "startedAt": "2026-11-08T12:00:00+07:00",
+      "completedAt": "2026-11-08T12:08:00+07:00",
+      "durationSeconds": 600,
+      "answerSet": "part5_all_correct_30",
+      "note": "Part practice scores are raw/count metrics; current app deliberately omits scaled TOEIC score for PART mode."
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/auth/login"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"{{qaUserAEmail}}\",\r
+
+    \  \"password\": \"{{qaUserAPassword}}\",\r
+
+    \  \"deviceId\": \"{{deviceId}}\"\r
+
+    }"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      const response = pm.response.json();
+
+      if (pm.response.code === 200) {
+          const data = response.data ?? response;
+
+          if (data.accessToken) {
+              pm.environment.set("accessToken", data.accessToken);
+          }
+
+          if (data.refreshToken) {
+              pm.environment.set("refreshToken", data.refreshToken);
+          }
+      }
+    language: text/javascript
+settings: {}
+examples: .resources/login.resources/examples
+order: 1000

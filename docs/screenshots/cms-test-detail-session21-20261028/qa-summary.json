@@ -1,0 +1,141 @@
+{
+  "reports": [
+    {
+      "name": "test-detail",
+      "file": "browser-report.json",
+      "completed": true,
+      "checks": 44,
+      "screenshots": 63,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "shell",
+      "file": "shell-regression/browser-report.json",
+      "completed": true,
+      "checks": 35,
+      "screenshots": 46,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "questions",
+      "file": "questions-regression/browser-report.json",
+      "completed": true,
+      "checks": 25,
+      "screenshots": 27,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "tests",
+      "file": "tests-regression/browser-report.json",
+      "completed": true,
+      "checks": 25,
+      "screenshots": 30,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "lessons",
+      "file": "lessons-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 44,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "vocabulary",
+      "file": "vocabulary-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 52,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "users",
+      "file": "users-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 60,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "audit-logs",
+      "file": "audit-logs-regression/browser-report.json",
+      "completed": true,
+      "checks": 32,
+      "screenshots": 60,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    },
+    {
+      "name": "question-detail",
+      "file": "question-detail-regression/browser-report.json",
+      "completed": true,
+      "checks": 44,
+      "screenshots": 83,
+      "errors": 0,
+      "forbiddenRequests": 0,
+      "httpErrors": 0,
+      "storageWrites": 0,
+      "failure": null
+    }
+  ],
+  "totalChecks": 301,
+  "totalScreenshots": 465,
+  "allPassed": true,
+  "unitTests": {
+    "total": 55,
+    "passed": 55
+  },
+  "visualReview": {
+    "viewports": [
+      1440,
+      768,
+      390,
+      320
+    ],
+    "height": 900,
+    "deviceScaleFactor": 1,
+    "originalPngReviewed": [
+      "metadata-full-1440.png",
+      "state-tool-768.png",
+      "metadata-mini-390.png",
+      "metadata-mini-320.png",
+      "missing-fields-320.png",
+      "state-tool-320.png",
+      "long-id-320.png",
+      "long-title-320.png",
+      "error-retry-320.png",
+      "restored-filter-page-320.png"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+$kind: collection
+description: |-
+  Batch trùng questionId hoặc vượt 200
+  Procedure: 1. Gửi hai đáp án cùng qid.
+  2. Dataset riêng gửi 201 đáp án.
+  3. Đọc lại trạng thái/draft.
+  Expected: 400; không lưu/chấm một phần hoặc thay đổi kết quả bằng dữ liệu không hợp lệ.
+  Preconditions: Attempt còn hạn; payload có UUID hợp lệ.
+  Execution note: Ưu tiên: High.
+  Risk: R-01,R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.1.
+  Note cũ ghi “Thiết kế; chưa thực thi” nên trạng thái Failed hiện tại chưa có bằng chứng hỗ trợ; đề nghị đổi Round 1 thành Pending nếu không có response lỗi thực tế. Khi chạy: dùng attempt IN_PROGRESS; gửi draft có cùng questionId hai lần, sau đó ở lượt riêng gửi 201 phần tử (có thể lặp các qid hợp lệ để đạt 201). Kỳ vọng 400, không lưu một phần và draft trước đó giữ nguyên.
+  The 201-entry request reuses UUIDs from the real 200-question snapshot; HTTP 400 proves payload rejection, but backend error details should be reviewed to distinguish the >200 limit from duplicate-ID validation.
+order: 19000

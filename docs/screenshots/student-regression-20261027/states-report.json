@@ -1,0 +1,155 @@
+{
+  "checks": [
+    "Dashboard empty/insufficient/error/retry, select labels and loading",
+    "Vocabulary/Grammar empty/error/retry and search clearing",
+    "Grammar table-of-contents hash then Profile/Settings Back restores the lesson, not only its URL",
+    "Exam library loading/empty/error/retry, search/filter, invalid selections preserve storage",
+    "Player loading/empty/error/retry retains actual answers and deadline; Reading highlight and map",
+    "One active draft requires replacement confirmation and cancellation keeps original snapshot",
+    "Exam failed save warns on exit/Back/native reload; cancel and retry preserve draft",
+    "Learning save-error discloses RAM-only progress and does not claim a successful browser save"
+  ],
+  "screenshots": [
+    {
+      "name": "dashboard-empty",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "dashboard-empty",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "dashboard-empty",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "dashboard-error",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "dashboard-error",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "dashboard-error",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "vocabulary-load-error",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "vocabulary-load-error",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "vocabulary-load-error",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "grammar-load-error",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "grammar-load-error",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "grammar-load-error",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "exam-loading",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "exam-loading",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "exam-loading",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "player-load-error",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "player-load-error",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "player-load-error",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "player-reading-highlight",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "player-reading-highlight",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "player-reading-highlight",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "player-save-error",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "player-save-error",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "player-save-error",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "name": "learning-save-error",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "learning-save-error",
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "learning-save-error",
+      "width": 390,
+      "height": 900
+    }
+  ],
+  "errors": [],
+  "apiRequests": [],
+  "nativeDialogs": [
+    "beforeunload"
+  ],
+  "completed": true
+}

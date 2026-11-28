@@ -1,0 +1,417 @@
+.student-auth-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(1000px, calc(100% - 48px));
+  max-width: none;
+  max-height: calc(100dvh - 64px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  overflow: visible;
+  background: transparent;
+  color: #18314b;
+  box-shadow: 0 28px 100px rgb(16 45 103 / 24%);
+}
+.student-auth-dialog::backdrop {
+  background: rgb(15 23 42 / 54%);
+  backdrop-filter: blur(4px);
+  animation: student-auth-backdrop-in 0.35s ease both;
+}
+.student-auth-dialog[open] .student-auth-card {
+  animation: student-auth-drop-in 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.student-auth-dialog[data-closing] .student-auth-card {
+  animation: student-auth-rise-out 0.22s ease-in both;
+}
+.student-auth-dialog[data-closing]::backdrop {
+  animation: student-auth-backdrop-out 0.22s ease-in both;
+}
+.student-auth-card {
+  --student-auth-primary: #315bd6;
+  position: relative;
+  height: min(720px, calc(100dvh - 64px));
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: inherit;
+  background: #fff;
+}
+.student-auth-card[data-mode='demo'] {
+  --student-auth-primary: #2563eb;
+}
+.student-auth-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e6ebf2;
+  border-radius: 50%;
+  background: #fff;
+  color: #18314b;
+  cursor: pointer;
+}
+.student-auth-close:hover:not(:disabled) {
+  background: #f5f7fb;
+}
+.student-auth-close:disabled,
+.student-auth-toggle:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.student-auth-form-slot {
+  position: relative;
+  z-index: 1;
+  width: 50%;
+  height: 100%;
+  padding: 48px 40px 32px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  transition: transform 0.65s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.student-auth-card[data-intent='register'] .student-auth-form-slot {
+  transform: translateX(100%);
+}
+.student-auth-form-view {
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+  animation: student-auth-form-in 0.55s ease both;
+}
+.student-auth-card .api-login,
+.student-auth-card .auth-form-container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.student-auth-card .api-login h1,
+.student-auth-card .auth-form-container h1 {
+  margin: 0 0 12px;
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.7px;
+}
+.student-auth-card .api-login > p:first-of-type,
+.student-auth-card .auth-description {
+  margin: 0 0 24px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.student-auth-card .api-field {
+  margin: 0 0 16px;
+}
+.student-auth-card .api-field label {
+  font-size: 13px;
+}
+.student-auth-card .api-field input {
+  min-height: 46px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.student-auth-card .api-auth-student form {
+  gap: 6px;
+}
+.student-auth-card .api-auth-submit {
+  font-size: 14px;
+}
+.student-auth-card .api-auth-switch,
+.student-auth-card .auth-switch {
+  margin-top: 28px;
+  font-size: 13px;
+}
+.student-auth-card .api-auth-support {
+  margin-top: 18px;
+  font-size: 12px;
+}
+.student-auth-card .api-blocked {
+  margin: 24px 0 0;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.student-auth-card .api-error {
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.student-auth-welcome {
+  position: absolute;
+  inset: 0 0 0 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 64px 48px;
+  border-radius: 120px 0 0 120px;
+  background: var(--student-auth-primary);
+  color: #fff;
+  text-align: center;
+  transition:
+    transform 0.65s cubic-bezier(0.65, 0, 0.35, 1),
+    border-radius 0.65s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.student-auth-card[data-intent='register'] .student-auth-welcome {
+  transform: translateX(-100%);
+  border-radius: 0 120px 120px 0;
+}
+.student-auth-welcome::before,
+.student-auth-welcome::after {
+  content: '';
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.student-auth-welcome::before {
+  top: -240px;
+  right: -130px;
+}
+.student-auth-welcome::after {
+  bottom: -230px;
+  left: -140px;
+}
+.student-auth-welcome-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  max-width: 320px;
+  animation: student-auth-welcome-in 0.6s ease both;
+}
+.student-auth-mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 20px;
+  background: rgb(255 255 255 / 10%);
+}
+.student-auth-brand {
+  margin-top: 16px;
+  font-size: 15px;
+  font-weight: 650;
+}
+.student-auth-welcome h2 {
+  margin: 28px 0 16px;
+  font-size: clamp(26px, 2.8vw, 36px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.8px;
+}
+.student-auth-welcome p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.9;
+  color: #fff;
+}
+.student-auth-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 46px;
+  margin-top: 30px;
+  padding: 10px 24px;
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 12px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.student-auth-toggle:hover:not(:disabled) {
+  background: rgb(255 255 255 / 12%);
+}
+.student-auth-skills {
+  margin-top: 36px;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+}
+.student-auth-welcome :focus-visible {
+  outline-color: #fff;
+}
+@keyframes student-auth-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-100vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes student-auth-rise-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+}
+@keyframes student-auth-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes student-auth-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes student-auth-form-in {
+  0%,
+  25% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes student-auth-welcome-in {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@media (min-width: 768px) and (max-height: 600px) {
+  .student-auth-welcome {
+    padding: 24px 32px;
+  }
+  .student-auth-mark,
+  .student-auth-skills {
+    display: none;
+  }
+  .student-auth-brand {
+    margin: 0;
+    font-size: 13px;
+  }
+  .student-auth-welcome h2 {
+    margin: 16px 0 12px;
+    font-size: 26px;
+  }
+  .student-auth-welcome p {
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .student-auth-toggle {
+    min-height: 42px;
+    margin-top: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .student-auth-dialog {
+    width: min(480px, calc(100% - 24px));
+    max-height: calc(100dvh - 24px);
+    border-radius: 20px;
+  }
+  .student-auth-card {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    max-height: calc(100dvh - 24px);
+  }
+  .student-auth-form-slot,
+  .student-auth-card[data-intent='register'] .student-auth-form-slot {
+    order: 2;
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 28px 24px;
+    transform: none;
+    transition: none;
+  }
+  .student-auth-form-view {
+    min-height: 0;
+  }
+  .student-auth-welcome,
+  .student-auth-card[data-intent='register'] .student-auth-welcome {
+    position: relative;
+    inset: auto;
+    order: 1;
+    flex: 0 0 auto;
+    padding: 22px 60px 22px 24px;
+    border-radius: 0 0 36px 0;
+    transform: none;
+    text-align: left;
+    transition: none;
+  }
+  .student-auth-welcome-content {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    max-width: none;
+  }
+  .student-auth-mark {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+  }
+  .student-auth-mark svg {
+    width: 25px;
+    height: 25px;
+  }
+  .student-auth-brand {
+    margin: 0;
+    font-size: 16px;
+  }
+  .student-auth-welcome h2,
+  .student-auth-welcome p,
+  .student-auth-toggle,
+  .student-auth-skills {
+    display: none;
+  }
+  .student-auth-close {
+    top: 18px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+  }
+  .student-auth-card .api-login h1,
+  .student-auth-card .auth-form-container h1 {
+    font-size: 25px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .student-auth-dialog::backdrop,
+  .student-auth-dialog[data-closing]::backdrop,
+  .student-auth-dialog[open] .student-auth-card,
+  .student-auth-dialog[data-closing] .student-auth-card,
+  .student-auth-form-view,
+  .student-auth-welcome-content {
+    animation: none;
+  }
+  .student-auth-form-slot,
+  .student-auth-welcome {
+    transition: none;
+  }
+}

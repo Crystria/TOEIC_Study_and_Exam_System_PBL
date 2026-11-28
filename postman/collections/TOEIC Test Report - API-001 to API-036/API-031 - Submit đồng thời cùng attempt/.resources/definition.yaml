@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  Submit đồng thời cùng attempt
+  Procedure: 1. Gửi hai request đồng thời cho cùng attempt.
+  2. Chờ cả hai xong, GET và đối soát số kết quả/event theo quyền QA.
+  Expected: Chỉ một lần hoàn tất; không trùng kết quả; response cuối nhất quán. Đây là kiểm tra idempotency, không benchmark nhiều user.
+  Preconditions: QA riêng; cùng owner; dự kiến dữ liệu giống nhau.
+  Execution note: Ưu tiên: High.
+  Risk: R-04.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-04.
+  Tạo attempt và payload cố định; phát hai POST submit gần như đồng thời bằng cùng owner/token và cùng dữ liệu (Postman Runner/collection hoặc script Promise.all). Sau đó GET attempt/result/history; nếu có quyền QA, đối chiếu một result/outbox event. Hai request tuần tự không thay thế được kiểm tra concurrency.
+order: 32000

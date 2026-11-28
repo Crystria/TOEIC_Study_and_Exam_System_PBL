@@ -1,0 +1,17 @@
+# Workflow metadata for the Auth/Learning/Analytics OpenAPI workspace.
+# Paths are relative to the .postman directory.
+
+workflows:
+  syncSpecToCollection:
+    - spec: '../qa/api/postman/workspace/specs/Auth Learning Analytics target API/auth-learning-analytics.v1.json'
+      collection: '../qa/api/postman/workspace/collections/Auth Learning Analytics target API'
+      options:
+        syncExamples: false
+        deleteOrphanedRequests: false
+
+  syncCollectionToSpec:
+    - spec: '../qa/api/postman/workspace/specs/Auth Learning Analytics target API/auth-learning-analytics.v1.json'
+      collection: '../qa/api/postman/workspace/collections/Auth Learning Analytics target API'
+      options:
+        syncExamples: false
+        deleteOrphanedRequests: false

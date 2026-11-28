@@ -22,6 +22,10 @@ export class ListQuestionsQueryDto {
   tag?: string;
 
   @IsOptional()
+  @IsString()
+  groupId?: string;
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)

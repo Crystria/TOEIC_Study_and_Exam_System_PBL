@@ -1,0 +1,73 @@
+{
+  "files": [
+    {
+      "file": "apps\\admin-cms\\src\\lib\\questions\\detail-availability.ts",
+      "imports": [],
+      "forbiddenMatches": []
+    },
+    {
+      "file": "apps\\admin-cms\\src\\lib\\questions\\detail-fixtures.ts",
+      "imports": [
+        "import type { QuestionDetail } from './detail-types';"
+      ],
+      "forbiddenMatches": []
+    },
+    {
+      "file": "apps\\admin-cms\\src\\lib\\questions\\detail-navigation.ts",
+      "imports": [
+        "import { questionHref, readQuestionParams } from './query';",
+        "import type { DetailPreview } from './detail-types';"
+      ],
+      "forbiddenMatches": []
+    },
+    {
+      "file": "apps\\admin-cms\\src\\lib\\questions\\detail-repository.ts",
+      "imports": [
+        "import { QUESTION_FIXTURES } from './fixtures';",
+        "import { QUESTION_DETAIL_FIXTURES } from './detail-fixtures';",
+        "import type { DetailPreview, DetailResult, QuestionDetail } from './detail-types';"
+      ],
+      "forbiddenMatches": []
+    },
+    {
+      "file": "apps\\admin-cms\\src\\lib\\questions\\detail-types.ts",
+      "imports": [
+        "import type { Difficulty } from './types';"
+      ],
+      "forbiddenMatches": []
+    },
+    {
+      "file": "apps\\admin-cms\\src\\components\\questions\\question-detail-content.tsx",
+      "imports": [
+        "import { Card } from '@/components/ui/card';",
+        "import { explicitAnswer, type QuestionDetail } from '@/lib/questions/detail-types';",
+        "import { DIFFICULTY_LABELS } from '@/lib/questions/types';"
+      ],
+      "forbiddenMatches": []
+    },
+    {
+      "file": "apps\\admin-cms\\src\\components\\questions\\question-detail.tsx",
+      "imports": [
+        "import Link from 'next/link';",
+        "import { useRouter, useSearchParams } from 'next/navigation';",
+        "import { useEffect, useRef, useState } from 'react';",
+        "import { Button } from '@/components/ui/button';",
+        "import { Card } from '@/components/ui/card';",
+        "import { readDetailParams, questionDetailHref } from '@/lib/questions/detail-navigation';",
+        "import { demoQuestionDetailRepository } from '@/lib/questions/detail-repository';",
+        "import type { DetailPreview, DetailResult } from '@/lib/questions/detail-types';",
+        "import { QuestionDetailContent } from './question-detail-content';"
+      ],
+      "forbiddenMatches": []
+    },
+    {
+      "file": "apps\\admin-cms\\src\\lib\\demo\\cms-destination.ts",
+      "imports": [
+        "import { CMS_DESTINATIONS } from './cms-fixtures';"
+      ],
+      "forbiddenMatches": []
+    }
+  ],
+  "forbiddenCount": 0,
+  "fixtureAnswerUse": "CMS viewing only; local originals; no Attempt or audit creation"
+}

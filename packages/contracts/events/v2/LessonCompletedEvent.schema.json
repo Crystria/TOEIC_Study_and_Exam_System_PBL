@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://contracts.toeic.local/events/v2/LessonCompletedEvent.schema.json",
+  "title": "LessonCompletedEvent.v2",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+    },
+    "eventType": {
+      "const": "LessonCompletedEvent.v2"
+    },
+    "occurredAt": {
+      "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Timestamp"
+    },
+    "producer": {
+      "const": "learning-service"
+    },
+    "version": {
+      "const": 2
+    },
+    "payload": {
+      "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/LessonCompletedPayload"
+    },
+    "correlationId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "causationId": {
+      "$ref": "https://contracts.toeic.local/p0/domain.schema.json#/definitions/Uuid"
+    }
+  },
+  "required": ["eventId", "eventType", "occurredAt", "producer", "version", "payload"],
+  "additionalProperties": true
+}

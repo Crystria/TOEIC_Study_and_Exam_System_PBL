@@ -1,0 +1,1679 @@
+[
+  {
+    "file": "SRS.docx",
+    "sha256": "E1E3D2DFAAC745E9B75E79769DA6B945AA79D388CDAC2F0E0BCD25A59F0D83FE",
+    "count": 726,
+    "paragraphs": [
+      {
+        "index": 58,
+        "text": "Tài liệu Đặc tả Yêu cầu Phần mềm (SRS) này xác định các yêu cầu chức năng, phi chức năng và các ràng buộc kỹ thuật đối với hệ thống Học và Ôn thi TOEIC 2 kỹ năng (Listening & Reading) chạy trên cả nền tảng Mobile App và Web App. Tài liệu này đóng vai trò là hợp đồng kỹ thuật và hướng dẫn triển khai chi tiết cho: * Lập trình viên (Backend/Frontend): Để nắm bắt chính xác các API cần xây dựng, ranh giới dữ liệu giữa các microservices, và luồng nghiệp vụ cần xử lý. * Kiểm thử viên (QC/Tester): Làm căn cứ thiết kế Kịch bản kiểm thử (Test Case) và đánh giá sự tuân thủ yêu cầu. * Kiến trúc sư hệ thống (Solution Architect): Để thiết kế chi tiết cơ sở dữ liệu vật lý, hạ tầng triển khai và các luồng giao tiếp liên dịch vụ."
+      },
+      {
+        "index": 59,
+        "text": "Phạm vi sản phẩm phần mềm"
+      },
+      {
+        "index": 60,
+        "text": "Sản phẩm phần mềm là một hệ sinh thái học tập đa nền tảng (Web App và Mobile App) cung cấp giải pháp toàn diện cho việc ôn luyện chứng chỉ TOEIC 2 kỹ năng bao gồm: * Phân hệ Người dùng học tập: Cho phép người dùng học từ vựng theo chủ đề, học lý thuyết ngữ pháp, tra cứu ngân hàng câu hỏi, thực hiện thi thử (Full Test/Mini Test), tự đánh giá năng lực, dự đoán điểm số thông qua lịch sử thi và học tập dưới sự hỗ trợ của AI Chatbox. * Phân hệ Quản trị (Admin CMS): "
+      },
+      {
+        "index": 61,
+        "text": "Quản trị hệ thống: Cung cấp chức năng quản lý người dùng, phân quyền người dùng. "
+      },
+      {
+        "index": 62,
+        "text": "Quản trị nội dung: Cung cấp giao diện trực quan cho quản trị viên quản lý kho từ vựng, bài giảng lý thuyết ngữ pháp và cấu trúc ngân hàng câu hỏi thi thử."
+      },
+      {
+        "index": 63,
+        "text": " *Ngoài phạm vi: Hệ thống không chịu trách nhiệm tổ chức thi và cấp chứng chỉ TOEIC chính thức của ETS, chỉ đóng vai trò là một nền tảng hỗ trợ ôn luyện."
+      },
+      {
+        "index": 64,
+        "text": "Độc giả định hướng"
+      },
+      {
+        "index": 65,
+        "text": "Đội ngũ Phát triển Backend: Đọc kỹ Mục 3 (Functional Requirements) để thiết kế các dịch vụ tương ứng, thiết kế Database riêng cho từng Service và xây dựng các API Gateway, Message Broker."
+      },
+      {
+        "index": 113,
+        "text": "•           Quản trị viên hệ thống (System Administrator / SYSTEM_ADMIN):"
+      },
+      {
+        "index": 114,
+        "text": "–          Sử dụng: Admin CMS - Phân hệ Hệ thống."
+      },
+      {
+        "index": 115,
+        "text": "–          Mục tiêu: Quản lý danh sách tài khoản người dùng, phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), kiểm soát trạng thái kích hoạt/khóa tài khoản, xem nhật ký truy cập (System Audit Logs) và cấu hình nền tảng chung."
+      },
+      {
+        "index": 116,
+        "text": "•           Quản trị viên nội dung (Content Administrator / CONTENT_ADMIN):"
+      },
+      {
+        "index": 117,
+        "text": "–          Sử dụng: Admin CMS - Phân hệ Nội dung."
+      },
+      {
+        "index": 118,
+        "text": "–          Mục tiêu: Quản lý kho câu hỏi trắc nghiệm (Listening & Reading), quản lý các bộ từ vựng Flashcard kèm âm thanh/phiên âm, quản lý bài giảng lý thuyết ngữ pháp, và thiết lập cấu trúc các đề thi thử (Full Test/Mini Test)."
+      },
+      {
+        "index": 119,
+        "text": "Tóm tắt chức năng vĩ mô"
+      },
+      {
+        "index": 120,
+        "text": "Hệ thống đáp ứng 14 chức năng nghiệp vụ cốt lõi thông qua sự phối hợp của 6 service nghiệp vụ: "
+      },
+      {
+        "index": 121,
+        "text": "Đăng nhập (Login): Xác thực người dùng bằng tài khoản/mật khẩu hoặc OAuth2 (Google/Facebook), trả về Access Token dạng JWT. "
+      },
+      {
+        "index": 122,
+        "text": "Đăng ký (Register): Cho phép người dùng tạo tài khoản mới và khởi tạo hồ sơ học viên trên hệ thống. "
+      },
+      {
+        "index": 123,
+        "text": "Quản lý người dùng & phân quyền hệ thống (System & User Management): System Admin phân quyền vai trò (SYSTEM_ADMIN, CONTENT_ADMIN, USER), quản lý trạng thái tài khoản."
+      },
+      {
+        "index": 124,
+        "text": "Quản lý ngân hàng câu hỏi (Question Bank Management): Admin thực hiện CRUD các câu hỏi TOEIC thuộc phần Listening (Part 1 - Part 4) và Reading (Part 5 - Part 7). "
+      },
+      {
+        "index": 125,
+        "text": "Quản lý từ vựng & Flashcards (Vocabulary Management): Content Admin quản lý bộ từ vựng, từ mới, phiên âm IPA, định nghĩa, ví dụ, audio phát âm .mp3."
+      },
+      {
+        "index": 126,
+        "text": "Quản lý lý thuyết ngữ pháp (Grammar Theory Management): Content Admin quản lý bài giảng lý thuyết ngữ pháp định dạng Markdown và ví dụ."
+      },
+      {
+        "index": 127,
+        "text": "Quản lý bài kiểm tra (Test Management): Content Admin xây dựng đề thi (Full Test 200 câu hoặc Mini Test)."
+      },
+      {
+        "index": 128,
+        "text": "Học từ vựng & Lý thuyết (Learning Tasks): Học viên học từ vựng qua Flashcard (áp dụng thuật toán SuperMemo-2) và học lý thuyết ngữ pháp."
+      },
+      {
+        "index": 129,
+        "text": "Làm bài thi thử (Mock Test Taking): Học viên làm bài thi thử có tính giờ, chấm điểm tự động qua gRPC và phát sự kiện TestSubmittedEvent."
+      },
+      {
+        "index": 130,
+        "text": "Tìm kiếm và lọc câu hỏi (Search & Filter): Cho phép tìm kiếm câu hỏi, lọc bài luyện tập theo dạng bài, độ khó hoặc chủ đề. "
+      },
+      {
+        "index": 131,
+        "text": "Xem lịch sử và lời giải chi tiết (History & Solutions): Hiển thị danh sách các bài thi đã thực hiện, chấm điểm từng phần, hiển thị đáp án đúng, băng ghi âm (transcript) cho bài nghe và lời giải thích ngữ pháp chi tiết cho bài đọc."
+      },
+      {
+        "index": 132,
+        "text": "Theo dõi tiến độ và thống kê kết quả (Progress Tracking): Thu thập dữ liệu làm bài và học tập để thống kê biểu đồ tiến trình học, đồng thời dự đoán mức điểm TOEIC hiện tại của người dùng. "
+      },
+      {
+        "index": 149,
+        "text": "FUNCTIONAL REQUIREMENTS (CÁC YÊU CẦU CHỨC NĂNG)"
+      },
+      {
+        "index": 150,
+        "text": "DỊCH VỤ XÁC THỰC & NGƯỜI DÙNG"
+      },
+      {
+        "index": 151,
+        "text": "Dịch vụ chịu trách nhiệm quản lý thông tin tài khoản, xác thực quyền hạn theo mô hình RBAC (SYSTEM_ADMIN, CONTENT_ADMIN, USER) và đồng bộ hóa phiên làm việc của người dùng trên nhiều nền tảng."
+      },
+      {
+        "index": 152,
+        "text": "3.1.1 Đăng ký tài khoản (FK-01-Dang-Ky)"
+      },
+      {
+        "index": 153,
+        "text": "Tác nhân thực hiện: Khách (Guest)."
+      },
+      {
+        "index": 154,
+        "text": "Mô tả chức năng: Cho phép người dùng tạo tài khoản học viên mới bằng địa chỉ email cá nhân."
+      },
+      {
+        "index": 155,
+        "text": "Dữ liệu đầu vào (Inputs):"
+      },
+      {
+        "index": 156,
+        "text": "email (Chuỗi, định dạng Email chuẩn, bắt buộc)"
+      },
+      {
+        "index": 166,
+        "text": "Tài khoản mới mặc định ở trạng thái INACTIVE; hệ thống gửi email kích hoạt và tự động chuyển sang ACTIVE sau khi người dùng xác thực liên kết. Tự động gán vai trò mặc định là USER cho mọi tài khoản đăng ký mới."
+      },
+      {
+        "index": 167,
+        "text": "3.1.2 Đăng nhập hệ thống (FK-02-Dang-Nhap)"
+      },
+      {
+        "index": 168,
+        "text": "Tác nhân thực hiện: Tất cả người dùng (USER, SYSTEM_ADMIN, CONTENT_ADMIN)."
+      },
+      {
+        "index": 169,
+        "text": "Mô tả chức năng: Xác thực thông tin người dùng và cấp cặp Token JWT bảo mật để truy cập các tài nguyên hệ thống."
+      },
+      {
+        "index": 170,
+        "text": "Dữ liệu đầu vào (Inputs):"
+      },
+      {
+        "index": 171,
+        "text": "email (Chuỗi, bắt buộc)"
+      },
+      {
+        "index": 172,
+        "text": "password (Chuỗi, bắt buộc)"
+      },
+      {
+        "index": 173,
+        "text": "Dữ liệu đầu ra (Outputs):"
+      },
+      {
+        "index": 182,
+        "text": "Dữ liệu đầu vào (Inputs):"
+      },
+      {
+        "index": 183,
+        "text": "Đối với Học viên: full_name (Chuỗi), avatar_key (Chuỗi), phone_number (Chuỗi)."
+      },
+      {
+        "index": 184,
+        "text": "Đối với System Admin: user_id (UUIDv4), status (Enum: ACTIVE, SUSPENDED, INACTIVE), roles (Mảng Enum: SYSTEM_ADMIN, CONTENT_ADMIN, USER)."
+      },
+      {
+        "index": 185,
+        "text": "Dữ liệu đầu ra (Outputs):"
+      },
+      {
+        "index": 186,
+        "text": "HTTP 200 (OK): Trả về thực thể người dùng đã cập nhật."
+      },
+      {
+        "index": 187,
+        "text": "HTTP 403 (Forbidden): Trả về lỗi nếu tài khoản không có quyền SYSTEM_ADMIN mà cố tình gọi API phân quyền."
+      },
+      {
+        "index": 188,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 189,
+        "text": "Chỉ tài khoản có vai trò SYSTEM_ADMIN mới có quyền gán/thay đổi thuộc tính roles và status của tài khoản khác."
+      },
+      {
+        "index": 201,
+        "text": "Dịch vụ quản trị kho dữ liệu câu hỏi thi TOEIC 2 kỹ năng (Listening & Reading), hỗ trợ tìm kiếm phân loại đa tiêu chí."
+      },
+      {
+        "index": 202,
+        "text": "3.2.1 Quản lý ngân hàng câu hỏi (FK-05-Quan-Ly-Ngan-Hang-Cau-Hoi)"
+      },
+      {
+        "index": 203,
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+      },
+      {
+        "index": 204,
+        "text": "Mô tả chức năng: Cho phép Content Admin thực hiện CRUD các câu hỏi trắc nghiệm thuộc Part 1 đến Part 7."
+      },
+      {
+        "index": 205,
+        "text": "Dữ liệu đầu vào (Inputs): question_text (Chuỗi), audio_key (Bắt buộc cho Part 1-4), image_key (Part 1 và câu hỏi có hình), options (Mảng 4 phương án A, B, C, D), correct_option (Enum: 'A', 'B', 'C', 'D'), part (1-7), difficulty (Enum: EASY, MEDIUM, HARD), tags (Mảng chuỗi), explanation (Chuỗi giải thích), transcript (Chuỗi băng ghi âm, bắt buộc cho Part 1-4)"
+      },
+      {
+        "index": 206,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm question_id (UUIDv4) / HTTP 200 (OK) khi sửa/xóa thành công."
+      },
+      {
+        "index": 207,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 208,
+        "text": "File ghi âm (.mp3, tối đa 5MB) và ảnh (.png/.jpg/.webp, tối đa 2MB) tải lên qua S3 Presigned URL trực tiếp từ Client để giải phóng băng thông Gateway."
+      },
+      {
+        "index": 209,
+        "text": "Sử dụng mẫu Transactional Outbox & CDC phát sự kiện QuestionCreatedEvent / QuestionUpdatedEvent lên Message Broker để đồng bộ chỉ mục Elasticsearch."
+      },
+      {
+        "index": 210,
+        "text": "3.2.2 Tìm kiếm và lọc câu hỏi (FK-06-Tim-Kiem-Va-Loc-Cau-Hoi)"
+      },
+      {
+        "index": 211,
+        "text": "Tác nhân thực hiện: Học viên (USER), Content Admin (CONTENT_ADMIN)."
+      },
+      {
+        "index": 212,
+        "text": "Mô tả chức năng: Cung cấp bộ lọc câu hỏi đa tiêu chí phục vụ luyện tập và quản trị."
+      },
+      {
+        "index": 213,
+        "text": "Dữ liệu đầu vào (Inputs): keyword (Chuỗi), part (1-7), difficulty (Enum), tag (Chuỗi), page (Mặc định 1), size (Giới hạn từ 1 đến 50)."
+      },
+      {
+        "index": 214,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) trả về đối tượng phân trang chứa danh sách câu hỏi và Metadata (total_records, total_pages)."
+      },
+      {
+        "index": 215,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 216,
+        "text": "Bắt buộc giới hạn size <= 50 để bảo vệ hiệu năng Database/Elasticsearch."
+      },
+      {
+        "index": 219,
+        "text": "DỊCH VỤ BÀI THI & THI THỬ"
+      },
+      {
+        "index": 220,
+        "text": "Dịch vụ điều phối đề thi, chấm điểm tự động bảo mật qua gRPC, quản lý tiến trình thi và lịch sử làm bài."
+      },
+      {
+        "index": 221,
+        "text": "3.3.1 Quản lý bài kiểm tra / đề thi (FK-07-Quan-Ly-De-Thi)"
+      },
+      {
+        "index": 222,
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+      },
+      {
+        "index": 223,
+        "text": "Mô tả chức năng: Cho phép Content Admin đóng gói đề thi thử TOEIC (Full Test 200 câu hoặc Mini Test) từ kho câu hỏi."
+      },
+      {
+        "index": 224,
+        "text": "Dữ liệu đầu vào (Inputs): test_title (Chuỗi), test_type (Enum: FULL_TEST, MINI_TEST), duration_seconds (Số nguyên: 7200 giây cho Full Test 120 phút; 1800 giây cho Mini Test 30 phút), question_ids (Mảng UUID câu hỏi)."
+      },
+      {
+        "index": 225,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm test_id (UUIDv4)."
+      },
+      {
+        "index": 226,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 227,
+        "text": "Xác thực tính tồn tại của danh sách question_ids bằng cuộc gọi gRPC nội bộ sang Question Bank Service trước khi đóng gói đề thi."
+      },
+      {
+        "index": 228,
+        "text": "3.3.2 Làm bài thi thử (FK-08-lam-bai-thi-thu)"
+      },
+      {
+        "index": 229,
+        "text": "Tác nhân thực hiện: Học viên (USER)."
+      },
+      {
+        "index": 230,
+        "text": "Mô tả chức năng: Cho phép học viên thi thử TOEIC trực tuyến có tính giờ thời gian thực và chấm điểm tự động."
+      },
+      {
+        "index": 231,
+        "text": "Dữ liệu đầu vào (Inputs): test_id (UUIDv4), user_id (lấy từ JWT), user_answers (Mảng JSON: [{question_id, selected_option}])."
+      },
+      {
+        "index": 232,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) kèm attempt_id, score_listening (5 - 495), score_reading (5 - 495), total_score (10 - 990), correct_listening_count, correct_reading_count, completed_at."
+      },
+      {
+        "index": 233,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 234,
+        "text": "Chấm điểm tự động bảo mật: Gọi gRPC Protobuf (question.proto) sang Question Bank Service để lấy đáp án đối chiếu chấm điểm nội bộ, chống rò rỉ đáp án dưới Client."
+      },
+      {
+        "index": 235,
+        "text": "Đồng bộ Saga Hướng sự kiện: Ghi kết quả vào exam_db.attempts, đồng thời ghi sự kiện TestSubmittedEvent vào Outbox Table để CDC đẩy lên RabbitMQ cho phân hệ Analytics tiêu thụ."
+      },
+      {
+        "index": 236,
+        "text": "3.3.3 Xem lịch sử và lời giải chi tiết (FK-09-Xem-Lich-Su-Va-Loi-Giai)"
+      },
+      {
+        "index": 237,
+        "text": "Tác nhân thực hiện: Học viên (USER)."
+      },
+      {
+        "index": 238,
+        "text": "Mô tả chức năng: Cho phép học viên xem lại chi tiết bài thi đã làm, đáp án đúng/sai, audio, transcript bài nghe và lời giải thích ngữ pháp bài đọc."
+      },
+      {
+        "index": 239,
+        "text": "Dữ liệu đầu vào (Inputs): attempt_id (UUIDv4, bắt buộc)."
+      },
+      {
+        "index": 240,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 200 (OK) kèm cấu trúc bài làm đầy đủ."
+      },
+      {
+        "index": 241,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 242,
+        "text": "Bắt buộc kiểm tra quyền sở hữu bản ghi: Học viên chỉ được phép xem bài làm của chính mình (attempt.user_id === jwt.user_id)."
+      },
+      {
+        "index": 246,
+        "text": "Dịch vụ quản trị từ vựng Flashcards, biên soạn lý thuyết ngữ pháp và điều phối thuật toán lặp lại ngắt quãng SuperMemo-2."
+      },
+      {
+        "index": 247,
+        "text": "3.4.1 Quản lý từ vựng & Flashcards (FK-10-Quan-Ly-Tu-Vung)"
+      },
+      {
+        "index": 248,
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+      },
+      {
+        "index": 249,
+        "text": "Mô tả chức năng: Cho phép Content Admin biên tập kho từ vựng theo chủ đề, nạp từ mới, IPA, định nghĩa, ví dụ và file âm thanh."
+      },
+      {
+        "index": 250,
+        "text": "Dữ liệu đầu vào (Inputs): topic_id (UUIDv4), topic_name (Chuỗi), vocabularies (Mảng JSON: [{word, phonetic, definition, example, audio_key, image_key}])."
+      },
+      {
+        "index": 251,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm topic_id."
+      },
+      {
+        "index": 252,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 253,
+        "text": "File phát âm (.mp3, tối đa 5MB) được lưu trữ trên Object Storage và phát lại qua CDN public; hệ thống lưu audio_key, kiểm tra object tồn tại; CDN URL chỉ dùng khi phát nội dung."
+      },
+      {
+        "index": 254,
+        "text": "3.4.2 Quản lý lý thuyết ngữ pháp (FK-11-Quan-Ly-Ly-Thuyet)"
+      },
+      {
+        "index": 255,
+        "text": "Tác nhân thực hiện: Quản trị viên nội dung (CONTENT_ADMIN)."
+      },
+      {
+        "index": 256,
+        "text": "Mô tả chức năng: Cho phép Content Admin soạn thảo bài giảng lý thuyết ngữ pháp TOEIC theo định dạng Markdown."
+      },
+      {
+        "index": 257,
+        "text": "Dữ liệu đầu vào (Inputs): lesson_title (Chuỗi), category (Chuỗi), content_markdown (Văn bản định dạng Markdown chứa cấu trúc bài học và ví dụ)."
+      },
+      {
+        "index": 258,
+        "text": "Dữ liệu đầu ra (Outputs): HTTP 201 (Created) kèm lesson_id (UUIDv4)."
+      },
+      {
+        "index": 259,
+        "text": "Ràng buộc nghiệp vụ (Business Constraints):"
+      },
+      {
+        "index": 260,
+        "text": "content_markdown bắt buộc tuân thủ chuẩn Markdown để các ứng dụng Client (Next.js/Flutter) render giao diện chuẩn xác."
+      },
+      {
+        "index": 283,
+        "text": "Công thức:"
+      },
+      {
+        "index": 284,
+        "text": "Quy đổi số câu đúng → điểm TOEIC"
+      },
+      {
+        "index": 285,
+        "text": "Full Test: dùng bảng quy đổi chuẩn ETS (lookup table, giá trị 5–495, bước nhảy 5), lưu trong config của Exam Service."
+      },
+      {
+        "index": 286,
+        "text": "Mini Test (không có bảng ETS tương ứng): score_section = clamp( round5( 5 + (correct_section / total_section) * 490 ), 5, 495 ) với round5(x) = làm tròn tới bội số gần nhất của 5."
+      },
+      {
+        "index": 287,
+        "text": "total_score = score_listening + score_reading (miền 10–990)."
+      },
+      {
+        "index": 288,
+        "text": "Thời điểm tính: khi submit hoặc timeout (theo luồng UC‑01)."
+      },
+      {
+        "index": 289,
+        "text": "Dự đoán điểm TOEIC:"
+      },
+      {
+        "index": 290,
+        "text": "Lấy tối đa 3 bài thi thử gần nhất trong 30 ngày (theo completed_at)."
+      },
+      {
+        "index": 291,
+        "text": "Trọng số theo độ mới: w = [0.5, 0.3, 0.2] (bài mới nhất w=0.5)."
+      },
+      {
+        "index": 316,
+        "text": "UC-01-Thi-Thu-TOEIC"
+      },
+      {
+        "index": 317,
+        "text": "Tên Use Case"
+      },
+      {
+        "index": 318,
+        "text": "Làm bài thi thử TOEIC trực tuyến (Full Test hoặc Mini Test)"
+      },
+      {
+        "index": 319,
+        "text": "Phạm vi"
+      },
+      {
+        "index": 320,
+        "text": "Test/Exam Service"
+      },
+      {
+        "index": 321,
+        "text": "Tác nhân"
+      },
+      {
+        "index": 322,
+        "text": "Primary: Học viên (User)"
+      },
+      {
+        "index": 323,
+        "text": "Supporting: Question Bank Service (Cung cấp nội dung câu hỏi), History & Analytics Service (Cập nhật điểm và thống kê)"
+      },
+      {
+        "index": 493,
+        "text": "Quản trị viên tiến hành thêm, sửa đổi, hoặc xóa câu hỏi trong hệ thống CMS quản trị. Để tối ưu băng thông API Gateway, các tệp âm thanh nghe (.mp3) và hình ảnh minh họa (.png) được tải trực tiếp lên Object Storage (S3/MinIO) thông qua cơ chế Presigned URL. Sau khi ghi nhận dữ liệu câu hỏi thành công, hệ thống sử dụng Transactional Outbox để đồng bộ bất đồng bộ sang module Search (trong Question Bank Service) nhằm cập nhật chỉ mục tìm kiếm gần thời gian thực."
+      },
+      {
+        "index": 494,
+        "text": "Điều kiện tiên quyết"
+      },
+      {
+        "index": 495,
+        "text": "Quản trị viên đã đăng nhập thành công vào hệ thống Admin CMS và được cấp Token JWT có quyền CONTENT_ADMIN."
+      },
+      {
+        "index": 496,
+        "text": "Kích hoạt"
+      },
+      {
+        "index": 497,
+        "text": "Quản trị viên nhấn nút “Lưu câu hỏi” trên giao diện quản trị sau khi đã điền đầy đủ dữ liệu và tải lên các tệp đa phương tiện."
+      },
+      {
+        "index": 498,
+        "text": "Điều kiện sau"
+      },
+      {
+        "index": 499,
+        "text": "Trường hợp thành công:- Bản ghi câu hỏi được cập nhật hoặc thêm mới thành công vào cơ sở dữ liệu quest_db.questions.- Các tệp đa phương tiện được lưu trữ an toàn trên Object Storage dưới dạng object key.- Sự kiện đồng bộ QuestionCreatedEvent / QuestionUpdatedEvent được xuất bản thành công lên Message Broker."
+      },
+      {
+        "index": 500,
+        "text": "Trường hợp thất bại:- Không có bản ghi mới hay thay đổi nào được ghi nhận vào cơ sở dữ liệu.- Các tệp phương tiện tải lên dở dang bị dọn dẹp hoặc thu hồi tự động để tránh lãng phí bộ nhớ lưu trữ.- Hệ thống hiển thị thông báo lỗi chi tiết cho Admin và giữ nguyên dữ liệu đã nhập trên form."
+      },
+      {
+        "index": 675,
+        "text": "UC-01-Thi-Thu-TOEIC"
+      },
+      {
+        "index": 676,
+        "text": "Use Case: Thi thử TOEIC"
+      },
+      {
+        "index": 677,
+        "text": "1. Học viên có thể hoàn thành bài thi thử full 200 câu trong 120 phút hoặc mini test trong 30 phút."
+      },
+      {
+        "index": 678,
+        "text": "2. Khi nộp bài, hệ thống hiển thị chính xác kết quả chấm điểm từng phần Listening, Reading và điểm tổng."
+      },
+      {
+        "index": 679,
+        "text": "3. Kết quả bài thi được đồng bộ sang History & Analytics Service thông qua cơ chế Event-driven bất đồng bộ để cập nhật tiến độ học tập."
+      },
+      {
+        "index": 680,
+        "text": "Demonstration (D)Analysis (A)"
+      },
+      {
+        "index": 681,
+        "text": "1. Đi qua luồng thực thi đầy đủ của Use Case thi thử trên Web/Mobile, kiểm tra đồng hồ đếm ngược và kết quả hiển thị trên UI."
+      },
+      {
+        "index": 682,
+        "text": "2. Sử dụng hệ thống phân tích log tập trung và OpenTelemetry (export Jaeger) để theo dõi sự kiện TestSubmittedEvent được xuất bản thành công từ Exam Service và được History & Analytics Service tiêu thụ cập nhật database thành công."
+      }
+    ]
+  },
+  {
+    "file": "tai_lieu_thiet_ke_CSDL.docx",
+    "sha256": "A6D70A829EF84EFBC67C42D1386C756ECD55875389AB61D3D4590276122DBA13",
+    "count": 2627,
+    "paragraphs": [
+      {
+        "index": 130,
+        "text": "exam_db.tests"
+      },
+      {
+        "index": 131,
+        "text": "exam_db"
+      },
+      {
+        "index": 132,
+        "text": "Lưu thông tin đề thi Full Test và Mini Test."
+      },
+      {
+        "index": 133,
+        "text": "15"
+      },
+      {
+        "index": 134,
+        "text": "exam_db.test_questions"
+      },
+      {
+        "index": 135,
+        "text": "exam_db"
+      },
+      {
+        "index": 136,
+        "text": "Lưu cấu trúc và thứ tự câu hỏi của từng đề thi."
+      },
+      {
+        "index": 137,
+        "text": "16"
+      },
+      {
+        "index": 223,
+        "text": "Email duy nhất; password BCrypt cost 12; khóa 15 phút sau 5 lần sai; FK-01, FK-02, FK-03"
+      },
+      {
+        "index": 224,
+        "text": "Role"
+      },
+      {
+        "index": 225,
+        "text": "Danh mục vai trò: role_code, name (SYSTEM_ADMIN, CONTENT_ADMIN, USER)"
+      },
+      {
+        "index": 226,
+        "text": "PK role_code; không NULL"
+      },
+      {
+        "index": 227,
+        "text": "Miền giá trị đóng; quản lý RBAC"
+      },
+      {
+        "index": 228,
+        "text": "UserRole"
+      },
+      {
+        "index": 229,
+        "text": "Gán nhiều vai trò cho một User: user_id, role_code, assigned_at"
+      },
+      {
+        "index": 230,
+        "text": "PK ghép (user_id, role_code)"
+      },
+      {
+        "index": 247,
+        "text": "Một trạng thái canonical cho mỗi cặp user-thiết bị; chỉ ghi khi version mới hơn"
+      },
+      {
+        "index": 248,
+        "text": "AuthOutboxEvent"
+      },
+      {
+        "index": 249,
+        "text": "Sự kiện UserSyncCompletedEvent: event id, aggregate, payload, occurred/published"
+      },
+      {
+        "index": 250,
+        "text": "PK event_id; published_at NULL"
+      },
+      {
+        "index": 251,
+        "text": "Lưu các sự kiện phát sinh từ hệ thống xác thực để đảm bảo sự kiện được ghi nhận cùng transaction và có thể phát hành/xử lý sau, tránh mất sự kiện khi hệ thống gặp lỗi."
+      },
+      {
+        "index": 252,
+        "text": ""
+      },
+      {
+        "index": 253,
+        "text": "3.2.2 Question Bank"
+      },
+      {
+        "index": 254,
+        "text": "Class Object"
+      },
+      {
+        "index": 255,
+        "text": "Ý nghĩa và thuộc tính"
+      },
+      {
+        "index": 274,
+        "text": "QuestionOutboxEvent"
+      },
+      {
+        "index": 275,
+        "text": "QuestionCreatedEvent QuestionUpdatedEvent và sự kiện xóa cần xác nhận"
+      },
+      {
+        "index": 276,
+        "text": "PK event_id; published_at NULL"
+      },
+      {
+        "index": 277,
+        "text": "Ghi cùng transaction với Question"
+      },
+      {
+        "index": 278,
+        "text": ""
+      },
+      {
+        "index": 279,
+        "text": "3.2.3 Test and Exam"
+      },
+      {
+        "index": 280,
+        "text": "Class Object"
+      },
+      {
+        "index": 281,
+        "text": "Ý nghĩa và thuộc tính"
+      },
+      {
+        "index": 283,
+        "text": ""
+      },
+      {
+        "index": 284,
+        "text": "Test"
+      },
+      {
+        "index": 285,
+        "text": "Đề thi: test_id, title, type FULL_TEST/MINI_TEST, duration_seconds, timestamps, deleted_at"
+      },
+      {
+        "index": 286,
+        "text": "PK test_id; title/type/duration bắt buộc"
+      },
+      {
+        "index": 287,
+        "text": "FULL_TEST 120 phút và 200 câu; MINI_TEST 30 phút"
+      },
+      {
+        "index": 288,
+        "text": "TestQuestion"
+      },
+      {
+        "index": 289,
+        "text": "Cấu trúc đề: test_id, question_id logic, position"
+      },
+      {
+        "index": 290,
+        "text": "PK ghép (test_id, question_id); UNIQUE (test_id, position)"
+      },
+      {
+        "index": 291,
+        "text": "N-N Test-Question; question_id được xác thực qua gRPC, không FK sang quest_db"
+      },
+      {
+        "index": 300,
+        "text": "ExamOutboxEvent"
+      },
+      {
+        "index": 301,
+        "text": "TestSubmittedEvent"
+      },
+      {
+        "index": 302,
+        "text": "PK event_id; published_at NULL"
+      },
+      {
+        "index": 303,
+        "text": "Ghi kết quả Attempt và TestSubmittedEvent trong cùng transaction, đảm bảo dữ liệu và event luôn nhất quán. "
+      },
+      {
+        "index": 304,
+        "text": ""
+      },
+      {
+        "index": 305,
+        "text": "3.2.4 Learning and Theory"
+      },
+      {
+        "index": 306,
+        "text": "Class Object"
+      },
+      {
+        "index": 307,
+        "text": "Ý nghĩa và thuộc tính"
+      },
+      {
+        "index": 338,
+        "text": "LearningOutboxEvent"
+      },
+      {
+        "index": 339,
+        "text": "VocabularyLearnedEvent LessonCompletedEvent"
+      },
+      {
+        "index": 340,
+        "text": "PK event_id; published_at NULL"
+      },
+      {
+        "index": 341,
+        "text": "Ghi cùng transaction với tiến độ"
+      },
+      {
+        "index": 342,
+        "text": ""
+      },
+      {
+        "index": 343,
+        "text": "3.2.5 History and Analytics"
+      },
+      {
+        "index": 344,
+        "text": "Class Object"
+      },
+      {
+        "index": 345,
+        "text": "Ý nghĩa và thuộc tính"
+      },
+      {
+        "index": 962,
+        "text": "Không"
+      },
+      {
+        "index": 963,
+        "text": "Thời điểm sự kiện hoặc thao tác phát sinh."
+      },
+      {
+        "index": 964,
+        "text": "published_at"
+      },
+      {
+        "index": 965,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 966,
+        "text": "-"
+      },
+      {
+        "index": 967,
+        "text": "Có"
+      },
+      {
+        "index": 968,
+        "text": "Không"
+      },
+      {
+        "index": 969,
+        "text": "Thời điểm sự kiện được xuất bản; NULL khi chưa xuất bản."
+      },
+      {
+        "index": 1169,
+        "text": "Không"
+      },
+      {
+        "index": 1170,
+        "text": "Thời điểm sự kiện hoặc thao tác phát sinh."
+      },
+      {
+        "index": 1171,
+        "text": "published_at"
+      },
+      {
+        "index": 1172,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1173,
+        "text": "-"
+      },
+      {
+        "index": 1174,
+        "text": "Có"
+      },
+      {
+        "index": 1175,
+        "text": "Không"
+      },
+      {
+        "index": 1176,
+        "text": "Thời điểm sự kiện được xuất bản; NULL khi chưa xuất bản."
+      },
+      {
+        "index": 1183,
+        "text": ""
+      },
+      {
+        "index": 1184,
+        "text": "5.2.14 exam_db.tests"
+      },
+      {
+        "index": 1185,
+        "text": "Lưu thông tin đề thi Full Test và Mini Test."
+      },
+      {
+        "index": 1186,
+        "text": "Column"
+      },
+      {
+        "index": 1187,
+        "text": "Type"
+      },
+      {
+        "index": 1188,
+        "text": "Key"
+      },
+      {
+        "index": 1189,
+        "text": "NULL"
+      },
+      {
+        "index": 1190,
+        "text": "UNIQUE"
+      },
+      {
+        "index": 1191,
+        "text": "Mô tả"
+      },
+      {
+        "index": 1192,
+        "text": "test_id"
+      },
+      {
+        "index": 1193,
+        "text": "UUID"
+      },
+      {
+        "index": 1194,
+        "text": "PK"
+      },
+      {
+        "index": 1195,
+        "text": "Không"
+      },
+      {
+        "index": 1196,
+        "text": "Không"
+      },
+      {
+        "index": 1197,
+        "text": "Định danh đề thi."
+      },
+      {
+        "index": 1198,
+        "text": "test_title"
+      },
+      {
+        "index": 1199,
+        "text": "VARCHAR(255)"
+      },
+      {
+        "index": 1200,
+        "text": "-"
+      },
+      {
+        "index": 1201,
+        "text": "Không"
+      },
+      {
+        "index": 1202,
+        "text": "Không"
+      },
+      {
+        "index": 1203,
+        "text": "Thuộc tính test title theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1204,
+        "text": "test_type"
+      },
+      {
+        "index": 1205,
+        "text": "VARCHAR(16)"
+      },
+      {
+        "index": 1206,
+        "text": "-"
+      },
+      {
+        "index": 1207,
+        "text": "Không"
+      },
+      {
+        "index": 1208,
+        "text": "Không"
+      },
+      {
+        "index": 1209,
+        "text": "Thuộc tính test type theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1210,
+        "text": "duration_seconds"
+      },
+      {
+        "index": 1211,
+        "text": "SMALLINT"
+      },
+      {
+        "index": 1212,
+        "text": "-"
+      },
+      {
+        "index": 1213,
+        "text": "Không"
+      },
+      {
+        "index": 1214,
+        "text": "Không"
+      },
+      {
+        "index": 1215,
+        "text": "Thời lượng đề thi tính bằng giây (Full Test 7200; Mini Test 1800)."
+      },
+      {
+        "index": 1216,
+        "text": "created_at"
+      },
+      {
+        "index": 1217,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1218,
+        "text": "-"
+      },
+      {
+        "index": 1219,
+        "text": "Không"
+      },
+      {
+        "index": 1220,
+        "text": "Không"
+      },
+      {
+        "index": 1221,
+        "text": "Thời điểm bản ghi được tạo."
+      },
+      {
+        "index": 1222,
+        "text": "updated_at"
+      },
+      {
+        "index": 1223,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1224,
+        "text": "-"
+      },
+      {
+        "index": 1225,
+        "text": "Không"
+      },
+      {
+        "index": 1226,
+        "text": "Không"
+      },
+      {
+        "index": 1227,
+        "text": "Thời điểm bản ghi được cập nhật gần nhất."
+      },
+      {
+        "index": 1228,
+        "text": "deleted_at"
+      },
+      {
+        "index": 1229,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1230,
+        "text": "-"
+      },
+      {
+        "index": 1231,
+        "text": "Có"
+      },
+      {
+        "index": 1232,
+        "text": "Không"
+      },
+      {
+        "index": 1233,
+        "text": "Thời điểm xóa logic; NULL khi bản ghi còn hiệu lực."
+      },
+      {
+        "index": 1234,
+        "text": ""
+      },
+      {
+        "index": 1235,
+        "text": "5.2.15 exam_db.test_questions"
+      },
+      {
+        "index": 1236,
+        "text": "Lưu cấu trúc và thứ tự câu hỏi của từng đề thi."
+      },
+      {
+        "index": 1237,
+        "text": "Column"
+      },
+      {
+        "index": 1238,
+        "text": "Type"
+      },
+      {
+        "index": 1239,
+        "text": "Key"
+      },
+      {
+        "index": 1240,
+        "text": "NULL"
+      },
+      {
+        "index": 1241,
+        "text": "UNIQUE"
+      },
+      {
+        "index": 1242,
+        "text": "Mô tả"
+      },
+      {
+        "index": 1243,
+        "text": "test_id"
+      },
+      {
+        "index": 1244,
+        "text": "UUID"
+      },
+      {
+        "index": 1245,
+        "text": "PK, FK"
+      },
+      {
+        "index": 1246,
+        "text": "Không"
+      },
+      {
+        "index": 1247,
+        "text": "Không"
+      },
+      {
+        "index": 1248,
+        "text": "Định danh đề thi."
+      },
+      {
+        "index": 1249,
+        "text": "question_id"
+      },
+      {
+        "index": 1250,
+        "text": "UUID"
+      },
+      {
+        "index": 1251,
+        "text": "PK"
+      },
+      {
+        "index": 1252,
+        "text": "Không"
+      },
+      {
+        "index": 1253,
+        "text": "Không"
+      },
+      {
+        "index": 1254,
+        "text": "Định danh câu hỏi; là Logical Reference khi nằm ngoài Question DB."
+      },
+      {
+        "index": 1255,
+        "text": "position"
+      },
+      {
+        "index": 1256,
+        "text": "INTEGER"
+      },
+      {
+        "index": 1257,
+        "text": "-"
+      },
+      {
+        "index": 1258,
+        "text": "Không"
+      },
+      {
+        "index": 1259,
+        "text": "Không"
+      },
+      {
+        "index": 1260,
+        "text": "Thuộc tính position theo định nghĩa và ràng buộc trong DDL nguồn."
+      },
+      {
+        "index": 1424,
+        "text": "Không"
+      },
+      {
+        "index": 1425,
+        "text": "Thời điểm sự kiện hoặc thao tác phát sinh."
+      },
+      {
+        "index": 1426,
+        "text": "published_at"
+      },
+      {
+        "index": 1427,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1428,
+        "text": "-"
+      },
+      {
+        "index": 1429,
+        "text": "Có"
+      },
+      {
+        "index": 1430,
+        "text": "Không"
+      },
+      {
+        "index": 1431,
+        "text": "Thời điểm sự kiện được xuất bản; NULL khi chưa xuất bản."
+      },
+      {
+        "index": 1836,
+        "text": "Không"
+      },
+      {
+        "index": 1837,
+        "text": "Thời điểm sự kiện hoặc thao tác phát sinh."
+      },
+      {
+        "index": 1838,
+        "text": "published_at"
+      },
+      {
+        "index": 1839,
+        "text": "TIMESTAMPTZ"
+      },
+      {
+        "index": 1840,
+        "text": "-"
+      },
+      {
+        "index": 1841,
+        "text": "Có"
+      },
+      {
+        "index": 1842,
+        "text": "Không"
+      },
+      {
+        "index": 1843,
+        "text": "Thời điểm sự kiện được xuất bản; NULL khi chưa xuất bản."
+      },
+      {
+        "index": 2190,
+        "text": "PK (user_id, client_device_id); không unique client_timestamp; khóa so sánh LWW = version"
+      },
+      {
+        "index": 2191,
+        "text": "outbox_events"
+      },
+      {
+        "index": 2192,
+        "text": "partial index unpublished"
+      },
+      {
+        "index": 2193,
+        "text": ""
+      },
+      {
+        "index": 2194,
+        "text": ""
+      },
+      {
+        "index": 2195,
+        "text": "5.4 Default Value"
+      },
+      {
+        "index": 2196,
+        "text": "Table"
+      },
+      {
+        "index": 2197,
+        "text": "Column"
+      },
+      {
+        "index": 2569,
+        "text": "Xem lịch sử quản trị"
+      },
+      {
+        "index": 2570,
+        "text": "Thứ tự DESC theo thời gian"
+      },
+      {
+        "index": 2571,
+        "text": "idx_outbox_unpublished partial"
+      },
+      {
+        "index": 2572,
+        "text": "CDC quét sự kiện chưa gửi"
+      },
+      {
+        "index": 2573,
+        "text": "Partial WHERE published_at IS NULL trên từng schema"
+      },
+      {
+        "index": 2574,
+        "text": "idx_questions_part_difficulty_active"
+      },
+      {
+        "index": 2575,
+        "text": "Search/filter Part và difficulty"
+      },
+      {
+        "index": 2576,
+        "text": "Search keyword/tag chính qua Elasticsearch; không tạo nhiều B-tree đơn"
+      },
+      {
+        "index": 2577,
+        "text": "ux_tags_name_ci"
+      },
+      {
+        "index": 2578,
+        "text": "Tìm/gộp tag"
+      }
+    ]
+  },
+  {
+    "file": "Thiết kế Event.docx",
+    "sha256": "C1BC6BB143BDAAA871BF0C07716BAF0BA19ED2E25A16E535B2E4D8C86A3C734D",
+    "count": 147,
+    "paragraphs": []
+  },
+  {
+    "file": "Thiết kế hệ thống.docx",
+    "sha256": "C766590CA504F42D54205F5C09182AAE8003AA47916DB8E6BB9988C354F14ECB",
+    "count": 520,
+    "paragraphs": [
+      {
+        "index": 0,
+        "text": "Phân rã dịch vụ và Quản lý dữ liệu "
+      },
+      {
+        "index": 1,
+        "text": "DỊCH VỤ XÁC THỰC & NGƯỜI DÙNG"
+      },
+      {
+        "index": 2,
+        "text": "Mục đích: quản lý danh tính, xác thực, phân quyền và trạng thái tài khoản. SRS xác định các vai trò SYSTEM_ADMIN, CONTENT_ADMIN và USER; đồng thời yêu cầu hỗ trợ JWT và cơ chế đồng bộ tiến độ đa nền tảng."
+      },
+      {
+        "index": 3,
+        "text": "Thiết kế Cơ sở dữ liệu "
+      },
+      {
+        "index": 4,
+        "text": "Bảng"
+      },
+      {
+        "index": 5,
+        "text": "Trường chính"
+      },
+      {
+        "index": 6,
+        "text": "Mục đích"
+      },
+      {
+        "index": 7,
+        "text": "users"
+      },
+      {
+        "index": 88,
+        "text": "Gắn nhiều tag cho câu hỏi."
+      },
+      {
+        "index": 89,
+        "text": "outbox_events"
+      },
+      {
+        "index": 90,
+        "text": "event_id, aggregate_type, aggregate_id, event_type, payload, occurred_at, published_at"
+      },
+      {
+        "index": 91,
+        "text": "Đảm bảo phát event tin cậy sau transaction DB."
+      },
+      {
+        "index": 92,
+        "text": ""
+      },
+      {
+        "index": 93,
+        "text": "Thiết kế API RESTful "
+      },
+      {
+        "index": 94,
+        "text": "Method"
+      },
+      {
+        "index": 95,
+        "text": "Endpoint đề xuất"
+      },
+      {
+        "index": 120,
+        "text": "Tìm kiếm kết hợp keyword + bộ lọc part/difficulty/tag và phân trang; kích thước page không vượt 50 theo SRS."
+      },
+      {
+        "index": 121,
+        "text": "DỊCH VỤ BÀI THI & THI THỬ"
+      },
+      {
+        "index": 122,
+        "text": "Mục đích: quản lý cấu trúc đề thi Full Test/Mini Test và phiên làm bài. Use Case thi thử trong SRS yêu cầu gọi Question Bank qua gRPC khi tải câu hỏi, đếm giờ thực tế, tự động nộp khi hết giờ, chấm điểm và ghi nhận lịch sử attempt."
+      },
+      {
+        "index": 123,
+        "text": "Thiết kế Cơ sở dữ liệu "
+      },
+      {
+        "index": 124,
+        "text": "Bảng"
+      },
+      {
+        "index": 125,
+        "text": "Trường chính"
+      },
+      {
+        "index": 126,
+        "text": "Mục đích"
+      },
+      {
+        "index": 127,
+        "text": "tests"
+      },
+      {
+        "index": 128,
+        "text": "test_id, test_title, test_type, duration_seconds, created_at, updated_at, deleted_at"
+      },
+      {
+        "index": 129,
+        "text": "Thông tin đề thi."
+      },
+      {
+        "index": 130,
+        "text": "test_questions"
+      },
+      {
+        "index": 131,
+        "text": "test_id, question_id, position"
+      },
+      {
+        "index": 132,
+        "text": "Cấu trúc đề thi và thứ tự câu."
+      },
+      {
+        "index": 133,
+        "text": "attempts"
+      },
+      {
+        "index": 134,
+        "text": "attempt_id, test_id, user_id, started_at, submitted_at, completed_at, status, score_listening, score_reading, total_score, correct_listening_count, correct_reading_count"
+      },
+      {
+        "index": 135,
+        "text": "Một lần làm bài của user."
+      },
+      {
+        "index": 136,
+        "text": "attempt_answers"
+      },
+      {
+        "index": 137,
+        "text": "attempt_id, question_id, selected_option, is_correct, answered_at"
+      },
+      {
+        "index": 138,
+        "text": "Đáp án từng câu trong attempt."
+      },
+      {
+        "index": 139,
+        "text": "outbox_events"
+      },
+      {
+        "index": 140,
+        "text": "event_id, aggregate_type, aggregate_id, event_type, payload, occurred_at, published_at"
+      },
+      {
+        "index": 141,
+        "text": "Phát TestSubmittedEvent sau khi lưu kết quả."
+      },
+      {
+        "index": 142,
+        "text": ""
+      },
+      {
+        "index": 143,
+        "text": "Thiết kế API RESTful "
+      },
+      {
+        "index": 144,
+        "text": "Method"
+      },
+      {
+        "index": 145,
+        "text": "Endpoint đề xuất"
+      },
+      {
+        "index": 146,
+        "text": "Mục đích"
+      },
+      {
+        "index": 147,
+        "text": "GET"
+      },
+      {
+        "index": 148,
+        "text": "/api/v1/tests"
+      },
+      {
+        "index": 149,
+        "text": "Danh sách đề thi."
+      },
+      {
+        "index": 150,
+        "text": "GET"
+      },
+      {
+        "index": 151,
+        "text": "/api/v1/tests/{id}"
+      },
+      {
+        "index": 152,
+        "text": "Chi tiết cấu trúc đề."
+      },
+      {
+        "index": 153,
+        "text": "POST"
+      },
+      {
+        "index": 154,
+        "text": "/api/v1/tests"
+      },
+      {
+        "index": 155,
+        "text": "Tạo đề thi (admin)."
+      },
+      {
+        "index": 156,
+        "text": "PATCH"
+      },
+      {
+        "index": 157,
+        "text": "/api/v1/tests/{id}"
+      },
+      {
+        "index": 158,
+        "text": "Cập nhật đề thi."
+      },
+      {
+        "index": 159,
+        "text": "POST"
+      },
+      {
+        "index": 160,
+        "text": "/api/v1/tests/{testId}/attempts"
+      },
+      {
+        "index": 161,
+        "text": "Bắt đầu một attempt."
+      },
+      {
+        "index": 162,
+        "text": "POST"
+      },
+      {
+        "index": 163,
+        "text": "/api/v1/attempts/{attemptId}/submit"
+      },
+      {
+        "index": 164,
+        "text": "Nộp bài và chấm điểm."
+      },
+      {
+        "index": 165,
+        "text": "GET"
+      },
+      {
+        "index": 166,
+        "text": "/api/v1/attempts/{attemptId}"
+      },
+      {
+        "index": 167,
+        "text": "Xem kết quả attempt."
+      },
+      {
+        "index": 168,
+        "text": ""
+      },
+      {
+        "index": 169,
+        "text": "Nghiệp vụ & thuật toán cốt lõi "
+      },
+      {
+        "index": 170,
+        "text": "Bắt đầu bài: xác thực JWT/quyền truy cập, tải cấu trúc đề và gọi Question Bank Service qua gRPC để lấy nội dung cần thiết."
+      },
+      {
+        "index": 171,
+        "text": "Khởi tạo started_at và xác định deadline = started_at + duration."
+      },
+      {
+        "index": 172,
+        "text": "Trong khi làm, chỉ lưu selected_option; không để client nhìn thấy answer key."
+      },
+      {
+        "index": 173,
+        "text": "Khi submit hoặc timeout, lấy answer key từ Question Bank, đối chiếu từng câu và tính total_correct/score."
+      },
+      {
+        "index": 174,
+        "text": "Lưu attempt + attempt_answers + outbox trong transaction. Sau đó phát TestSubmittedEvent cho Analytics."
+      },
+      {
+        "index": 175,
+        "text": "Đối với Full Test, SRS quy định 200 câu/120 phút; Mini Test 30 phút. Công thức quy đổi số câu đúng thành điểm TOEIC: Full Test dùng bảng quy đổi chuẩn ETS (lookup 5-495, bước 5); Mini Test dùng score_section = clamp(round5(5 + (correct_section/total_section)*490), 5, 495)."
+      },
+      {
+        "index": 176,
+        "text": "DỊCH VỤ HỌC TẬP & LÝ THUYẾT"
+      },
+      {
+        "index": 177,
+        "text": "Mục đích: cung cấp nội dung học từ vựng, flashcard, bài học ngữ pháp và lưu tiến độ học. Đây cũng là nơi thực hiện thuật toán Spaced Repetition SM-2 theo SRS."
+      },
+      {
+        "index": 178,
+        "text": "Thiết kế Cơ sở dữ liệu "
+      },
+      {
+        "index": 179,
+        "text": "Bảng"
+      },
+      {
+        "index": 180,
+        "text": "Trường chính"
+      },
+      {
+        "index": 202,
+        "text": "Kết quả từng từ vựng trong phiên học."
+      },
+      {
+        "index": 203,
+        "text": "outbox_events"
+      },
+      {
+        "index": 204,
+        "text": "event_id, aggregate_type, aggregate_id, event_type, payload, occurred_at, published_at"
+      },
+      {
+        "index": 205,
+        "text": "Phát VocabularyLearnedEvent/LessonCompletedEvent."
+      },
+      {
+        "index": 206,
+        "text": ""
+      },
+      {
+        "index": 207,
+        "text": "Thiết kế API RESTful "
+      },
+      {
+        "index": 208,
+        "text": "Method"
+      },
+      {
+        "index": 209,
+        "text": "Endpoint đề xuất"
+      }
+    ]
+  },
+  {
+    "file": "Thiet_ke_kien_truc_Storage.docx",
+    "sha256": "D6E3D72A58B6262E2724C636C5ACCA7071B975C9A64B9C94E55395D392D89BC3",
+    "count": 67,
+    "paragraphs": []
+  }
+]

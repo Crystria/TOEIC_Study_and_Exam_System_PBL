@@ -1,0 +1,4186 @@
+[
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/groups/[groupId]/edit/page.tsx",
+    "hash": "4DE598C0A918601F8D412902DB9C7301B330939FE2C0941D351CA45C61F312E1"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/groups/[groupId]/page.tsx",
+    "hash": "4DE598C0A918601F8D412902DB9C7301B330939FE2C0941D351CA45C61F312E1"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/groups/new/page.tsx",
+    "hash": "4DE598C0A918601F8D412902DB9C7301B330939FE2C0941D351CA45C61F312E1"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/groups/page.tsx",
+    "hash": "4DE598C0A918601F8D412902DB9C7301B330939FE2C0941D351CA45C61F312E1"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/lessons/[lessonId]/edit/page.tsx",
+    "hash": "259A677FC247618C00BE8068C76F5A304F552140EC536B9B3AA4BFD54DD4C26A"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/lessons/[lessonId]/page.tsx",
+    "hash": "259A677FC247618C00BE8068C76F5A304F552140EC536B9B3AA4BFD54DD4C26A"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/lessons/new/page.tsx",
+    "hash": "259A677FC247618C00BE8068C76F5A304F552140EC536B9B3AA4BFD54DD4C26A"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/media/[mediaId]/page.tsx",
+    "hash": "D60E45D39FBF6BB1E8EE5CAB87F3BBD7D6365D30C0FF426144308AE4A1A6E7F2"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/media/page.tsx",
+    "hash": "D60E45D39FBF6BB1E8EE5CAB87F3BBD7D6365D30C0FF426144308AE4A1A6E7F2"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/questions/[questionId]/edit/page.tsx",
+    "hash": "7CBA87937B69AA3551772CBA0E1292636F1520514B9B4E0BFE656A8887E4E759"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/questions/[questionId]/page.tsx",
+    "hash": "7CBA87937B69AA3551772CBA0E1292636F1520514B9B4E0BFE656A8887E4E759"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/questions/new/page.tsx",
+    "hash": "7CBA87937B69AA3551772CBA0E1292636F1520514B9B4E0BFE656A8887E4E759"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/tests/[testId]/edit/page.tsx",
+    "hash": "A5A9FB75268CFBCED16031B4DF8B66041C5AB4B2CEF63A70F3D8D94B18FF11C8"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/tests/[testId]/page.tsx",
+    "hash": "A5A9FB75268CFBCED16031B4DF8B66041C5AB4B2CEF63A70F3D8D94B18FF11C8"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/tests/new/page.tsx",
+    "hash": "A5A9FB75268CFBCED16031B4DF8B66041C5AB4B2CEF63A70F3D8D94B18FF11C8"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/topics/[topicId]/edit/page.tsx",
+    "hash": "A47A0A33B29BD0AE114FC5F33D65152FF0AF20BD73AD5D2B75C470247A4C2638"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/topics/[topicId]/page.tsx",
+    "hash": "A47A0A33B29BD0AE114FC5F33D65152FF0AF20BD73AD5D2B75C470247A4C2638"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/topics/new/page.tsx",
+    "hash": "A47A0A33B29BD0AE114FC5F33D65152FF0AF20BD73AD5D2B75C470247A4C2638"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/topics/page.tsx",
+    "hash": "A47A0A33B29BD0AE114FC5F33D65152FF0AF20BD73AD5D2B75C470247A4C2638"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/users/[userId]/edit/page.tsx",
+    "hash": "D291ABEBA371A7676BE2DA96D290B689954669F89AAB98BCC964EF150B1D98D4"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/users/[userId]/page.tsx",
+    "hash": "D291ABEBA371A7676BE2DA96D290B689954669F89AAB98BCC964EF150B1D98D4"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/vocabulary/[vocabularyId]/edit/page.tsx",
+    "hash": "F7845449D924CC616511AF4619A18A064130C5481D81542E859428BDE0A8D0CB"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/vocabulary/[vocabularyId]/page.tsx",
+    "hash": "F7845449D924CC616511AF4619A18A064130C5481D81542E859428BDE0A8D0CB"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/vocabulary/new/page.tsx",
+    "hash": "F7845449D924CC616511AF4619A18A064130C5481D81542E859428BDE0A8D0CB"
+  },
+  {
+    "path": "apps/admin-cms/src/components/audit-logs/audit-log-list.tsx",
+    "hash": "3F976CE8D98095157E5328F2A819AD4C21A56B7603645C52D58A8E48E5A31A89"
+  },
+  {
+    "path": "apps/admin-cms/src/components/auth/login-preview.tsx",
+    "hash": "7AD4CB6D93FD08292DC14D2A35FE4E7B48BCF388BF8711E6DC14D952E9CF6A1D"
+  },
+  {
+    "path": "apps/admin-cms/src/components/demo/cms-workspace.tsx",
+    "hash": "CAC05915FEE8D0C11B079BF95C24C0B1DB1CF8FE84C139F68C75A2D121A9EA56"
+  },
+  {
+    "path": "apps/admin-cms/src/components/demo/entity-editor.tsx",
+    "hash": "D606CAA9E9B3775EB7CF4E4C0892192212AF1396A08C0F0A4B4A2C497F0E78E9"
+  },
+  {
+    "path": "apps/admin-cms/src/components/demo/entity-fields.tsx",
+    "hash": "AF6078E98A01D197D1A57A9B1605454CD9A41DA38EA49F9EBE0B1190B415E182"
+  },
+  {
+    "path": "apps/admin-cms/src/components/demo/entity-preview.tsx",
+    "hash": "4DC02204D7B055B9DA3F4BDB3CEFF31B11AE2EE88DBD287C93B70B9DB7B228EB"
+  },
+  {
+    "path": "apps/admin-cms/src/components/demo/media-controls.tsx",
+    "hash": "16069637D67B1C9C5D01ED95CBBFB506B8AC2170480CA15A66ADD039D33D92BB"
+  },
+  {
+    "path": "apps/admin-cms/src/components/demo/workspace-primitives.tsx",
+    "hash": "683743C4ABF3AFDA246CD43F07BD2B4ABFA1CA1F53274685106E6B4ACD9AB436"
+  },
+  {
+    "path": "apps/admin-cms/src/components/demo/workspace-provider.tsx",
+    "hash": "DDE02E15F82C772DB5CCC2069D4775FDDEEA4464FDD7A76D0DC2DAC79355CF31"
+  },
+  {
+    "path": "apps/admin-cms/src/components/layout/cms-route-preview.tsx",
+    "hash": "B6153609CCD6EA7F2700E59DACED90DBA2D87AFAE7F108D04AE239B4E432859D"
+  },
+  {
+    "path": "apps/admin-cms/src/components/layout/cms-shell.tsx",
+    "hash": "46669FFC1C70E0A80806B593CB8F47947F1DC8C6BACF163CBE480EC19DBB450E"
+  },
+  {
+    "path": "apps/admin-cms/src/components/lessons/lesson-detail-content.tsx",
+    "hash": "32B44E8858919EFA47A85E79EF6EF7EA6FD9438085E5198669AEC87C5E244B91"
+  },
+  {
+    "path": "apps/admin-cms/src/components/lessons/lesson-detail.tsx",
+    "hash": "4FAF451AB7391CC3077052474758C3AE5670C27896721E3B50C523D6E86E5AB6"
+  },
+  {
+    "path": "apps/admin-cms/src/components/lessons/lesson-list.tsx",
+    "hash": "5ED79980EECE12D7BB02647DD1E6CCB4161C1116695C8A34BFB03C6824428A60"
+  },
+  {
+    "path": "apps/admin-cms/src/components/questions/question-detail-content.tsx",
+    "hash": "0CA2E7793F16F433E73CB932702E2DA951BCFA338701CBA05F7BC7D67C0DD2EE"
+  },
+  {
+    "path": "apps/admin-cms/src/components/questions/question-detail.tsx",
+    "hash": "D4319E3DE934F98E5F381C4D13632833D5ABECCA40C46436969944DB6D172E83"
+  },
+  {
+    "path": "apps/admin-cms/src/components/questions/question-draft-preview.tsx",
+    "hash": "1D00CED96484DC6F0C21CD0B6278197FF108FF4B6CE0D2FAED15D8F993337700"
+  },
+  {
+    "path": "apps/admin-cms/src/components/questions/question-form.tsx",
+    "hash": "131A08435FD123D7B58C1C23A0CD4F0DF3D9B7205E5295CC1731BDC2BDFDE3E7"
+  },
+  {
+    "path": "apps/admin-cms/src/components/questions/question-list.tsx",
+    "hash": "83DBAEE7E67914B8C7D765A72F3D9D7E639588463483F7E81B489A2E91043673"
+  },
+  {
+    "path": "apps/admin-cms/src/components/tests/test-detail-content.tsx",
+    "hash": "329E9537EA0AC9704314CE1C21494E4E1C528C51D504907173D0DF567FE3B756"
+  },
+  {
+    "path": "apps/admin-cms/src/components/tests/test-detail.tsx",
+    "hash": "7734D2ED8F4648188945F42C1E61EE7D15F5668F0F9260F88AA43BCD2C6E57CB"
+  },
+  {
+    "path": "apps/admin-cms/src/components/tests/test-list.tsx",
+    "hash": "00EB47B2307458712D0A795E22BFB7AD99ED41DE3DC26B02D7983E75E7038C0D"
+  },
+  {
+    "path": "apps/admin-cms/src/components/users/user-list.tsx",
+    "hash": "197F7744A809F83B48AB3951A660D4D63A8C8986A709583906B00145E0D19AF9"
+  },
+  {
+    "path": "apps/admin-cms/src/components/vocabulary/vocabulary-detail-content.tsx",
+    "hash": "EC4ED9E91EAA734E48A0DE5D597A870628D20C981D371D4FF3C7B62E97246DE7"
+  },
+  {
+    "path": "apps/admin-cms/src/components/vocabulary/vocabulary-detail.tsx",
+    "hash": "87DF9608A52BB5D8B76D35F001548657D47289B095AA4B0A82838A9F4AE0F006"
+  },
+  {
+    "path": "apps/admin-cms/src/components/vocabulary/vocabulary-list.tsx",
+    "hash": "404087B19A11BC48B113F01BF8646EB5AF53C8B5C091B79C06622734B48E8217"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/audit-logs/demo-repository.ts",
+    "hash": "89600CF27400219813280FF53BB25B702FC131FDADC1E5402A69D284CCD17606"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/audit-logs/fixtures.ts",
+    "hash": "E4B852998DA0E571EFBC4CC625684E3587F6E5B81F3619DF9B3AF6FB173242F6"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/audit-logs/query.ts",
+    "hash": "B79F7E3D0DA51B74E014C366A716B786F4D885A3FA0A4967C9AA0BA30917677D"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/audit-logs/types.ts",
+    "hash": "AE6F5F3762A3ACD038DB532895CEBBAB3C51484DD50AEB8C53C042C5859DF713"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/demo/cms-destination.ts",
+    "hash": "2B063723E436C5D9879CD38437C47F657E94540B273013587957C9DE44C1175E"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/demo/cms-fixtures.ts",
+    "hash": "4AC5785729B6A939C47A1C04852BB0DDC58FD5FA5DDB722F2175477E81FAD5D2"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/demo/workspace-model.ts",
+    "hash": "575DACA0CF1FBE82946723982660B246E6BCE28DA43861657FF49F87B0C01AC2"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/demo/workspace-query.ts",
+    "hash": "331F345B61C1601C852CCA2D16A6C34540D45134D7D603C64551842DFA063CBD"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/demo/workspace-seed.ts",
+    "hash": "51D95EF2D26C233D74C09C60B69C4B9F5879174D27EC8E8D3C9CE74940F1D55C"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/demo/workspace-store.ts",
+    "hash": "CE66CCCC222663581D9080C29B4128F0EF409433B7ABD5EEB64AD04C6479D098"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/demo/workspace-validation.ts",
+    "hash": "6408A783226D898C696A8396690A74A1948F52F25BB84C9D3BAB052D07FF738B"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/demo-repository.ts",
+    "hash": "47DFEA3B10249219E86581A22F6E35422D0C6A0F385228144B4BECAF66B9C6A0"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/detail-availability.ts",
+    "hash": "09A83FFCF5C9750DE6FD9450D8498EA9DCA0FC462AED06452DFCF1905BF35922"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/detail-fixtures.ts",
+    "hash": "4CE2025B6AFA052F392CD73C01EE08F10D83379ABAA24133C54A371766156F6C"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/detail-navigation.ts",
+    "hash": "8BC6F6788EBAD207B1C1278F63660999E2D450C6493D54AFD9B315BB8F984D3F"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/detail-reader.ts",
+    "hash": "6F053C3AE0226D379A8F23F84B8E7AAB6BAD11E19BE82CC6E5788BF274F2A566"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/detail-types.ts",
+    "hash": "3727FF23C1E08D92ADCCFD41E1F7122E08CEF76B5968F230A97764C07B4122A1"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/fixtures.ts",
+    "hash": "9E7ED6CEB305A30B8A37F0FF5706228317673C50F1BEA06A94F041CE08C8BF48"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/query.ts",
+    "hash": "4F78B503B9ECDF7EC91AC7C164D8C9B3C9F7304E52AC49443F71E5109508D04D"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/lessons/types.ts",
+    "hash": "165E904E1FFB3A0B67507A51402BFAAFA89241607243021DABB9C844CF19E99F"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/demo-repository.ts",
+    "hash": "73063ADF759647A55A4BAB9A579353859C08C400E2391D53E920216C7F50176B"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/detail-availability.ts",
+    "hash": "E2301133008EE612EA350A9F45619C641DE21E17B66F29F3A20EB2FA201490D7"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/detail-fixtures.ts",
+    "hash": "D4E79640E9C8958C562D492A71ACE7BA82647448234105028151C3232C80138F"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/detail-navigation.ts",
+    "hash": "5DB3A274F4BD467733432FBCB88CE35F824ECF05226F9C2DC12F4955670D5200"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/detail-repository.ts",
+    "hash": "8DCC8E282798BAAEC55522FE75CDE394C02CF7C56D5D6B0F363807E1E87CA4E7"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/detail-types.ts",
+    "hash": "0DF606BC1C84D5D464657C4424CEB9EE67E25A9C7ACFAEEB57B2C896171FA491"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/fixtures.ts",
+    "hash": "F96F95B2A75ED810AC2F68668027C71E8C787B64368C10B554090FD2EDDBA10A"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/form-draft.ts",
+    "hash": "4D4B6788790CC3F1F4BE34D1DD0036F11122D26BA15748FCBC221C2C1C898E53"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/form-navigation.ts",
+    "hash": "BBD9D96FE3317567B4FFC3CB37BAFDCB8D44940C4BFE4CD9FD44C0186B8039CA"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/query.ts",
+    "hash": "B0E1C6BB30BDDBAC767E2770D066AF7EE7E5CC3031074D13BCD83E32D30AE4D9"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/questions/types.ts",
+    "hash": "CBB7E3D90836C82E91055108C5BD09EAD54C0C68A94FB2B415C45FB4E45DF6DF"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/demo-repository.ts",
+    "hash": "7F2BE68A7C8BF69C37B8C9363D1FEED0041D6B7FF0DE0B40589D992C24E7BD74"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/detail-availability.ts",
+    "hash": "F6A990D2EAD9F125E2F190C27584252881CC43511BA7E103515DF0E79EC06164"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/detail-fixtures.ts",
+    "hash": "1EAD10AD23DF4C672DC2B7C268C81541E88E61DAA2ED678D8B021986BF5474A8"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/detail-navigation.ts",
+    "hash": "CD9769A2E9073B962308008B911C2A3E7E2B8DDAF5838DECE5A9B13F75CB6E21"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/detail-repository.ts",
+    "hash": "C83C1644D62DFE243C969FEB816CD691C423D9FE85D11428CE2114E097264EAC"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/detail-types.ts",
+    "hash": "62BCD2CC3E718003F3140A7DF5353196DC57E2779678AE673333B245FD95D24C"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/fixtures.ts",
+    "hash": "B07635DB8C6C64AA9697EDE241530AB10985B9DA3F48A99F80528C9F4662FDB6"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-adapter.ts",
+    "hash": "79586B2AB2E4AE5401647465A85B1978D026EDD57E1C59D9554AFF160346FDE1"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-fetch-transport.ts",
+    "hash": "C4BF70384D1CC3090A9EB27F0EB8EFDC58260C84B2C5786F89600AB0E63BD995"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-fetch-types.ts",
+    "hash": "5B13424738C9FEB9EC8644A42C3EA71B9919B559CEE64F2ECA817A29934D1688"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-presentation.ts",
+    "hash": "56C53E19DAF4A1CF44949C1B6FA92C5AAC7DE9A534879CEDAE54A102E59FB83A"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-query-types.ts",
+    "hash": "8468DE5CDD67B77048C391EF8B82855731068F722A3FCA7C3F636FCBC7CF7BEC"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-query.ts",
+    "hash": "875F5617B44F0311BAE4ED5A0F6D8BAD188574353C22483EAB9E2CB8F64D4EDA"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-repository-types.ts",
+    "hash": "EBA62C906538E7E6FFC8E9849FC5DDB8936BCFB4B470C1740ACA1C3C3E491D5C"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-repository.ts",
+    "hash": "5F6EAB065E30907255322B61963C5FF42B9A048ED4B4B5F3C825EDD62E40BD36"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/metadata-types.ts",
+    "hash": "25CCBB9000403973CFE99A46FDD4A622B9E3D279CF7B2AD771504910A943CD90"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/query.ts",
+    "hash": "AE37A1703695A18645CC058DC65C144C421E3B68C4A3E6C33ECD4EB8F097B6E5"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/tests/types.ts",
+    "hash": "F6117A5DD10E22B26EBFA988DB9C0A3E16F94D63D4B20750A7432FD234114C12"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/users/demo-repository.ts",
+    "hash": "781E08C5A9AD715E17160CD3E582F8C2B0052AB7636FF61B8DBD30C07E8FC222"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/users/fixtures.ts",
+    "hash": "42B9E626D3DD377BDDD1384ED77BC34C6B4B82E8DD5E1E203E7CD70B7D9FCF7B"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/users/query.ts",
+    "hash": "1312E2782A64B9A72DA429A9FA174C9DAD2FA12A424A53F766C62E34D63B0E4F"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/users/types.ts",
+    "hash": "129DD6D1A1AA326D28A7EB5E0734FC245078FE65A5673994FF9BDBAEFAD45226"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/demo-repository.ts",
+    "hash": "2BAF60439D7546F04D0946E91D0236C899291E6C6C8979667F9DEE6541C7AF16"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/detail-availability.ts",
+    "hash": "AFD263468CE606EDE7C407A8F02646BD518A889B9C700C0236EEC65603A9B9C3"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/detail-fixtures.ts",
+    "hash": "26C31FF077859BFC4BF1EDD7E745BF795B8CC6A5D4CD0A785F216AA33F264F68"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/detail-navigation.ts",
+    "hash": "DBE7917B61CF3B11AA428797C3EC991C6B08182AC95A74BD53E2F56A02F022D8"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/detail-reader.ts",
+    "hash": "5C444D277A62A368686EE95683CA800D3612AB290330585E4E4C09A94FA8C994"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/detail-types.ts",
+    "hash": "D1CA0F07A946991A5A02A1C56F3813ECAC87376F0CBF8CD33E4669D646EC114F"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/fixtures.ts",
+    "hash": "DC14DF649544F64D949ED465FCA7431F32C17E80171922502415A08281FD91A8"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/query.ts",
+    "hash": "CD5349516EE28082ACDF34FE50D0BE2735C39C42751C76494DBA7178CC8566EE"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/vocabulary/types.ts",
+    "hash": "E0B6C6336BD6774C8605C0FBD639C60AAD825C5B1DCE7738180082AD24C12D91"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/audit-logs.css",
+    "hash": "667C68631977CF75F6EC7CBBD9B8289221C2FA182AB222A7B99397D18B9B90D1"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/cms-workspace.css",
+    "hash": "8F952F95E08266DE43CCF44E0C717528C121BEB59ABE9AF5234C8033703C6737"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/lesson-detail.css",
+    "hash": "E533F5EC225CDCEB61A12AE5C6B2E80B0D0EAE01A4E12167ED9B4C4BEEE83918"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/lessons.css",
+    "hash": "3FA91DB151D93B80A4C38524B095114B208BBBF858C886720F0427F6F7D89F8D"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/question-detail.css",
+    "hash": "2E313E61B5A4C9673835DBA5E3EBE226AAF9613E1E19FC8F056F4D0EB4D61AF9"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/question-form.css",
+    "hash": "FCB1B167271628805A1C19ACF997B1398E4ED7E535DA2FF8861DFB5A7D8B4D13"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/questions.css",
+    "hash": "5EC44E8D22D8FC2DD2E3E280DE0C9718DDBCB818A9ECDA233812AEFF7B7BB06F"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/test-detail.css",
+    "hash": "4C4BEB0A99F0D57B932365665BE3B69BFE0351106682F533C36E2EBDB5D4B77E"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/tests.css",
+    "hash": "BC50B005C56B336E07507DEA971D1F5DDDE2A5AD6BEFC9B777B9482A14D95716"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/users.css",
+    "hash": "FE7FB55A1C76170F4959F0C0EF0B03AA69981993ED6EB68533A83C98F9FF4DBD"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/vocabulary-detail.css",
+    "hash": "5A7230FE19C36D5D196DF05E7F1FFFFE98DEFF7BB50DAC4DDF13930B48AB6812"
+  },
+  {
+    "path": "apps/admin-cms/src/styles/vocabulary.css",
+    "hash": "36331BBFD2693FF0157007511C71C1C226297989067B6C64FA42B7A1CE1846DE"
+  },
+  {
+    "path": "apps/admin-cms/tests/audit-logs.test.ts",
+    "hash": "AE926DDE4331532C17D1DCB66E798B5EF11674809CFA58504D9C73C0D75C404C"
+  },
+  {
+    "path": "apps/admin-cms/tests/fixtures/cms-test-metadata-fetch.ts",
+    "hash": "478BEEF826069C7844E466F058F476C74477A59480670AD5700BB9DAD248105E"
+  },
+  {
+    "path": "apps/admin-cms/tests/fixtures/cms-test-metadata-query.ts",
+    "hash": "C95BCCE68187AD994AA95EBDF80E94EEE142F86F94E3D91680B13273A55B48E0"
+  },
+  {
+    "path": "apps/admin-cms/tests/fixtures/cms-test-metadata-transport.ts",
+    "hash": "6E51DD3D40CD371D77B1C4C29443D81859EB1E50ED895E57566DED27B0641A91"
+  },
+  {
+    "path": "apps/admin-cms/tests/fixtures/cms-test-metadata.ts",
+    "hash": "88813B509C6784BD5FB5675FB75EE4ACB3C2BCD2E94537B96B2755FCE4A9A1BC"
+  },
+  {
+    "path": "apps/admin-cms/tests/lesson-detail.test.ts",
+    "hash": "7B799102A971DB6275D8821A098B25A5564BCC382F08E1CB9ADC7B9C480EADE0"
+  },
+  {
+    "path": "apps/admin-cms/tests/lessons.test.ts",
+    "hash": "1BF06B571119CC1F8097C86552F27F7F411C77A14A79A985A89C5B0A52469CD5"
+  },
+  {
+    "path": "apps/admin-cms/tests/question-detail.test.ts",
+    "hash": "B21263B89CCC02DC7A377CA1F8198B35123B35738469BC59B74DA373422A14B1"
+  },
+  {
+    "path": "apps/admin-cms/tests/question-form.test.ts",
+    "hash": "2A187629C21C6DC1C7ECE2196DC60097DB653B17AB39D363DAEDF5DCC3A626D1"
+  },
+  {
+    "path": "apps/admin-cms/tests/questions.test.ts",
+    "hash": "F3D1BD2A7B5FF7FFBDB93192A4093705CB4EBA344EBE8D99B2A0B914FF029DA0"
+  },
+  {
+    "path": "apps/admin-cms/tests/test-detail.test.ts",
+    "hash": "57790EA9ABD032BBCF833E99A09CF4460C36B3BE30C11C4EC0B8E34D087E12F6"
+  },
+  {
+    "path": "apps/admin-cms/tests/test-metadata-adapter.test.ts",
+    "hash": "EEE6A517AFF1D1E93706F35BAAA5DB0A9976C3820C82470DDB26C1FB8012D45A"
+  },
+  {
+    "path": "apps/admin-cms/tests/test-metadata-fetch-transport.test.ts",
+    "hash": "FD3F6EE4A6241F98348222348C34594555158DA7B6F1C802D55B174E8608F739"
+  },
+  {
+    "path": "apps/admin-cms/tests/test-metadata-query.test.ts",
+    "hash": "D93C7D4F6FE103E1E94DCD663D4735A57199D11C4E536B77212FBDBE0CEE9397"
+  },
+  {
+    "path": "apps/admin-cms/tests/test-metadata-repository.test.ts",
+    "hash": "B1879D8350559E275E75C847824825005F96F6435AABB0D892AEDB3465235856"
+  },
+  {
+    "path": "apps/admin-cms/tests/tests.test.ts",
+    "hash": "4D24FA28C7CC5CCE217CC7223560DFF59403AA4AC3574EB30B9495A717F247D3"
+  },
+  {
+    "path": "apps/admin-cms/tests/users.test.ts",
+    "hash": "A9029B5552D6706A0C2387B3687DFC2FE9F228C26DB113BFCACD3A86B7BAE3B0"
+  },
+  {
+    "path": "apps/admin-cms/tests/vocabulary-detail.test.ts",
+    "hash": "0072FBF8D0B38DD67C2D1DD5BB2D3AB0DE9B2BDE093C79EC8C8883A5C9CC3E85"
+  },
+  {
+    "path": "apps/admin-cms/tests/vocabulary.test.ts",
+    "hash": "EC364087B98C489235C7615AD499BEC4065DF5AF10A344BA1B1716C3CAB28EB8"
+  },
+  {
+    "path": "apps/admin-cms/tests/workspace.test.ts",
+    "hash": "2011028B94A4B9348DDB9F2ECD8693B575AB7CF2E7C727887A71638D19170ECE"
+  },
+  {
+    "path": "apps/admin-cms/tsconfig.tests.json",
+    "hash": "7C04446F63D2E3BD81FE9126F4A58DE13F39012DE32740A7B2CF8CAA916BDFBC"
+  },
+  {
+    "path": "docs/cms-test-metadata-contract-review.md",
+    "hash": "B2E2870C8503DCA205903DDD6E0B78482B23B0450B0E25EC364B5CD71942D665"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/browser-report.json",
+    "hash": "47B5217AEB3DC3807A5C7AE5B99317143D14C982A70D832CEB38718DD143EC45"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/build-evidence.json",
+    "hash": "AD0678486110C89966982141E8529C1DDE5D41F294BFF84CBF54524359CA691D"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/contract-evidence.json",
+    "hash": "6E9659718CA0E38F22E458A0D152D1500C1631148B6EEAA11815AD3066589FA7"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/initial-qa-attempt/browser-report.json",
+    "hash": "5E96AB091B7E78EB15C57D4913A20D3C48A513752183913E5F842EDEA711660A"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/lessons-regression/browser-report.json",
+    "hash": "F56D76EE55C969289B69044EB9BC2C43E586CB6A169B96DC0A5FBDD79CE3CB5E"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/preservation-evidence.json",
+    "hash": "B1C599322BB3213ACE815C9744F34BE9444130F743E8260F06A2948C72147832"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/qa-summary.json",
+    "hash": "D4384835828790E43ACF35AA4C448EBC321082A309AF0D68A8736DD50180F64C"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/questions-regression/browser-report.json",
+    "hash": "0A09C1C6AD7986DB12B65C3EE30D34C3B29380431FFDBE53E5A6219A5830FB8A"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/shell-regression/browser-report.json",
+    "hash": "865273BE74283004BAD81EC7FFE78C3BAAC992156CF01E001DE42C52BA363C15"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/source-evidence.json",
+    "hash": "887B4FE7845C8A812AE223FC83884A0A89A6715C332B2748831B3530F0AD5BCC"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/static-isolation-evidence.json",
+    "hash": "9082405D72F6D49577A8EF2F1386E679E9EA94F171D66DE5F0BB8C7F468AA599"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/tests-regression/browser-report.json",
+    "hash": "B05B08A5D360DBFCFA277C1FF177E063BDA4D2D7679A2688E72B944977792F43"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/users-regression-rerun/browser-report.json",
+    "hash": "9A22D4C60FA2AE3FEA7F5E9439AEF365162526D2CF3CD18E7407AF992505178B"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/users-regression/browser-report.json",
+    "hash": "72623B7BDB793FBDA08580EB4898353BC03E26F7D0C53B5FE5C4979C9319D68D"
+  },
+  {
+    "path": "docs/screenshots/cms-audit-logs-20261028/vocabulary-regression/browser-report.json",
+    "hash": "C49F419E53B39C388589DDFC44B2F83E5851A4D1F999B423B7B7047886B938BB"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/all-tests.tap",
+    "hash": "A1CBB394AB90CFF1A6DA908380748F3C2451651E2DA1E1053A676617F3297E00"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/browser-report.json",
+    "hash": "170563E0DF2455B0D8FF97C2AC98868ED522E373614E1CA207973FF6D00D293F"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/build-evidence.json",
+    "hash": "0B2667E736473204AB7A090CA0ED4508ECD9B38FE0A835C24E9DFF40A51D3C8C"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/detail-final/browser-report.json",
+    "hash": "170563E0DF2455B0D8FF97C2AC98868ED522E373614E1CA207973FF6D00D293F"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/initial-tests.tap",
+    "hash": "EEA12706C00EC8E294E124F3CB91765C2E408EC373F2EECA2CB4F98F03DAE016"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/lessons-regression-final/browser-report.json",
+    "hash": "54CC2D01CF7D5348071CDFB370FE6B63F69707CD36146BCF63997C3A41C23F49"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/lessons-regression/browser-report.json",
+    "hash": "9B05D0314F265725598CE88313E6B946B304C80D8A8C0BFF98633F40037B43B9"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/qa-summary.json",
+    "hash": "739D82EEA1E5692B67C9F45A9255F9C9D77089848813A4A28ED440DF49E0311F"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/question-form-regression/browser-report.json",
+    "hash": "C2FF73E296467766362956ED8FEC63E7682BF1A9F629058C219AFCF8FA1EFB6E"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/shell-regression/browser-report.json",
+    "hash": "865273BE74283004BAD81EC7FFE78C3BAAC992156CF01E001DE42C52BA363C15"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/source-evidence.json",
+    "hash": "B9030E03535E5FFC00F166221BDA5F08BB26E6F01AD014758AE57F45EAB14F7D"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/test-detail-regression-final/browser-report.json",
+    "hash": "F6DD5FF1C5B18D8408E380D6EE125933B5E30CB57A785196F38EBE2244968EBA"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/test-detail-regression/browser-report.json",
+    "hash": "F5D8E8D6DDA66DEAED42E6C77CEA75ED82E22BF1D2C4C879FFC13595B790121B"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/verification.json",
+    "hash": "0ADBE2E4A5DB681665E0BE05155C6975D0D6FB6E53FB87D608C01333676A1C2C"
+  },
+  {
+    "path": "docs/screenshots/cms-lesson-detail-session29-20261029/visual-evidence.json",
+    "hash": "C45188893088683DF5AB0B7A659373F52B2713E5A27D0CA4B351B6E0540A656A"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/browser-report.json",
+    "hash": "D7D40A814ADD990A696DE09763045FC82B7BFEB3DF8FA65543C3990A3EA4625A"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/build-evidence.json",
+    "hash": "2FE1E1B40C62C5865E63F13A73781C2A5FCC1FCBAC85CC03C4F9CBD13289A359"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/contract-evidence.json",
+    "hash": "58E1384C4BE559FC9BB5E7369DCC3B2AE14CC80B32DCDCDDA12C81A87574A407"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/preservation-evidence.json",
+    "hash": "312A8B1F497ECBCAE9152B8A8205ECB76C424C07364416F7F9D55F965F6F1EB4"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/questions-regression/browser-report.json",
+    "hash": "0016AC58033B32584DA0AD9D82D22943D77B645C125FB93A31FB64786BCEC4C5"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/shell-regression/browser-report.json",
+    "hash": "E784DD60ED259920990639CEF947A72C617C56AD7E7D3E2AFC8AA38FD467B163"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/source-evidence.json",
+    "hash": "2909D5A8C9B64F61B87BFB07D9EC130AB3E263CF1497A713209E2B9EC79ACA46"
+  },
+  {
+    "path": "docs/screenshots/cms-lessons-20261027/tests-regression/browser-report.json",
+    "hash": "9B751D428D5F8ED297997993DDE55E4BDC14A24465F0A1EA32BDE4E8DF6876F6"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/audit-logs-regression/browser-report.json",
+    "hash": "47B5217AEB3DC3807A5C7AE5B99317143D14C982A70D832CEB38718DD143EC45"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/browser-report.json",
+    "hash": "67F1A82D0958B5CF3266720918090A856235A9862727D0274A9B185F74692DB0"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/build-evidence.json",
+    "hash": "7DE24961E85C2DB10F76F30225E4EC2750EA22C16BC0EFF6BECF8D21BF9DA948"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/initial-encoded-id-attempt/browser-report.json",
+    "hash": "484D44C0FAE152D52CE9D471B22987D516FD227724DB7ABD9DCA946FDD616ADE"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/initial-hidden-control-attempt/browser-report.json",
+    "hash": "B26E96AA4908D44B53FB38A0DE8C6A21E410CAC0F4404C0FD84B8606A74FCFC0"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/initial-native-history-attempt/browser-report.json",
+    "hash": "C92A02A5C15F0D68B53ECBDCBCE0D417590D0DC652E07F906B707481B8BF6F5D"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/lessons-regression/browser-report.json",
+    "hash": "F56D76EE55C969289B69044EB9BC2C43E586CB6A169B96DC0A5FBDD79CE3CB5E"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/preservation-evidence.json",
+    "hash": "00DC53672785EF9E17D3B0C391E51CEB544421BB5D67B95087F972EC94386B52"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/qa-summary.json",
+    "hash": "C90FA78CA9581198C66542A866E00584C2AD7019775495336AD82E2D587AC909"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/questions-regression/browser-report.json",
+    "hash": "0A09C1C6AD7986DB12B65C3EE30D34C3B29380431FFDBE53E5A6219A5830FB8A"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/shell-regression/browser-report.json",
+    "hash": "865273BE74283004BAD81EC7FFE78C3BAAC992156CF01E001DE42C52BA363C15"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/shell-route-reproduction.json",
+    "hash": "9218A7EB9F0641F9A343A47BA5B3033BD649F785F90CA5573289C6CC3BDB8888"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/source-evidence.json",
+    "hash": "A6DF6330C8DDE63B57B3005A97013A9B193D8B3A8836BA371101C6F32386491E"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/static-isolation-evidence.json",
+    "hash": "6FCFFF5F4882C9239BD9F3668137F4A54F82CEE9313CA7BD6231B6B3975D927F"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/tests-regression/browser-report.json",
+    "hash": "B05B08A5D360DBFCFA277C1FF177E063BDA4D2D7679A2688E72B944977792F43"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/users-regression/browser-report.json",
+    "hash": "9A22D4C60FA2AE3FEA7F5E9439AEF365162526D2CF3CD18E7407AF992505178B"
+  },
+  {
+    "path": "docs/screenshots/cms-question-detail-session20-20261028/vocabulary-regression/browser-report.json",
+    "hash": "C49F419E53B39C388589DDFC44B2F83E5851A4D1F999B423B7B7047886B938BB"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/all-tests.tap",
+    "hash": "36794DCAA40C7F16C305B88F977E9E29895B1835347EC1F7BE9B886CCF39C9C0"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/browser-report.json",
+    "hash": "C2FF73E296467766362956ED8FEC63E7682BF1A9F629058C219AFCF8FA1EFB6E"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/build-evidence.json",
+    "hash": "1CF5DCBD3D5F065BD608ADE40BC154FC9EBDF766B9A71CCDCFA4D7DF2B6C6FB6"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/detail-regression/browser-report.json",
+    "hash": "67F1A82D0958B5CF3266720918090A856235A9862727D0274A9B185F74692DB0"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/qa-summary.json",
+    "hash": "72735FE79DAFDD59885B144D34C9533044EA5A983EEFE9A8DA3437877E49A840"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/questions-regression/browser-report.json",
+    "hash": "0A09C1C6AD7986DB12B65C3EE30D34C3B29380431FFDBE53E5A6219A5830FB8A"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/shell-regression/browser-report.json",
+    "hash": "865273BE74283004BAD81EC7FFE78C3BAAC992156CF01E001DE42C52BA363C15"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/source-evidence.json",
+    "hash": "63B02DD1DF2CD6A90610DC9A87A598E50FB82AC1174F5E181800A9FA1292B975"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/tests-regression/browser-report.json",
+    "hash": "6D082DD64D4E4680A21D31A8D0D39C3AB40F21B4445EF95918D111CB52FBD1DB"
+  },
+  {
+    "path": "docs/screenshots/cms-question-form-session28-20261029/verification.json",
+    "hash": "B8CF3CFCFCE4429B8493BCCA054E307FE564E502E2DB631AB15A8EE5C70E2050"
+  },
+  {
+    "path": "docs/screenshots/cms-questions-20261027/browser-report.json",
+    "hash": "0016AC58033B32584DA0AD9D82D22943D77B645C125FB93A31FB64786BCEC4C5"
+  },
+  {
+    "path": "docs/screenshots/cms-questions-20261027/build-evidence.json",
+    "hash": "ACE5D735251C510CCE882CA14B7C1D0CDFDFE9CFA66E78F1CAB829E9E320AA6E"
+  },
+  {
+    "path": "docs/screenshots/cms-questions-20261027/contract-evidence.json",
+    "hash": "5DC8DB7372CE234219CA18170618E59E2A35A9EA862ADC635A782938F9346DC2"
+  },
+  {
+    "path": "docs/screenshots/cms-questions-20261027/shell-regression/browser-report.json",
+    "hash": "E784DD60ED259920990639CEF947A72C617C56AD7E7D3E2AFC8AA38FD467B163"
+  },
+  {
+    "path": "docs/screenshots/cms-questions-20261027/source-evidence.json",
+    "hash": "95F993132D02CEAA93A7A4867995F7E8B4DB486EC737873A8BD1A98868D539CA"
+  },
+  {
+    "path": "docs/screenshots/cms-shell-20261027/browser-report.json",
+    "hash": "E784DD60ED259920990639CEF947A72C617C56AD7E7D3E2AFC8AA38FD467B163"
+  },
+  {
+    "path": "docs/screenshots/cms-shell-20261027/build-evidence.json",
+    "hash": "A3F9D30084E2FE7CDEDB96D95DB6075C4EE29243B2F261193BDCF01181CDE060"
+  },
+  {
+    "path": "docs/screenshots/cms-shell-20261027/source-evidence.json",
+    "hash": "108BBFECE8840F631F1BC3C75718E7BD55CE4C0B16D29585A93512CF8B4E4AC0"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/audit-logs-regression/browser-report.json",
+    "hash": "47B5217AEB3DC3807A5C7AE5B99317143D14C982A70D832CEB38718DD143EC45"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/browser-report.json",
+    "hash": "F6DD5FF1C5B18D8408E380D6EE125933B5E30CB57A785196F38EBE2244968EBA"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/build-evidence.json",
+    "hash": "7D971A8249DB8EBD72C01DAB5774026AB9A0E44FFFF703CEDDB51B7E3D80C7B4"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/lessons-regression/browser-report.json",
+    "hash": "F56D76EE55C969289B69044EB9BC2C43E586CB6A169B96DC0A5FBDD79CE3CB5E"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/preservation-evidence.json",
+    "hash": "4FA722B53C9C7D6705CE315AB40DB16CDE726EEDBACC5B3634878709EDAEB46D"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/qa-summary.json",
+    "hash": "E7E33B58513A89D42D71EAE20C1A2D38CFB6B238B5E5CC192755E12E636BA0A2"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/question-detail-regression/browser-report.json",
+    "hash": "67F1A82D0958B5CF3266720918090A856235A9862727D0274A9B185F74692DB0"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/questions-regression/browser-report.json",
+    "hash": "0A09C1C6AD7986DB12B65C3EE30D34C3B29380431FFDBE53E5A6219A5830FB8A"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/shell-regression/browser-report.json",
+    "hash": "865273BE74283004BAD81EC7FFE78C3BAAC992156CF01E001DE42C52BA363C15"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/shell-route-reproduction.json",
+    "hash": "C3562C9C293799031AC2C909522D6992BF397AB7CCC518835D7ED48C4EB18F65"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/source-evidence.json",
+    "hash": "93169D340D677240106C5A893724656D55551B422D27D57CC7B0F6FDD8F1D2CA"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/static-isolation-evidence.json",
+    "hash": "529D8A52CE10066E84E279BFFAA22C605F1052FB8F9213C8F55DEF8873FB1719"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/tests-regression/browser-report.json",
+    "hash": "6D082DD64D4E4680A21D31A8D0D39C3AB40F21B4445EF95918D111CB52FBD1DB"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/users-regression/browser-report.json",
+    "hash": "9A22D4C60FA2AE3FEA7F5E9439AEF365162526D2CF3CD18E7407AF992505178B"
+  },
+  {
+    "path": "docs/screenshots/cms-test-detail-session21-20261028/vocabulary-regression/browser-report.json",
+    "hash": "C49F419E53B39C388589DDFC44B2F83E5851A4D1F999B423B7B7047886B938BB"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/baseline.json",
+    "hash": "3B63543912C7FCBCEFE47FF5C68D41461D0B941857E6BE319ACAAC4600AB2C6A"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/browser-report.json",
+    "hash": "9B751D428D5F8ED297997993DDE55E4BDC14A24465F0A1EA32BDE4E8DF6876F6"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/build-evidence.json",
+    "hash": "935AB73CADE28CE2FE5944378E12207E3CD8C7B5E878E11B258E751FED3BFD35"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/contract-evidence.json",
+    "hash": "D386543A67190562214FA692083C1BEF56F98594909A8AA55D69C4F9472127BB"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/preservation-evidence.json",
+    "hash": "37D6E4C4A2A5A708591D4B967040D3BDC28C26008EFFE1B9C59AABD1F1DC2554"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/questions-regression/browser-report.json",
+    "hash": "0016AC58033B32584DA0AD9D82D22943D77B645C125FB93A31FB64786BCEC4C5"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/shell-regression/browser-report.json",
+    "hash": "E784DD60ED259920990639CEF947A72C617C56AD7E7D3E2AFC8AA38FD467B163"
+  },
+  {
+    "path": "docs/screenshots/cms-tests-20261027/source-evidence.json",
+    "hash": "1F51B06762E3B9ABB0A9F8FDDF784F7F00E4A7A38B2102BE66D4FD2C78B1C671"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/browser-report.json",
+    "hash": "C87ACC7A08032EB4844501FE024733DD76AD1B49EE30543EA29CFD6496AD26B5"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/build-evidence.json",
+    "hash": "D1DD0CDE5BD0D4F878EB194E47133FABA26F2C9DF44BBDB51BFCD584F5AA763A"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/contract-evidence.json",
+    "hash": "F2D6B6CC174C043598EA361581BE6EC9C018CD326C54E36D0EACFC0BB4D99287"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/controls-report.json",
+    "hash": "5A2AEA4893898F4507C8E56E21853FF694A60AF3B7CC648B23F4ABACA8ECD281"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/lessons-regression/browser-report.json",
+    "hash": "D7D40A814ADD990A696DE09763045FC82B7BFEB3DF8FA65543C3990A3EA4625A"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/preservation-evidence.json",
+    "hash": "BEC8255131678E939BA950F2BD7A26F692D194CF90274955A7B6D98CFACB2517"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/questions-regression/browser-report.json",
+    "hash": "0016AC58033B32584DA0AD9D82D22943D77B645C125FB93A31FB64786BCEC4C5"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/shell-regression/browser-report.json",
+    "hash": "E784DD60ED259920990639CEF947A72C617C56AD7E7D3E2AFC8AA38FD467B163"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/source-evidence.json",
+    "hash": "2D268AAE9D1917E87BBFABAC0DBC5B45EBDC8175FA217EB2B20A5DEA9EED81F7"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/tests-regression/browser-report.json",
+    "hash": "9B751D428D5F8ED297997993DDE55E4BDC14A24465F0A1EA32BDE4E8DF6876F6"
+  },
+  {
+    "path": "docs/screenshots/cms-users-20261027/vocabulary-regression/browser-report.json",
+    "hash": "8F63C5D1666569B813A8A9AA2C7ADEF5BFC8363C13B3E54CA7FDDD1990ECDD87"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/browser-report.json",
+    "hash": "8F63C5D1666569B813A8A9AA2C7ADEF5BFC8363C13B3E54CA7FDDD1990ECDD87"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/build-evidence.json",
+    "hash": "83CC229FB255A1571B7573A02C497E951DCA6E619524BF44D75237FF028ED814"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/contract-evidence.json",
+    "hash": "A9FF3883EFF1FDED07C0A95F0CBBDFA08B737FA2678959A6B39A9FA67DDAFC24"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/lessons-regression/browser-report.json",
+    "hash": "D7D40A814ADD990A696DE09763045FC82B7BFEB3DF8FA65543C3990A3EA4625A"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/preservation-evidence.json",
+    "hash": "C02B09828476398DB8F310FFB9B2183B48688087148CF6C2D804DB0DA8926551"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/questions-regression/browser-report.json",
+    "hash": "0016AC58033B32584DA0AD9D82D22943D77B645C125FB93A31FB64786BCEC4C5"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/shell-regression/browser-report.json",
+    "hash": "E784DD60ED259920990639CEF947A72C617C56AD7E7D3E2AFC8AA38FD467B163"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/source-evidence.json",
+    "hash": "7166244F862BE8DD1BAA7ECEABB99B46B007C39E36F03DA395F3D7B3D04D52B0"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-20261027/tests-regression/browser-report.json",
+    "hash": "9B751D428D5F8ED297997993DDE55E4BDC14A24465F0A1EA32BDE4E8DF6876F6"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/all-tests.tap",
+    "hash": "7BA92E9D7D5CEADB95AF972ACD18F6D06A3A52666515F6133E7AE07E5989792A"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/baseline-hashes.json",
+    "hash": "2FA5F4AF10A7B91CBC59905E98307F4E8FDFCF08184C2B786D4DAD5D6F6782E8"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/baseline-status.txt",
+    "hash": "C552958E4BD61A96F286E47760D9ADB68986ADD80478A65CDCBA3CB3CDFC59E6"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/build-evidence.json",
+    "hash": "892C19FD358E37838B778D99F34A383975A5DF5180AEB9BAEDEA1D207748FC0B"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/detail-final/browser-report.json",
+    "hash": "88DD3FE19E77A2A349F6BFFF793C364D168B0F33B57A4B2BBA275FECA8C1B167"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/detail-verified/browser-report.json",
+    "hash": "D623B3EB2709E9F3B888264730869AE2E8B1D1162B3A817F7177860E42EF9E5F"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/detail/browser-report.json",
+    "hash": "A21008D111E62FB46C24595CCF622BB55F01FFCC3ECE521E69777EA269DC0346"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/lesson-detail-regression/browser-report.json",
+    "hash": "170563E0DF2455B0D8FF97C2AC98868ED522E373614E1CA207973FF6D00D293F"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/qa-summary.json",
+    "hash": "C8A3C13B9DBD763C708488F5EDDE338A69CF9B09AA01D6AE93B49B9B2D6D5B54"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/question-form-regression/browser-report.json",
+    "hash": "C2FF73E296467766362956ED8FEC63E7682BF1A9F629058C219AFCF8FA1EFB6E"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/shell-regression/browser-report.json",
+    "hash": "865273BE74283004BAD81EC7FFE78C3BAAC992156CF01E001DE42C52BA363C15"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/source-evidence.json",
+    "hash": "71FBFFFF7536D5FF4F5B356BFC4EEE0CA221B7C1BFEE55132FC14C120B986DEA"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/verification.json",
+    "hash": "883439A2F9FB53117B9BA2AF3E12AF56F633FC64A78087B09AB08A522160544E"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/visual-evidence.json",
+    "hash": "5BF29AFFB99B091073AD6BB6C2A592A8DB1B20C50F7FE9A97EFB70BB23B22889"
+  },
+  {
+    "path": "docs/screenshots/cms-vocabulary-detail-session30-20261029/vocabulary-regression/browser-report.json",
+    "hash": "481EFDBE1286141CA92545425596D73504A7614810C31E19C0242A8D8A24EF91"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/all-tests.tap",
+    "hash": "55A6DE6B7191238ECDDE7F1DE1962CA8848C701F7DBB24FF6963337FF1583AA9"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/before-hashes.json",
+    "hash": "DFD2F12692C3CEFAF0C367AA907DC60ACD9CBB223D84C72DA6819DE4C85231EA"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/before-status.txt",
+    "hash": "7935AB8C725E951A1059E24F77BCF1AF92CDF0FD6DAB4A3E2E0B2B1072FBDB7E"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/browser-report.json",
+    "hash": "97C8666B0DDDDF9D38A76C3D3B380BFD05E43B7187FDDF1758DD6D38833177DB"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/build-result.json",
+    "hash": "FD671BF1687BA5451094A622F61DCBC0AF64EDA6E2F7BB55AF2EDD0A874770B9"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/grammar-preview-1440.png",
+    "hash": "381A29A4C391A2024EDC84E048906056A78E8288881A3BE0C01F29DC8FEFDF43"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/question-part7-390.png",
+    "hash": "FD5BD41696F96C5E0A0CDBA6B27B4D0539BD2552061385E1AA3DC2BBFE30E190"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/test-structure-320.png",
+    "hash": "B6E6F58DC698ED42A55433BD9ECF96F54EBD5EC0BEC33BB009E5941482119EEE"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/verification.json",
+    "hash": "1E07B89A33782398EA8DAFA686050DF0EA53A8AAB4F03EF7E0E6CFFF84F2A836"
+  },
+  {
+    "path": "docs/screenshots/cms-workspace-session31-20261029/vocabulary-media-768.png",
+    "hash": "2F48C6F7E4D498334255E4CF7D33A87BB3943576FB59063B400E9FEAD1F6B728"
+  },
+  {
+    "path": "scripts/qa/cms-audit-logs.cjs",
+    "hash": "687B77451929D94DCBD610BE95A6D3E604F6B0C85C5060CCD6E2FD4D9C9F33B0"
+  },
+  {
+    "path": "scripts/qa/cms-lesson-detail.cjs",
+    "hash": "908274276458A558A4087A6AA4FF9804AD948A436A512B9AF182BABF03ABA30D"
+  },
+  {
+    "path": "scripts/qa/cms-lessons.cjs",
+    "hash": "8894FEE3011008EEB443E429C517666199DB0E2A5933F067B862FAB450162291"
+  },
+  {
+    "path": "scripts/qa/cms-question-detail.cjs",
+    "hash": "90C36E2F7FC11A29E706164C2CCBE60650B322631A3424E240FA005CCE06D4A0"
+  },
+  {
+    "path": "scripts/qa/cms-question-form.cjs",
+    "hash": "9611737EB6287D48E077A4F54449DF50D2C09EB2027EE373225195C3B6822E5C"
+  },
+  {
+    "path": "scripts/qa/cms-questions.cjs",
+    "hash": "A4F09AB3AD51BC4D2915EC77520F25CAE657CBD91FBD2FBC4E06E40C4A8A2656"
+  },
+  {
+    "path": "scripts/qa/cms-shell.cjs",
+    "hash": "620271FA80C3D3D0A44370981030BBDBA616D648220E4413269920F82BF797F8"
+  },
+  {
+    "path": "scripts/qa/cms-test-detail.cjs",
+    "hash": "BBC6F90A9F9E642BF395DC2FB5FFF76CF3554D02F5CE4C5562FF287CED431707"
+  },
+  {
+    "path": "scripts/qa/cms-tests.cjs",
+    "hash": "BED1CFE97A9AB7AC2CB84927BC6D96F7315DD60D0A98421737F9ADD12D98E1D7"
+  },
+  {
+    "path": "scripts/qa/cms-users.cjs",
+    "hash": "67A60102C2441C5A539795041AFA8104F7F3B03814DB962AA8C0C668FF3EE3E2"
+  },
+  {
+    "path": "scripts/qa/cms-vocabulary-detail.cjs",
+    "hash": "81ADC85D58ED282E94982BD81A2FC7E5963912C1388CEBD9264416A9E0EAA946"
+  },
+  {
+    "path": "scripts/qa/cms-vocabulary.cjs",
+    "hash": "C9C0987E58A2D187F676C7AF8A4A66679559FC591F1C8E602D3D1F02FB3CAC13"
+  },
+  {
+    "path": "scripts/qa/cms-workspace-build.cjs",
+    "hash": "592FC9D14A1B9EA52BB999278599665DDEF083933758A747275ACB025EAF90E5"
+  },
+  {
+    "path": "scripts/qa/cms-workspace.cjs",
+    "hash": "08B4938D974D3C8ECF9E4DAEADFFA5FA82B820DA7491917767BE3EE0BBF6DC3A"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/cms-test-metadata-routing.spec.ts",
+    "hash": "0875EB21E6F7991EFF37C0E29F29E31763CAA993B068750441EA780B26D1B7D9"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/jwt.middleware.spec.ts",
+    "hash": "1B4E820B8CEF44416CD282CE7BB3A8F1B3EF77F7BB5E0DB0D9F50C235C6AB753"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/cms-test-metadata-roles.guard.ts",
+    "hash": "C794C0E2FB244148163BF8A6FDCB71ECA8C4435AAB10404D3919FF44F794C5B7"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/cms-test-metadata.controller.spec.ts",
+    "hash": "632276FE24FBBDBC38EB8C16E19386078DD6A88B9B6D7BEEE6DCE2372A2D9FBA"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/cms-test-metadata.controller.ts",
+    "hash": "4CD646B08724468AFC51A86925E467BF9BD5F6404B2006C4BBA30FA0935633E8"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/cms-test-metadata.service.spec.ts",
+    "hash": "850094A3EB326DDF08F79F340A50C15FE83E2CCFCA4EC8ADE07A3B4BB6B6C9BB"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/cms-test-metadata.service.ts",
+    "hash": "EA8371FE9BEDFB2A6F148F38F4387C0AB465C2837ED0C39C782610532EE56AF3"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/dto/cms-test-metadata-response.dto.ts",
+    "hash": "E0082291AD0AA8C559CDEC6A5F1CDCCD3F27A55EBB4AF0B224DFD241AD2AE8B9"
+  },
+  {
+    "path": ".dockerignore",
+    "hash": "0D7F0F520AC2FF26C469E3CDB900089243CEA9DB566078927EC0F9F1F9949A8E"
+  },
+  {
+    "path": ".editorconfig",
+    "hash": "18DD26EC8D764B1E6EA5251C787AC30FAC8387679DF0A2FDC109645FBD128F6C"
+  },
+  {
+    "path": ".env.example",
+    "hash": "D6D8361E60E1042F221ABBD97338E0877EFEC775C3FF01F9B0B11ED955E1C1B7"
+  },
+  {
+    "path": ".gitattributes",
+    "hash": "B363E19B6DD25820B18A4540B52194F46816D557356E5145D6E7A70788443C24"
+  },
+  {
+    "path": ".github/workflows/ai-service-ci.yml",
+    "hash": "6FDA038DCC2C1912C4E8F6F56C268DF08475FA76DC2245BB3F0E6A1C4FA74842"
+  },
+  {
+    "path": ".github/workflows/backend-ci.yml",
+    "hash": "D65849FB40919E93FF6D8103B485F5FECC15594382F9C0DC6CE8D1DF5D0CEB35"
+  },
+  {
+    "path": ".github/workflows/contracts-compat.yml",
+    "hash": "A62E1575A1170A66E71B90BCEACC2323D17ECCD0AC5E3229C394E1E355305EB8"
+  },
+  {
+    "path": ".github/workflows/frontend-ci.yml",
+    "hash": "38046C0E276A97A4F320AE05BEF3002FD44C779A9371823AE1D2B073D6285422"
+  },
+  {
+    "path": ".gitignore",
+    "hash": "18D5BF58B28BCD0419EBD28E7D140EF7BB369BFC70D6E3879DD64BBE37E31585"
+  },
+  {
+    "path": ".nvmrc",
+    "hash": "F14B4987904BCB5814E4459A057ED4D20F58A633152288A761214DCD28780B56"
+  },
+  {
+    "path": ".prettierrc",
+    "hash": "B3771CABC3D3ADED87CCEFEBCE345975C1783235E906971FF7159F294BC5AB62"
+  },
+  {
+    "path": "README.md",
+    "hash": "F9689B681F8D356C4B024037CBF5CA480A6BC0FBC8F8B1513326CFFA4DE6AE81"
+  },
+  {
+    "path": "apps/admin-cms/.env.local.example",
+    "hash": "4E0F6EE30DAFBA8383672CEED517B2FA97DB321AAA96DEF4820ED42D77331617"
+  },
+  {
+    "path": "apps/admin-cms/.eslintrc.json",
+    "hash": "BAC4378E77BF3142B9D096D6B978021FCA3FA78D581BEF96E7ACEF844D737D16"
+  },
+  {
+    "path": "apps/admin-cms/.gitignore",
+    "hash": "48D85B8A3C052CAE55B3E15C1FF725AAAC327EEE8475D3CCD34A34ED22DEC792"
+  },
+  {
+    "path": "apps/admin-cms/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "apps/admin-cms/Dockerfile",
+    "hash": "E9804115B7FC1A7654F3B46C7E8ABFF228B648FB8CF6DB1A7D93D4333AFDFF1F"
+  },
+  {
+    "path": "apps/admin-cms/README.md",
+    "hash": "BD4B80D96AA63EEC5B50066BBFF7D6D59078425ECAE5FB6B6E56480063DCCF1A"
+  },
+  {
+    "path": "apps/admin-cms/next-env.d.ts",
+    "hash": "9DD9D642CDB87D4D5B3173217E0C45429B3E47A6F5CF5FB0EAD6C644EC5FED01"
+  },
+  {
+    "path": "apps/admin-cms/next.config.mjs",
+    "hash": "07CEEB6CA51809D2AF4CAB69BE45CB8FA8C6C507B540F259CB697C5C75FD68AC"
+  },
+  {
+    "path": "apps/admin-cms/package.json",
+    "hash": "2F8149E70F00A367B5E77AAAEBA7CAC33243AE54A24B0BECDFFA61254DBFE3DE"
+  },
+  {
+    "path": "apps/admin-cms/postcss.config.js",
+    "hash": "FA650B380ADFABB151A0B352F7135E107E6352345F899060F1C5C231228F94BF"
+  },
+  {
+    "path": "apps/admin-cms/public/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(auth)/login/page.tsx",
+    "hash": "911BA06863A7258B5E09F8BF8EAB5BCA559ECC4423C3E61F0FDB25EE8040650D"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/audit-logs/page.tsx",
+    "hash": "66F39F71B2C9121DDB9023B661A5AA649B9F52C6EDDB05ABA41EFA24984685B6"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/layout.tsx",
+    "hash": "BEB422A8064ED02C6212FF662445C8ACD3AF58661ACF6F5787A6EF001D48766E"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/lessons/page.tsx",
+    "hash": "259A677FC247618C00BE8068C76F5A304F552140EC536B9B3AA4BFD54DD4C26A"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/questions/page.tsx",
+    "hash": "7CBA87937B69AA3551772CBA0E1292636F1520514B9B4E0BFE656A8887E4E759"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/tests/page.tsx",
+    "hash": "A5A9FB75268CFBCED16031B4DF8B66041C5AB4B2CEF63A70F3D8D94B18FF11C8"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/users/page.tsx",
+    "hash": "D291ABEBA371A7676BE2DA96D290B689954669F89AAB98BCC964EF150B1D98D4"
+  },
+  {
+    "path": "apps/admin-cms/src/app/(dashboard)/vocabulary/page.tsx",
+    "hash": "F7845449D924CC616511AF4619A18A064130C5481D81542E859428BDE0A8D0CB"
+  },
+  {
+    "path": "apps/admin-cms/src/app/globals.css",
+    "hash": "5E6EBA98556CA66454C166A7A282509701FF7F1EA22837F33D8A12441CC35DD9"
+  },
+  {
+    "path": "apps/admin-cms/src/app/layout.tsx",
+    "hash": "9F528623B898A9080F35AD57DCF4CA8A476D1F802EAB7C7737B25660DAE4C54C"
+  },
+  {
+    "path": "apps/admin-cms/src/app/page.tsx",
+    "hash": "36236BEB778B189E301A77DCD26DE941A89EB00CAAFDBD63166CFA7383274C50"
+  },
+  {
+    "path": "apps/admin-cms/src/components/layout/sidebar.tsx",
+    "hash": "88694E97C31E66CA616828DAED67AE8320BC6A9F24AF3EC7C2047D6B53AD531D"
+  },
+  {
+    "path": "apps/admin-cms/src/components/ui/button.tsx",
+    "hash": "D7DC5564FEBDF1A192A7445D3C69B373A47E2979A5683A911CBECE2873531598"
+  },
+  {
+    "path": "apps/admin-cms/src/components/ui/card.tsx",
+    "hash": "9AD3F301125D416C60917F15AF74EAE5A2FB56F5A5CE4288C007B927C63ACD9D"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/api-client.ts",
+    "hash": "CDCFC6285BF455749EF752600F1041B85BE4EA22CA708ABA648EF6DA6C2932B3"
+  },
+  {
+    "path": "apps/admin-cms/src/lib/auth.ts",
+    "hash": "FB84FAB16B54D402A222D6CD13120319CD4595D19349F51AC875A6C249065ED5"
+  },
+  {
+    "path": "apps/admin-cms/tailwind.config.ts",
+    "hash": "675797E2E93A5F009031689B3111FDE6C43A9ECC18B5B8B1933D28EF8A09CAA1"
+  },
+  {
+    "path": "apps/admin-cms/tsconfig.json",
+    "hash": "1C154A2D5EDE00C07BFC3476733FD9B112B45B57D7228139C96030ABE355B280"
+  },
+  {
+    "path": "apps/mobile/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "apps/web/.env.local.example",
+    "hash": "4E0F6EE30DAFBA8383672CEED517B2FA97DB321AAA96DEF4820ED42D77331617"
+  },
+  {
+    "path": "apps/web/.eslintrc.json",
+    "hash": "BAC4378E77BF3142B9D096D6B978021FCA3FA78D581BEF96E7ACEF844D737D16"
+  },
+  {
+    "path": "apps/web/.gitignore",
+    "hash": "4B985576CDECA93FC5D8AA1FF5CD604B9E2E810DB8500DA9F430E6329A45A23A"
+  },
+  {
+    "path": "apps/web/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "apps/web/Dockerfile",
+    "hash": "3DEC2CF1D21AEF89415C23175AFD6A555E8C2103364FA0ABC42C0FE3C4D3932C"
+  },
+  {
+    "path": "apps/web/next-env.d.ts",
+    "hash": "9DD9D642CDB87D4D5B3173217E0C45429B3E47A6F5CF5FB0EAD6C644EC5FED01"
+  },
+  {
+    "path": "apps/web/next.config.mjs",
+    "hash": "0062B4B567FEF5623E38BFF624CAC1A2237DEED8C171E7AA9C1C09CA001A3877"
+  },
+  {
+    "path": "apps/web/package.json",
+    "hash": "81375F07992F72A61F89A444F2C7BBF44519DE3F813E943953B974AC3E86A3D4"
+  },
+  {
+    "path": "apps/web/postcss.config.js",
+    "hash": "FA650B380ADFABB151A0B352F7135E107E6352345F899060F1C5C231228F94BF"
+  },
+  {
+    "path": "apps/web/public/demo/audio/listening-part-1.mp3",
+    "hash": "40386BE7DA6AB1DACD59819613DDDDE91F63D2CB2E70C293AEA568A5098A5205"
+  },
+  {
+    "path": "apps/web/public/demo/audio/listening-part-2.mp3",
+    "hash": "7B6775628243E8163CE4899AEF23529898466D74116FDFADE1EA2A1436F3ECE3"
+  },
+  {
+    "path": "apps/web/public/demo/audio/listening-part-3.mp3",
+    "hash": "3054DC019CEB46056F0112979F4D981F97C0998908B1722375852B98114ABAAF"
+  },
+  {
+    "path": "apps/web/public/demo/audio/listening-part-4.mp3",
+    "hash": "AEA6FD6184DB11FC18DBC53AFF395F72AFDFFFE6F452EB4BC55C36A3A317050E"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-accommodation.mp3",
+    "hash": "E737954A1042B049644F9F61658DF6A1346BA60BD3031A0EDBC270ABB0503060"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-appointment.mp3",
+    "hash": "CBCEE62039411A4A74679B650853F5D0F3D64FDEF049AA02166D28A5CDD17FEE"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-available.mp3",
+    "hash": "D905F996A53AA3F029E9AC886B3CDB58A02E23B249729824DECD5D971A621FEB"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-boarding.mp3",
+    "hash": "A632C3E3FB6EFC464F58B8889FC2A2F757793F80436C2C72129D5C9675E58563"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-colleague.mp3",
+    "hash": "37DFC6435B9C2CEF3C749DE976CBA63D87F89494029E09B307AEA281E5FD17D3"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-commute.mp3",
+    "hash": "D1A58701BBF496FBC98081802875DD90FA60BFE12872431B05DB44039D0006BA"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-customer.mp3",
+    "hash": "04F94E8DCB57F606396AB7DF173B9B9E0D90CAEE91F5FBEC35B617BBEA2E5A78"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-deadline.mp3",
+    "hash": "258A7D42DD52A895B129B105AA8123E48834963ACEBEB1E589FA749829F2B54B"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-delivery.mp3",
+    "hash": "152E13D21A74D733F303C0B9E178FE7986988AE5E367307003FDFD8F1FC0A803"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-department.mp3",
+    "hash": "E7CD5B023ED71CCC10A52FAA6138056E0428993E6117553A358BC326802B0914"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-departure.mp3",
+    "hash": "26F63179F16198DE2AF1CD6B7DF05B7E6D82E247E9110F9F5A77DDCCE3A3AB90"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-destination.mp3",
+    "hash": "ECEF76EF284FBF6D6D619C65934E9BCDB33BB0B38BDA8F91D009498113DACF92"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-discount.mp3",
+    "hash": "200697C3DADC6E8A96B758B15D65BFBAE6A63C3A25C9A416BE8C5766B99DD9C9"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-itinerary.mp3",
+    "hash": "B12B4BC057CDC52478E3F0CAAFE4697B99257033BECAFF2C5EDC94AB9B9ABC96"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-luggage.mp3",
+    "hash": "02CE767B5168C5A76D67D02103994114D52BBE5968A21890C60E8C3CF2C747E3"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-negotiate.mp3",
+    "hash": "1A7ACF86EA67310A141B4DB295351B6694D473A0D2BDDC8D8400B654AC7C5519"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-proposal.mp3",
+    "hash": "C94E764E534CC6B580024B0F17A91EEC17FE033F036055E3BD778DAF3314CA7B"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-purchase.mp3",
+    "hash": "686EDFCA6AB67E6AAB2DF8795224CB9651EADAB4C4F2DED2962191BA5704B83C"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-receipt.mp3",
+    "hash": "7B8E72FA7CBA535567B1A905A465DE8B8CF55351078A1EC357E0504526DF4ECA"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-refund.mp3",
+    "hash": "2F014A1889351024EA5165CA5161426617F72C9B269E10E0D9B7FF8705EDAF02"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-reservation.mp3",
+    "hash": "69854FAC08F5A8103D5B64DD53387511315B27132B14A3F31B7EE00FCB593BDE"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-schedule.mp3",
+    "hash": "A2344A683039F2B78F4666AED3B0AEAB40A30D889363F00E0876CB611AA56245"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-supervisor.mp3",
+    "hash": "1B15B6C33D69E37F8A8ACF8CB320BA21604CFEE17C1B6EC22F02F66E01EDD91A"
+  },
+  {
+    "path": "apps/web/public/demo/audio/vocabulary-warranty.mp3",
+    "hash": "489A2E942E54574FD2C1EE74DDCE211F14F66079DA1BD2F222048DF30223EB9F"
+  },
+  {
+    "path": "apps/web/public/demo/exam/office.svg",
+    "hash": "0A3702C1DFAE51E9FEFB03CBDBC8D7FA38FE19854116561EED602E09A6AB6A2D"
+  },
+  {
+    "path": "apps/web/src/app/ai-chat/page.tsx",
+    "hash": "6CCAB87FF81B13D6AD718D8F925234358CB44546E879521E5653E677802EA86F"
+  },
+  {
+    "path": "apps/web/src/app/analytics/page.tsx",
+    "hash": "50C4944365D7466AF762A239B84603DC03F12220F11D93CB4F8C3728C4218FEB"
+  },
+  {
+    "path": "apps/web/src/app/dashboard/page.tsx",
+    "hash": "4A15D2CF09EBF46BCFB3DBEF952AC0F92FC1043BAAE998F4295508CB5FCEA7BB"
+  },
+  {
+    "path": "apps/web/src/app/exam/[testId]/page.tsx",
+    "hash": "FACC8AAE37497FABBBAC6BBFF98ED260CBF6DF2FFC0A4EB035352E1C6BA9C497"
+  },
+  {
+    "path": "apps/web/src/app/exam/[testId]/prepare/page.tsx",
+    "hash": "A1D32784DE7D153015F34763F548EB78F82EFDC5F901E42C9F2FE59ADD7AB028"
+  },
+  {
+    "path": "apps/web/src/app/exam/[testId]/result/page.tsx",
+    "hash": "75D52D665583F8700C649BE49B7F650522E9761A19F19693FC579671077ADC2B"
+  },
+  {
+    "path": "apps/web/src/app/exam/[testId]/review/page.tsx",
+    "hash": "C848814BEA11B8E8C17CA86C6FF8297C50DD6FB1D753300959981093F6A4C95C"
+  },
+  {
+    "path": "apps/web/src/app/exam/[testId]/take/page.tsx",
+    "hash": "542B54E95D0596B3EE9A85DD2F06A16526B6DFE21D2686AE66402A426FD40DFC"
+  },
+  {
+    "path": "apps/web/src/app/exam/page.tsx",
+    "hash": "60C2EC486A0DDBB2A7807C558ECBAAD339FEEEE9AD37D7C35B058838BD8CF013"
+  },
+  {
+    "path": "apps/web/src/app/globals.css",
+    "hash": "7560A92AA131A386EBA686B13AE720746B3D68EAC99F0D55561848462AB70F08"
+  },
+  {
+    "path": "apps/web/src/app/history/example/page.tsx",
+    "hash": "CF0F7C92BBE9E29668F9D34E1449FC202F54CBA8D2D7F1FBB0637FCD64007186"
+  },
+  {
+    "path": "apps/web/src/app/history/example/review/page.tsx",
+    "hash": "39EAB0E663326BD159CF67FBDA158334835A248300AAC1EF11151F327D290434"
+  },
+  {
+    "path": "apps/web/src/app/history/page.tsx",
+    "hash": "B9D4878CE44D68CB4D0DBED6D48F2ADDC28C9C1BC646FE9B9E5E5C8CE37BC5DF"
+  },
+  {
+    "path": "apps/web/src/app/layout.tsx",
+    "hash": "F99A6C62E6E628BFCA3166F1DEAA79C4938881C7CB7966A9D6E929946B2BA871"
+  },
+  {
+    "path": "apps/web/src/app/login/page.tsx",
+    "hash": "4890DDE6487AB9F4F1A4578209E0A72D7BA142FDE148705B2EC9A1E0E7CBA827"
+  },
+  {
+    "path": "apps/web/src/app/page.tsx",
+    "hash": "47C5D941D92717D23B00CA0F7B19679783BF7FFC1A8DDE7A26A3B7D8ED0B3E48"
+  },
+  {
+    "path": "apps/web/src/app/practice/page.tsx",
+    "hash": "903C58CA4973F1E06750990A579E99C25643572E2327BCD9AD31F083A977A971"
+  },
+  {
+    "path": "apps/web/src/app/profile/page.tsx",
+    "hash": "084814AC4DC88CC0FAF023FC33A04FB42485F5E69069CC3866206684182369CA"
+  },
+  {
+    "path": "apps/web/src/app/register/page.tsx",
+    "hash": "233094A0C4172CEC56F5408A9CBFA45AD15574E142CD4B4F5DFECB9C12016D88"
+  },
+  {
+    "path": "apps/web/src/app/settings/page.tsx",
+    "hash": "EFEA9D497459C42311D3B484310C4D601F16956290B5C8F945FED8973D4D5D0F"
+  },
+  {
+    "path": "apps/web/src/app/study/grammar/[lessonId]/page.tsx",
+    "hash": "B8EE101C0E755DD1C0DE786F8EC19C40D9F4DA554961BE755655F990B8D641F0"
+  },
+  {
+    "path": "apps/web/src/app/study/grammar/page.tsx",
+    "hash": "CFB64309503CDA8C7E0BDE66F2EF094E36F87948770F4C1332BCD5122F8665B3"
+  },
+  {
+    "path": "apps/web/src/app/study/layout.tsx",
+    "hash": "42972F2D4595387F4572BE284C94266E642F8C8557D96F797B1CF2807B6AD054"
+  },
+  {
+    "path": "apps/web/src/app/study/vocabulary/[topicId]/page.tsx",
+    "hash": "9ADD7B1D7EA7CD7D5026C2D8059AF236F2172966B7E57661F9986A08591B4082"
+  },
+  {
+    "path": "apps/web/src/app/study/vocabulary/page.tsx",
+    "hash": "C48510DF61FB269F10E95BBA7687AE91DEE655CBA25D9741BE7E4F94778F7144"
+  },
+  {
+    "path": "apps/web/src/components/ai-chat/chat-thread.tsx",
+    "hash": "0C1588C3EC3C99E8C5A835C58155E8776BFED1CDF9242B70D82CDAD76CF02353"
+  },
+  {
+    "path": "apps/web/src/components/ai-chat/chat-view.tsx",
+    "hash": "DBF31605F8DD57E4E02BDF82AC959EC7B664E262D7D6F62E8C6A8628D0D43F6D"
+  },
+  {
+    "path": "apps/web/src/components/ai-chat/use-demo-chat.ts",
+    "hash": "C9EFA28D7EBE31208DA0484D0982A7AD47EF61D1C94736AFA87889B741A052E9"
+  },
+  {
+    "path": "apps/web/src/components/analytics/activity-trend.tsx",
+    "hash": "B6720ED77843A983219B82282FF7221B023026D8D7E96B4ACD80C3FA85D59BDE"
+  },
+  {
+    "path": "apps/web/src/components/analytics/analytics-results.tsx",
+    "hash": "A3887A7497EE79ECA08523AC7F2E8B9CB15F06182CD284B10DB2DFF1926CB714"
+  },
+  {
+    "path": "apps/web/src/components/analytics/analytics-table.tsx",
+    "hash": "FE1A23032D7031503AEB140462F90977DCD44822A77E9524509B57330BBCC102"
+  },
+  {
+    "path": "apps/web/src/components/analytics/analytics-view.tsx",
+    "hash": "C2CD5F2A732E357D8478A31DA9B56E95E7AB3FA1584F1066B7C5A3EB9A523B7E"
+  },
+  {
+    "path": "apps/web/src/components/auth/auth-form.tsx",
+    "hash": "6A6C6B988D62B06EBD7E7AAEE072C34FC19AFDD2A2BF803D32C8A96A614ECFC7"
+  },
+  {
+    "path": "apps/web/src/components/auth/auth-layout.tsx",
+    "hash": "64DB23E47C5C7F4DB89B00A32915084B6981656F0147A66910E58E70BB75D643"
+  },
+  {
+    "path": "apps/web/src/components/dashboard/dashboard-view.tsx",
+    "hash": "06DFB00B7FD71CAAD71BB838EEA3E4E66FE84612AC804773DB1224C70D0F6EE8"
+  },
+  {
+    "path": "apps/web/src/components/dashboard/score-trend.tsx",
+    "hash": "8C5BD36121D884885435D7C1A28B090757D6134BD7A1B230D255E0AE992232D8"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-detail.tsx",
+    "hash": "11F08A33DDF43DB6696C666CBC0A94695B71A26E4D2D007CB4C3771CC3B37192"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-dialog.tsx",
+    "hash": "1982F6CA55B24A38007D36126FC633286130F361877AB6BD0C6B6483E3845026"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-history-provider.tsx",
+    "hash": "637F224FE6D24930E920DC306F39BE25858FBC44502C33A9152A26D060793947"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-history.tsx",
+    "hash": "E35DD0129F374DA5013EF777E0DB13942D95F66D3615285E711BE0B6A23F17BC"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-library.tsx",
+    "hash": "CF9F95253E8D74A0DB1D6FD216620322B35076D471F139D065177579B5E7064B"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-media.tsx",
+    "hash": "E6D38EC7B7925E1A0B097845D00B285E122213D872E2DFE53F7DDBA10D2CDB7A"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-outcome-loader.tsx",
+    "hash": "7BCF669F105E33E7C25A0574B871449827D6DE91E244059D251A659E34EC5ED3"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-player.tsx",
+    "hash": "3054E7D2F4898CC98D573021110D9C1CCB9CC48A39BD1812BC0A50EEDF328685"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-prepare.tsx",
+    "hash": "C5AE78883640C6384DB2567C53AF2FC19A5C960588962E16F8524778A706F4C1"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-question-group.tsx",
+    "hash": "E396F8FA95FAD93CB1CB0EF568932CABE182265B3E7D73E2BD8BF2A494BD54B8"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-question-map.tsx",
+    "hash": "195B25B52422CB412A2D61C3F8EC8627F281B01549B4C3B24253448267FC6920"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-result-shared.tsx",
+    "hash": "B0406C167F93EDD15358E0F17B1E66D6263D10AC643487860A4262C51AEADBA7"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-result.tsx",
+    "hash": "576B74A235ABD0E22E906D41F46629826027F4642357147294BC33F45E9EB1FC"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-review.tsx",
+    "hash": "19E149BC252B4C97FBD696B28BEB680750799364DC550D62D739311AC4598BB4"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-session-provider.tsx",
+    "hash": "AF80CAB59ABC1378B8B235D276285CE5FEB0BCAADE04F9AC429381E87B068CB7"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-shared.tsx",
+    "hash": "509B6B665776B5AC404A70D91D20C564DE147098901CEB92B3D93202D147864F"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-start.tsx",
+    "hash": "9994722E5CCE922310C98C2616410547467E5761C12B4C5C898E17F164765150"
+  },
+  {
+    "path": "apps/web/src/components/exams/exam-workspace.tsx",
+    "hash": "A334D44B928A89646FFE97594232241B9A2A221FD8B368D2B1EE7BECFB3AD306"
+  },
+  {
+    "path": "apps/web/src/components/layout/brand.tsx",
+    "hash": "19CBA6B8E3309D97179821A317E919D4803E30B7F48CDA9E6EC56EF0EFF43FEE"
+  },
+  {
+    "path": "apps/web/src/components/layout/student-shell.tsx",
+    "hash": "910F6EA997FE97326D5D58243A2E77CD6BBC9A5B78ED546761236360A38E9A01"
+  },
+  {
+    "path": "apps/web/src/components/learning/grammar-lesson.tsx",
+    "hash": "411E49B4644DF69ABC9F1FCAB8D3B2A8DE3BEF76D52B4652BB81F39174325B8D"
+  },
+  {
+    "path": "apps/web/src/components/learning/grammar-library.tsx",
+    "hash": "91EDABECD3BA994214DC2220167F0B8D93BF938BA7B0C17B276B1E5DF5747E86"
+  },
+  {
+    "path": "apps/web/src/components/learning/learning-provider.tsx",
+    "hash": "6DC0DC0F405B62107C64C57813D68F16165B929B0772A1040E5AC7DB71117609"
+  },
+  {
+    "path": "apps/web/src/components/learning/learning-shared.tsx",
+    "hash": "7519779690585626BA0DC19F2C6FEA4285716E70E11221693BDC4C7D8B9A3160"
+  },
+  {
+    "path": "apps/web/src/components/learning/lesson-markdown.tsx",
+    "hash": "358E00376CA287697BC33211A43BAD5C66A71C16D94FD1CAD78974AEF8C89BD4"
+  },
+  {
+    "path": "apps/web/src/components/learning/vocabulary-audio.tsx",
+    "hash": "88DD10B1D0AC47994CFBF02E0BD3F0A070B1BF71571F89D357E46E8B48842665"
+  },
+  {
+    "path": "apps/web/src/components/learning/vocabulary-library.tsx",
+    "hash": "C14BCE7A2DADCA2786D4AED98048DF219B74861F1D2A0915064E0736F4CC35F9"
+  },
+  {
+    "path": "apps/web/src/components/learning/vocabulary-session.tsx",
+    "hash": "E23458BF3272087C136748250EED342F5208CC6E0BBD1998903BA9E540AF9185"
+  },
+  {
+    "path": "apps/web/src/components/learning/vocabulary-topic.tsx",
+    "hash": "D122B463E035CC37DC57DEBBA5E0B305553E2E85E69F630868EE7759F68203E8"
+  },
+  {
+    "path": "apps/web/src/components/profile/profile-form.tsx",
+    "hash": "9D7F20DF8D1D6267CF2D25F196B553512DA5029E5ABD5C0CE41F128219CB6BB9"
+  },
+  {
+    "path": "apps/web/src/components/profile/profile-view.tsx",
+    "hash": "9CC996D3F248A4E1FBAB2722FFBE8428B57A23FE9FF5D865D4C1A239BE1FFBDD"
+  },
+  {
+    "path": "apps/web/src/components/profile/use-avatar-preview.ts",
+    "hash": "0C9818377AEB3FD7C728C2222FDCAA143292E97A9D66242579C2137F0EE5D09C"
+  },
+  {
+    "path": "apps/web/src/components/settings/settings-form.tsx",
+    "hash": "E6BD03B480A30B4727EC713DF2554AFADB23279328E05357A54C6F7EC8A2C941"
+  },
+  {
+    "path": "apps/web/src/components/settings/settings-view.tsx",
+    "hash": "D706384C7655E15D89EDC685BBEF71CD616F5C75342D57F1EEC4D4E9876A8CA4"
+  },
+  {
+    "path": "apps/web/src/components/settings/use-settings-navigation.ts",
+    "hash": "CE1CFC53FBD5C0188BF34520C063FAE588565F246A526208D8E2D331DB932767"
+  },
+  {
+    "path": "apps/web/src/components/ui/audio-player.tsx",
+    "hash": "5F2E99AC3523A61A14C214477850E4260320760F607B88715C53F06D7382B40F"
+  },
+  {
+    "path": "apps/web/src/components/ui/button.tsx",
+    "hash": "746D38E4DC415F635F98B4046544C861349F51078B9EA430079D71D875CB6E61"
+  },
+  {
+    "path": "apps/web/src/components/ui/feedback.tsx",
+    "hash": "F4EDCB0272EF20DAC986B57365C50329FD7B3B8983AF6E965D1BABD8C3C5A1D9"
+  },
+  {
+    "path": "apps/web/src/components/ui/field.tsx",
+    "hash": "5B3798F6E16AEB637E40EAEE6AAE827DA19959EEB9EC0D90386E09E1F5987EB6"
+  },
+  {
+    "path": "apps/web/src/components/ui/icon.tsx",
+    "hash": "4222F3108CA264D44319FBF2CB4217DF76F0561B4FC0AC0B8858C04AC8534E25"
+  },
+  {
+    "path": "apps/web/src/components/ui/panel.tsx",
+    "hash": "CFA87BEB807AF403353F4FBDB7858E5E7EB7DADE0493B50EDCECFE5F2FC9321B"
+  },
+  {
+    "path": "apps/web/src/lib/ai-chat/conversation.ts",
+    "hash": "1481E3305DD4D5C9FE839F1A19AAEE6E78F80D9008FFBB50F6CBFD08AA6E0270"
+  },
+  {
+    "path": "apps/web/src/lib/ai-chat/fixture.ts",
+    "hash": "3851022F1CFEFC7CC15A287C09B4D9FDEEF4A6352D93DFB7F37FF37E9C10D20C"
+  },
+  {
+    "path": "apps/web/src/lib/ai-chat/repository.ts",
+    "hash": "9450383B6F96AF5B36D8DC332AC6C344493B72F4AE1E31EBE1DD56433852C964"
+  },
+  {
+    "path": "apps/web/src/lib/ai-chat/types.ts",
+    "hash": "1511BD96B5EB7800001ED3C863F8F58364BB7A2DFE979B9B556DD3C5805F0D74"
+  },
+  {
+    "path": "apps/web/src/lib/ai-chat/validation.ts",
+    "hash": "5871E25DE62AAE7247B6BAAD27E4E7BA013888ADDF17F4442400AC9157F1837A"
+  },
+  {
+    "path": "apps/web/src/lib/analytics/mock-data.ts",
+    "hash": "D8C0800ADB574D8427A60F65929464D785D84A53BDB49BBC6786C0F8E2D6677A"
+  },
+  {
+    "path": "apps/web/src/lib/analytics/prediction-fixture.ts",
+    "hash": "1F15828C3EF6DEA7A2154D09DBDE1E9978C741739006E8ECAB283A221D9B3527"
+  },
+  {
+    "path": "apps/web/src/lib/analytics/repository.ts",
+    "hash": "C11CBF72B744C5499B963D27672567CEDE5F0273D1203AC0B196CBB896F62071"
+  },
+  {
+    "path": "apps/web/src/lib/analytics/selectors.ts",
+    "hash": "26F8084DBE9433997AFEB50B5009172A455EBBC6AF1386469966868FC5C22AB7"
+  },
+  {
+    "path": "apps/web/src/lib/analytics/types.ts",
+    "hash": "EAD5F9B927A289B699AC03885408F19A054F7A2714EFE5D7BFDA30A8D8DC9ADC"
+  },
+  {
+    "path": "apps/web/src/lib/api.ts",
+    "hash": "9D6D15EF6EE1623985F9E4E77FBDE004818B40668E7A4B9CE77743B14B6C20E7"
+  },
+  {
+    "path": "apps/web/src/lib/auth-preview.ts",
+    "hash": "6AB1AC0AB769ED51C66B755ED33067A4B279A08BE3C48B9DC210ECB5E2A73047"
+  },
+  {
+    "path": "apps/web/src/lib/dashboard/mock-data.ts",
+    "hash": "E25C77AD72426FF1D2DCEEFE0B93334E483B1B850186E3B7DF4D5A543C581F6E"
+  },
+  {
+    "path": "apps/web/src/lib/dashboard/repository.ts",
+    "hash": "DA73FA5E2FDC16F5A41E2536009F053FC9BE75AE039B85FA61D6E88E2ACDF900"
+  },
+  {
+    "path": "apps/web/src/lib/dashboard/selectors.ts",
+    "hash": "352E4F35987829FD534B9C1E98B430A867FB913021B56C2D8120467C675DE144"
+  },
+  {
+    "path": "apps/web/src/lib/dashboard/types.ts",
+    "hash": "EF5548878DF7A3ECCAED879BA2D64F877F3F56ADB6468648818D9FCF7A02752B"
+  },
+  {
+    "path": "apps/web/src/lib/exams/mock-data.ts",
+    "hash": "2038FDF0EF76F4F0C0A6DFD1EC754F5521A4B9947CADD7AE55DA541E8D2964B8"
+  },
+  {
+    "path": "apps/web/src/lib/exams/question-fixtures.ts",
+    "hash": "5CCFF3C713E0DD56C7C15063BB1A5AB1D6C6D4D546673FEE1584FEB25604F0E5"
+  },
+  {
+    "path": "apps/web/src/lib/exams/repository.ts",
+    "hash": "A2D779F87418D938FAE8DBE464838BD8C5058790783800C7BBD233162A49D8FD"
+  },
+  {
+    "path": "apps/web/src/lib/exams/result-types.ts",
+    "hash": "A8A060DEA73C33E46EE06B29991685EFC04CF9DD61FA6FF7CB1EAAEC5A17FD7C"
+  },
+  {
+    "path": "apps/web/src/lib/exams/results.ts",
+    "hash": "F38DF1F2F48D6E7E493032BD493BC887E249DE76D3C36A6F4AADFF02FE1D7E78"
+  },
+  {
+    "path": "apps/web/src/lib/exams/review-example.ts",
+    "hash": "F6983DB19719EC6E8F4DAE6D22A5B84234D585DDC56DCBCFD601FFC8B9946522"
+  },
+  {
+    "path": "apps/web/src/lib/exams/selection.ts",
+    "hash": "22EB5AD69A68512890E426E2DA65B697DF87FDBBAF4E91A1CA1A17BE2819612A"
+  },
+  {
+    "path": "apps/web/src/lib/exams/session-types.ts",
+    "hash": "7A5BEB3768842D28A446FBBFF860E11B78030D93AE04BFC229483D53B4ADD131"
+  },
+  {
+    "path": "apps/web/src/lib/exams/session.ts",
+    "hash": "AFB367109FCB00ADBE936E923960D00C80917371BA370F4391108086465F34CE"
+  },
+  {
+    "path": "apps/web/src/lib/exams/types.ts",
+    "hash": "1AEE8E0AF45DF1040896361E03D49E351535573A1769DAD2178F1430D276280E"
+  },
+  {
+    "path": "apps/web/src/lib/learning/markdown.ts",
+    "hash": "A1B755223929CB2E815DFC06D41718B9BA935078129791140C869DEE66F4B3CE"
+  },
+  {
+    "path": "apps/web/src/lib/learning/mock-data.ts",
+    "hash": "F9EA70C6EF0617ED62B19AFC2749CE0495456FE4FB5E443C0E6CD6E6CA53B160"
+  },
+  {
+    "path": "apps/web/src/lib/learning/persistence.ts",
+    "hash": "9AA21B849CB0438CBD631B8132860F89EA928C9561DE1E195B3EC1147A6F0BAD"
+  },
+  {
+    "path": "apps/web/src/lib/learning/repository.ts",
+    "hash": "0D0AF700058E83C37A1F23FE14F26C263AA4D912AE58B638CE3B381DBEF496CF"
+  },
+  {
+    "path": "apps/web/src/lib/learning/study.ts",
+    "hash": "BA0D29EC7F7CAED0AC82A8351D773693A7BD68C6ED7BB3C30C0E4EDB1DF378A5"
+  },
+  {
+    "path": "apps/web/src/lib/learning/types.ts",
+    "hash": "076CCF09A7B109652EE92EAE241F4CD33E26746EA4C505EC5D7DE5663D5A956B"
+  },
+  {
+    "path": "apps/web/src/lib/profile/fixture.ts",
+    "hash": "49243515C45F07AD723FCDE66D5C74E69AB41682F767CCEA458F1D548D633AD6"
+  },
+  {
+    "path": "apps/web/src/lib/profile/repository.ts",
+    "hash": "DA814E354E63B3A52CA61D8D98D5110F925E231707EE721160DBB1903F908423"
+  },
+  {
+    "path": "apps/web/src/lib/profile/types.ts",
+    "hash": "722C00F2F53F71649CCA895339AC47260A2E5450F26EC1E5A3F41E4929CCE85E"
+  },
+  {
+    "path": "apps/web/src/lib/profile/validation.ts",
+    "hash": "78813F5F57F13E3D2B0029D49B06E5AE6CA76D2B1753EE39E6E5995DEE5B3B36"
+  },
+  {
+    "path": "apps/web/src/lib/settings/fixture.ts",
+    "hash": "0B458CDF287B54FEB6BCA2E40E215869041DD2602844009F1DA8F9444A6331EF"
+  },
+  {
+    "path": "apps/web/src/lib/settings/repository.ts",
+    "hash": "45364104767069AF0DDA17A7F0CD5EA2BF429A854CEE926FA07EC32FC43A1B7D"
+  },
+  {
+    "path": "apps/web/src/lib/settings/types.ts",
+    "hash": "0AD75928210F7AD4146B4E13DF7ADAE4FAC1EF6EA425B480826428A099866A43"
+  },
+  {
+    "path": "apps/web/src/lib/settings/validation.ts",
+    "hash": "95AC7494C899CBA3B8DABAE7D9662997580432868B121728E9017CD0BBFCFA04"
+  },
+  {
+    "path": "apps/web/src/lib/utils.ts",
+    "hash": "7167CCCF819BA5A9E5F3B098C2D56F8C4C4EDD924E4158BB830122EC6E0A5E76"
+  },
+  {
+    "path": "apps/web/src/styles/ai-chat.css",
+    "hash": "590D7AA76B09F9B4F9F16E229F41C18784E711C4C2D5A89A564F89BB733EB4B2"
+  },
+  {
+    "path": "apps/web/src/styles/analytics.css",
+    "hash": "192176456F48798E8D3169EEC7493FADEB4492C55DE449C5BD717A16AB729C0A"
+  },
+  {
+    "path": "apps/web/src/styles/exam-player.css",
+    "hash": "2E81FF8FA9B9E33841FB8844E115C955E227208332F82E865260DDFA8415E270"
+  },
+  {
+    "path": "apps/web/src/styles/exam-results.css",
+    "hash": "6941FF88B41DB067C844F34E008A0F1294D6B76E2E2667DBA2F4B7CBEB749DBF"
+  },
+  {
+    "path": "apps/web/src/styles/exams.css",
+    "hash": "B0B4700AA64EA7AB913B44BB7F809737D6986ED88DA7B3A22A996132D1B76C0A"
+  },
+  {
+    "path": "apps/web/src/styles/learning.css",
+    "hash": "72E89FCD5BE32C2A47526E0818F526EE0367A4D7F0B4AF5618C3B753C679F5A2"
+  },
+  {
+    "path": "apps/web/src/styles/profile.css",
+    "hash": "FEB3605B9CC25FDBA4C0CA059AAD793B21DF8647007A0903622BC148BDDE5F9C"
+  },
+  {
+    "path": "apps/web/src/styles/settings.css",
+    "hash": "94AB5A86A1EB72ADA8A603BCE0B9941FD655F190581159B960A88739488A451B"
+  },
+  {
+    "path": "apps/web/src/styles/student.css",
+    "hash": "DEF925764B09AA25901B970EF6A7129D70B9800613353E0C9BCE2CA8DD3BE525"
+  },
+  {
+    "path": "apps/web/tailwind.config.ts",
+    "hash": "675797E2E93A5F009031689B3111FDE6C43A9ECC18B5B8B1933D28EF8A09CAA1"
+  },
+  {
+    "path": "apps/web/tests/ai-chat.test.ts",
+    "hash": "9E0D285BCE9D1EB4F6856677DAB705CE0BF8B7167637088C8A5AC74BD333B33B"
+  },
+  {
+    "path": "apps/web/tests/analytics.test.ts",
+    "hash": "6DD7C8D5DBDDD55E080544F4172E5901093F77AE5316F1014FD3782B0F037E49"
+  },
+  {
+    "path": "apps/web/tests/exam-results.test.ts",
+    "hash": "20F02FE303C76B2007F807161458B37357801321AE2D2B997BF6D8B4B4E8E2B0"
+  },
+  {
+    "path": "apps/web/tests/exam-session.test.ts",
+    "hash": "9FA384747139B11B89B37E2390674FA6D7C39CB915297A8FDB8888CFBE6F9C72"
+  },
+  {
+    "path": "apps/web/tests/exams.test.ts",
+    "hash": "15B56E2C621C523121028F55A38FA721746CE01628BCE46DD58C935898D1504D"
+  },
+  {
+    "path": "apps/web/tests/learning.test.ts",
+    "hash": "E9F4922E845758033AFE6A29EF5F4561B54FBE98F999E0385603B8322889C98C"
+  },
+  {
+    "path": "apps/web/tests/profile.test.ts",
+    "hash": "44247F8A8BB510CD5EA66B9A56E0737F4F9F0F16BC09437866346E57727CFEF7"
+  },
+  {
+    "path": "apps/web/tests/settings.test.ts",
+    "hash": "6136A0FF3CDCA65C81E673D2EA5A22382428934D6F5AEFEA2AA24268FD3EDFFC"
+  },
+  {
+    "path": "apps/web/tests/ui-contracts.test.ts",
+    "hash": "A618B74A2C6DACA50E4D279ADBCBFEFDA3832852A21A704CEAAD2411DCEA8ADD"
+  },
+  {
+    "path": "apps/web/tsconfig.json",
+    "hash": "1C154A2D5EDE00C07BFC3476733FD9B112B45B57D7228139C96030ABE355B280"
+  },
+  {
+    "path": "apps/web/tsconfig.tests.json",
+    "hash": "FC6EDF1A84D76D01EB8BD5238C719B94445EF0CF84AE21E6E1FA40BCC046BA89"
+  },
+  {
+    "path": "commitlint.config.js",
+    "hash": "83BCB397647F12F75FF4EBC2FB0BB09129E3E84435F167AE74357D7C3A4AA9C6"
+  },
+  {
+    "path": "docker-compose.apps.yml",
+    "hash": "5BFE6BB1920B9CAA80A9D2BC181D363DB1B429B501D6C9C097EE5D9228BB7240"
+  },
+  {
+    "path": "docker-compose.yml",
+    "hash": "1EEF0A2438F32B979B1251F6AF472EAB1199523AE4CF64203B21BCB4F69D03C3"
+  },
+  {
+    "path": "docs/SRS.docx",
+    "hash": "E1E3D2DFAAC745E9B75E79769DA6B945AA79D388CDAC2F0E0BCD25A59F0D83FE"
+  },
+  {
+    "path": "docs/Thiet_ke_kien_truc_Storage.docx",
+    "hash": "D6E3D72A58B6262E2724C636C5ACCA7071B975C9A64B9C94E55395D392D89BC3"
+  },
+  {
+    "path": "\"docs/Thi\\341\\272\\277t k\\341\\272\\277 Event.docx\"",
+    "hash": null
+  },
+  {
+    "path": "\"docs/Thi\\341\\272\\277t k\\341\\272\\277 h\\341\\273\\207 th\\341\\273\\221ng.docx\"",
+    "hash": null
+  },
+  {
+    "path": "docs/frontend-current-status.md",
+    "hash": null
+  },
+  {
+    "path": "docs/frontend-design-review.md",
+    "hash": "B6046B7ACD003A8FCF899A3650092D902298A37BE963A2C2F0403EF5C7D84462"
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/chat-1024.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/chat-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/chat-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/chat-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/chat-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/empty-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/error-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/error-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/error-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/exhausted-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/exhausted-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/exhausted-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/exhausted-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/load-error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/reply-error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/success-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/timeout-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/ai-chat-review/validation-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/analytics-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/analytics-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/analytics-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/empty-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/insufficient-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/part-table-mobile-scroll.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/analytics-review/ungraded-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/exam-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/exam-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/exam-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/exam-ready-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/exam-ready-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/exam-ready-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/vocabulary-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/vocabulary-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/vocabulary-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/vocabulary-ready-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/vocabulary-ready-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-playback-20261027/vocabulary-ready-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/exam-missing-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/exam-missing-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/exam-missing-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/vocabulary-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/vocabulary-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/vocabulary-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/vocabulary-missing-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/vocabulary-missing-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review-20261027/vocabulary-missing-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/audio-error-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/exam-error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/exam-error-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/exam-error-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/exam-error-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/exam-missing-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/exam-missing-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/exam-missing-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-error-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-error-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-error-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-missing-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-missing-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-missing-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/audio-review/vocabulary-missing-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/ended-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/expired-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/finish-dialog-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/listening-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/listening-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/listening-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/media-error-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/player-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/question-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/reading-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/reading-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-player-review/reading-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/example-part6-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/expired-result-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/history-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/history-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/history-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/history-corrupt-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/history-empty-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/result-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/result-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/result-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/review-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/review-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/review-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/review-part2-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-results-review/review-question-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/detail-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/detail-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/detail-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/invalid-selection-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/library-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/library-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/library-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/prepare-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/prepare-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/prepare-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/exam-review/preview-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/frontend-review/dashboard-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/frontend-review/dashboard-mobile-menu.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/frontend-review/dashboard-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/frontend-review/login-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/frontend-review/register-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/frontend-review/register-mobile-validation.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/learning-review/flashcard-long-word-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/learning-review/flashcard-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/learning-review/grammar-lesson-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/learning-review/grammar-library-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/learning-review/grammar-table-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/learning-review/quiz-result-mobile.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/learning-review/vocabulary-library-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/avatar-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/empty-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/load-error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/profile-1024.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/profile-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/profile-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/profile-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/profile-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/save-error-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/save-error-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/save-error-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/validation-1024.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/validation-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/validation-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/validation-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/validation-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/profile-review/view-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/corrupt-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/empty-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/error-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/save-error-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/schema-desktop.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/settings-1024.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/settings-1440.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/settings-320.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/settings-390.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/settings-review/settings-768.jpg",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/ai-chat-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/ai-chat-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/ai-chat-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/ai-chat-composer-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/ai-chat-composer-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/ai-chat-composer-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/analytics-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/analytics-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/analytics-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/browser-report.json",
+    "hash": "CB1ABD716DE0FF219B27E682695DFC8EAFA14B0ACCEB502B2811F9DE1E408C65"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/completion-report.json",
+    "hash": "AE4A198E2103785A9251891B0931A35DC283A3B6E50CC0266B0A6360E4DDBFE7"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-empty-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-empty-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-empty-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/dashboard-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-ended-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-ended-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-ended-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-history-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-history-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-history-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-library-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-library-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-library-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-loading-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-loading-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-loading-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-player-listening-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-player-listening-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-player-listening-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-prepare-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-prepare-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-prepare-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-question-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-question-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-question-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-readiness-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-readiness-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-readiness-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-result-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-result-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-result-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-review-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-review-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-review-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-selection-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-selection-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/exam-selection-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/failure.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/flashcard-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/flashcard-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/flashcard-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/flashcard-actions-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/flashcard-actions-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/flashcard-actions-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-completion-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-completion-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-completion-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-lesson-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-lesson-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-lesson-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-library-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-library-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-library-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-load-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-load-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-load-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-table-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-table-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/grammar-table-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/learning-save-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/learning-save-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/learning-save-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/login-validation-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/login-validation-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/login-validation-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/menu-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/menu-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/navigation-report.json",
+    "hash": "2137DB9141276096CD13698BB104E6AFF1A2DBBAFD5F20A236FBD6C8DCB0E354"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-load-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-load-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-load-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-reading-highlight-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-reading-highlight-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-reading-highlight-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-save-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-save-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/player-save-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/profile-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/profile-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/profile-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/profile-form-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/profile-form-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/profile-form-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reading-example-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reading-example-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reading-example-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/register-validation-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/register-validation-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/register-validation-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/ai-chat-browser-report.json",
+    "hash": "81DE561FB105374FE31506531F5F7E918CC7FC8C7F88B78318073E5C6BA30DD5"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/ai-chat-edge-browser-report.json",
+    "hash": "A02FC4D36C9442941B5DCB42DBC57858B259122151531C51A7D06E4262FAFB34"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/analytics-browser-report.json",
+    "hash": "90DFE068A689073D985FC69FED56F5331C492D28C4CE5A146B4BF01AC220BC82"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/audio-playback-report-20261027.json",
+    "hash": "525531525A6238A0CFA6DAB0A944263F70FDDDF52981EF9E57490748A7FB9F86"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/exam-results-browser-report.json",
+    "hash": "C21C4CBF24572636FABCD765632BCCE10BB68DF23848A7DC32DAADD88DD2A54A"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/profile-browser-report.json",
+    "hash": "FCDB3D98160D6888CAB0C7D408EE81ADC46820E765167A0872C2C90D1F5905C4"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/profile-edge-browser-report.json",
+    "hash": "B02049A844750349E18BF026BAA13AFF4ADE2E30B6721E405A6122C6AC9E6980"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/reports/settings-browser-report.json",
+    "hash": "124A0E9BCA827155DAB26710976CBD8BA64470EC534212EF785F163057167950"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/settings-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/settings-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/settings-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/states-failure.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/states-report.json",
+    "hash": "76C0CE9F2F7BCA6A7C7CB4A6AE5CDDC11624831A882C18EC1737B1481222DEE6"
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-library-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-library-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-library-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-load-error-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-load-error-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-load-error-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-quiz-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-quiz-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-quiz-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-quiz-submit-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-quiz-submit-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-quiz-submit-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-result-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-result-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-result-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-result-review-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-result-review-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-result-review-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-topic-1440.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-topic-390.png",
+    "hash": null
+  },
+  {
+    "path": "docs/screenshots/student-regression-20261027/vocabulary-topic-768.png",
+    "hash": null
+  },
+  {
+    "path": "docs/tai_lieu_thiet_ke_CSDL.docx",
+    "hash": "A6D70A829EF84EFBC67C42D1386C756ECD55875389AB61D3D4590276122DBA13"
+  },
+  {
+    "path": "eslint.config.mjs",
+    "hash": "16F1BFD59946C8A994CBAAD9DCB47444570702CD69B69DB0ECC7C8A2FE2FE141"
+  },
+  {
+    "path": "infra/docker/dev-node.Dockerfile",
+    "hash": "6DFB1AF4CD473C2F04A7F40889AE6A00F8437889936C7F3B7B3CA31665CDD1A9"
+  },
+  {
+    "path": "package-lock.json",
+    "hash": "0BA13768CAC2855375B9F3B95B21A19C20DB2628B7023DD2A3A25295BD9E34AB"
+  },
+  {
+    "path": "package.json",
+    "hash": "E5D6E6EBBA827968B1680CF144F0D50EF5AD3EF10C039112FC18D19505D25D51"
+  },
+  {
+    "path": "packages/common/package.json",
+    "hash": "1DB08D7032D4F1056A53B9602CE5BEC07E433EBE9F20DFC254CEBF7EC74999C7"
+  },
+  {
+    "path": "packages/common/src/auth/constants.ts",
+    "hash": "BD92FB4BB1AD9CD588025668D089D0728F6E96A6153DEE44D0F06A0D40370CCE"
+  },
+  {
+    "path": "packages/common/src/auth/current-user.decorator.ts",
+    "hash": "E204F871478B76878E5CC5047672145E28E6D830235CE72939A0FA50E9F8BC5C"
+  },
+  {
+    "path": "packages/common/src/auth/jwt-auth.guard.ts",
+    "hash": "92F08512771B5121175ACAA6D6F9E6DCE8E7C20820064D1E6526BE902477BD5C"
+  },
+  {
+    "path": "packages/common/src/auth/public.decorator.ts",
+    "hash": "8F99EB062FE99FFE9674E82BA33628EBE8F8E98A07A22AAF23E58E778EBD1CD1"
+  },
+  {
+    "path": "packages/common/src/auth/roles.decorator.ts",
+    "hash": "9CD37EEFAEE5B6AC4F0D504B963E54AA71437290B0466FF65119D4BCF567EB80"
+  },
+  {
+    "path": "packages/common/src/auth/roles.guard.ts",
+    "hash": "F2D149E7EC369F798A923E6EA21FA0371F01B67C12702BF372D8A241C3261B3C"
+  },
+  {
+    "path": "packages/common/src/config/config.module.ts",
+    "hash": "41C02FFBBAE44049264924B489457D59129A9B6F7CBE345114CF9B231F486A59"
+  },
+  {
+    "path": "packages/common/src/config/env.ts",
+    "hash": "803951EE30185C04ADE93C94120A676531C89814E5845C861F6C83E864C1BC77"
+  },
+  {
+    "path": "packages/common/src/http/correlation-id.middleware.ts",
+    "hash": "9BFAF7E6EEAB3DD0295EADED32628381251E9FA0147568CB60A6E6D254036FD4"
+  },
+  {
+    "path": "packages/common/src/index.ts",
+    "hash": "87C7D1AD8A90096516572800AFBBE7C53FC0D6C99B0500F26E64E40607FD7C0D"
+  },
+  {
+    "path": "packages/common/src/messaging/messaging.module.ts",
+    "hash": "EAC4D0523D895A2947C86C03A65C03A5CBD4E301D9AEB2CE8F7B5699E8E5B2F7"
+  },
+  {
+    "path": "packages/common/src/messaging/messaging.service.ts",
+    "hash": "2F9103FFBE1C96FA69EFBC6399F6050253E13721D36D22748552FB5E8E464F66"
+  },
+  {
+    "path": "packages/common/src/outbox/outbox.ts",
+    "hash": "BA8D61D63EC66F51CC0A14D62C7CF01E1A7DD80AF871235DEA5180054FC19FB2"
+  },
+  {
+    "path": "packages/common/src/redis/redis.module.ts",
+    "hash": "63D750644CCD2C23CD59BC05B3B5EDD82B915E56C9A805D1DCFEBBDB02454FED"
+  },
+  {
+    "path": "packages/common/src/redis/redis.service.ts",
+    "hash": "05161A7120D4FD0E529ADC37A5866D933340EC10DF120EA0B8EDCDA0E42D9A7B"
+  },
+  {
+    "path": "packages/common/tsconfig.json",
+    "hash": "5CEC471A11B81FAA3F29873A96FE7A0E6A1DC575BABF417A7AD73D9343CAE4DC"
+  },
+  {
+    "path": "packages/config-eslint/index.js",
+    "hash": "52D83A71EE612F402517010B6C894EE5E9C2EED7C3C75FB5D6975ADB0E4FA3B2"
+  },
+  {
+    "path": "packages/config-eslint/package.json",
+    "hash": "C02F050A846A602C9F997D208C723926095C08C5CD55F4430FB2A09C75848AC0"
+  },
+  {
+    "path": "packages/config-ts/base.json",
+    "hash": "E3EFCABA904386ABC890E0FE11F8223D21452599F739A00489B10A1B4CB62303"
+  },
+  {
+    "path": "packages/config-ts/nest.json",
+    "hash": "A0B26AA7BED0CAEF2D672B5A9617A4BB4E53F6D0A17D31F1B8F76284129E2017"
+  },
+  {
+    "path": "packages/config-ts/nextjs.json",
+    "hash": "53AE258EBEA5E5C9CCA55382F7E6BC271C327ED9936E65FC8A5D3040687EAD08"
+  },
+  {
+    "path": "packages/config-ts/package.json",
+    "hash": "12EB98746A00050E59C160C5D8B09E7695A0B06549B1CF930B613EEA3C99B645"
+  },
+  {
+    "path": "packages/contracts/README.md",
+    "hash": "389FEC91B2E924490FD400FB32F40E6F4146BDE7961F3C2387015B2008968224"
+  },
+  {
+    "path": "packages/contracts/events/LessonCompletedEvent.avsc",
+    "hash": "0732798B8A9B191808BF2C26A93B0BAA09607670A7A6C0F86BDB3A09DAA9DB39"
+  },
+  {
+    "path": "packages/contracts/events/QuestionCreatedEvent.avsc",
+    "hash": "FDE9F12F515EE49BA4FB55C6A81F009CB5A4D7A3F9C418997CF92AC508F0ACFE"
+  },
+  {
+    "path": "packages/contracts/events/QuestionUpdatedEvent.avsc",
+    "hash": "19A264356FA795AC23D05E4CC8F0FA0EB132EF9E5DD1ED94914034DC3348F9D0"
+  },
+  {
+    "path": "packages/contracts/events/TestSubmittedEvent.avsc",
+    "hash": "DD0EF9DF88B8174CC74501D7B0E6568D0DA20D17A953F01D73FDDC6A7AEC798B"
+  },
+  {
+    "path": "packages/contracts/events/UserSyncCompletedEvent.avsc",
+    "hash": "DD5275D8F97F3F1144CD389B20C18CF82018CD4660382EBA1E4D9B3C56A6F879"
+  },
+  {
+    "path": "packages/contracts/events/VocabularyLearnedEvent.avsc",
+    "hash": "D459670E0582D93BCF29477B30DD769215AA57E6B94E19A5C3AD2A927A81BD6A"
+  },
+  {
+    "path": "packages/contracts/openapi/openapi.yaml",
+    "hash": "9BD1E875D7237207232D6062764695F6B8AAA420ADE129A8DDDE01C7E4C4AC6F"
+  },
+  {
+    "path": "packages/contracts/package.json",
+    "hash": "5CDF5465A0D55463E297A2A8CD305D93370E327ED598681D1B7E0B7267FFE960"
+  },
+  {
+    "path": "packages/contracts/proto/question_bank.proto",
+    "hash": "4D002AC1D92FC67A7E3ACBD9D28825F1E935D069A4343D89B1BCC0E8CFF92952"
+  },
+  {
+    "path": "scripts/README.md",
+    "hash": "DF9622E994B5941B0266ED61FF5182287E772888F1AD5A634C70193532A6D894"
+  },
+  {
+    "path": "scripts/audio-demo/README.md",
+    "hash": "7C6CBF070CED0D1D2F1339C9F85BA3C2EC2394764F7A54E1729173D60F70BF6C"
+  },
+  {
+    "path": "scripts/audio-demo/content.json",
+    "hash": "6ACAD583C89FDF58EBCC7CC730DCAE6C7F33B6C770E31CAC34B83830F8F32F75"
+  },
+  {
+    "path": "scripts/audio-demo/generate.py",
+    "hash": "098114873BBAFCC94BDC91D6E4E0230A5A254609CF2F83CD5E0B6A73163755BE"
+  },
+  {
+    "path": "scripts/audio-demo/playback-qa.cjs",
+    "hash": "42F94C9E699C4FBE20190F29EA55BF2EBFA6CF0172CDD06494EC5EE3930269F7"
+  },
+  {
+    "path": "scripts/audio-demo/recordings-20261027/browser-playback-report.json",
+    "hash": "F62DD9F257D852E2AB3A1D81D9CFDC3145CD9B5EF3F0B94B01CF4B4E180132B8"
+  },
+  {
+    "path": "scripts/audio-demo/recordings-20261027/content.json",
+    "hash": "4F22FA7ABE62DF43B259756A1CFE7A7CE70BBD504522153C27721F99BF4CB08A"
+  },
+  {
+    "path": "scripts/audio-demo/recordings-20261027/manifest.json",
+    "hash": "FA0D9386F11C3F93B7E454AE32F4E78720696AB81425A67CF51CCEC233D44F01"
+  },
+  {
+    "path": "scripts/audio-demo/recordings-20261027/voice-info.json",
+    "hash": "60865C1DD2B79913FD3D5F63508AD67EF254242BDBEAED99E623449B02561B28"
+  },
+  {
+    "path": "scripts/audio-demo/speak.ps1",
+    "hash": "11785CFDAEA29DD80DD8D70F01A8D2389445BB9C298FF7B13CC4A24121BED689"
+  },
+  {
+    "path": "scripts/audio-demo/verify-fixtures.cjs",
+    "hash": "E81D17F713A69D938D0EEA36101A6B56C548F133689948EA5CE5A22FE1AC5266"
+  },
+  {
+    "path": "scripts/init-db/01-create-databases.sql",
+    "hash": "882553B09F65BCD76BC934314AA7F5757D4A73B8F4289905C6594C619B4BEC6B"
+  },
+  {
+    "path": "scripts/init-minio.sh",
+    "hash": "E5FC5CC9100BF079113478320C67163C1CA615091CA3E53BB80B13CFE0E83511"
+  },
+  {
+    "path": "scripts/init-rabbitmq.sh",
+    "hash": "AEC931814FD5BC71D4D5B5C4E4B0ACC27DFBD134B5733D8CAD8575CBBC58C411"
+  },
+  {
+    "path": "scripts/qa/student-navigation.cjs",
+    "hash": "6B3FAE1132C1F6CBE3EE24FD46F8BB8900D2E3844BC2D7FC5055983015DF0980"
+  },
+  {
+    "path": "scripts/qa/student-regression.cjs",
+    "hash": "BF95498E1F20364661DA9525CBEB8D872695F06E45867429ED00AF1826D28D4E"
+  },
+  {
+    "path": "scripts/qa/student-states.cjs",
+    "hash": "0696E9DD50231500FAF294D3755BCB18867EAA16AE0FEAF6F273CB43D6899983"
+  },
+  {
+    "path": "scripts/setup-env.mjs",
+    "hash": "D7082E4CD04C2A23282028ADE606454ED589C23721B2343CE177407AE2DF24C5"
+  },
+  {
+    "path": "services/ai-chatbox-service/.dockerignore",
+    "hash": "56D1CCB034CA515FD123D11D09E5AFAA53489462E590A05D66FF6D79997CECAD"
+  },
+  {
+    "path": "services/ai-chatbox-service/.env.example",
+    "hash": "EB4C18D4638F9785012E074DED012B7DADC8852B9035CCEBCD802CF0F0F0241A"
+  },
+  {
+    "path": "services/ai-chatbox-service/.gitignore",
+    "hash": "703559EE08281F27B0146F35BF2F41C1A913CA5586FFA3F1EE37475D64777801"
+  },
+  {
+    "path": "services/ai-chatbox-service/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "services/ai-chatbox-service/Dockerfile",
+    "hash": "ABB794DC11BFDFAE6A55505E0A2CB12533B6F5A375BAC16413D75E0E87D83F7E"
+  },
+  {
+    "path": "services/ai-chatbox-service/README.md",
+    "hash": "D5B85CF1703978A599BC492A0E0F646F5AC26FF3B85D956A9B636113FF475865"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/__init__.py",
+    "hash": "DBDA274605D63B2F7A3A554448835F3E346F566D3A6871687D752F7FE55690DF"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/api/routes_conversations.py",
+    "hash": "FD9C89D60EC314E5C508BDC70864284B498E0570458335486488C6F42F0B3EC8"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/api/routes_health.py",
+    "hash": "CFC23C38A70D1A65823154106A5E7548A343ED98D15171F65E3A8DC23252B657"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/core/circuit_breaker.py",
+    "hash": "E4B6D9A343F27AE7682770B00FC52B867572D6B6C8110D955414315C8E8EFB7B"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/core/config.py",
+    "hash": "F18C4B2B2DD5CE017A0E894CEA48C646202056A0AC1F026A9CCA913D7E190AAA"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/core/redis.py",
+    "hash": "5512A6CA420BD3ACCD863C6CBE087FD8CB8DD76137E38523C48061C6D8560853"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/db/models.py",
+    "hash": "BD21BE0AA13CC823ED0F3D230313213026605FF1EDB073D597B8C5CD6C10F020"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/db/session.py",
+    "hash": "C7F9710DA54B4E190BA640D714179DE2D7D02634674473CD7EC56A81D7D41D35"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/main.py",
+    "hash": "B03F1325DA3B8F102399FB76ECC6261DC5C1CD60859E7A48968E75FD148B7EF7"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/schemas/conversation.py",
+    "hash": "515AA603E48B8A2F701B6180D6BEE86530D686CB787E1C24EB359E2BC0C824CB"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/services/chat_service.py",
+    "hash": "04B79F64544AA9B8D849B399AA8BCB8BBCDEF94FA6E3BBB0F16496F2450D5E13"
+  },
+  {
+    "path": "services/ai-chatbox-service/app/services/llm.py",
+    "hash": "798F888BFC93DE2C88D6E4453B4806622A76CE2FBBC40E1DACC4C0973C6FE960"
+  },
+  {
+    "path": "services/ai-chatbox-service/pyproject.toml",
+    "hash": "EC8DD69F07C0B6D64335EB905FEDEC503C926AD9A980852F1CBFC89D9554A897"
+  },
+  {
+    "path": "services/ai-chatbox-service/tests/test_health.py",
+    "hash": "8B78FF9B9E23CCAD35A353D7F78B5C1A4F0EE9FD6F3D560EA85361DCC74E039F"
+  },
+  {
+    "path": "services/analytics-service/.env.example",
+    "hash": "5710C5985A39409AB0EF9274130A349BEF825F1EC19BCA3AFB1B9E3DF9FAC078"
+  },
+  {
+    "path": "services/analytics-service/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "services/analytics-service/Dockerfile",
+    "hash": "C229B5440DBE933F6135BDE95F286484B6BF3E1C33E90685E61C567E6E86A1FD"
+  },
+  {
+    "path": "services/analytics-service/jest.config.js",
+    "hash": "1FA41177C93B01CA98125B3FF2E6D438CE42FFEDBAB265FF4FC9DC10C47EBFC4"
+  },
+  {
+    "path": "services/analytics-service/nest-cli.json",
+    "hash": "BBCA305C25D8E9E3363A13307E4CCD2DBB66C6CF09091EA584FB95529AD98B48"
+  },
+  {
+    "path": "services/analytics-service/package.json",
+    "hash": "AE14BA26F5E53DA63231F643DB65F5A6E656EEC607C9A4130E2127C4037CD832"
+  },
+  {
+    "path": "services/analytics-service/prisma/migrations/20261012084053_init/migration.sql",
+    "hash": "CD976DB4629E516CCD1F4C9E6A47440D5EE8BE7E0AA0F1765BE24407C9570906"
+  },
+  {
+    "path": "services/analytics-service/prisma/migrations/migration_lock.toml",
+    "hash": "693566B52C49DB47A2B0901D12400AA3D710D13A49F4A2A154B80C0505ED737C"
+  },
+  {
+    "path": "services/analytics-service/prisma/schema.prisma",
+    "hash": "DD359F54AC55D048325476CF5DA3011A3059D59338BA6119CD61CFA2775DDC32"
+  },
+  {
+    "path": "services/analytics-service/src/app.module.ts",
+    "hash": "994D7DE2164554A3134E9109DF9A125734B183FBBE0DE4794C25705F099F568A"
+  },
+  {
+    "path": "services/analytics-service/src/health/health.controller.ts",
+    "hash": "830B40C614B13E373E9703C67CEB361D5EF0E133AC2FAB796E2CA3E6EED93999"
+  },
+  {
+    "path": "services/analytics-service/src/main.ts",
+    "hash": "C020A7AFE8FD4A9186C5FC87FE8A53D0472D0C6C277BEFBE98B15B618CEBAFB1"
+  },
+  {
+    "path": "services/analytics-service/src/modules/analytics/analytics.controller.ts",
+    "hash": "8A9635756B4CF2363FB5148248236C08FB4865DBE8CFA4AF850053F67A419161"
+  },
+  {
+    "path": "services/analytics-service/src/modules/analytics/analytics.module.ts",
+    "hash": "9EFEAE40A9FF1DEF9507EFDDC4EA6D39FC2641ED856317031CA971FFBAD8077E"
+  },
+  {
+    "path": "services/analytics-service/src/modules/analytics/analytics.service.ts",
+    "hash": "3A7D407CD0AFA3621CD7B6489B6D55B0F2E893CC162F2619545F327698423488"
+  },
+  {
+    "path": "services/analytics-service/src/modules/analytics/dto/progress-query.dto.ts",
+    "hash": "0ABB4E7EA519994D45BB39CCB448E6294DD55CD2BA08E2493B074B92442BB566"
+  },
+  {
+    "path": "services/analytics-service/src/modules/analytics/events.consumer.ts",
+    "hash": "EDE12D9A1D090F737AA53269A16118D6651575C694E245EB6762666313D02281"
+  },
+  {
+    "path": "services/analytics-service/src/modules/analytics/streak.ts",
+    "hash": "A0A78E797E5FC2835A88EB232CCA937A9491AF0DAA5AC056EE7E9E2DE4F55746"
+  },
+  {
+    "path": "services/analytics-service/src/prisma/prisma.module.ts",
+    "hash": "9223A0889ABB0669020E94A9B8C1E68274CDC05533C1F79D84FE516450E94EBD"
+  },
+  {
+    "path": "services/analytics-service/src/prisma/prisma.service.ts",
+    "hash": "B4495F4C77846EFB707F6A723CA6D9450CB67ABF20ADC28D7300C8AA674D35EF"
+  },
+  {
+    "path": "services/analytics-service/tsconfig.build.json",
+    "hash": "3A016B4EE9713CD16295128BAD42E6077E5ECD8C2ED225CAA7D1E0E3F1C7F03F"
+  },
+  {
+    "path": "services/analytics-service/tsconfig.json",
+    "hash": "6F5A56BD8981A374EFB9D89A5530651F98B064EBD5B3587457BA4C45F29A9F1F"
+  },
+  {
+    "path": "services/api-gateway/.env.example",
+    "hash": "0B38BBEB63DB45E53A53828A6AF0498E7FDFAB2D844FD681FBEA9BB7C40DFFF9"
+  },
+  {
+    "path": "services/api-gateway/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "services/api-gateway/Dockerfile",
+    "hash": "E95CB8C0B7EAACF45613F3F05C6E7A00E1A1F9745A7027D304CC8111F3F982A3"
+  },
+  {
+    "path": "services/api-gateway/jest.config.js",
+    "hash": "CF0F3171AD44000D07A7BCC37692AE317BEE6B29A316A300868B7E9120D97936"
+  },
+  {
+    "path": "services/api-gateway/nest-cli.json",
+    "hash": "BCB15E3049FF5D131762D2BFE3A6F917C3C64C83AC772467A4073975CD423B5B"
+  },
+  {
+    "path": "services/api-gateway/package.json",
+    "hash": "D77DE410B83D0264C62F6689C358C3D685E0BE5AAF871F44EA1210C87114A9E3"
+  },
+  {
+    "path": "services/api-gateway/src/app.module.ts",
+    "hash": "118DFDC039A3DB0936B439ABBED27052E2066B7F6E2C361E32F4237F7355C9EA"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/correlation-id.middleware.ts",
+    "hash": "C6A0FC31DF38BD401BECBB33DD63D35EB048FF547D43F8C787F6D2F9F1711A2D"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/jwt.middleware.ts",
+    "hash": "32BBDC3F5F99206CE0668713D5104E79253A40A0875569AC7D8EF307F39EC00B"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/proxy.ts",
+    "hash": "AE33569605B9F14362B96720730F9A29C0F82ED0E392E975FC3D556676BA2F27"
+  },
+  {
+    "path": "services/api-gateway/src/gateway/rate-limit.middleware.ts",
+    "hash": "EC0B1DF40A1C57B51D839A54505CF97B087A8F25744A68033B0FA16F9DBC4A66"
+  },
+  {
+    "path": "services/api-gateway/src/health/health.controller.ts",
+    "hash": "13426CE794253FEE251099C3563C9322C432E80ECF95F69B8E151F984F6378EA"
+  },
+  {
+    "path": "services/api-gateway/src/main.ts",
+    "hash": "C2C85D95B820F0C2C416259C02A54D6905A0E53AF139B41F65C1EEF889EC860E"
+  },
+  {
+    "path": "services/api-gateway/tsconfig.build.json",
+    "hash": "3A016B4EE9713CD16295128BAD42E6077E5ECD8C2ED225CAA7D1E0E3F1C7F03F"
+  },
+  {
+    "path": "services/api-gateway/tsconfig.json",
+    "hash": "6F5A56BD8981A374EFB9D89A5530651F98B064EBD5B3587457BA4C45F29A9F1F"
+  },
+  {
+    "path": "services/auth-service/.env.example",
+    "hash": "E4DEBE8689D4CD2CC89ADE849AA6E096CC042F64C36C082C1AC461AA0FCAE329"
+  },
+  {
+    "path": "services/auth-service/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "services/auth-service/Dockerfile",
+    "hash": "173B19857CA135D51250C5C2577D8A2F274E6829BA5F94318B152F9A5E58724A"
+  },
+  {
+    "path": "services/auth-service/jest.config.js",
+    "hash": "1FA41177C93B01CA98125B3FF2E6D438CE42FFEDBAB265FF4FC9DC10C47EBFC4"
+  },
+  {
+    "path": "services/auth-service/nest-cli.json",
+    "hash": "BBCA305C25D8E9E3363A13307E4CCD2DBB66C6CF09091EA584FB95529AD98B48"
+  },
+  {
+    "path": "services/auth-service/package.json",
+    "hash": "713639A6E343AE480EA1F63DBB4E89658962E435A59999FD96715F1D9B7F05D0"
+  },
+  {
+    "path": "services/auth-service/prisma/migrations/20261012083959_init/migration.sql",
+    "hash": "0FB6FF02DD8A963FE0285DB538500E564B0616EAC11995947F317476F74805EB"
+  },
+  {
+    "path": "services/auth-service/prisma/migrations/migration_lock.toml",
+    "hash": "693566B52C49DB47A2B0901D12400AA3D710D13A49F4A2A154B80C0505ED737C"
+  },
+  {
+    "path": "services/auth-service/prisma/schema.prisma",
+    "hash": "844F04D8049FF63753B7DA2D895E4DD394A8918438651B535849487239AB2E60"
+  },
+  {
+    "path": "services/auth-service/src/app.module.ts",
+    "hash": "C82FB0C34903A2BC52647868464E43D79E2B80593E1CEF91DB2BCF60C23F12B4"
+  },
+  {
+    "path": "services/auth-service/src/health/health.controller.ts",
+    "hash": "00A3C259D99CF31EA5A55E3AE0F0A680E08A8E01BA2E1623473BDE2FD1C534E9"
+  },
+  {
+    "path": "services/auth-service/src/main.ts",
+    "hash": "4FFD0C54D43069305ECFC5FA08D33A5B421878D31FEDAC6E9CA82413C5457CE9"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/auth.controller.ts",
+    "hash": "6C344C7F40D99F24814670FCBD0C6167EE12E870A47C0526815C6AD31387F8F0"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/auth.module.ts",
+    "hash": "34FF8D00CE193AF05E9C2AD0981D363749FC0C543B9F73D7A3FE5107E6FDE414"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/auth.service.ts",
+    "hash": "6F3396F80FF84D005E3753EA307BEF43E3FA1145EAA273685D3F1776101F5B79"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/login.dto.ts",
+    "hash": "E8611590E6BA808E4A1CE9673F52C644F857BD0C603699C73ED9E618D2CD2E5D"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/refresh.dto.ts",
+    "hash": "D2632CD57EB70E56D7E86AF59F6867F189F2888DAADA9B54B12601727DC36413"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/register.dto.ts",
+    "hash": "63E594C95744E907A0C0C288ADF0AFAB321D2D66A3659B991A5A0E3E728D8154"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/dto/sync.dto.ts",
+    "hash": "D124399B232F50D3084F17D12ECF235E76A6ADDB78B03FC5732AB3EC940AE67E"
+  },
+  {
+    "path": "services/auth-service/src/modules/auth/sync.controller.ts",
+    "hash": "1C5855F1CEC4B7599695941FCC211BD602AADE3D225BB495FEF15C058EC29250"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/admin-users.controller.ts",
+    "hash": "B5A997F757C2ADAC029636FE64326897DAAB15A0226056C938FCAC3523FC2421"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/list-users-query.dto.ts",
+    "hash": "CF65394A8DB5BBCA1F9EDE5A8C25A4B8CCABD498D5D89BAF279F05E4F71F2378"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/update-profile.dto.ts",
+    "hash": "07D5898C4C2B13A6259CC49FE5DACFD591D25F6AD0E1DC6A0BDBD69CBE513410"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/update-roles.dto.ts",
+    "hash": "E87A1D1CECC974AED95CD9A29C891EBB1C5DCDE92DFACBC67B7A8A4DBD2068B4"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/dto/update-status.dto.ts",
+    "hash": "BBB625C46C2C9A04E80DA931BA319D876FF14F10B1727E75731D70DDCD92DA1A"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/users.controller.ts",
+    "hash": "07D65D38A5B9669EE71E482421AC41621F987431D81A00D9C88137F5804B9982"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/users.module.ts",
+    "hash": "B6BE00E702EDFB041344CA33E553D69AC42DFEBBBF81034619923B585AB7902D"
+  },
+  {
+    "path": "services/auth-service/src/modules/users/users.service.ts",
+    "hash": "09298CD97A77F84C5811A64D57A3535B39BA10999ABBFF80315CAC8BDDEAB1C1"
+  },
+  {
+    "path": "services/auth-service/src/prisma/prisma.module.ts",
+    "hash": "9223A0889ABB0669020E94A9B8C1E68274CDC05533C1F79D84FE516450E94EBD"
+  },
+  {
+    "path": "services/auth-service/src/prisma/prisma.service.ts",
+    "hash": "B4495F4C77846EFB707F6A723CA6D9450CB67ABF20ADC28D7300C8AA674D35EF"
+  },
+  {
+    "path": "services/auth-service/test/jest-e2e.json",
+    "hash": "67C12DC1C4CE0E2C2E53D47243EE9A423FF7FA28A27F8E9DAE32D121D3894590"
+  },
+  {
+    "path": "services/auth-service/tsconfig.build.json",
+    "hash": "3A016B4EE9713CD16295128BAD42E6077E5ECD8C2ED225CAA7D1E0E3F1C7F03F"
+  },
+  {
+    "path": "services/auth-service/tsconfig.json",
+    "hash": "6F5A56BD8981A374EFB9D89A5530651F98B064EBD5B3587457BA4C45F29A9F1F"
+  },
+  {
+    "path": "services/exam-service/.env.example",
+    "hash": "C72A02E88DD564F739F656036A3F7537A1E47DFC0F247FDDB89FB386C004B4F4"
+  },
+  {
+    "path": "services/exam-service/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "services/exam-service/Dockerfile",
+    "hash": "F49ECEAA1A7D11586D76D03FF85713319B429C7171EC377AB044D9934CDAC597"
+  },
+  {
+    "path": "services/exam-service/jest.config.js",
+    "hash": "1FA41177C93B01CA98125B3FF2E6D438CE42FFEDBAB265FF4FC9DC10C47EBFC4"
+  },
+  {
+    "path": "services/exam-service/nest-cli.json",
+    "hash": "BBCA305C25D8E9E3363A13307E4CCD2DBB66C6CF09091EA584FB95529AD98B48"
+  },
+  {
+    "path": "services/exam-service/package.json",
+    "hash": "1F345BE1D122F9D5DC3AD6B5C136C596E125ACA75ED190AA15C1B3FB06B39B6A"
+  },
+  {
+    "path": "services/exam-service/prisma/migrations/20261012084039_init/migration.sql",
+    "hash": "2D19F44F99E037E7CC44A6D93295ACC6BF3D42849EEF77EBA0150B540E1B3FE5"
+  },
+  {
+    "path": "services/exam-service/prisma/migrations/migration_lock.toml",
+    "hash": "693566B52C49DB47A2B0901D12400AA3D710D13A49F4A2A154B80C0505ED737C"
+  },
+  {
+    "path": "services/exam-service/prisma/schema.prisma",
+    "hash": "32253A6CD527C75E62855441570357A819D20B7E3588532F859C4A2A2F795E80"
+  },
+  {
+    "path": "services/exam-service/src/app.module.ts",
+    "hash": "BBF01271DF464A6DC4938E80688BA36FB843FD3631076545EC2BAC8086EFC354"
+  },
+  {
+    "path": "services/exam-service/src/grpc/grpc.module.ts",
+    "hash": "299229D616910D4D240717D2CD2E969D6AD8DCB6BA1A2453B9C383EED6C7E0E0"
+  },
+  {
+    "path": "services/exam-service/src/grpc/question-bank.client.ts",
+    "hash": "13477AD01FB81511331F60694E97C594EE6DD6CDA1885FBB418C2136E105CDE1"
+  },
+  {
+    "path": "services/exam-service/src/health/health.controller.ts",
+    "hash": "3B58A624B9505C4DA374BBA4381CF7BE2208B9E74C06E2E804C9C1077BFC8147"
+  },
+  {
+    "path": "services/exam-service/src/main.ts",
+    "hash": "BEC3CD35C25AA184DA98A44A0F9395DF820FFEB11B8F7F18C572B6C1B8D27936"
+  },
+  {
+    "path": "services/exam-service/src/modules/attempts/attempts.controller.ts",
+    "hash": "BA9B1B8C5E602954C80A1F210364C12637746CB4C29E05FF1DBC120485F28F57"
+  },
+  {
+    "path": "services/exam-service/src/modules/attempts/attempts.module.ts",
+    "hash": "FA1680B3545A7481E744231456192A06C245B70EEAA21CEE9C621F40458557FB"
+  },
+  {
+    "path": "services/exam-service/src/modules/attempts/attempts.service.ts",
+    "hash": "6DACCA6CC30836B3305D1B9735C0EEC6CD296A3884BF653253119D4AD1BF0419"
+  },
+  {
+    "path": "services/exam-service/src/modules/attempts/dto/save-answer.dto.ts",
+    "hash": "3CA9CEF899C971F5890041236E3AEEB3DA7BB20B0AD31909AA8AE71CCE076A04"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/dto/create-test.dto.ts",
+    "hash": "F70D003883B79876C19E6D7204ABC54A26052D336E222F91DDE24C60C1E24A1B"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/dto/list-tests-query.dto.ts",
+    "hash": "4BE16EE82B736D863DD6D79342B52498116492F25A83C215CE1E15474DC85668"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/dto/update-test.dto.ts",
+    "hash": "011FDCEE5B017927447B137E399FD6C40E16BCE645F7820D687073D95680631F"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/tests.controller.ts",
+    "hash": "2344CB1E52FEFEC3BF0BAAD3BAE889322F8511A54F58AED861C4C79902435FFB"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/tests.module.ts",
+    "hash": "F62881C7CDC123F49636C4D43B33404CF6B0A13D3B20D0C2C2F07D167856D2F3"
+  },
+  {
+    "path": "services/exam-service/src/modules/tests/tests.service.ts",
+    "hash": "428AACECD2AEFE4E644EFA9EDD185BA116943EAFD5F7AA64E9444E316133BD6E"
+  },
+  {
+    "path": "services/exam-service/src/prisma/prisma.module.ts",
+    "hash": "9223A0889ABB0669020E94A9B8C1E68274CDC05533C1F79D84FE516450E94EBD"
+  },
+  {
+    "path": "services/exam-service/src/prisma/prisma.service.ts",
+    "hash": "B4495F4C77846EFB707F6A723CA6D9450CB67ABF20ADC28D7300C8AA674D35EF"
+  },
+  {
+    "path": "services/exam-service/test/jest-e2e.json",
+    "hash": "67C12DC1C4CE0E2C2E53D47243EE9A423FF7FA28A27F8E9DAE32D121D3894590"
+  },
+  {
+    "path": "services/exam-service/tsconfig.build.json",
+    "hash": "3A016B4EE9713CD16295128BAD42E6077E5ECD8C2ED225CAA7D1E0E3F1C7F03F"
+  },
+  {
+    "path": "services/exam-service/tsconfig.json",
+    "hash": "6F5A56BD8981A374EFB9D89A5530651F98B064EBD5B3587457BA4C45F29A9F1F"
+  },
+  {
+    "path": "services/learning-service/.env.example",
+    "hash": "6B95DDF4D867C006547C2490683D973F6F1C03BC486F8AA5A3475908A7FA6523"
+  },
+  {
+    "path": "services/learning-service/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "services/learning-service/Dockerfile",
+    "hash": "059B2D7297A8BF004845B32264A4FADB839FA59BDC3CD9A559FAD46E62B0630D"
+  },
+  {
+    "path": "services/learning-service/jest.config.js",
+    "hash": "1FA41177C93B01CA98125B3FF2E6D438CE42FFEDBAB265FF4FC9DC10C47EBFC4"
+  },
+  {
+    "path": "services/learning-service/nest-cli.json",
+    "hash": "BBCA305C25D8E9E3363A13307E4CCD2DBB66C6CF09091EA584FB95529AD98B48"
+  },
+  {
+    "path": "services/learning-service/package.json",
+    "hash": "1190246B27C07681601C25F4806553C3665BF9DBB14CE18D80BB61DE43D06A47"
+  },
+  {
+    "path": "services/learning-service/prisma/migrations/20261012084046_init/migration.sql",
+    "hash": "D6E105BD543CF755FFF33F06331FBC6E6C419F196C12662F08F9C41B18ED4C32"
+  },
+  {
+    "path": "services/learning-service/prisma/migrations/migration_lock.toml",
+    "hash": "693566B52C49DB47A2B0901D12400AA3D710D13A49F4A2A154B80C0505ED737C"
+  },
+  {
+    "path": "services/learning-service/prisma/schema.prisma",
+    "hash": "66059A23D034A362101C5549891A94A90F6265B88D5B01DA72FC96799CF1FDF6"
+  },
+  {
+    "path": "services/learning-service/src/app.module.ts",
+    "hash": "D30E5EF57C6519DE2C7A57C9311DC1CA23E6AF48D3CAA3EA8B67A52984F4217C"
+  },
+  {
+    "path": "services/learning-service/src/health/health.controller.ts",
+    "hash": "07886CC1560F0905F3AC4CD989197B33D9C86750ADF53CD07A187044F2264CFE"
+  },
+  {
+    "path": "services/learning-service/src/main.ts",
+    "hash": "FB8063AE9E75FF2472FFA2E011928691838D64697ED1C94B839621FBA0199462"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/dtos/list-lessons-query.dto.ts",
+    "hash": "254F15FB34D6DF5B5CF61E9563652671F2A521CFFD37E6D5AAE833199E168FF8"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/dtos/list-vocabularies-query.dto.ts",
+    "hash": "5D1E2C61691DEE2F3DA43C7DD66FDCA07E31BBC995CA9C8FFFD6418ABA8259F0"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/dtos/review-flashcard.dto.ts",
+    "hash": "3DFEE2A993ABFE4574E41E7F2EE6C3BE9992E0EABB35A9C3A478F106C9BA5640"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/learning.controller.ts",
+    "hash": "50CA9616989901654C10847FBC7ACA89EE82E860371A8E20C22DDA2513ABE6CA"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/learning.module.ts",
+    "hash": "51E13F0D52CE09190F29F1E2632E217764DF74A0122385CF4AFC47018D9C6BBE"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/learning.service.ts",
+    "hash": "103B176F7CA53E22DD8BEE531E93F56F61B23557432FC60427BBF3D43B1838C7"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/sm2.spec.ts",
+    "hash": "07F519DCC798B73F6BF01C844C33CF154FA942C27A400B79470231B2CF35FE53"
+  },
+  {
+    "path": "services/learning-service/src/modules/learning/sm2.ts",
+    "hash": "C47629A194E1D0BA702DCE475DAE35057C451B59B5CD2141BC343C516CD04247"
+  },
+  {
+    "path": "services/learning-service/src/prisma/prisma.module.ts",
+    "hash": "9223A0889ABB0669020E94A9B8C1E68274CDC05533C1F79D84FE516450E94EBD"
+  },
+  {
+    "path": "services/learning-service/src/prisma/prisma.service.ts",
+    "hash": "B4495F4C77846EFB707F6A723CA6D9450CB67ABF20ADC28D7300C8AA674D35EF"
+  },
+  {
+    "path": "services/learning-service/tsconfig.build.json",
+    "hash": "3A016B4EE9713CD16295128BAD42E6077E5ECD8C2ED225CAA7D1E0E3F1C7F03F"
+  },
+  {
+    "path": "services/learning-service/tsconfig.json",
+    "hash": "6F5A56BD8981A374EFB9D89A5530651F98B064EBD5B3587457BA4C45F29A9F1F"
+  },
+  {
+    "path": "services/question-bank-service/.env.example",
+    "hash": "6F1100AAC357316C34ED2CF02D01D0EB66B4D151D6ACC6296E7BA3E760BC7426"
+  },
+  {
+    "path": "services/question-bank-service/.gitkeep",
+    "hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "path": "services/question-bank-service/Dockerfile",
+    "hash": "6C0E69F0DD208B5984694D7E537857A09D6CAE78ED12409C4BA9844FE9E73509"
+  },
+  {
+    "path": "services/question-bank-service/jest.config.js",
+    "hash": "CF0F3171AD44000D07A7BCC37692AE317BEE6B29A316A300868B7E9120D97936"
+  },
+  {
+    "path": "services/question-bank-service/nest-cli.json",
+    "hash": "FC5C046FD3191358FC667D9F3BEA1A92913926FA5F89011508FA5154DAE67682"
+  },
+  {
+    "path": "services/question-bank-service/package.json",
+    "hash": "C7061A338191B9C25E197000A63BC3BEC60066053CDD173AE686A7220DBC4EDF"
+  },
+  {
+    "path": "services/question-bank-service/prisma/migrations/20261012084032_init/migration.sql",
+    "hash": "3E1AE629ED7CE9C7FE1DA515BA3BB6E1E217A009C6BF3766F601C76BEF4AFB9A"
+  },
+  {
+    "path": "services/question-bank-service/prisma/migrations/migration_lock.toml",
+    "hash": "693566B52C49DB47A2B0901D12400AA3D710D13A49F4A2A154B80C0505ED737C"
+  },
+  {
+    "path": "services/question-bank-service/prisma/schema.prisma",
+    "hash": "6B4142DDE41DA50C05CD2A00B762697C49AA40A06AFF094820476E1CA1BAE37A"
+  },
+  {
+    "path": "services/question-bank-service/src/app.module.ts",
+    "hash": "40DFA1A87CBCBB76C712AC5AE93686E639277708B6C445BEAF9887D5F4B2E1BF"
+  },
+  {
+    "path": "services/question-bank-service/src/grpc/question-bank.grpc.controller.ts",
+    "hash": "92A2C2457A88BBB576C06F710FB0FBE33F9DB0ECA84057503F82925E38EF057D"
+  },
+  {
+    "path": "services/question-bank-service/src/grpc/question_bank.proto",
+    "hash": "F46EFF5B354AB0BF4ED5B59BD7B56EE5BE1F2D4B2C5C98EF6ABAF4F3D7349FD0"
+  },
+  {
+    "path": "services/question-bank-service/src/health/health.controller.ts",
+    "hash": "3B31F6B722C2D7972967D91BEFB1FC94A51C1C755D1C0172099C23A6B9E138B3"
+  },
+  {
+    "path": "services/question-bank-service/src/main.ts",
+    "hash": "F73695F63AFDB52A9F1A554731521212843C21D18EF1EF2A3DA2D3F848912B07"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/questions/dto/create-question.dto.ts",
+    "hash": "B8CDBCCA9CDD350FF6D7E8EA6136F283CB09C76C1A105652EC897572CA0D6928"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/questions/dto/list-questions-query.dto.ts",
+    "hash": "9C98CC9BF1C7C6AB639FC0D884C1EFFC57AA640BC2E63535FB22BEA2C3A4CB51"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/questions/dto/presign-media.dto.ts",
+    "hash": "8308ADFD3A0DC66F521CEE4A9ACC8FD22229F8039A373C7C095FD3C02A7E4901"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/questions/dto/update-question.dto.ts",
+    "hash": "37AAC165C1A25220B8399225A83A0BC95F56772031B84AF97F4F5F8BAF748DE7"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/questions/questions.controller.ts",
+    "hash": "F8DFFB342D47526041622B3F13B4FA8587AA395720F9D115F0ABEBBB26BE3A56"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/questions/questions.module.ts",
+    "hash": "F3AEBCBD5CC1A0A1B1B9971DD531D4CAFA65B09810B648AABD0A5889C80CE102"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/questions/questions.service.ts",
+    "hash": "E00324948A9454CC1AB12E9C49115B521B1BD1437784D6730F29A6A8A7991D47"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/search/search-indexer.ts",
+    "hash": "9EC7E4F0E71997678D3B8B42B66654D8584ED4C4072E50E8B8D0628956F657A9"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/search/search.module.ts",
+    "hash": "C125020B13078B523B5A5A8959054BC5B4C4F7DF95AFB572287A014DF66DF311"
+  },
+  {
+    "path": "services/question-bank-service/src/modules/search/search.service.ts",
+    "hash": "9EC7EEB104F35DBD5EF9D4D0ADC42B91E1CA3D476FD22C2FAC40E387A0CDECFA"
+  },
+  {
+    "path": "services/question-bank-service/src/prisma/prisma.module.ts",
+    "hash": "9223A0889ABB0669020E94A9B8C1E68274CDC05533C1F79D84FE516450E94EBD"
+  },
+  {
+    "path": "services/question-bank-service/src/prisma/prisma.service.ts",
+    "hash": "B4495F4C77846EFB707F6A723CA6D9450CB67ABF20ADC28D7300C8AA674D35EF"
+  },
+  {
+    "path": "services/question-bank-service/tsconfig.build.json",
+    "hash": "3A016B4EE9713CD16295128BAD42E6077E5ECD8C2ED225CAA7D1E0E3F1C7F03F"
+  },
+  {
+    "path": "services/question-bank-service/tsconfig.json",
+    "hash": "6F5A56BD8981A374EFB9D89A5530651F98B064EBD5B3587457BA4C45F29A9F1F"
+  },
+  {
+    "path": "tsconfig.base.json",
+    "hash": "BC90AA837BA431014F07556F480BA9219C4DB52B01F951893D2B0108A65CC2A8"
+  }
+]

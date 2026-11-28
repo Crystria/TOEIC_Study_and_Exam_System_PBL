@@ -1,0 +1,106 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/learning/admin/lessons/:id"
+  method: GET
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    id: b2b638c2-0db0-4256-a945-715659ac6882
+  body:
+    type: text
+    content: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "lessonId": "2955d6d2-e987-4cab-97cf-bab0467dc8ed",
+        "lessonTitle": "string",
+        "category": "string",
+        "contentMarkdown": "string",
+        "status": "DRAFT",
+        "createdAt": "Z",
+        "updatedAt": "Z"
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "lessonTitle": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "contentMarkdown": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "updatedAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          }
+        },
+        "required": [
+          "lessonId",
+          "lessonTitle",
+          "category",
+          "contentMarkdown",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+order: 1000

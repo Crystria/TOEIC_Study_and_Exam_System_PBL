@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, Public, RoleCode, Roles } from '@toeic/common';
+import { CurrentUser, JwtPayload, RoleCode, Roles } from '@toeic/common';
 import { CreateTestDto } from './dto/create-test.dto';
 import { ListTestsQueryDto } from './dto/list-tests-query.dto';
 import { UpdateTestDto } from './dto/update-test.dto';
@@ -11,22 +11,26 @@ import { TestsService } from './tests.service';
 export class TestsController {
   constructor(private readonly testsService: TestsService) {}
 
-  @Public()
   @Get()
-  @ApiOperation({ summary: 'Danh sách đề thi (Full Test / Mini Test)' })
-  list(@Query() query: ListTestsQueryDto) {
-    return this.testsService.list(query);
+  @ApiOperation({ summary: 'Danh sách đề thi hoàn chỉnh 7 Part' })
+  list(@Query() query: ListTestsQueryDto, @CurrentUser() user: JwtPayload) {
+    return this.testsService.list(
+      query,
+      user.roles.some((r) => r === RoleCode.CONTENT_ADMIN || r === RoleCode.SYSTEM_ADMIN),
+    );
   }
 
-  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Chi tiết cấu trúc đề thi' })
-  findById(@Param('id') id: string) {
-    return this.testsService.findById(id);
+  findById(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    return this.testsService.findById(
+      id,
+      user.roles.some((r) => r === RoleCode.CONTENT_ADMIN || r === RoleCode.SYSTEM_ADMIN),
+    );
   }
 
   @ApiBearerAuth()
-  @Roles(RoleCode.SYSTEM_ADMIN, RoleCode.CONTENT_ADMIN)
+  @Roles(RoleCode.CONTENT_ADMIN)
   @Post()
   @ApiOperation({ summary: 'Tạo đề thi' })
   create(@Body() dto: CreateTestDto, @CurrentUser('sub') userId: string) {
@@ -34,10 +38,15 @@ export class TestsController {
   }
 
   @ApiBearerAuth()
-  @Roles(RoleCode.SYSTEM_ADMIN, RoleCode.CONTENT_ADMIN)
+  @Roles(RoleCode.CONTENT_ADMIN)
   @Patch(':id')
   @ApiOperation({ summary: 'Cập nhật đề thi / cấu trúc' })
   update(@Param('id') id: string, @Body() dto: UpdateTestDto) {
     return this.testsService.update(id, dto);
+  }
+  @Delete(':id')
+  @Roles(RoleCode.CONTENT_ADMIN)
+  remove(@Param('id') id: string) {
+    return this.testsService.remove(id);
   }
 }

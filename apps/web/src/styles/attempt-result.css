@@ -1,0 +1,313 @@
+.api-root .attempt-result {
+  color: #24344b;
+  font-size: 15px;
+}
+.api-root a.attempt-result-back {
+  display: inline-flex;
+  padding: 4px 0;
+  color: #66758c;
+  font-size: 13px;
+}
+.api-root a.attempt-result-back:hover {
+  color: #315bd6;
+}
+.attempt-result-heading {
+  margin: 22px 0 24px;
+}
+.attempt-result-eyebrow {
+  color: #66758c;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  margin: 0 0 8px;
+}
+.api-root .attempt-result-heading h1 {
+  font-size: clamp(24px, 3vw, 32px);
+  margin: 0 0 12px;
+  line-height: 1.35;
+}
+.attempt-result-meta,
+.attempt-result-actions,
+.attempt-result-facts,
+.attempt-result-scores,
+.attempt-result-legend,
+.attempt-result-legend span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.attempt-result-meta {
+  gap: 8px 18px;
+  font-size: 13px;
+  color: #66758c;
+  margin: 0;
+}
+.attempt-result-actions {
+  gap: 10px;
+  margin-top: 20px;
+}
+.api-root :is(a, button).attempt-result-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 16px;
+  border: 1px solid #dbe3ef;
+  background: white;
+  border-radius: 8px;
+  color: #36527d;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.api-root :is(a, button).attempt-result-button.is-primary {
+  background: #315bd6;
+  border-color: #315bd6;
+  color: #fff;
+}
+.api-root :is(a, button).attempt-result-button:hover:not(:disabled) {
+  box-shadow: 0 2px 6px rgb(30 60 100 / 12%);
+}
+.attempt-result-overview {
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e1e7ef;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+.attempt-result-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.attempt-result-stat > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+.attempt-result-stat > strong {
+  display: block;
+  font-size: 30px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+.attempt-result-stat small,
+.attempt-result-scores small {
+  color: #7d899b;
+  font-size: 13px;
+  font-weight: 400;
+  margin-left: 3px;
+}
+.attempt-result .is-correct {
+  color: #32976b;
+}
+.attempt-result .is-wrong {
+  color: #d14d65;
+}
+.attempt-result-stat.is-accuracy {
+  color: #3c5eae;
+}
+.attempt-result-facts {
+  gap: 14px 24px;
+  justify-content: space-between;
+  border-top: 1px solid #edf0f5;
+  padding-top: 18px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #66758c;
+}
+.attempt-result-facts > span {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.attempt-result-facts strong {
+  color: #2e405d;
+}
+.attempt-result-scores {
+  gap: 12px 24px;
+}
+.attempt-result-scores strong {
+  margin-left: 5px;
+}
+.attempt-result-disclaimer {
+  font-size: 12px;
+  color: #7b879a;
+  margin: 12px 0 0;
+}
+.attempt-result-answers {
+  background: #fff;
+  padding: 28px;
+  border: 1px solid #e1e7ef;
+  border-radius: 12px;
+  scroll-margin-top: 24px;
+}
+.attempt-result-answer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.api-root .attempt-result-answer-heading h2 {
+  margin: 0;
+  font-size: 19px;
+}
+.attempt-result-legend {
+  gap: 14px;
+  font-size: 12px;
+  color: #7b879a;
+}
+.attempt-result-legend span {
+  gap: 4px;
+}
+.attempt-result-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #e0f3e8;
+  color: #32674f;
+  padding: 14px 17px;
+  border: 1px solid #d1eadb;
+  border-radius: 5px;
+  font-size: 13px;
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+.attempt-result-tip svg {
+  margin-top: 3px;
+}
+.attempt-result-tip p {
+  margin: 0;
+}
+.attempt-result-notice,
+.attempt-result-empty {
+  background: #f5f7fb;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+  color: #66758c;
+}
+.attempt-result-part + .attempt-result-part {
+  margin-top: 32px;
+}
+.attempt-result-part h3 {
+  font-size: 15px;
+  color: #233148;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+.attempt-answer-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 32px;
+}
+.attempt-answer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.attempt-answer-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  white-space: nowrap;
+}
+.attempt-answer-number {
+  display: inline-flex;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  background: #edf4fd;
+  border-radius: 50%;
+  color: #3f5788;
+  font-weight: 650;
+  font-size: 14px;
+}
+.attempt-answer-pair {
+  min-width: 39px;
+}
+.attempt-answer-pair strong {
+  color: #3e5483;
+  font-weight: 650;
+}
+.attempt-answer-pair s,
+.attempt-answer-pair em {
+  font-style: italic;
+}
+.attempt-answer-outcome {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  font-size: 13px;
+}
+.attempt-answer-outcome.is-unknown {
+  color: #7c8798;
+}
+.attempt-answer-detail {
+  background: transparent;
+  border: 0;
+  color: #405783;
+  cursor: pointer;
+  padding: 8px 2px;
+  min-height: 40px;
+  font-size: 13px;
+}
+.attempt-answer-detail:hover {
+  color: #2456b8;
+  background: #f4f7fc;
+  border-radius: 4px;
+}
+@media (max-width: 767px) {
+  .attempt-result-overview,
+  .attempt-result-answers {
+    padding: 20px;
+  }
+  .attempt-result-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 14px;
+  }
+  .attempt-answer-columns {
+    column-gap: 16px;
+  }
+  .attempt-answer-row {
+    gap: 6px;
+  }
+}
+@media (max-width: 580px) {
+  .attempt-answer-columns {
+    grid-template-columns: 1fr;
+    row-gap: 9px;
+  }
+  .attempt-result-answer-heading {
+    align-items: flex-start;
+  }
+  .attempt-result-heading {
+    margin-top: 16px;
+  }
+  .attempt-result-overview,
+  .attempt-result-answers {
+    padding: 18px 15px;
+  }
+  .attempt-result-tip {
+    padding: 12px;
+  }
+  .attempt-result-stat > span {
+    font-size: 12px;
+  }
+  .attempt-result-stat > strong {
+    font-size: 26px;
+  }
+}

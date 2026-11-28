@@ -1,0 +1,511 @@
+{
+  "source": "Test Report.xlsx",
+  "sheets": {
+    "api": "Test API",
+    "mobile": "Test app mobile"
+  },
+  "apiCases": [
+    {
+      "id": "API-001",
+      "description": "POST /auth/login hợp lệ",
+      "procedure": "1. Gửi email/password/deviceId đúng.\n2. Kiểm tra status/schema/user và dùng token gọi API bảo vệ.",
+      "expected": "HTTP 200; tokenType/expires và user theo contract; không lộ hash; token dùng được cho đúng user.",
+      "preconditions": "User ACTIVE; quota cho phép.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 2.1 Test API.\nFixture: dùng qa-demo-3@example.test hoặc qa-demo-4@example.test (ACTIVE). Đã quan sát lần login bằng tài khoản test trước đó trả HTTP 200 sau khi verify email; chưa lưu bằng chứng xác nhận đầy đủ tokenType, expires, object user và gọi thành công API bảo vệ bằng access token. Chạy lại login trên QA account; kiểm tra response theo OpenAPI, không có password/passwordHash; xác nhận token thuộc đúng user."
+    },
+    {
+      "id": "API-002",
+      "description": "Login sai password hoặc user không tồn tại",
+      "procedure": "1. Gửi từng dataset sai.\n2. Kiểm tra status/schema và xác nhận không có token hợp lệ.",
+      "expected": "401 theo contract; không tạo phiên hợp lệ, không lộ mật khẩu/hash.",
+      "preconditions": "Dataset độc lập; tránh khóa ngoài chủ đích.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 1.3.\nFixture: dùng QA account ACTIVE đã seed; chạy hai request độc lập: (1) email tồn tại + password sai; (2) email chưa tồn tại trong namespace example.test. Kỳ vọng 401 theo contract, không cấp token/session. Tránh lặp nhiều lần gây rate limit hoặc khóa tài khoản."
+    },
+    {
+      "id": "API-003",
+      "description": "Login thiếu/sai kiểu dữ liệu",
+      "procedure": "1. Bỏ từng field bắt buộc; gửi email sai, password/deviceId sai kiểu.\n2. Kiểm tra từng response.",
+      "expected": "400 theo contract/validator; error schema hợp lệ, không 5xx hoặc cấp token.",
+      "preconditions": "LoginRequest và các giới hạn hiện hành đã rà soát.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 2.1.\nKhông cần fixture bổ sung. Chạy riêng từng payload: thiếu email/password/deviceId; email sai định dạng; password hoặc deviceId sai kiểu dữ liệu. Đối chiếu HTTP status/error schema theo DTO hiện hành; không gộp nhiều lỗi vào một request."
+    },
+    {
+      "id": "API-004",
+      "description": "POST /auth/refresh hợp lệ",
+      "procedure": "1. Login lấy refresh token.\n2. Refresh; dùng access token mới gọi API.",
+      "expected": "200; đúng user/phiên; token/rotation đúng contract đã chốt.",
+      "preconditions": "Refresh token còn hạn/chưa bị thu hồi.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a.\nFixture: refresh token mới lấy từ login thành công của qa-demo-3. Gọi POST /auth/refresh, lưu response mới; dùng access token mới gọi GET /users/me hoặc endpoint bảo vệ tương đương. Nếu contract bật refresh rotation, cập nhật refresh token mới và kiểm tra token cũ theo chính sách đã chốt; không giả định token cũ còn dùng được."
+    },
+    {
+      "id": "API-005",
+      "description": "Refresh sai/hết hạn/đã thu hồi",
+      "procedure": "1. Gọi refresh với từng token fixture không hợp lệ.\n2. Kiểm tra quyền gọi API sau đó.",
+      "expected": "401; không cấp phiên/token hợp lệ.",
+      "preconditions": "Có QA fixture hết hạn/thu hồi, không sửa dữ liệu production.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 1.3.\nKhông có fixture token hết hạn được tạo sẵn bởi qa:seed. Dùng riêng: token ngẫu nhiên/không hợp lệ; token đã bị thu hồi sau logout hoặc rotation; token hết hạn chỉ kiểm tra khi có TTL/fixture QA xác định hoặc chờ hết TTL thật. Không sửa trực tiếp bảng session/token và không dùng token production."
+    },
+    {
+      "id": "API-006",
+      "description": "POST /auth/logout và dùng lại phiên",
+      "procedure": "1. Login.\n2. Logout theo contract.\n3. Dùng lại token/refresh của phiên theo cơ chế vô hiệu hóa đã chốt.",
+      "expected": "Logout 200; phiên bị thu hồi không được tiếp tục truy cập theo contract; không thu hồi nhầm user khác.",
+      "preconditions": "Claims và refresh cùng user/session; quy tắc revoke đã chốt.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.a.\nFixture: login riêng cho User A, giữ access token + refresh token của cùng session/device. Gọi logout với Bearer access token và body refresh token đúng contract; sau đó thử lại refresh/access của session đã logout. Dùng User B để xác nhận session khác không bị thu hồi. Trước đây chỉ quan sát request logout thiếu Bearer trả 401; đó không phải kết quả logout thành công."
+    },
+    {
+      "id": "API-007",
+      "description": "API bảo vệ thiếu hoặc sai token",
+      "procedure": "1. Gọi đọc/start/save/submit/history không token.\n2. Lặp với token hỏng/hết hạn.",
+      "expected": "401 cho mọi entry bảo vệ; không lộ dữ liệu hoặc tạo/sửa attempt.",
+      "preconditions": "Danh sách endpoint và chính sách xác thực hiện hành.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.a; 1.1.b–c.\nĐã quan sát POST /auth/logout không có Bearer trả 401 UNAUTHORIZED – Missing access token. Sau khi seed, chạy với token thiếu và token sai trên GET /tests, GET /tests/{testId}, start attempt, save answer/draft, submit và history; lặp với access token hết hạn khi có fixture phù hợp. Xác nhận không rò response riêng tư và không tạo/sửa attempt."
+    },
+    {
+      "id": "API-008",
+      "description": "GET /tests và /tests/{testId}",
+      "procedure": "1. Đọc danh sách và chi tiết fixture.\n2. So schema, ID và totalQuestions.",
+      "expected": "200; đúng đề Full Test 200 câu, duration/cấu trúc đúng; không lộ answer key trái chính sách.",
+      "preconditions": "Token hợp lệ; fixture đã rà soát.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.b; 1.1.c.\nGọi list với keyword QA Demo 200 Questions, lưu testId, gọi detail và đối chiếu 200 câu, durationSeconds=7200, phân bổ Part [6,25,39,30,30,16,54]. Fixture hiện dùng group synthetic QA_STIMULUS; không kết luận đã đạt taxonomy Part 7 single/double/triple passage nếu chưa có fixture tương ứng. Detail/list không được lộ answer key/explanation."
+    },
+    {
+      "id": "API-009",
+      "description": "Đề không tồn tại",
+      "procedure": "1. GET chi tiết và POST start với UUID không tồn tại.\n2. Kiểm tra dữ liệu trước/sau.",
+      "expected": "404 theo contract; không tạo attempt mồ côi hoặc rò dữ liệu đề khác.",
+      "preconditions": "UUID hợp lệ về định dạng nhưng không tồn tại.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.b; 2.1.\nDùng một UUID đúng định dạng nhưng chắc chắn không bằng testId trong artifacts/qa/seed.json. Gọi GET detail và POST start ở hai request độc lập. Ghi nhận 404 theo contract; đối chiếu history/count trước-sau để bảo đảm không tạo attempt mồ côi. Không dùng UUID sai định dạng cho ca này."
+    },
+    {
+      "id": "API-010",
+      "description": "POST /tests/{testId}/attempts",
+      "procedure": "1. Start Full Test.\n2. Kiểm tra schema/snapshot/deadline và owner.",
+      "expected": "201; attempt IN_PROGRESS, đúng user/test, 200 câu/7 Part; deadline phù hợp duration; không lộ đáp án/lời giải.",
+      "preconditions": "Đề đầy đủ; user được phép; ID mới.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-03,R-05.\nNguồn: Software Test Documentation.docx §1.1.b–c.\nFixture: testId từ QA seed; dùng qa-demo-3 làm User A hoặc qa-demo-4 nếu cần một owner mới. QA seed chỉ tạo đề/câu hỏi, không tạo sẵn attempt. Gọi POST start Full với Idempotency-Key duy nhất cho lượt test; lưu attemptId, mode/status, question count, serverTime/deadlineAt/remainingSeconds. Kỳ vọng IN_PROGRESS, 200 câu/7 Part, không lộ answer key."
+    },
+    {
+      "id": "API-011",
+      "description": "GET /attempts/{id} khi đang làm",
+      "procedure": "1. Lưu vài lựa chọn.\n2. GET attempt đang làm.\n3. Duyệt fields câu/nhóm.",
+      "expected": "200; draft/deadline đúng; không có correctOption/explanation/transcript nhạy cảm trước kết thúc; score chưa công bố.",
+      "preconditions": "Attempt IN_PROGRESS và snapshot có lời giải nội bộ.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.b–c.\nTạo attempt mới theo API-010, lưu một vài đáp án rồi GET attempt bằng đúng owner token. Đối chiếu draft, deadline và snapshot. Quét toàn bộ response, kể cả object lồng nhau, để xác nhận chưa có correctOption, explanation hoặc transcript nhạy cảm trước submit."
+    },
+    {
+      "id": "API-012",
+      "description": "PUT /attempts/{id}/answers/{qid} lưu mới",
+      "procedure": "1. Gửi selectedOption=A hợp lệ.\n2. GET attempt để đối soát.",
+      "expected": "200; đúng IDs/option, answeredAt hợp lệ; đọc lại thấy đáp án đã xác nhận lưu.",
+      "preconditions": "Đúng owner, câu thuộc snapshot, trước hạn.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b.\nFixture: attempt IN_PROGRESS của User A và một questionId thuộc chính snapshot đó. PUT selectedOption=A; đợi acknowledgement; GET attempt/draft để xác nhận questionId/option đã lưu và answeredAt hợp lệ. Không coi thao tác gửi request là đã lưu nếu chưa nhận response xác nhận."
+    },
+    {
+      "id": "API-013",
+      "description": "Lưu đè đáp án",
+      "procedure": "1. Lưu A rồi B cho cùng câu.\n2. Đọc lại draft; nộp không gửi đè để kiểm tra.",
+      "expected": "Lựa chọn cuối là B; không tạo hai đáp án hiệu lực hoặc chấm theo A.",
+      "preconditions": "Câu có A/B; cùng attempt, còn hạn.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-02.\nDùng attempt riêng. Với cùng một questionId, PUT lần lượt A rồi B; GET draft để xác nhận giá trị cuối là B. Khi submit không gửi payload ghi đè, đối chiếu kết quả chấm theo B. Không dùng lại attempt đã submit từ testcase khác."
+    },
+    {
+      "id": "API-014",
+      "description": "Xóa đáp án bằng null",
+      "procedure": "1. Lưu A.\n2. PUT selectedOption=null.\n3. GET và submit {}.",
+      "expected": "200; câu trở thành bỏ trống; không chấm A; điểm đúng bộ expected.",
+      "preconditions": "Đúng owner; còn hạn.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-02.\nNguồn: Software Test Documentation.docx §1.1.b.\nDùng attempt riêng. PUT A trước, sau đó PUT selectedOption: null; GET để xác nhận câu trở thành unanswered. Thực hiện submit {} ở một request riêng để kiểm tra hệ thống dùng draft đã lưu; không thay {} bằng { \"answers\": [] }.."
+    },
+    {
+      "id": "API-015",
+      "description": "PUT /attempts/{id}/draft batch hợp lệ",
+      "procedure": "1. Gửi answers gồm nhiều câu và null.\n2. Đọc lại; đối chiếu số saved và từng lựa chọn.",
+      "expected": "200; saved bằng số phần tử; lưu đúng tất cả câu hợp lệ; không mất draft trước đó ngoài các câu được cập nhật.",
+      "preconditions": "Batch không trùng; câu thuộc snapshot.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b.\nFixture: attempt IN_PROGRESS với ít nhất 4 questionId hợp lệ, không trùng. PUT draft batch gồm nhiều option hợp lệ và ít nhất một selectedOption: null; GET attempt để đối chiếu từng câu/số lượng đã lưu. Kiểm tra các câu không có trong batch vẫn giữ draft cũ."
+    },
+    {
+      "id": "API-016",
+      "description": "Option sai enum/không thuộc câu",
+      "procedure": "1. Gửi X hoặc số thay option.\n2. Với câu chỉ A/B/C, gửi D.\n3. Đọc lại draft.",
+      "expected": "400; không ghi/chấm dữ liệu sai, draft trước đó giữ nguyên.",
+      "preconditions": "Fixture câu có ba option; dữ liệu trước test đã biết.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 2.1.\nQA fixture có Part 2 chỉ gồm option A/B/C. Lấy questionId Part 2 từ snapshot; gửi lần lượt option X, kiểu số và option D (không tồn tại ở Part 2). Mỗi payload chạy riêng; kỳ vọng 400 và draft trước đó không đổi."
+    },
+    {
+      "id": "API-017",
+      "description": "Question thuộc đề/attempt khác",
+      "procedure": "1. Lưu hoặc submit với questionId ngoài snapshot.\n2. Kiểm tra phản hồi và dữ liệu.",
+      "expected": "400; không ghi dữ liệu sang attempt/câu khác hoặc chấm một phần payload sai.",
+      "preconditions": "Hai snapshot độc lập; token của owner hiện tại.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 2.1.\nCần một UUID question hợp lệ nhưng không thuộc snapshot đang kiểm tra; tốt nhất tạo một test/question fixture thứ hai độc lập bằng tài khoản CONTENT_ADMIN hoặc lấy ID từ fixture QA khác. Bộ QA Demo 200 Questions hiện chỉ sinh một test; không dùng questionId thuộc chính snapshot. Xác nhận 400 và không thay đổi draft. Không dùng chuỗi ID giả sai định dạng vì sẽ kiểm tra nhầm validator UUID."
+    },
+    {
+      "id": "API-018",
+      "description": "Batch trùng questionId hoặc vượt 200",
+      "procedure": "1. Gửi hai đáp án cùng qid.\n2. Dataset riêng gửi 201 đáp án.\n3. Đọc lại trạng thái/draft.",
+      "expected": "400; không lưu/chấm một phần hoặc thay đổi kết quả bằng dữ liệu không hợp lệ.",
+      "preconditions": "Attempt còn hạn; payload có UUID hợp lệ.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 2.1.\nNote cũ ghi “Thiết kế; chưa thực thi” nên trạng thái Failed hiện tại chưa có bằng chứng hỗ trợ; đề nghị đổi Round 1 thành Pending nếu không có response lỗi thực tế. Khi chạy: dùng attempt IN_PROGRESS; gửi draft có cùng questionId hai lần, sau đó ở lượt riêng gửi 201 phần tử (có thể lặp các qid hợp lệ để đạt 201). Kỳ vọng 400, không lưu một phần và draft trước đó giữ nguyên."
+    },
+    {
+      "id": "API-019",
+      "description": "Payload draft/submit sai schema",
+      "procedure": "1. Gửi answers sai kiểu, thiếu questionId, UUID sai hoặc thiếu selectedOption.\n2. Kiểm tra từng response.",
+      "expected": "400 theo DTO/contract; không 5xx; không sửa draft/kết quả. Submit {} hợp lệ được kiểm ở ca riêng.",
+      "preconditions": "DTO hiện hành; tách từng dataset và fixture.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §2.1 Test API; 3.4 Entry.\nKhông cần fixture dữ liệu mới; cần attempt active cho trường hợp kiểm tra trạng thái không đổi. Gửi từng payload sai: answers sai kiểu, thiếu questionId, UUID không hợp lệ, selectedOption sai kiểu/thiếu field. Mỗi response cần theo DTO/validator và không 5xx. Giữ {} cho API-026 vì đó là trường hợp submit hợp lệ theo thiết kế."
+    },
+    {
+      "id": "API-020",
+      "description": "GET attempt không tồn tại",
+      "procedure": "1. Gọi GET với UUID không tồn tại.\n2. Thử save/submit cùng ID trong lượt riêng.",
+      "expected": "404 theo contract; không tạo attempt từ ID lạ hoặc lộ dữ liệu khác.",
+      "preconditions": "UUID đúng định dạng, không tồn tại.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.b–c; 2.1.\nSinh UUID hợp lệ ngẫu nhiên, không tồn tại trong attempts. Dùng UUID đó gọi GET attempt; ở request riêng thử save và submit. Kỳ vọng 404; kiểm tra không tạo row/không lộ attempt khác. Không dùng UUID sai định dạng cho testcase này."
+    },
+    {
+      "id": "API-021",
+      "description": "Đọc attempt người khác",
+      "procedure": "1. Tạo attempt của A.\n2. GET bằng token B ở trạng thái đang làm/đã nộp.",
+      "expected": "403 theo triển khai hiện tại; không trả nội dung bài, điểm hoặc lời giải của A.",
+      "preconditions": "A/B độc lập; trước/sau nộp fixtures.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.c; 2.4 R-03.\nFixture A/B: qa-demo-3 là owner A, qa-demo-4 là user B. A tạo attempt; B gọi GET attempt bằng token B ở trạng thái IN_PROGRESS, sau đó lặp với một attempt đã submit. Kỳ vọng 403 theo contract/triển khai được chốt; không trả questions, draft, score hoặc explanation của A."
+    },
+    {
+      "id": "API-022",
+      "description": "Lưu vào attempt người khác",
+      "procedure": "1. Dùng B gọi single-answer và batch-draft của A.\n2. Đọc lại bằng A.",
+      "expected": "403; draft của A không thay đổi, không lộ dữ liệu cá nhân.",
+      "preconditions": "Attempt A còn hạn, biết draft ban đầu.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-03.\nA tạo attempt IN_PROGRESS và có draft ban đầu đã ghi nhận. B dùng token B gọi cả single-answer và batch-draft vào attempt của A. Kỳ vọng 403; sau đó A GET lại để xác nhận draft không thay đổi. Lưu hai response và ảnh/JSON đối soát đã khử token."
+    },
+    {
+      "id": "API-023",
+      "description": "Nộp attempt người khác",
+      "procedure": "1. Dùng B submit attempt A.\n2. Kiểm tra bằng A và đối soát count.",
+      "expected": "403; A không bị nộp/chấm hoặc đổi trạng thái ngoài ý muốn.",
+      "preconditions": "Attempt A IN_PROGRESS, token B hợp lệ.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-03.\nA tạo attempt IN_PROGRESS; B dùng token B POST submit attempt đó. Kỳ vọng 403; A GET lại vẫn IN_PROGRESS, không xuất hiện result hoặc history entry mới. Không dùng attempt của A cho testcase khác trong cùng thời điểm."
+    },
+    {
+      "id": "API-024",
+      "description": "Lưu trước/đúng/sau deadline",
+      "procedure": "1. Dùng clock QA/fixture hợp lệ kiểm soát thời gian.\n2. Lưu ở deadline−1ms, deadline, deadline+1ms.\n3. Đối soát lựa chọn.",
+      "expected": "Trước hạn lưu được; đúng/sau hạn không nhận đáp án mới (409 theo triển khai); không kéo dài deadline.",
+      "preconditions": "EN-01 chốt ranh giới; không dựa sleep ngẫu nhiên để kết luận sát biên.",
+      "notes": "Ưu tiên: High.\nRisk: R-05.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-05; 3.4 EX-06.\nqa:seed không tạo fixture thời gian hoặc chức năng time-travel. Có thể thử ranh giới thô bằng PART attempt durationSeconds=300, nhưng không đủ độ chính xác để khẳng định deadline−1ms/đúng deadline/deadline+1ms. Cần Backend/QA cung cấp clock injection hoặc fixture thời gian có kiểm soát; không sửa timestamp trực tiếp trong DB để kết luận."
+    },
+    {
+      "id": "API-025",
+      "description": "POST /attempts/{id}/submit đủ 200 đáp án",
+      "procedure": "1. Nộp bộ đáp án expected 200 câu.\n2. GET kết quả và lịch sử.\n3. Đối chiếu từng lựa chọn/điểm.",
+      "expected": "201 theo controller; hoàn tất đúng attempt; số đúng/điểm L/R/tổng khớp bảng độc lập; không mất câu.",
+      "preconditions": "Attempt mới, còn hạn; answer key/score table đã rà soát.",
+      "notes": "Ưu tiên: High.\nRisk: R-01.\nNguồn: Software Test Documentation.docx §1.1.b–c; 2.4 R-01.\nFixture: đề QA 200 câu; tạo FULL attempt mới. Bộ synthetic fixture dùng correctOption=A cho toàn bộ câu, nên gửi 200 đáp án A là dataset all-correct. Submit; GET result/history; kiểm tra total/correct count, score Listening/Reading và tổng điểm bằng bảng quy đổi độc lập, không chỉ dựa trên response của chính API."
+    },
+    {
+      "id": "API-026",
+      "description": "Submit {} dùng draft",
+      "procedure": "1. Lưu một số đáp án, xác nhận đọc lại.\n2. Submit body {}.\n3. So kết quả với draft.",
+      "expected": "201; đúng các đáp án đã lưu, còn lại trống; không reset draft do thiếu answers.",
+      "preconditions": "Không gửi answers=[] để thay nghĩa; fixture có expected.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-02; 3.4 EX-06.\nTạo attempt IN_PROGRESS; lưu trước một tập đáp án (có ít nhất một câu bỏ trống nếu cần); GET để xác nhận draft; POST submit body {}. Không gửi { \"answers\": [] }. GET kết quả và so sánh với đúng draft trước submit: đáp án đã lưu giữ nguyên, câu khác bỏ trống."
+    },
+    {
+      "id": "API-027",
+      "description": "Chấm bài đúng/sai/bỏ trống và biên bảng điểm",
+      "procedure": "1. Tạo attempt mới cho mỗi dataset all-correct/all-wrong/all-blank/mixed và mốc đổi điểm.\n2. Submit; so kết quả.",
+      "expected": "Số đúng và điểm theo bảng cấu hình độc lập; tổng=L+R; bỏ trống không tính đúng. Không giả định 0 câu đúng bằng 0 điểm TOEIC.",
+      "preconditions": "Expected độc lập; version bảng điểm cố định.",
+      "notes": "Ưu tiên: High.\nRisk: R-01.\nNguồn: Software Test Documentation.docx §1.1.b–c; 2.4 R-01.\nDùng nhiều FULL attempt độc lập trên cùng đề: all-correct (200 A), all-wrong (200 B), all-blank (200 null/không gửi), mixed và các mốc biên của bảng điểm. Fixture synthetic có answer key A nên số câu đúng kỳ vọng xác định được. Đối chiếu raw correctCount và bảng quy đổi version cố định; không giả định 0 câu đúng đồng nghĩa 0 TOEIC point."
+    },
+    {
+      "id": "API-028",
+      "description": "Submit sau deadline không nhận sửa muộn",
+      "procedure": "1. Lưu draft trước hạn.\n2. Qua deadline, submit kèm đáp án khác.\n3. Đọc kết quả.",
+      "expected": "Kết thúc theo quy tắc hết giờ; đáp án muộn không thay draft hợp lệ; thời điểm và điểm khớp expected.",
+      "preconditions": "Timeout QA; EN-01 đã chốt; biết draft trước hạn.",
+      "notes": "Ưu tiên: High.\nRisk: R-02,R-05.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-05; 3.4 EX-06.\nTạo PART attempt duration 300 giây (mức tối thiểu trong contract), lưu draft trước deadline, ghi deadlineAt từ server. Chờ qua deadline rồi submit payload có lựa chọn khác; đối chiếu kết quả không nhận đáp án đến muộn. Ghi chính xác thời gian server và response. Không dùng FULL 120 phút cho lần kiểm tra nhanh."
+    },
+    {
+      "id": "API-029",
+      "description": "GET sau deadline hoàn tất bài theo thiết kế",
+      "procedure": "1. Lưu draft rồi để quá deadline.\n2. GET attempt, GET lại và xem lịch sử.",
+      "expected": "Không còn quyền sửa; trả kết quả hoàn tất nhất quán, không tạo trùng; draft đã lưu được giữ.",
+      "preconditions": "Fixture timeout có kiểm soát; cơ chế auto-finalize đã chốt.",
+      "notes": "Ưu tiên: High.\nRisk: R-02,R-05.\nNguồn: Software Test Documentation.docx §1.1.b–c; 3.4 EX-06.\nTạo PART attempt 300 giây, lưu draft, đợi qua deadline. GET attempt hai lần và GET history; đối chiếu status/result/draft có nhất quán, không tạo kết quả trùng. Nếu hệ thống dùng background finalizer, ghi cả thời điểm deadline và thời điểm trạng thái hoàn tất thực tế."
+    },
+    {
+      "id": "API-030",
+      "description": "Submit lặp tuần tự cùng attempt",
+      "procedure": "1. Submit hợp lệ.\n2. Gửi lại một và nhiều lần.\n3. Đối soát result/history và bản ghi QA nếu có quyền.",
+      "expected": "Một kết quả nghiệp vụ; điểm/lựa chọn không đổi; replay không ghi đè/chấm mới.",
+      "preconditions": "Attempt và response lần đầu đã ghi; không log secret.",
+      "notes": "Ưu tiên: High.\nRisk: R-04.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-04.\nTạo một attempt mới; lưu response submit lần đầu làm baseline. Gửi lại chính xác request submit trên cùng attempt một lần và sau đó nhiều lần; GET result/history để so attemptId, answers, điểm và số record. Ghi rõ replay trả 200/201/409 theo contract thực tế; tiêu chí chính là không sinh kết quả nghiệp vụ thứ hai hoặc đổi kết quả."
+    },
+    {
+      "id": "API-031",
+      "description": "Submit đồng thời cùng attempt",
+      "procedure": "1. Gửi hai request đồng thời cho cùng attempt.\n2. Chờ cả hai xong, GET và đối soát số kết quả/event theo quyền QA.",
+      "expected": "Chỉ một lần hoàn tất; không trùng kết quả; response cuối nhất quán. Đây là kiểm tra idempotency, không benchmark nhiều user.",
+      "preconditions": "QA riêng; cùng owner; dự kiến dữ liệu giống nhau.",
+      "notes": "Ưu tiên: High.\nRisk: R-04.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-04.\nTạo attempt và payload cố định; phát hai POST submit gần như đồng thời bằng cùng owner/token và cùng dữ liệu (Postman Runner/collection hoặc script Promise.all). Sau đó GET attempt/result/history; nếu có quyền QA, đối chiếu một result/outbox event. Hai request tuần tự không thay thế được kiểm tra concurrency."
+    },
+    {
+      "id": "API-032",
+      "description": "Không sửa sau khi nộp",
+      "procedure": "1. Submit xong.\n2. Gọi save single/batch bằng owner.\n3. GET lại kết quả.",
+      "expected": "409 theo triển khai; lựa chọn/điểm không đổi; không mở lại quyền sửa.",
+      "preconditions": "Attempt đã nộp và expected cố định.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 3.4 EX-06.\nTạo và submit attempt thành công. Sau khi nhận final result, gọi PUT single-answer và PUT batch-draft bằng owner token; kỳ vọng 409 theo triển khai và không thay đổi selectedOption, correctCount, score hoặc history. Lưu result trước/sau để đối chiếu."
+    },
+    {
+      "id": "API-033",
+      "description": "GET /attempts lịch sử đúng user",
+      "procedure": "1. Tạo vài bài của A/B.\n2. Gọi history bằng từng token.\n3. So IDs/count và kết quả vừa nộp.",
+      "expected": "200; chỉ attempt của user token; bài đã nộp xuất hiện, điểm/trạng thái nhất quán; không rò bài của user khác.",
+      "preconditions": "Dataset A/B ổn định, biết số bản ghi.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-03.\nNguồn: Software Test Documentation.docx §1.1.c; 2.4 R-03.\nUser A (qa-demo-3) tạo nhiều attempt FULL/PART; User B (qa-demo-4) giữ một lịch sử riêng. Gọi GET /attempts với từng token, đối chiếu IDs/count/status/result; không được trả attempt của user còn lại. Nên chạy testcase này sau khi đã tạo dữ liệu A/B có chủ đích."
+    },
+    {
+      "id": "API-034",
+      "description": "Lịch sử rỗng, phân trang và query sai",
+      "procedure": "1. User rỗng gọi history.\n2. User nhiều bài gọi page/size hợp lệ.\n3. Gửi page=0, size=0/51, testId sai UUID.",
+      "expected": "200 với items rỗng khi đúng; phân trang đúng tổng và không lặp trên dataset ổn định; query sai trả 400 theo DTO.",
+      "preconditions": "HistoryQueryDto hiện hành; fixture đủ nhiều bản ghi.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.c; 2.1.\nChạy trường hợp history rỗng trước trên User B (qa-demo-4) khi chưa tạo attempt cho B. Sau đó dùng User A tạo đủ lượt để kiểm tra page/size, không lặp/mất item trên dataset ổn định. Kiểm tra riêng page=0, size=0, size=51 và testId sai UUID; kỳ vọng 400 theo DTO."
+    },
+    {
+      "id": "API-035",
+      "description": "Kết quả/lời giải sau nộp và snapshot nhất quán",
+      "procedure": "1. GET attempt đã hoàn tất.\n2. So response với bài nộp, history, expected và snapshot.",
+      "expected": "200; score/scoreListening/scoreReading/correctCount đúng; từng selectedOption/correctOption/explanation đúng; không lấy nhầm nội dung của attempt khác.",
+      "preconditions": "Answer key/bảng điểm/snapshot được rà soát.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-03.\nNguồn: Software Test Documentation.docx §1.1.c; 3.4 EX-06.\nTạo FULL attempt và submit. Với fixture synthetic, correctOption/explanation mẫu được tạo cho từng câu; trước submit chúng phải bị ẩn, sau submit mới đối chiếu selectedOption/correctOption/explanation/transcript và snapshot. So sánh kết quả giữa GET attempt và history, đồng thời xác nhận không lẫn question/group từ attempt khác."
+    },
+    {
+      "id": "API-036",
+      "description": "Lỗi dịch vụ lưu/nộp không làm hỏng dữ liệu",
+      "procedure": "1. Fault injection có kiểm soát khi lưu/nộp.\n2. Ghi response, phục hồi rồi GET/retry.\n3. Đối soát draft/result/count.",
+      "expected": "Không thành công giả; đáp án đã xác nhận trước sự cố không mất; retry không tạo trùng. Status/error theo hợp đồng lỗi đã chốt.",
+      "preconditions": "QA riêng, kế hoạch phục hồi; không làm hỏng môi trường dùng chung.",
+      "notes": "Ưu tiên: High.\nRisk: R-02,R-04.\nNguồn: Software Test Documentation.docx §1.3; 2.1; 2.4 R-02/R-04.\nqa:seed chỉ tạo dữ liệu, không mô phỏng lỗi DB/network/service. Chỉ chạy trên QA overlay riêng với kế hoạch fault injection được Backend owner phê duyệt: lưu draft thành công trước lỗi, gây lỗi có kiểm soát, phục hồi, GET/retry và đối soát draft/result/outbox. Không ngắt dịch vụ hoặc làm hỏng dữ liệu trên môi trường dev dùng chung"
+    }
+  ],
+  "mobileCases": [
+    {
+      "id": "MOB-001",
+      "description": "Cài, mở và kết nối môi trường QA",
+      "procedure": "1. Cài APK được bàn giao.\n2. Mở app và thử gọi luồng thiết yếu.\n3. Ghi build/device/API level/base URL.",
+      "expected": "App khởi động và kết nối đúng QA; nếu không cài/kết nối được thì ghi Blocked, không dùng demo để thay kết quả.",
+      "preconditions": "Có APK hợp lệ; thiết bị/emulator mục tiêu.",
+      "notes": "Ưu tiên: High.\nRisk: R-07.\nNguồn: Software Test Documentation.docx §1.3; 2.1 Test app mobile; 3.4 Entry.\nKhởi chạy APK; xác nhận “TOEIC Master”/“Đăng nhập”. Xác minh riêng trạng thái API QA, URL cơ sở."
+    },
+    {
+      "id": "MOB-002",
+      "description": "Login hợp lệ bằng thao tác chạm",
+      "procedure": "1. Mở login, nhập user ACTIVE.\n2. Chạm login và mở chức năng thi.",
+      "expected": "Vào đúng tài khoản; thao tác chạm thực hiện được; API thật xác nhận phiên.",
+      "preconditions": "APK sẵn sàng; tài khoản đúng.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 2.1.\nNhập TEST_EMAIL/TEST_PASSWORD; đăng nhập. Xác minh phản hồi xác thực, ID người dùng và phiên thông qua API/log; che giấu secrets."
+    },
+    {
+      "id": "MOB-003",
+      "description": "Login sai/thiếu thông tin",
+      "procedure": "1. Thử sai password/email chưa tồn tại.\n2. Thử thiếu từng trường và email sai.",
+      "expected": "Thông báo lỗi tương ứng, không tạo phiên hoặc vào màn hình dữ liệu cá nhân.",
+      "preconditions": "Các dataset độc lập; tránh khóa ngoài chủ đích.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 2.1.\nGửi các trường trống, xác nhận yêu cầu xác thực; sử dụng email không xác định cho đăng nhập không thành công và bị từ chối. Tránh sử dụng mật khẩu sai trên các tài khoản thực."
+    },
+    {
+      "id": "MOB-004",
+      "description": "Bàn phím và nút login",
+      "procedure": "1. Chạm từng trường; nhập/sửa.\n2. Hiện/ẩn bàn phím và chạm nút login.",
+      "expected": "Trường/nút thiết yếu dùng được; bàn phím không che thao tác bắt buộc; không gửi thông tin sai trường.",
+      "preconditions": "Thiết bị mục tiêu và kích thước màn hình đã chọn.",
+      "notes": "Ưu tiên: Medium.\nNguồn: Software Test Documentation.docx §2.1 Test app mobile.\nTập trung vào cả hai ô nhập; kiểm tra bàn phím hiển thị/ẩn và nút Đăng nhập. Lặp lại trên màn hình nhỏ nhất được hỗ trợ; kiểm tra chồng chéo/tràn."
+    },
+    {
+      "id": "MOB-005",
+      "description": "Duy trì phiên khi chuyển nền",
+      "procedure": "1. Login.\n2. Chuyển nền rồi mở lại khi phiên còn hạn.",
+      "expected": "Vẫn đúng user và dữ liệu; không login sang tài khoản khác hoặc mất điều hướng không có thông báo.",
+      "preconditions": "Phiên hợp lệ; app không bị chủ động xóa dữ liệu.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 2.1.\nĐăng nhập -> chạy nền 4 giây -> tiếp tục; Xác nhận giao diện người dùng đã được xác thực. Xác minh TTL/làm mới mã thông báo và phiên hoạt động tại API."
+    },
+    {
+      "id": "MOB-006",
+      "description": "Phiên hết hạn",
+      "procedure": "1. Làm token hết hiệu lực có kiểm soát.\n2. Gọi thao tác cần xác thực.",
+      "expected": "Refresh hợp lệ hoặc yêu cầu login lại; không treo/vòng lặp; không truy cập bằng phiên vô hiệu.",
+      "preconditions": "Quy tắc refresh và QA token fixture.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.a; 1.3.\nYêu cầu accessToken và refreshToken hết hạn . Xác minh lôi 401 và đóng lỗi thông qua API/nhật ký QA."
+    },
+    {
+      "id": "MOB-007",
+      "description": "Logout rồi Back/mở lại",
+      "procedure": "1. Logout.\n2. Chạm Back và mở lại app.\n3. Thử xem kết quả cũ.",
+      "expected": "Không lộ dữ liệu cá nhân qua phiên logout; app trở về luồng xác thực phù hợp.",
+      "preconditions": "Đã login và xem kết quả.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.a; 1.1.c.\nTrang cá nhân -> Đăng xuất -> Các nhận -> Quay lại; Xác nhận màn hình Đăng nhập. Xác minh việc thu hồi/xóa token và API rejection được bảo vệ."
+    },
+    {
+      "id": "MOB-008",
+      "description": "Chặn màn hình thi khi chưa xác thực",
+      "procedure": "1. Khởi động không có phiên.\n2. Mở thi/kết quả qua điều hướng hoặc deep link nếu có.",
+      "expected": "Không truy cập được dữ liệu cần xác thực; yêu cầu login; deep link chỉ kiểm nếu app hỗ trợ.",
+      "preconditions": "Chưa có phiên hợp lệ.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.a; 1.1.c.\nBắt đầu với phiên mới; thử route kiểm tra/kết quả được bảo vệ và xác minh API 401/403. Chỉ deep link nếu ứng dụng khai báo"
+    },
+    {
+      "id": "MOB-009",
+      "description": "Danh sách và start Full Test",
+      "procedure": "1. Chọn đề 200 câu.\n2. Chạm bắt đầu.\n3. So attempt, cấu trúc và thời gian.",
+      "expected": "Đúng đề/attempt của user; đủ L/R, countdown theo server; chưa lộ lời giải.",
+      "preconditions": "Đề/media đầy đủ; API thật.",
+      "notes": "Ưu tiên: High.\nRisk: R-05.\nNguồn: Software Test Documentation.docx §1.1.b.\nTab Kiểm tra -> “Thi đầy đủ”; xác nhận Thiết lập đầy đủ/200 câu hỏi. So sánh testId, attemptId, owner và bộ câu hỏi 200 câu hỏi trong API QA."
+    },
+    {
+      "id": "MOB-010",
+      "description": "Hiển thị câu và ảnh trên màn hình nhỏ",
+      "procedure": "1. Mở câu dài/có ảnh ở L/R.\n2. Cuộn/chuyển câu và chọn option.",
+      "expected": "Đọc được câu/ảnh/options; không che nút thiết yếu; thao tác gắn đúng câu.",
+      "preconditions": "Thiết bị/cỡ màn hình mục tiêu; fixture nội dung dài.",
+      "notes": "Ưu tiên: Medium.\nNguồn: Software Test Documentation.docx §1.1.b; 2.1.\nBắt đầu Kiểm tra FULL; xác nhận câu hỏi 1/200 và các tùy chọn. Lặp lại với màn hình kích thước nhỏ, quan sát vùng tràn/cắt/chạm."
+    },
+    {
+      "id": "MOB-011",
+      "description": "Phát audio Listening",
+      "procedure": "1. Mở câu có audio.\n2. Chạm phát/dừng/tiếp tục theo điều khiển hỗ trợ.\n3. Chuyển câu.",
+      "expected": "Đúng audio, phát được; trạng thái điều khiển khớp; không phát chồng ngoài thiết kế.",
+      "preconditions": "Media thật; thiết bị có âm thanh.",
+      "notes": "Ưu tiên: High.\nNguồn: Software Test Documentation.docx §1.1.b; 2.1.\nNhấn vào audio, xác nhận âm thanh đúng với câu hỏi, dừng audio, tiếp tục audio. Dừng audio khi chuyển câu"
+    },
+    {
+      "id": "MOB-012",
+      "description": "Audio khi chuyển nền/quay lại",
+      "procedure": "1. Phát audio.\n2. Home/chuyển app rồi quay lại.",
+      "expected": "Xử lý theo hành vi foreground/background đã thống nhất; không crash, không tự tạo luồng phát trùng; giữ bài đã lưu.",
+      "preconditions": "EN-01 chốt hành vi audio khi gián đoạn trước khi kết luận.",
+      "notes": "Ưu tiên: Medium.\nNguồn: Software Test Documentation.docx §2.1 Test app mobile.\nKiểm tra mất audio focus; tài liệu chưa chốt chính sách pause/resume.\nChạy nền/tiếp tục bài kiểm tra."
+    },
+    {
+      "id": "MOB-013",
+      "description": "Chọn và đổi đáp án bằng chạm",
+      "procedure": "1. Chọn A, chờ lưu.\n2. Chạm B rồi chuyển câu/quay lại.",
+      "expected": "Chỉ B là lựa chọn cuối; câu khác không bị đổi; server và UI khớp sau acknowledgement.",
+      "preconditions": "Câu có A/B; trước deadline.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-02.\nNhấn vào A rồi B; ghi lại trạng thái đã chọn. Kiểm tra yêu cầu trả lời và xác nhận của máy chủ; chỉ chạm thôi không đủ để đảm bảo"
+    },
+    {
+      "id": "MOB-014",
+      "description": "Xóa đáp án",
+      "procedure": "1. Chọn, xác nhận lưu.\n2. Dùng thao tác xóa/bỏ chọn theo UI.\n3. Mở lại câu.",
+      "expected": "Câu về chưa trả lời; null được lưu; không giữ lựa chọn cũ.",
+      "preconditions": "App có thao tác theo đặc tả; thiếu thì ghi nhận.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b.\nChọn câu trả lời -> “Bỏ chọn”; xác nhận giao diện người dùng đã được xóa. Xác minh câu trả lời rỗng/trống được lưu trữ và câu trả lời cũ không còn sau khi tải lại."
+    },
+    {
+      "id": "MOB-015",
+      "description": "Điều hướng Part giữ dữ liệu",
+      "procedure": "1. Trả lời ở nhiều Part.\n2. Chuyển Part/Back rồi quay lại theo UI.",
+      "expected": "Đúng câu và lựa chọn; không mất đáp án đã xác nhận lưu hoặc start nhầm attempt.",
+      "preconditions": "Attempt đang làm; expected question IDs.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b.\nChuyển đến Part 2, quay lại Part 1. Cổng: so sánh questionId, attemptId và các câu trả lời đã được xác nhận thông qua API."
+    },
+    {
+      "id": "MOB-016",
+      "description": "Khôi phục draft sau mở lại app",
+      "procedure": "1. Lưu vài đáp án, chờ server xác nhận.\n2. Đóng/mở lại app theo luồng được hỗ trợ.\n3. Vào attempt.",
+      "expected": "Khôi phục cùng draft và deadline; không reset thời gian; không yêu cầu khôi phục đáp án chưa từng được server xác nhận.",
+      "preconditions": "Phiên/attempt còn hiệu lực; đã chốt cách resume.",
+      "notes": "Ưu tiên: High.\nRisk: R-02,R-05.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-02/R-05.\nBuộc dừng/mở lại sau khi có câu trả lời được xác nhận; xác minh cùng một lần thử, câu trả lời và thời hạn của máy chủ."
+    },
+    {
+      "id": "MOB-017",
+      "description": "Mất mạng lúc lưu và kết nối lại",
+      "procedure": "1. Tắt mạng trước lưu.\n2. Chọn đáp án; quan sát thông báo.\n3. Bật mạng, retry theo app.",
+      "expected": "Không báo lưu giả; giữ đáp án trước đó đã xác nhận; đáp án mới chỉ được coi đã lưu sau server acknowledgement.",
+      "preconditions": "QA có thể đổi trạng thái mạng; ghi request/ack.",
+      "notes": "Ưu tiên: High.\nRisk: R-02.\nNguồn: Software Test Documentation.docx §1.1.b; 2.1; 2.4 R-02.\nBật/tắt mạng trên thiết bị; Ghi lại xác nhận câu trả lời trước/sau khi thử lại. Xác minh trạng thái máy chủ."
+    },
+    {
+      "id": "MOB-018",
+      "description": "Mạng chậm/mất phản hồi nộp bài",
+      "procedure": "1. Nộp bài, làm mất response sau request có thể đã tới server.\n2. Kết nối lại và retry.\n3. Kiểm tra lịch sử/kết quả.",
+      "expected": "UI không báo thành công khi chưa xác minh; phục hồi kết quả đã có; không tạo bản ghi trùng.",
+      "preconditions": "Fault injection QA, attempt ID đã ghi.",
+      "notes": "Ưu tiên: High.\nRisk: R-02,R-04.\nNguồn: Software Test Documentation.docx §2.1; 2.4 R-02/R-04.\nBỏ qua phản hồi gửi sau khi yêu cầu đến máy chủ; kết nối lại; truy vấn lần nộp bài/kết quả. Xác minh không có kết quả/bản ghi lịch sử trùng lặp."
+    },
+    {
+      "id": "MOB-019",
+      "description": "Countdown sau chuyển nền/đổi giờ",
+      "procedure": "1. Ghi deadline, chuyển nền một khoảng.\n2. Quay lại; đổi giờ thiết bị trong QA.",
+      "expected": "Không tạm dừng/gia hạn deadline vì app nền hoặc giờ máy; thời gian dựa server.",
+      "preconditions": "Không đổi clock server; EN-01 chốt deadline.",
+      "notes": "Ưu tiên: High.\nRisk: R-05.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-05.\nthiết lập deadline máy chủ; Chạy nền/tiếp tục và chỉ thay đổi đồng hồ thiết bị trong QA. Xác minh thời hạn vẫn do máy chủ quy định."
+    },
+    {
+      "id": "MOB-020",
+      "description": "Nộp bài chủ động và câu bỏ trống",
+      "procedure": "1. Làm fixture đúng/sai/trống.\n2. Chạm nộp và xác nhận nếu có.\n3. So kết quả.",
+      "expected": "Đúng điểm theo bảng; trống không tính đúng; attempt hoàn tất và không sửa được.",
+      "preconditions": "Expected độc lập, trước deadline.",
+      "notes": "Ưu tiên: High.\nRisk: R-01.\nNguồn: Software Test Documentation.docx §1.1.b–c.\nNhấn Gửi -> Xác nhận; xác nhận màn hình kết quả. Tính toán độc lập điểm số dự kiến ​​từ bảng trả lời/bảng chuyển đổi đã được phê duyệt; so sánh L/R/tổng."
+    },
+    {
+      "id": "MOB-021",
+      "description": "Hết giờ trong khi app foreground/background",
+      "procedure": "1. Dùng hai attempt deadline ngắn.\n2. Một ở foreground, một chuyển nền qua deadline.\n3. Quay lại và thử sửa.",
+      "expected": "Cả hai kết thúc đúng server deadline; không nhận sửa muộn; draft đã lưu được chấm đúng.",
+      "preconditions": "Fixture timeout có kiểm soát; EN-01 đã chốt.",
+      "notes": "Ưu tiên: High.\nRisk: R-05.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-05; 3.4 EX-06.\nTạo các lần thi thử ngắn hạn ở chế độ foreground/background. Xác minh máy chủ đóng cả khi hết hạn và từ chối các thay đổi câu trả lời muộn."
+    },
+    {
+      "id": "MOB-022",
+      "description": "Chạm nộp liên tục",
+      "procedure": "1. Chạm nộp nhanh nhiều lần.\n2. Mở lại lịch sử và đối soát count.",
+      "expected": "Một kết quả cho attempt, không tăng điểm/đếm lịch sử trùng.",
+      "preconditions": "Attempt có expected và dữ liệu đối soát.",
+      "notes": "Ưu tiên: High.\nRisk: R-04.\nNguồn: Software Test Documentation.docx §1.1.b; 2.4 R-04.\nLặp lại việc gửi với cùng ID lần thử bằng cách sử dụng API đã được phê duyệt/kiểm tra lỗi. Xác minh chính xác một kết quả và một bản ghi lịch sử; chỉ nhấn nhiều lần là không đủ."
+    },
+    {
+      "id": "MOB-023",
+      "description": "Lời giải chỉ sau khi kết thúc",
+      "procedure": "1. Thử mở review khi đang làm.\n2. Nộp rồi mở lại review.",
+      "expected": "Trước kết thúc không lộ đáp án/lời giải; sau kết thúc hiển thị đúng bài đã nộp và không cho sửa.",
+      "preconditions": "Attempt IN_PROGRESS rồi hoàn tất.",
+      "notes": "Ưu tiên: High.\nRisk: R-03.\nNguồn: Software Test Documentation.docx §1.1.c.\nSau khi gửi, mở “Xem lại đáp án”. Trước khi gửi, chạy kiểm tra API phủ định để đảm bảo rằng key/đáp án không bị lộ cho IN_PROGRESS."
+    },
+    {
+      "id": "MOB-024",
+      "description": "Lịch sử và kết quả đúng người",
+      "procedure": "1. Xem lịch sử/kết quả của A.\n2. Logout, login B và xem lại.\n3. Nếu có deep link, thử ID của A.",
+      "expected": "Điểm L/R/tổng, đáp án/lời giải của đúng user; không còn cache hiển thị A cho B; truy cập trái quyền bị chặn.",
+      "preconditions": "Hai user và attempt độc lập; expected.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-03.\nNguồn: Software Test Documentation.docx §1.1.c; 2.4 R-03.\nSử dụng tài khoản và lần thử A/B riêng biệt. Xác minh ID chủ sở hữu lịch sử/kết quả/đánh giá và ủy quyền API; chỉ kiểm tra giao diện người dùng/bộ nhớ cache là không đủ."
+    },
+    {
+      "id": "MOB-025",
+      "description": "Lịch sử rỗng và nhiều trang",
+      "procedure": "1. User mới mở lịch sử.\n2. User nhiều bài tải thêm/chuyển trang theo app.",
+      "expected": "Trạng thái rỗng đúng; không lặp/mất bản ghi khi dataset ổn định; chỉ dữ liệu của user hiện tại.",
+      "preconditions": "Hai fixture user; app hỗ trợ cơ chế phân trang đã chốt.",
+      "notes": "Ưu tiên: Medium.\nNguồn: Software Test Documentation.docx §1.1.c; 2.1.\nMở lịch sử; khẳng định trạng thái trống hoặc giao diện người dùng tải thêm. Tạo tập dữ liệu 0 và >1 trang; lịch sử giả lập trong bộ nhớ không đảm bảo phân trang Backend."
+    },
+    {
+      "id": "MOB-026",
+      "description": "E2E Android với API thật",
+      "procedure": "1. Login → chọn Full Test → start.\n2. Phát media, chọn/đổi/xóa và lưu.\n3. Nộp → kết quả → lịch sử/lời giải.",
+      "expected": "Toàn luồng trên Android mục tiêu đạt; đối soát API/expected; demo/mock không thay chứng cứ EX-05. Thiếu build/kết nối ghi Blocked.",
+      "preconditions": "EN-01–EN-07; APK/API/media thật hoạt động.",
+      "notes": "Ưu tiên: High.\nRisk: R-01,R-02,R-07.\nNguồn: Software Test Documentation.docx §3.4 EX-05/EX-06.\nYêu cầu APK có bật API, API QA trực tiếp, tài khoản, bài kiểm tra 200 câu hỏi, phương tiện, đáp án và bảng chuyển đổi. Chạy đăng nhập -> bắt đầu -> lưu -> gửi -> lịch sử -> xem lại."
+    }
+  ],
+  "mappingNotes": [
+    "Test API row 15 has a malformed ID cell 'c', but its description/procedure/expected result explicitly describe POST /auth/refresh success; mapped as API-004 to preserve the intended continuous API-001..API-036 sequence.",
+    "The automation package does not mark any live test as passed; it only defines executable requests/tests and explicit gated cases."
+  ]
+}

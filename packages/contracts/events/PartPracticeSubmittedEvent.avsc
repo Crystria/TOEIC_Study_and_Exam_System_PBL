@@ -1,0 +1,47 @@
+{
+  "type": "record",
+  "name": "PartPracticeSubmittedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi user nộp bài Part Test; chỉ có accuracy, không quy đổi ETS.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "attemptId", "type": "string" },
+    { "name": "userId", "type": "string" },
+    { "name": "testId", "type": "string" },
+    {
+      "name": "mode",
+      "type": { "type": "enum", "name": "PartAttemptMode", "symbols": ["PART"] }
+    },
+    { "name": "parts", "type": { "type": "array", "items": "int" } },
+    { "name": "totalQuestions", "type": "int" },
+    { "name": "correctCount", "type": "int" },
+    { "name": "accuracy", "type": "double" },
+    {
+      "name": "partStats",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "PartPracticeStat",
+          "fields": [
+            { "name": "part", "type": "int" },
+            {
+              "name": "skill",
+              "type": {
+                "type": "enum",
+                "name": "PartPracticeSkillArea",
+                "symbols": ["LISTENING", "READING"]
+              }
+            },
+            { "name": "totalQuestions", "type": "int" },
+            { "name": "correctCount", "type": "int" },
+            { "name": "accuracy", "type": "double" }
+          ]
+        }
+      }
+    },
+    { "name": "durationSeconds", "type": "int" },
+    { "name": "completedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

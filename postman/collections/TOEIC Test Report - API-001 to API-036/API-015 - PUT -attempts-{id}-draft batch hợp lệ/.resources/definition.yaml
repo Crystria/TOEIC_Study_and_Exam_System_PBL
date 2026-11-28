@@ -1,0 +1,13 @@
+$kind: collection
+name: API-015 - PUT /attempts/{id}/draft batch hợp lệ
+description: |-
+  PUT /attempts/{id}/draft batch hợp lệ
+  Procedure: 1. Gửi answers gồm nhiều câu và null.
+  2. Đọc lại; đối chiếu số saved và từng lựa chọn.
+  Expected: 200; saved bằng số phần tử; lưu đúng tất cả câu hợp lệ; không mất draft trước đó ngoài các câu được cập nhật.
+  Preconditions: Batch không trùng; câu thuộc snapshot.
+  Execution note: Ưu tiên: High.
+  Risk: R-02.
+  Nguồn: Software Test Documentation.docx §1.1.b.
+  Fixture: attempt IN_PROGRESS với ít nhất 4 questionId hợp lệ, không trùng. PUT draft batch gồm nhiều option hợp lệ và ít nhất một selectedOption: null; GET attempt để đối chiếu từng câu/số lượng đã lưu. Kiểm tra các câu không có trong batch vẫn giữ draft cũ.
+order: 16000

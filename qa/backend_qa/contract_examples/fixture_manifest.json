@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "fixtureKind": "synthetic_dto_contract_example",
+  "generatedAt": "2026-11-11T09:26:35+00:00",
+  "referenceAsOf": "2026-11-11T09:10:00+00:00",
+  "idPolicy": "Stable synthetic UUIDv5 values; never valid Backend database references.",
+  "sources": [
+    "test_data/analytics/progress_last7Days.json",
+    "test_data/analytics/progress_last30Days.json",
+    "test_data/analytics/progress_allTime.json",
+    "test_data/analytics/history_full_scores.json",
+    "test_data/analytics/history_part_practices.json",
+    "test_data/analytics/streak_and_prediction.json",
+    "test_data/learning/grammar_catalog_current_source.json"
+  ],
+  "outputs": [
+    "analytics/history_full_scores.response.json",
+    "analytics/history_part_practices.response.json",
+    "analytics/prediction.response.json",
+    "analytics/progress_allTime.response.json",
+    "analytics/progress_last30Days.response.json",
+    "analytics/progress_last7Days.response.json",
+    "analytics/streak.response.json",
+    "analytics/weak_areas.response.json",
+    "learning/grammar_lesson_detail.response.json",
+    "learning/grammar_lessons_page_1.response.json"
+  ],
+  "liveBackendEvidence": false,
+  "seedEligible": false
+}

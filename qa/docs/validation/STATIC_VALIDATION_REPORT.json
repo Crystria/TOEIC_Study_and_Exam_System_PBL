@@ -1,0 +1,148 @@
+
+{
+  "reportVersion": "2.0",
+  "reportName": "QA Validation Report",
+  "updatedAt": "2026-11-21",
+  "repository": "Crystria/TOEIC_Study_and_Exam_System_PBL",
+  "branch": "mobile",
+  "referenceCommit": "3330cedf5f467a05825c1c17d92f02d5bfa481e7",
+  "sourceWorkbook": "Test Report.xlsx",
+  "traceability": {
+    "path": "qa/docs/test_case_traceability.json",
+    "apiCases": 36,
+    "mobileCases": 26,
+    "totalCases": 62
+  },
+  "staticValidation": {
+    "postman": {
+      "status": "HISTORICAL_PASS_NOT_REVALIDATED",
+      "provenance": "Original automation package static validation snapshot",
+      "revalidatedAfterMigration": false,
+      "apiCaseFolders": 36,
+      "apiIdsContinuous": true,
+      "requestCount": 172,
+      "javascriptScriptsParsed": 348,
+      "javascriptSyntaxFailures": 0,
+      "environmentVariableKeys": 58,
+      "unresolvedEnvironmentReferences": [],
+      "duplicateEnvironmentKeys": []
+    },
+    "appium": {
+      "historicalSnapshot": {
+        "status": "HISTORICAL_PASS",
+        "testFunctions": 26,
+        "caseIdsContinuous": true,
+        "pythonCompileExitCode": 0
+      },
+      "currentCollection": {
+        "status": "PASSED",
+        "suitePath": "qa/mobile/appium/tests/test_mob_001_026.py",
+        "command": "python -m pytest --collect-only -q",
+        "testsCollected": 26,
+        "executionPerformed": false,
+        "evidence": "User-reported successful pytest collection"
+      }
+    }
+  },
+  "environmentReadiness": {
+    "gateway": {
+      "status": "PASSED",
+      "endpoint": "GET /ready",
+      "qaMode": true,
+      "checks": {
+        "redis": "ok",
+        "auth": "ok",
+        "questions": "ok",
+        "exam": "ok",
+        "analytics": "ok",
+        "learning": "ok"
+      },
+      "scope": "Environment readiness only; not a full API suite result"
+    }
+  },
+  "liveExecution": {
+    "api": {
+      "status": "NOT_REPORTED",
+      "totalCases": 36,
+      "passed": null,
+      "failed": null,
+      "skipped": null,
+      "note": "No complete API-001 to API-036 execution report was included in the evidence available for this report."
+    },
+    "mobile": {
+      "status": "PARTIAL",
+      "lastObservedDate": "2026-11-20",
+      "totalCases": 26,
+      "summary": {
+        "passed": 9,
+        "failed": 1,
+        "skipped": 2,
+        "notReported": 14
+      },
+      "cases": {
+        "passed": [
+          "MOB-001",
+          "MOB-002",
+          "MOB-003",
+          "MOB-004",
+          "MOB-005",
+          "MOB-007",
+          "MOB-009",
+          "MOB-010",
+          "MOB-011"
+        ],
+        "skipped": [
+          {
+            "id": "MOB-006",
+            "reason": "No approved secure-storage fixture for expired-token injection."
+          },
+          {
+            "id": "MOB-008",
+            "reason": "Requires a dedicated QA emulator and explicit app-reset approval."
+          }
+        ],
+        "failed": [
+          {
+            "id": "MOB-013",
+            "expected": "After selecting A and then B, the persisted selectedOption is B.",
+            "actual": "The subsequent attempt GET returned selectedOption as null for the target question.",
+            "rootCause": "NOT_DETERMINED"
+          }
+        ],
+        "notReported": [
+          "MOB-012",
+          "MOB-014",
+          "MOB-015",
+          "MOB-016",
+          "MOB-017",
+          "MOB-018",
+          "MOB-019",
+          "MOB-020",
+          "MOB-021",
+          "MOB-022",
+          "MOB-023",
+          "MOB-024",
+          "MOB-025",
+          "MOB-026"
+        ]
+      }
+    }
+  },
+  "statusDefinitions": {
+    "PASSED": "Executed and all assertions passed with sufficient evidence.",
+    "FAILED": "Executed and at least one assertion failed.",
+    "SKIPPED": "Intentionally skipped because a documented precondition or approved fixture was unavailable.",
+    "BLOCKED": "Could not execute because of an environment or external dependency blocker.",
+    "NOT_REPORTED": "No verified execution result has been recorded.",
+    "XFAIL": "Expected failure recorded for a known product gap."
+  },
+  "limitations": [
+    "Historical static metrics have not all been rerun against the canonical QA directory.",
+    "Pytest collection does not prove live test behavior.",
+    "Gateway readiness does not prove the complete API suite passed.",
+    "MOB-013 root cause is not determined.",
+    "Skipped and not-reported tests must not be counted as passed.",
+    "Audio player UI state alone does not prove audible output."
+  ],
+  "overallStatus": "PARTIAL"
+}

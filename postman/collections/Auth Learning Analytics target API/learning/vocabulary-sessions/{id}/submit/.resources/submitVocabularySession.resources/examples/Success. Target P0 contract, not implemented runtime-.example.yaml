@@ -1,0 +1,231 @@
+$kind: http-example
+name: Success. Target P0 contract, not implemented runtime.
+request:
+  url: "{{baseUrl}}/learning/vocabulary-sessions/:id/submit"
+  method: POST
+  headers:
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    id: b2b638c2-0db0-4256-a945-715659ac6882
+  body:
+    type: json
+    content: |-
+      {
+        "operationId": "7788bf1b-b3b0-472f-beda-fc8b53fce724",
+        "reviews": [
+          {
+            "vocabularyId": "cd70a32c-7aed-4e7f-8f84-cdf007a51f02",
+            "quality": 3
+          },
+          {
+            "vocabularyId": "7fb4346a-199b-4251-b0e1-481c5b2d24ab",
+            "quality": 2
+          },
+          {
+            "vocabularyId": "55094f40-5e27-47f0-90a5-713bdc910c42",
+            "quality": 3
+          },
+          {
+            "vocabularyId": "30f24108-db28-448b-9ae8-3daafd1cb870",
+            "quality": 4
+          },
+          {
+            "vocabularyId": "d91efbe9-270f-4826-b6ca-21c071a7dd54",
+            "quality": 0
+          }
+        ],
+        "answers": [
+          {
+            "questionId": "1da2bcf7-5be2-4902-9e83-7a5ff0d18322",
+            "selectedOption": "A"
+          },
+          {
+            "questionId": "f82e6bfe-2a49-44b6-b943-d7fc2ddbfc4b",
+            "selectedOption": "A"
+          },
+          {
+            "questionId": "a44cf25a-3bf5-4830-bc26-2d5df4a1e7e1",
+            "selectedOption": "C"
+          },
+          {
+            "questionId": "f31e1c1b-4921-4bcb-ac91-1c4f14076d78",
+            "selectedOption": "B"
+          },
+          {
+            "questionId": "4dc8f9a7-72f2-4a9c-8561-2f63092f6f20",
+            "selectedOption": "B"
+          }
+        ]
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Correlation-ID
+      value: string
+      disabled: false
+      description: ""
+      $type: |-
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        }
+  body:
+    type: json
+    content: |-
+      {
+        "sessionId": "a19e4a70-a648-45ed-b8cf-9b5fc5456196",
+        "operationId": "c7bd4849-fc65-4412-a301-97b178fd7ddb",
+        "status": "",
+        "quizScore": 4,
+        "quizTotal": "",
+        "completedAt": "Z",
+        "answers": [
+          {
+            "questionId": "9498fea8-ab38-4ea6-b5ca-2c8e9764b44b",
+            "selectedOption": "A",
+            "correctOption": "C",
+            "isCorrect": false
+          },
+          {
+            "questionId": "854aea76-2731-475e-bc59-dc41e8613460",
+            "selectedOption": "D",
+            "correctOption": "A",
+            "isCorrect": true
+          },
+          {
+            "questionId": "a9f395ee-ae39-4c3c-bd75-96f70604f411",
+            "selectedOption": "A",
+            "correctOption": "C",
+            "isCorrect": false
+          },
+          {
+            "questionId": "e5758de1-0a1f-48c5-aeac-a9ca80c87eac",
+            "selectedOption": "D",
+            "correctOption": "A",
+            "isCorrect": true
+          },
+          {
+            "questionId": "7109039b-e26d-419a-b4e1-0c36fd9c3d3d",
+            "selectedOption": "B",
+            "correctOption": "B",
+            "isCorrect": true
+          }
+        ],
+        "progress": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "operationId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+          },
+          "quizScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "completedAt": {
+            "type": "string",
+            "pattern": "Z$",
+            "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "questionId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "selectedOption": {
+                  "type": "string",
+                  "enum": [
+                    "A",
+                    "B",
+                    "C",
+                    "D"
+                  ]
+                },
+                "correctOption": {
+                  "type": "string",
+                  "enum": [
+                    "A",
+                    "B",
+                    "C",
+                    "D"
+                  ]
+                },
+                "isCorrect": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "questionId",
+                "selectedOption",
+                "correctOption",
+                "isCorrect"
+              ]
+            }
+          },
+          "progress": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "allOf": [
+                    {}
+                  ]
+                },
+                {
+                  "allOf": [
+                    {}
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "sessionId",
+          "operationId",
+          "status",
+          "quizScore",
+          "quizTotal",
+          "completedAt",
+          "answers",
+          "progress"
+        ]
+      }
+order: 1000

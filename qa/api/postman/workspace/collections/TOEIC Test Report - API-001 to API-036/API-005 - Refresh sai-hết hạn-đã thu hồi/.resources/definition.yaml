@@ -1,0 +1,13 @@
+$kind: collection
+name: API-005 - Refresh sai/hết hạn/đã thu hồi
+description: |-
+  Refresh sai/hết hạn/đã thu hồi
+  Procedure: 1. Gọi refresh với từng token fixture không hợp lệ.
+  2. Kiểm tra quyền gọi API sau đó.
+  Expected: 401; không cấp phiên/token hợp lệ.
+  Preconditions: Có QA fixture hết hạn/thu hồi, không sửa dữ liệu production.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.a; 1.3.
+  Không có fixture token hết hạn được tạo sẵn bởi qa:seed. Dùng riêng: token ngẫu nhiên/không hợp lệ; token đã bị thu hồi sau logout hoặc rotation; token hết hạn chỉ kiểm tra khi có TTL/fixture QA xác định hoặc chờ hết TTL thật. Không sửa trực tiếp bảng session/token và không dùng token production.
+  Expired-token variant is gated: execute only when Backend provides a documented expired-token fixture/TTL; no direct DB token edits.
+order: 6000

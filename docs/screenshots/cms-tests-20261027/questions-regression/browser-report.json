@@ -1,0 +1,538 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Initial loading, ready list, 28 demo records and 20-row default",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Search in explanation, case-insensitive; explicit Enter apply keeps focus; reload retains query",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "All seven Parts and intersected filters produce expected records; Back/Forward restore applied filter fields",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Pagination size/page, keyboard focus, Back/Forward/reload, reset page on apply, no-match and clear",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Empty catalog differs from no-match; controlled error/retry and reload; retry preserves user-moved focus and draft",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Changing query during slow load cancels stale request and retains typing focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Invalid/repeated URL params normalize; unknown tag stays valid; custom size and out-of-range page clamp",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Existing role switch/Back and cross-role explanation retained; storage/cookies/IndexedDB empty",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Initial loading, ready list, 28 demo records and 20-row default",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Search in explanation, case-insensitive; explicit Enter apply keeps focus; reload retains query",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "All seven Parts and intersected filters produce expected records; Back/Forward restore applied filter fields",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Pagination size/page, keyboard focus, Back/Forward/reload, reset page on apply, no-match and clear",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Empty catalog differs from no-match; controlled error/retry and reload; retry preserves user-moved focus and draft",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Changing query during slow load cancels stale request and retains typing focus",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Invalid/repeated URL params normalize; unknown tag stays valid; custom size and out-of-range page clamp",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Existing role switch/Back and cross-role explanation retained; storage/cookies/IndexedDB empty",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Initial loading, ready list, 28 demo records and 20-row default",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Search in explanation, case-insensitive; explicit Enter apply keeps focus; reload retains query",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "All seven Parts and intersected filters produce expected records; Back/Forward restore applied filter fields",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Pagination size/page, keyboard focus, Back/Forward/reload, reset page on apply, no-match and clear",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Empty catalog differs from no-match; controlled error/retry and reload; retry preserves user-moved focus and draft",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Changing query during slow load cancels stale request and retains typing focus",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Invalid/repeated URL params normalize; unknown tag stays valid; custom size and out-of-range page clamp",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Existing role switch/Back and cross-role explanation retained; storage/cookies/IndexedDB empty",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "320px form/cards/pagination viewport without horizontal overflow",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "loading-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "list-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "rows-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "pagination-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "combined-filters-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "no-match-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "empty-catalog-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "error-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "width": 1440,
+        "height": 900,
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "loading-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "list-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "rows-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "pagination-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "combined-filters-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "no-match-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "empty-catalog-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "error-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "width": 768,
+        "height": 900,
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "loading-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "list-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "rows-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "pagination-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "combined-filters-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "no-match-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "empty-catalog-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "error-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "width": 390,
+        "height": 900,
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "list-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "cards-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "pagination-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "width": 320,
+        "height": 900,
+        "scroll": 320,
+        "client": 320
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "browser": "156.0.8078.48",
+  "completed": true
+}

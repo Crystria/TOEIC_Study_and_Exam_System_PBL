@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  Submit lặp tuần tự cùng attempt
+  Procedure: 1. Submit hợp lệ.
+  2. Gửi lại một và nhiều lần.
+  3. Đối soát result/history và bản ghi QA nếu có quyền.
+  Expected: Một kết quả nghiệp vụ; điểm/lựa chọn không đổi; replay không ghi đè/chấm mới.
+  Preconditions: Attempt và response lần đầu đã ghi; không log secret.
+  Execution note: Ưu tiên: High.
+  Risk: R-04.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-04.
+  Tạo một attempt mới; lưu response submit lần đầu làm baseline. Gửi lại chính xác request submit trên cùng attempt một lần và sau đó nhiều lần; GET result/history để so attemptId, answers, điểm và số record. Ghi rõ replay trả 200/201/409 theo contract thực tế; tiêu chí chính là không sinh kết quả nghiệp vụ thứ hai hoặc đổi kết quả.
+order: 31000

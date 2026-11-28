@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  Nộp attempt người khác
+  Procedure: 1. Dùng B submit attempt A.
+  2. Kiểm tra bằng A và đối soát count.
+  Expected: 403; A không bị nộp/chấm hoặc đổi trạng thái ngoài ý muốn.
+  Preconditions: Attempt A IN_PROGRESS, token B hợp lệ.
+  Execution note: Ưu tiên: High.
+  Risk: R-03.
+  Nguồn: Software Test Documentation.docx §1.1.b; 2.4 R-03.
+  A tạo attempt IN_PROGRESS; B dùng token B POST submit attempt đó. Kỳ vọng 403; A GET lại vẫn IN_PROGRESS, không xuất hiện result hoặc history entry mới. Không dùng attempt của A cho testcase khác trong cùng thời điểm.
+order: 24000

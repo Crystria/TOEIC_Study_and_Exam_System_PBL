@@ -1,0 +1,187 @@
+$kind: http-request
+description: ""
+url: "{{baseUrl}}/sync/users"
+method: POST
+headers:
+  - key: X-Correlation-ID
+    value: string
+    disabled: false
+    description: ""
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "deviceId": "string",
+      "operationId": "a557a854-f2ab-41d5-a880-5e163732fc14",
+      "baseVersion": "0",
+      "clientOccurredAt": "Z",
+      "operation": {
+        "kind": "",
+        "vocabularyId": "9b9907c9-8dd8-4577-a54b-44f30d9495ac",
+        "baseEntityRevision": "0",
+        "quality": 0
+      }
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "operationId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "baseVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,18})$",
+          "description": "Decimal string; semantic bound <= 9223372036854775807."
+        },
+        "clientOccurredAt": {
+          "type": "string",
+          "pattern": "Z$",
+          "description": "RFC3339 UTC; no timezone offsets on v2 wire."
+        },
+        "operation": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "vocabularyId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "baseEntityRevision": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9][0-9]{0,18})$",
+                  "description": "Decimal string; semantic bound <= 9223372036854775807."
+                },
+                "quality": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                }
+              },
+              "required": [
+                "kind",
+                "vocabularyId",
+                "baseEntityRevision",
+                "quality"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "lessonId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "baseEntityRevision": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9][0-9]{0,18})$",
+                  "description": "Decimal string; semantic bound <= 9223372036854775807."
+                }
+              },
+              "required": [
+                "kind",
+                "lessonId",
+                "baseEntityRevision"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "sessionId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                },
+                "reviews": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "vocabularyId": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                      },
+                      "quality": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 5
+                      }
+                    },
+                    "required": [
+                      "vocabularyId",
+                      "quality"
+                    ]
+                  }
+                },
+                "answers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "questionId": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                      },
+                      "selectedOption": {
+                        "type": "string",
+                        "enum": [
+                          "A",
+                          "B",
+                          "C",
+                          "D"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "questionId",
+                      "selectedOption"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "kind",
+                "sessionId",
+                "reviews",
+                "answers"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "deviceId",
+        "operationId",
+        "baseVersion",
+        "clientOccurredAt",
+        "operation"
+      ]
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/acceptSync.resources/examples
+order: 1000

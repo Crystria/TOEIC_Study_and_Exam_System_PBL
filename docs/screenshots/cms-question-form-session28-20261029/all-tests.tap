@@ -1,0 +1,2902 @@
+TAP version 13
+# Subtest: Audit UI paging is explicitly local; invalid, repeated and unsupported URL params normalize
+ok 1 - Audit UI paging is explicitly local; invalid, repeated and unsupported URL params normalize
+  ---
+  duration_ms: 5.6496
+  type: 'test'
+  ...
+# Subtest: Unknown action is an open string no-match, with Unicode/special chars and persona round trip
+ok 2 - Unknown action is an open string no-match, with Unicode/special chars and persona round trip
+  ---
+  duration_ms: 1.6091
+  type: 'test'
+  ...
+# Subtest: Search literal IDs/action/type with exact action AND; never infer actor, outcome or missing fields
+ok 3 - Search literal IDs/action/type with exact action AND; never infer actor, outcome or missing fields
+  ---
+  duration_ms: 0.7982
+  type: 'test'
+  ...
+# Subtest: One dataset counts, stable paging, safe clamp before offset and empty versus no-match
+ok 4 - One dataset counts, stable paging, safe clamp before offset and empty versus no-match
+  ---
+  duration_ms: 0.4882
+  type: 'test'
+  ...
+# Subtest: Fixture safe allowlist: fake IDs, no identity join, raw metadata or authentication data
+ok 5 - Fixture safe allowlist: fake IDs, no identity join, raw metadata or authentication data
+  ---
+  duration_ms: 1.6199
+  type: 'test'
+  ...
+# Subtest: Only confirmed source call sites receive summaries; fixed time zone and missing time
+ok 6 - Only confirmed source call sites receive summaries; fixed time zone and missing time
+  ---
+  duration_ms: 43.9672
+  type: 'test'
+  ...
+# Subtest: Repository rejects pre-aborted and cancels pending reads without stale completion
+ok 7 - Repository rejects pre-aborted and cancels pending reads without stale completion
+  ---
+  duration_ms: 2.3649
+  type: 'test'
+  ...
+# Subtest: Retry preserves query and clamps; simulated error, empty and no-match remain separate
+ok 8 - Retry preserves query and clamps; simulated error, empty and no-match remain separate
+  ---
+  duration_ms: 1159.8271
+  type: 'test'
+  ...
+# Subtest: Lesson URL normalizes unsafe, repeated and unsupported fields without importing Exam size rules
+ok 9 - Lesson URL normalizes unsafe, repeated and unsupported fields without importing Exam size rules
+  ---
+  duration_ms: 4.4874
+  type: 'test'
+  ...
+# Subtest: Unicode and unknown categories survive canonical round trip with persona and preview
+ok 10 - Unicode and unknown categories survive canonical round trip with persona and preview
+  ---
+  duration_ms: 1.4453
+  type: 'test'
+  ...
+# Subtest: Title search intersects exact category on one dataset; missing title is not searched as fallback text
+ok 11 - Title search intersects exact category on one dataset; missing title is not searched as fallback text
+  ---
+  duration_ms: 1.0545
+  type: 'test'
+  ...
+# Subtest: Stable local pagination has no lost/duplicate items, clamps huge pages and distinguishes empty from no-match
+ok 12 - Stable local pagination has no lost/duplicate items, clamps huge pages and distinguishes empty from no-match
+  ---
+  duration_ms: 1.3466
+  type: 'test'
+  ...
+# Subtest: Local reads cancel before/during delay and retry uses current query; no-match is not an error
+ok 13 - Local reads cancel before/during delay and retry uses current query; no-match is not an error
+  ---
+  duration_ms: 868.1244
+  type: 'test'
+  ...
+# Subtest: Exactly three original Part 5 details use catalog IDs/metadata; strict field allowlist
+ok 14 - Exactly three original Part 5 details use catalog IDs/metadata; strict field allowlist
+  ---
+  duration_ms: 4.5888
+  type: 'test'
+  ...
+# Subtest: Explicit correct flags survive reordering; missing/duplicate/ambiguous keys never infer answers
+ok 15 - Explicit correct flags survive reordering; missing/duplicate/ambiguous keys never infer answers
+  ---
+  duration_ms: 0.7659
+  type: 'test'
+  ...
+# Subtest: Navigation restores every real list param and only literal internal /questions
+ok 16 - Navigation restores every real list param and only literal internal /questions
+  ---
+  duration_ms: 5.9417
+  type: 'test'
+  ...
+# Subtest: Repeated/invalid URL params normalize using list rules; no caller-supplied destination
+ok 17 - Repeated/invalid URL params normalize using list rules; no caller-supplied destination
+  ---
+  duration_ms: 0.5401
+  type: 'test'
+  ...
+# Subtest: Existing unsupported catalog ID differs from unknown ID, even in UI simulation
+ok 18 - Existing unsupported catalog ID differs from unknown ID, even in UI simulation
+  ---
+  duration_ms: 1167.3863
+  type: 'test'
+  ...
+# Subtest: Missing/long previews are isolated; no answer inferred; reload error and scoped retry
+ok 19 - Missing/long previews are isolated; no answer inferred; reload error and scoped retry
+  ---
+  duration_ms: 1716.6071
+  type: 'test'
+  ...
+# Subtest: Abort both before and during slow read; new ID can complete independently
+ok 20 - Abort both before and during slow read; new ID can complete independently
+  ---
+  duration_ms: 295.3042
+  type: 'test'
+  ...
+# Subtest: Shell destination allows implemented question children and keeps personas separate
+ok 21 - Shell destination allows implemented question children and keeps personas separate
+  ---
+  duration_ms: 0.9557
+  type: 'test'
+  ...
+# Subtest: Route segments decode once and round-trip without repeated percent encoding
+ok 22 - Route segments decode once and round-trip without repeated percent encoding
+  ---
+  duration_ms: 0.6251
+  type: 'test'
+  ...
+# Subtest: New draft has no ID or invented defaults; instances are independent
+ok 23 - New draft has no ID or invented defaults; instances are independent
+  ---
+  duration_ms: 3.5642
+  type: 'test'
+  ...
+# Subtest: Edit copies exactly 017 by option key, never by catalog position or order
+ok 24 - Edit copies exactly 017 by option key, never by catalog position or order
+  ---
+  duration_ms: 1.5712
+  type: 'test'
+  ...
+# Subtest: Unknown ID is distinct from every out-of-scope catalog ID; never falls back
+ok 25 - Unknown ID is distinct from every out-of-scope catalog ID; never falls back
+  ---
+  duration_ms: 1.2658
+  type: 'test'
+  ...
+# Subtest: A missing edit template cannot silently open another question
+ok 26 - A missing edit template cannot silently open another question
+  ---
+  duration_ms: 0.4184
+  type: 'test'
+  ...
+# Subtest: Empty and whitespace-only inputs validate per field in DOM focus order
+ok 27 - Empty and whitespace-only inputs validate per field in DOM focus order
+  ---
+  duration_ms: 0.7584
+  type: 'test'
+  ...
+# Subtest: Accept Word difficulty EASY and optional blank explanation
+ok 28 - Accept Word difficulty EASY and optional blank explanation
+  ---
+  duration_ms: 1.1777
+  type: 'test'
+  ...
+# Subtest: Accept Word difficulty MEDIUM and optional blank explanation
+ok 29 - Accept Word difficulty MEDIUM and optional blank explanation
+  ---
+  duration_ms: 0.6447
+  type: 'test'
+  ...
+# Subtest: Accept Word difficulty HARD and optional blank explanation
+ok 30 - Accept Word difficulty HARD and optional blank explanation
+  ---
+  duration_ms: 0.3677
+  type: 'test'
+  ...
+# Subtest: Unknown difficulty/answer do not produce a preview or guess defaults
+ok 31 - Unknown difficulty/answer do not produce a preview or guess defaults
+  ---
+  duration_ms: 0.4275
+  type: 'test'
+  ...
+# Subtest: Each option is required independently; no invented duplicate-text restriction
+ok 32 - Each option is required independently; no invented duplicate-text restriction
+  ---
+  duration_ms: 1.8325
+  type: 'test'
+  ...
+# Subtest: Invalid submit retains all typed input and does not mutate frozen drafts
+ok 33 - Invalid submit retains all typed input and does not mutate frozen drafts
+  ---
+  duration_ms: 0.4384
+  type: 'test'
+  ...
+# Subtest: Preview projects four explicit flags, preserves long/literal text and is detached
+ok 34 - Preview projects four explicit flags, preserves long/literal text and is detached
+  ---
+  duration_ms: 0.4646
+  type: 'test'
+  ...
+# Subtest: Reset means a new empty draft or a new copy of the original, independent of edits
+ok 35 - Reset means a new empty draft or a new copy of the original, independent of edits
+  ---
+  duration_ms: 0.7514
+  type: 'test'
+  ...
+# Subtest: All form links carry only existing list allowlist and fixed local paths
+ok 36 - All form links carry only existing list allowlist and fixed local paths
+  ---
+  duration_ms: 2.6923
+  type: 'test'
+  ...
+# Subtest: Repeated and invalid query values use the existing parser, persona remains explicit
+ok 37 - Repeated and invalid query values use the existing parser, persona remains explicit
+  ---
+  duration_ms: 0.4064
+  type: 'test'
+  ...
+# Subtest: Shell recognizes new/edit routes without accepting other descendants or changing role model
+ok 38 - Shell recognizes new/edit routes without accepting other descendants or changing role model
+  ---
+  duration_ms: 0.7139
+  type: 'test'
+  ...
+# Subtest: URL defaults and all documented size boundaries, including custom valid sizes
+ok 39 - URL defaults and all documented size boundaries, including custom valid sizes
+  ---
+  duration_ms: 6.0058
+  type: 'test'
+  ...
+# Subtest: Repeated and malformed URL values normalize; unknown string tags remain valid no-match filters
+ok 40 - Repeated and malformed URL values normalize; unknown string tags remain valid no-match filters
+  ---
+  duration_ms: 0.5058
+  type: 'test'
+  ...
+# Subtest: Canonical URL round-trip preserves role and Unicode without credential or extra parameters
+ok 41 - Canonical URL round-trip preserves role and Unicode without credential or extra parameters
+  ---
+  duration_ms: 0.8765
+  type: 'test'
+  ...
+# Subtest: All seven Parts use the same catalog and intersect difficulty and exact tag filters
+ok 42 - All seven Parts use the same catalog and intersect difficulty and exact tag filters
+  ---
+  duration_ms: 0.8922
+  type: 'test'
+  ...
+# Subtest: Local search covers stem/explanation case-insensitively; exact tag and keyword combine
+ok 43 - Local search covers stem/explanation case-insensitively; exact tag and keyword combine
+  ---
+  duration_ms: 0.9582
+  type: 'test'
+  ...
+# Subtest: Stable pagination never duplicates, clamps past-end pages, distinguishes empty catalog and no match, and does not mutate
+ok 44 - Stable pagination never duplicates, clamps past-end pages, distinguishes empty catalog and no match, and does not mutate
+  ---
+  duration_ms: 0.945
+  type: 'test'
+  ...
+# Subtest: Repository cancellation, controlled error/recovery and empty scenario operate only on fixture data
+ok 45 - Repository cancellation, controlled error/recovery and empty scenario operate only on fixture data
+  ---
+  duration_ms: 859.693
+  type: 'test'
+  ...
+# Subtest: Only two catalog IDs have metadata, with no extra fields or inferred Mini count
+ok 46 - Only two catalog IDs have metadata, with no extra fields or inferred Mini count
+  ---
+  duration_ms: 3.1149
+  type: 'test'
+  ...
+# Subtest: Literal list return restores allowlisted params and rejects every returnTo destination
+ok 47 - Literal list return restores allowlisted params and rejects every returnTo destination
+  ---
+  duration_ms: 2.392
+  type: 'test'
+  ...
+# Subtest: Malformed and repeated detail/list params normalize by the existing list parser
+ok 48 - Malformed and repeated detail/list params normalize by the existing list parser
+  ---
+  duration_ms: 0.5774
+  type: 'test'
+  ...
+# Subtest: Catalog without detail differs from unknown ID in every preview
+ok 49 - Catalog without detail differs from unknown ID in every preview
+  ---
+  duration_ms: 2014.6518
+  type: 'test'
+  ...
+# Subtest: Missing/long/retry reads leave both fixture layers intact and never infer metadata
+ok 50 - Missing/long/retry reads leave both fixture layers intact and never infer metadata
+  ---
+  duration_ms: 1435.6602
+  type: 'test'
+  ...
+# Subtest: Read cancellation before/during delay prevents stale results when the ID changes
+ok 51 - Read cancellation before/during delay prevents stale results when the ID changes
+  ---
+  duration_ms: 297.991
+  type: 'test'
+  ...
+# Subtest: Segments decode once; detail resolver accepts only one segment and keeps role destinations
+ok 52 - Segments decode once; detail resolver accepts only one segment and keeps role destinations
+  ---
+  duration_ms: 1.2748
+  type: 'test'
+  ...
+# Subtest: valid detail/list bodies and presentation leave deeply frozen input intact
+ok 53 - valid detail/list bodies and presentation leave deeply frozen input intact
+  ---
+  duration_ms: 6.522
+  type: 'test'
+  ...
+# Subtest: nullable title remains null in detail and list
+ok 54 - nullable title remains null in detail and list
+  ---
+  duration_ms: 0.4797
+  type: 'test'
+  ...
+# Subtest: nullable type remains null in detail and list
+ok 55 - nullable type remains null in detail and list
+  ---
+  duration_ms: 0.2984
+  type: 'test'
+  ...
+# Subtest: nullable durationSeconds remains null in detail and list
+ok 56 - nullable durationSeconds remains null in detail and list
+  ---
+  duration_ms: 0.2365
+  type: 'test'
+  ...
+# Subtest: nullable questionCount remains null in detail and list
+ok 57 - nullable questionCount remains null in detail and list
+  ---
+  duration_ms: 0.1701
+  type: 'test'
+  ...
+# Subtest: nullable status remains null in detail and list
+ok 58 - nullable status remains null in detail and list
+  ---
+  duration_ms: 0.2184
+  type: 'test'
+  ...
+# Subtest: all null metadata display missing text without replacing raw values
+ok 59 - all null metadata display missing text without replacing raw values
+  ---
+  duration_ms: 0.3509
+  type: 'test'
+  ...
+# Subtest: zero count differs from null and neither type supplies duration/count/status
+ok 60 - zero count differs from null and neither type supplies duration/count/status
+  ---
+  duration_ms: 0.5928
+  type: 'test'
+  ...
+# Subtest: explicit 1 seconds displays 0 ph├║t 1 gi├óy
+ok 61 - explicit 1 seconds displays 0 ph├║t 1 gi├óy
+  ---
+  duration_ms: 0.3522
+  type: 'test'
+  ...
+# Subtest: explicit 60 seconds displays 1 ph├║t
+ok 62 - explicit 60 seconds displays 1 ph├║t
+  ---
+  duration_ms: 0.3192
+  type: 'test'
+  ...
+# Subtest: explicit 61 seconds displays 1 ph├║t 1 gi├óy
+ok 63 - explicit 61 seconds displays 1 ph├║t 1 gi├óy
+  ---
+  duration_ms: 0.2088
+  type: 'test'
+  ...
+# Subtest: explicit 123 seconds displays 2 ph├║t 3 gi├óy
+ok 64 - explicit 123 seconds displays 2 ph├║t 3 gi├óy
+  ---
+  duration_ms: 0.108
+  type: 'test'
+  ...
+# Subtest: explicit 7200 seconds displays 120 ph├║t
+ok 65 - explicit 7200 seconds displays 120 ph├║t
+  ---
+  duration_ms: 0.0997
+  type: 'test'
+  ...
+# Subtest: known status DRAFT keeps raw code beside its display label
+ok 66 - known status DRAFT keeps raw code beside its display label
+  ---
+  duration_ms: 0.1871
+  type: 'test'
+  ...
+# Subtest: known status PUBLISHED keeps raw code beside its display label
+ok 67 - known status PUBLISHED keeps raw code beside its display label
+  ---
+  duration_ms: 0.0811
+  type: 'test'
+  ...
+# Subtest: known status ARCHIVED keeps raw code beside its display label
+ok 68 - known status ARCHIVED keeps raw code beside its display label
+  ---
+  duration_ms: 0.0699
+  type: 'test'
+  ...
+# Subtest: unknown status CUSTOM_REVIEW has an explicit fallback and preserves exact text
+ok 69 - unknown status CUSTOM_REVIEW has an explicit fallback and preserves exact text
+  ---
+  duration_ms: 0.1836
+  type: 'test'
+  ...
+# Subtest: unknown status draft has an explicit fallback and preserves exact text
+ok 70 - unknown status draft has an explicit fallback and preserves exact text
+  ---
+  duration_ms: 0.1207
+  type: 'test'
+  ...
+# Subtest: unknown status __proto__ has an explicit fallback and preserves exact text
+ok 71 - unknown status __proto__ has an explicit fallback and preserves exact text
+  ---
+  duration_ms: 0.1388
+  type: 'test'
+  ...
+# Subtest: unknown status constructor has an explicit fallback and preserves exact text
+ok 72 - unknown status constructor has an explicit fallback and preserves exact text
+  ---
+  duration_ms: 0.079
+  type: 'test'
+  ...
+# Subtest: unknown status  PUBLISHED  has an explicit fallback and preserves exact text
+ok 73 - unknown status  PUBLISHED  has an explicit fallback and preserves exact text
+  ---
+  duration_ms: 0.0674
+  type: 'test'
+  ...
+# Subtest: unknown status <b>Lß║í</b> has an explicit fallback and preserves exact text
+ok 74 - unknown status <b>Lß║í</b> has an explicit fallback and preserves exact text
+  ---
+  duration_ms: 0.0944
+  type: 'test'
+  ...
+# Subtest: opaque IDs and non-blank text retain whitespace, Unicode and markup as text
+ok 75 - opaque IDs and non-blank text retain whitespace, Unicode and markup as text
+  ---
+  duration_ms: 0.1422
+  type: 'test'
+  ...
+# Subtest: missing id is rejected in detail and list, including nullable fields
+ok 76 - missing id is rejected in detail and list, including nullable fields
+  ---
+  duration_ms: 0.7446
+  type: 'test'
+  ...
+# Subtest: missing title is rejected in detail and list, including nullable fields
+ok 77 - missing title is rejected in detail and list, including nullable fields
+  ---
+  duration_ms: 0.1434
+  type: 'test'
+  ...
+# Subtest: missing type is rejected in detail and list, including nullable fields
+ok 78 - missing type is rejected in detail and list, including nullable fields
+  ---
+  duration_ms: 0.1152
+  type: 'test'
+  ...
+# Subtest: missing durationSeconds is rejected in detail and list, including nullable fields
+ok 79 - missing durationSeconds is rejected in detail and list, including nullable fields
+  ---
+  duration_ms: 0.0887
+  type: 'test'
+  ...
+# Subtest: missing questionCount is rejected in detail and list, including nullable fields
+ok 80 - missing questionCount is rejected in detail and list, including nullable fields
+  ---
+  duration_ms: 0.1229
+  type: 'test'
+  ...
+# Subtest: missing status is rejected in detail and list, including nullable fields
+ok 81 - missing status is rejected in detail and list, including nullable fields
+  ---
+  duration_ms: 0.135
+  type: 'test'
+  ...
+# Subtest: additional item key catalogTotal is rejected without changing input
+ok 82 - additional item key catalogTotal is rejected without changing input
+  ---
+  duration_ms: 0.3207
+  type: 'test'
+  ...
+# Subtest: additional item key _count is rejected without changing input
+ok 83 - additional item key _count is rejected without changing input
+  ---
+  duration_ms: 0.1975
+  type: 'test'
+  ...
+# Subtest: additional item key questions is rejected without changing input
+ok 84 - additional item key questions is rejected without changing input
+  ---
+  duration_ms: 0.1554
+  type: 'test'
+  ...
+# Subtest: additional item key description is rejected without changing input
+ok 85 - additional item key description is rejected without changing input
+  ---
+  duration_ms: 0.1313
+  type: 'test'
+  ...
+# Subtest: additional item key statusCode is rejected without changing input
+ok 86 - additional item key statusCode is rejected without changing input
+  ---
+  duration_ms: 0.147
+  type: 'test'
+  ...
+# Subtest: invalid id text case 0 is rejected, not repaired
+ok 87 - invalid id text case 0 is rejected, not repaired
+  ---
+  duration_ms: 0.1706
+  type: 'test'
+  ...
+# Subtest: invalid id text case 1 is rejected, not repaired
+ok 88 - invalid id text case 1 is rejected, not repaired
+  ---
+  duration_ms: 0.0934
+  type: 'test'
+  ...
+# Subtest: invalid id text case 2 is rejected, not repaired
+ok 89 - invalid id text case 2 is rejected, not repaired
+  ---
+  duration_ms: 0.0946
+  type: 'test'
+  ...
+# Subtest: invalid id text case 3 is rejected, not repaired
+ok 90 - invalid id text case 3 is rejected, not repaired
+  ---
+  duration_ms: 0.144
+  type: 'test'
+  ...
+# Subtest: invalid id text case 4 is rejected, not repaired
+ok 91 - invalid id text case 4 is rejected, not repaired
+  ---
+  duration_ms: 0.0858
+  type: 'test'
+  ...
+# Subtest: invalid id text case 5 is rejected, not repaired
+ok 92 - invalid id text case 5 is rejected, not repaired
+  ---
+  duration_ms: 0.1733
+  type: 'test'
+  ...
+# Subtest: invalid id text case 6 is rejected, not repaired
+ok 93 - invalid id text case 6 is rejected, not repaired
+  ---
+  duration_ms: 0.066
+  type: 'test'
+  ...
+# Subtest: invalid id text case 7 is rejected, not repaired
+ok 94 - invalid id text case 7 is rejected, not repaired
+  ---
+  duration_ms: 0.0536
+  type: 'test'
+  ...
+# Subtest: invalid title text case 0 is rejected, not repaired
+ok 95 - invalid title text case 0 is rejected, not repaired
+  ---
+  duration_ms: 0.0692
+  type: 'test'
+  ...
+# Subtest: invalid title text case 1 is rejected, not repaired
+ok 96 - invalid title text case 1 is rejected, not repaired
+  ---
+  duration_ms: 0.0636
+  type: 'test'
+  ...
+# Subtest: invalid title text case 2 is rejected, not repaired
+ok 97 - invalid title text case 2 is rejected, not repaired
+  ---
+  duration_ms: 0.0508
+  type: 'test'
+  ...
+# Subtest: invalid title text case 3 is rejected, not repaired
+ok 98 - invalid title text case 3 is rejected, not repaired
+  ---
+  duration_ms: 0.0485
+  type: 'test'
+  ...
+# Subtest: invalid title text case 4 is rejected, not repaired
+ok 99 - invalid title text case 4 is rejected, not repaired
+  ---
+  duration_ms: 0.0454
+  type: 'test'
+  ...
+# Subtest: invalid title text case 5 is rejected, not repaired
+ok 100 - invalid title text case 5 is rejected, not repaired
+  ---
+  duration_ms: 0.0463
+  type: 'test'
+  ...
+# Subtest: invalid title text case 6 is rejected, not repaired
+ok 101 - invalid title text case 6 is rejected, not repaired
+  ---
+  duration_ms: 0.0467
+  type: 'test'
+  ...
+# Subtest: invalid status text case 0 is rejected, not repaired
+ok 102 - invalid status text case 0 is rejected, not repaired
+  ---
+  duration_ms: 0.0525
+  type: 'test'
+  ...
+# Subtest: invalid status text case 1 is rejected, not repaired
+ok 103 - invalid status text case 1 is rejected, not repaired
+  ---
+  duration_ms: 0.0617
+  type: 'test'
+  ...
+# Subtest: invalid status text case 2 is rejected, not repaired
+ok 104 - invalid status text case 2 is rejected, not repaired
+  ---
+  duration_ms: 0.0586
+  type: 'test'
+  ...
+# Subtest: invalid status text case 3 is rejected, not repaired
+ok 105 - invalid status text case 3 is rejected, not repaired
+  ---
+  duration_ms: 0.0502
+  type: 'test'
+  ...
+# Subtest: invalid status text case 4 is rejected, not repaired
+ok 106 - invalid status text case 4 is rejected, not repaired
+  ---
+  duration_ms: 0.0497
+  type: 'test'
+  ...
+# Subtest: invalid status text case 5 is rejected, not repaired
+ok 107 - invalid status text case 5 is rejected, not repaired
+  ---
+  duration_ms: 0.0718
+  type: 'test'
+  ...
+# Subtest: invalid status text case 6 is rejected, not repaired
+ok 108 - invalid status text case 6 is rejected, not repaired
+  ---
+  duration_ms: 0.0662
+  type: 'test'
+  ...
+# Subtest: invalid type FULL_TEST is rejected without enum conversion
+ok 109 - invalid type FULL_TEST is rejected without enum conversion
+  ---
+  duration_ms: 0.1468
+  type: 'test'
+  ...
+# Subtest: invalid type MINI_TEST is rejected without enum conversion
+ok 110 - invalid type MINI_TEST is rejected without enum conversion
+  ---
+  duration_ms: 0.0578
+  type: 'test'
+  ...
+# Subtest: invalid type PRACTICE is rejected without enum conversion
+ok 111 - invalid type PRACTICE is rejected without enum conversion
+  ---
+  duration_ms: 0.0477
+  type: 'test'
+  ...
+# Subtest: invalid type MOCK_TEST is rejected without enum conversion
+ok 112 - invalid type MOCK_TEST is rejected without enum conversion
+  ---
+  duration_ms: 0.0466
+  type: 'test'
+  ...
+# Subtest: invalid type full is rejected without enum conversion
+ok 113 - invalid type full is rejected without enum conversion
+  ---
+  duration_ms: 0.0454
+  type: 'test'
+  ...
+# Subtest: invalid type  is rejected without enum conversion
+ok 114 - invalid type  is rejected without enum conversion
+  ---
+  duration_ms: 0.0478
+  type: 'test'
+  ...
+# Subtest: invalid type 1 is rejected without enum conversion
+ok 115 - invalid type 1 is rejected without enum conversion
+  ---
+  duration_ms: 0.0546
+  type: 'test'
+  ...
+# Subtest: invalid type [object Object] is rejected without enum conversion
+ok 116 - invalid type [object Object] is rejected without enum conversion
+  ---
+  duration_ms: 0.0967
+  type: 'test'
+  ...
+# Subtest: invalid type undefined is rejected without enum conversion
+ok 117 - invalid type undefined is rejected without enum conversion
+  ---
+  duration_ms: 0.0819
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 0 is rejected without coercion
+ok 118 - invalid durationSeconds numeric case 0 is rejected without coercion
+  ---
+  duration_ms: 0.1802
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 1 is rejected without coercion
+ok 119 - invalid durationSeconds numeric case 1 is rejected without coercion
+  ---
+  duration_ms: 0.0791
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 2 is rejected without coercion
+ok 120 - invalid durationSeconds numeric case 2 is rejected without coercion
+  ---
+  duration_ms: 0.1106
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 3 is rejected without coercion
+ok 121 - invalid durationSeconds numeric case 3 is rejected without coercion
+  ---
+  duration_ms: 0.0988
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 4 is rejected without coercion
+ok 122 - invalid durationSeconds numeric case 4 is rejected without coercion
+  ---
+  duration_ms: 0.0763
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 5 is rejected without coercion
+ok 123 - invalid durationSeconds numeric case 5 is rejected without coercion
+  ---
+  duration_ms: 0.0688
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 6 is rejected without coercion
+ok 124 - invalid durationSeconds numeric case 6 is rejected without coercion
+  ---
+  duration_ms: 0.0603
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 7 is rejected without coercion
+ok 125 - invalid durationSeconds numeric case 7 is rejected without coercion
+  ---
+  duration_ms: 0.0662
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 8 is rejected without coercion
+ok 126 - invalid durationSeconds numeric case 8 is rejected without coercion
+  ---
+  duration_ms: 0.0887
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 9 is rejected without coercion
+ok 127 - invalid durationSeconds numeric case 9 is rejected without coercion
+  ---
+  duration_ms: 0.0704
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 10 is rejected without coercion
+ok 128 - invalid durationSeconds numeric case 10 is rejected without coercion
+  ---
+  duration_ms: 0.0809
+  type: 'test'
+  ...
+# Subtest: invalid durationSeconds numeric case 11 is rejected without coercion
+ok 129 - invalid durationSeconds numeric case 11 is rejected without coercion
+  ---
+  duration_ms: 0.1207
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 0 is rejected without coercion
+ok 130 - invalid questionCount numeric case 0 is rejected without coercion
+  ---
+  duration_ms: 0.0859
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 1 is rejected without coercion
+ok 131 - invalid questionCount numeric case 1 is rejected without coercion
+  ---
+  duration_ms: 0.0675
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 2 is rejected without coercion
+ok 132 - invalid questionCount numeric case 2 is rejected without coercion
+  ---
+  duration_ms: 0.0709
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 3 is rejected without coercion
+ok 133 - invalid questionCount numeric case 3 is rejected without coercion
+  ---
+  duration_ms: 0.0566
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 4 is rejected without coercion
+ok 134 - invalid questionCount numeric case 4 is rejected without coercion
+  ---
+  duration_ms: 0.0564
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 5 is rejected without coercion
+ok 135 - invalid questionCount numeric case 5 is rejected without coercion
+  ---
+  duration_ms: 0.0599
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 6 is rejected without coercion
+ok 136 - invalid questionCount numeric case 6 is rejected without coercion
+  ---
+  duration_ms: 0.0514
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 7 is rejected without coercion
+ok 137 - invalid questionCount numeric case 7 is rejected without coercion
+  ---
+  duration_ms: 0.0469
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 8 is rejected without coercion
+ok 138 - invalid questionCount numeric case 8 is rejected without coercion
+  ---
+  duration_ms: 0.0583
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 9 is rejected without coercion
+ok 139 - invalid questionCount numeric case 9 is rejected without coercion
+  ---
+  duration_ms: 0.1559
+  type: 'test'
+  ...
+# Subtest: invalid questionCount numeric case 10 is rejected without coercion
+ok 140 - invalid questionCount numeric case 10 is rejected without coercion
+  ---
+  duration_ms: 0.118
+  type: 'test'
+  ...
+# Subtest: missing envelope key items is rejected
+ok 141 - missing envelope key items is rejected
+  ---
+  duration_ms: 0.2406
+  type: 'test'
+  ...
+# Subtest: missing envelope key total is rejected
+ok 142 - missing envelope key total is rejected
+  ---
+  duration_ms: 0.099
+  type: 'test'
+  ...
+# Subtest: missing envelope key page is rejected
+ok 143 - missing envelope key page is rejected
+  ---
+  duration_ms: 0.0971
+  type: 'test'
+  ...
+# Subtest: missing envelope key size is rejected
+ok 144 - missing envelope key size is rejected
+  ---
+  duration_ms: 0.0764
+  type: 'test'
+  ...
+# Subtest: additional envelope key catalogTotal is rejected
+ok 145 - additional envelope key catalogTotal is rejected
+  ---
+  duration_ms: 0.2283
+  type: 'test'
+  ...
+# Subtest: additional envelope key totalPages is rejected
+ok 146 - additional envelope key totalPages is rejected
+  ---
+  duration_ms: 0.1307
+  type: 'test'
+  ...
+# Subtest: additional envelope key data is rejected
+ok 147 - additional envelope key data is rejected
+  ---
+  duration_ms: 0.091
+  type: 'test'
+  ...
+# Subtest: additional envelope key statusCode is rejected
+ok 148 - additional envelope key statusCode is rejected
+  ---
+  duration_ms: 0.0768
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 0 is rejected
+ok 149 - invalid envelope total numeric case 0 is rejected
+  ---
+  duration_ms: 0.1897
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 1 is rejected
+ok 150 - invalid envelope total numeric case 1 is rejected
+  ---
+  duration_ms: 0.1434
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 2 is rejected
+ok 151 - invalid envelope total numeric case 2 is rejected
+  ---
+  duration_ms: 0.1058
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 3 is rejected
+ok 152 - invalid envelope total numeric case 3 is rejected
+  ---
+  duration_ms: 0.0693
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 4 is rejected
+ok 153 - invalid envelope total numeric case 4 is rejected
+  ---
+  duration_ms: 0.0906
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 5 is rejected
+ok 154 - invalid envelope total numeric case 5 is rejected
+  ---
+  duration_ms: 0.0773
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 6 is rejected
+ok 155 - invalid envelope total numeric case 6 is rejected
+  ---
+  duration_ms: 0.068
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 7 is rejected
+ok 156 - invalid envelope total numeric case 7 is rejected
+  ---
+  duration_ms: 0.0693
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 8 is rejected
+ok 157 - invalid envelope total numeric case 8 is rejected
+  ---
+  duration_ms: 0.0631
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 9 is rejected
+ok 158 - invalid envelope total numeric case 9 is rejected
+  ---
+  duration_ms: 0.0582
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 10 is rejected
+ok 159 - invalid envelope total numeric case 10 is rejected
+  ---
+  duration_ms: 0.0618
+  type: 'test'
+  ...
+# Subtest: invalid envelope total numeric case 11 is rejected
+ok 160 - invalid envelope total numeric case 11 is rejected
+  ---
+  duration_ms: 0.0713
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 0 is rejected
+ok 161 - invalid envelope page numeric case 0 is rejected
+  ---
+  duration_ms: 0.0844
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 1 is rejected
+ok 162 - invalid envelope page numeric case 1 is rejected
+  ---
+  duration_ms: 0.0667
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 2 is rejected
+ok 163 - invalid envelope page numeric case 2 is rejected
+  ---
+  duration_ms: 0.0595
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 3 is rejected
+ok 164 - invalid envelope page numeric case 3 is rejected
+  ---
+  duration_ms: 0.9818
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 4 is rejected
+ok 165 - invalid envelope page numeric case 4 is rejected
+  ---
+  duration_ms: 0.1097
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 5 is rejected
+ok 166 - invalid envelope page numeric case 5 is rejected
+  ---
+  duration_ms: 0.072
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 6 is rejected
+ok 167 - invalid envelope page numeric case 6 is rejected
+  ---
+  duration_ms: 0.06
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 7 is rejected
+ok 168 - invalid envelope page numeric case 7 is rejected
+  ---
+  duration_ms: 0.0563
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 8 is rejected
+ok 169 - invalid envelope page numeric case 8 is rejected
+  ---
+  duration_ms: 0.057
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 9 is rejected
+ok 170 - invalid envelope page numeric case 9 is rejected
+  ---
+  duration_ms: 0.1035
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 10 is rejected
+ok 171 - invalid envelope page numeric case 10 is rejected
+  ---
+  duration_ms: 0.0673
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 11 is rejected
+ok 172 - invalid envelope page numeric case 11 is rejected
+  ---
+  duration_ms: 0.0733
+  type: 'test'
+  ...
+# Subtest: invalid envelope page numeric case 12 is rejected
+ok 173 - invalid envelope page numeric case 12 is rejected
+  ---
+  duration_ms: 0.0595
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 0 is rejected
+ok 174 - invalid envelope size numeric case 0 is rejected
+  ---
+  duration_ms: 0.0656
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 1 is rejected
+ok 175 - invalid envelope size numeric case 1 is rejected
+  ---
+  duration_ms: 0.0631
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 2 is rejected
+ok 176 - invalid envelope size numeric case 2 is rejected
+  ---
+  duration_ms: 0.0592
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 3 is rejected
+ok 177 - invalid envelope size numeric case 3 is rejected
+  ---
+  duration_ms: 0.0522
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 4 is rejected
+ok 178 - invalid envelope size numeric case 4 is rejected
+  ---
+  duration_ms: 0.0515
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 5 is rejected
+ok 179 - invalid envelope size numeric case 5 is rejected
+  ---
+  duration_ms: 0.0743
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 6 is rejected
+ok 180 - invalid envelope size numeric case 6 is rejected
+  ---
+  duration_ms: 0.0593
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 7 is rejected
+ok 181 - invalid envelope size numeric case 7 is rejected
+  ---
+  duration_ms: 0.1417
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 8 is rejected
+ok 182 - invalid envelope size numeric case 8 is rejected
+  ---
+  duration_ms: 0.1172
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 9 is rejected
+ok 183 - invalid envelope size numeric case 9 is rejected
+  ---
+  duration_ms: 0.0746
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 10 is rejected
+ok 184 - invalid envelope size numeric case 10 is rejected
+  ---
+  duration_ms: 0.0551
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 11 is rejected
+ok 185 - invalid envelope size numeric case 11 is rejected
+  ---
+  duration_ms: 0.0581
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 12 is rejected
+ok 186 - invalid envelope size numeric case 12 is rejected
+  ---
+  duration_ms: 0.0562
+  type: 'test'
+  ...
+# Subtest: invalid envelope size numeric case 13 is rejected
+ok 187 - invalid envelope size numeric case 13 is rejected
+  ---
+  duration_ms: 0.0941
+  type: 'test'
+  ...
+# Subtest: invalid root case 0 is rejected by both parsers
+ok 188 - invalid root case 0 is rejected by both parsers
+  ---
+  duration_ms: 0.2936
+  type: 'test'
+  ...
+# Subtest: invalid root case 1 is rejected by both parsers
+ok 189 - invalid root case 1 is rejected by both parsers
+  ---
+  duration_ms: 0.0832
+  type: 'test'
+  ...
+# Subtest: invalid root case 2 is rejected by both parsers
+ok 190 - invalid root case 2 is rejected by both parsers
+  ---
+  duration_ms: 0.0653
+  type: 'test'
+  ...
+# Subtest: invalid root case 3 is rejected by both parsers
+ok 191 - invalid root case 3 is rejected by both parsers
+  ---
+  duration_ms: 0.0617
+  type: 'test'
+  ...
+# Subtest: invalid root case 4 is rejected by both parsers
+ok 192 - invalid root case 4 is rejected by both parsers
+  ---
+  duration_ms: 0.0542
+  type: 'test'
+  ...
+# Subtest: invalid root case 5 is rejected by both parsers
+ok 193 - invalid root case 5 is rejected by both parsers
+  ---
+  duration_ms: 0.0581
+  type: 'test'
+  ...
+# Subtest: invalid items container case 0 is rejected
+ok 194 - invalid items container case 0 is rejected
+  ---
+  duration_ms: 0.143
+  type: 'test'
+  ...
+# Subtest: invalid items container case 1 is rejected
+ok 195 - invalid items container case 1 is rejected
+  ---
+  duration_ms: 0.1233
+  type: 'test'
+  ...
+# Subtest: invalid items container case 2 is rejected
+ok 196 - invalid items container case 2 is rejected
+  ---
+  duration_ms: 0.0693
+  type: 'test'
+  ...
+# Subtest: invalid items container case 3 is rejected
+ok 197 - invalid items container case 3 is rejected
+  ---
+  duration_ms: 0.2234
+  type: 'test'
+  ...
+# Subtest: invalid items container case 4 is rejected
+ok 198 - invalid items container case 4 is rejected
+  ---
+  duration_ms: 0.0869
+  type: 'test'
+  ...
+# Subtest: invalid items container case 5 is rejected
+ok 199 - invalid items container case 5 is rejected
+  ---
+  duration_ms: 0.0675
+  type: 'test'
+  ...
+# Subtest: invalid list item case 0 is rejected at its path
+ok 200 - invalid list item case 0 is rejected at its path
+  ---
+  duration_ms: 0.1938
+  type: 'test'
+  ...
+# Subtest: invalid list item case 1 is rejected at its path
+ok 201 - invalid list item case 1 is rejected at its path
+  ---
+  duration_ms: 0.1458
+  type: 'test'
+  ...
+# Subtest: invalid list item case 2 is rejected at its path
+ok 202 - invalid list item case 2 is rejected at its path
+  ---
+  duration_ms: 0.1011
+  type: 'test'
+  ...
+# Subtest: invalid list item case 3 is rejected at its path
+ok 203 - invalid list item case 3 is rejected at its path
+  ---
+  duration_ms: 0.1116
+  type: 'test'
+  ...
+# Subtest: invalid list item case 4 is rejected at its path
+ok 204 - invalid list item case 4 is rejected at its path
+  ---
+  duration_ms: 0.1346
+  type: 'test'
+  ...
+# Subtest: invalid list item case 5 is rejected at its path
+ok 205 - invalid list item case 5 is rejected at its path
+  ---
+  duration_ms: 0.0664
+  type: 'test'
+  ...
+# Subtest: inherited required keys and sparse item arrays cannot bypass validation
+ok 206 - inherited required keys and sparse item arrays cannot bypass validation
+  ---
+  duration_ms: 0.1886
+  type: 'test'
+  ...
+# Subtest: empty items total=0 size=20 page=1 keeps response page; UI derives 1
+ok 207 - empty items total=0 size=20 page=1 keeps response page; UI derives 1
+  ---
+  duration_ms: 0.1923
+  type: 'test'
+  ...
+# Subtest: empty items total=0 size=1 page=8 keeps response page; UI derives 1
+ok 208 - empty items total=0 size=1 page=8 keeps response page; UI derives 1
+  ---
+  duration_ms: 0.1644
+  type: 'test'
+  ...
+# Subtest: empty items total=1 size=1 page=1 keeps response page; UI derives 1
+ok 209 - empty items total=1 size=1 page=1 keeps response page; UI derives 1
+  ---
+  duration_ms: 0.142
+  type: 'test'
+  ...
+# Subtest: empty items total=20 size=20 page=1 keeps response page; UI derives 1
+ok 210 - empty items total=20 size=20 page=1 keeps response page; UI derives 1
+  ---
+  duration_ms: 0.0918
+  type: 'test'
+  ...
+# Subtest: empty items total=21 size=20 page=1 keeps response page; UI derives 2
+ok 211 - empty items total=21 size=20 page=1 keeps response page; UI derives 2
+  ---
+  duration_ms: 0.0788
+  type: 'test'
+  ...
+# Subtest: empty items total=51 size=50 page=999 keeps response page; UI derives 2
+ok 212 - empty items total=51 size=50 page=999 keeps response page; UI derives 2
+  ---
+  duration_ms: 0.0707
+  type: 'test'
+  ...
+# Subtest: does not invent cross-field, uniqueness or safe-integer restrictions outside the contract
+ok 213 - does not invent cross-field, uniqueness or safe-integer restrictions outside the contract
+  ---
+  duration_ms: 0.1867
+  type: 'test'
+  ...
+# Subtest: API error body 400 never becomes successful metadata or a demo fallback
+ok 214 - API error body 400 never becomes successful metadata or a demo fallback
+  ---
+  duration_ms: 0.277
+  type: 'test'
+  ...
+# Subtest: API error body 401 never becomes successful metadata or a demo fallback
+ok 215 - API error body 401 never becomes successful metadata or a demo fallback
+  ---
+  duration_ms: 0.1261
+  type: 'test'
+  ...
+# Subtest: API error body 403 never becomes successful metadata or a demo fallback
+ok 216 - API error body 403 never becomes successful metadata or a demo fallback
+  ---
+  duration_ms: 0.0869
+  type: 'test'
+  ...
+# Subtest: API error body 404 never becomes successful metadata or a demo fallback
+ok 217 - API error body 404 never becomes successful metadata or a demo fallback
+  ---
+  duration_ms: 0.0812
+  type: 'test'
+  ...
+# Subtest: API error body 429 never becomes successful metadata or a demo fallback
+ok 218 - API error body 429 never becomes successful metadata or a demo fallback
+  ---
+  duration_ms: 0.0785
+  type: 'test'
+  ...
+# Subtest: API error body 500 never becomes successful metadata or a demo fallback
+ok 219 - API error body 500 never becomes successful metadata or a demo fallback
+  ---
+  duration_ms: 0.0793
+  type: 'test'
+  ...
+# Subtest: detail/list and demo-style wrappers cannot be mistaken for each other
+ok 220 - detail/list and demo-style wrappers cannot be mistaken for each other
+  ---
+  duration_ms: 0.3024
+  type: 'test'
+  ...
+# Subtest: factory has no fetcher default and rejects non-functions before any work
+ok 221 - factory has no fetcher default and rejects non-functions before any work
+  ---
+  duration_ms: 3.7887
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: {"items":[{"id":"demo-test-001","title":"Metadata minh hß╗ìa ┬╖ µùÑµ£¼Φ¬₧","type":"FULL","durationSeconds":61,"questionCount":0,"status":"DRAFT"},{"id":"demo-test-002","title":"Metadata minh hß╗ìa ┬╖ µùÑµ£¼Φ¬₧","type":"MINI","durationSeconds":123,"questionCount":null,"status":"CUSTOM_REVIEW"}],"total":2,"page":1,"size":20}
+ok 222 - transport 200 returns unknown JSON unchanged: {"items":[{"id":"demo-test-001","title":"Metadata minh hß╗ìa ┬╖ µùÑµ£¼Φ¬₧","type":"FULL","durationSeconds":61,"questionCount":0,"status":"DRAFT"},{"id":"demo-test-002","title":"Metadata minh hß╗ìa ┬╖ µùÑµ£¼Φ¬₧","type":"MINI","durationSeconds":123,"questionCount":null,"status":"CUSTOM_REVIEW"}],"total":2,"page":1,"size":20}
+  ---
+  duration_ms: 1.591
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: {"id":"demo-test-001","title":"Metadata minh hß╗ìa ┬╖ µùÑµ£¼Φ¬₧","type":"FULL","durationSeconds":61,"questionCount":0,"status":"DRAFT"}
+ok 223 - transport 200 returns unknown JSON unchanged: {"id":"demo-test-001","title":"Metadata minh hß╗ìa ┬╖ µùÑµ£¼Φ¬₧","type":"FULL","durationSeconds":61,"questionCount":0,"status":"DRAFT"}
+  ---
+  duration_ms: 0.2742
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: {"error":"Illustrative API error as JSON"}
+ok 224 - transport 200 returns unknown JSON unchanged: {"error":"Illustrative API error as JSON"}
+  ---
+  duration_ms: 0.2841
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: ["JSON array"]
+ok 225 - transport 200 returns unknown JSON unchanged: ["JSON array"]
+  ---
+  duration_ms: 0.2628
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: "JSON string"
+ok 226 - transport 200 returns unknown JSON unchanged: "JSON string"
+  ---
+  duration_ms: 0.3155
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: 0
+ok 227 - transport 200 returns unknown JSON unchanged: 0
+  ---
+  duration_ms: 0.2074
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: false
+ok 228 - transport 200 returns unknown JSON unchanged: false
+  ---
+  duration_ms: 0.1602
+  type: 'test'
+  ...
+# Subtest: transport 200 returns unknown JSON unchanged: null
+ok 229 - transport 200 returns unknown JSON unchanged: null
+  ---
+  duration_ms: 0.1954
+  type: 'test'
+  ...
+# Subtest: transport calls json as a response method and keeps status read before JSON
+ok 230 - transport calls json as a response method and keeps status read before JSON
+  ---
+  duration_ms: 0.5811
+  type: 'test'
+  ...
+# Subtest: HTTP 201 skips JSON and retains HTTP/not-found decisions in repository
+ok 231 - HTTP 201 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 1.2266
+  type: 'test'
+  ...
+# Subtest: HTTP 204 skips JSON and retains HTTP/not-found decisions in repository
+ok 232 - HTTP 204 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.2454
+  type: 'test'
+  ...
+# Subtest: HTTP 301 skips JSON and retains HTTP/not-found decisions in repository
+ok 233 - HTTP 301 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.1761
+  type: 'test'
+  ...
+# Subtest: HTTP 302 skips JSON and retains HTTP/not-found decisions in repository
+ok 234 - HTTP 302 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.169
+  type: 'test'
+  ...
+# Subtest: HTTP 307 skips JSON and retains HTTP/not-found decisions in repository
+ok 235 - HTTP 307 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.1809
+  type: 'test'
+  ...
+# Subtest: HTTP 308 skips JSON and retains HTTP/not-found decisions in repository
+ok 236 - HTTP 308 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.2763
+  type: 'test'
+  ...
+# Subtest: HTTP 400 skips JSON and retains HTTP/not-found decisions in repository
+ok 237 - HTTP 400 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.3304
+  type: 'test'
+  ...
+# Subtest: HTTP 401 skips JSON and retains HTTP/not-found decisions in repository
+ok 238 - HTTP 401 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.2717
+  type: 'test'
+  ...
+# Subtest: HTTP 403 skips JSON and retains HTTP/not-found decisions in repository
+ok 239 - HTTP 403 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.3373
+  type: 'test'
+  ...
+# Subtest: HTTP 404 skips JSON and retains HTTP/not-found decisions in repository
+ok 240 - HTTP 404 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.3664
+  type: 'test'
+  ...
+# Subtest: HTTP 429 skips JSON and retains HTTP/not-found decisions in repository
+ok 241 - HTTP 429 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.342
+  type: 'test'
+  ...
+# Subtest: HTTP 500 skips JSON and retains HTTP/not-found decisions in repository
+ok 242 - HTTP 500 skips JSON and retains HTTP/not-found decisions in repository
+  ---
+  duration_ms: 0.278
+  type: 'test'
+  ...
+# Subtest: non-200 does not even access the json property
+ok 243 - non-200 does not even access the json property
+  ---
+  duration_ms: 0.3557
+  type: 'test'
+  ...
+# Subtest: full list chain keeps nullable/count/status/duration values and API page without UI fields
+ok 244 - full list chain keeps nullable/count/status/duration values and API page without UI fields
+  ---
+  duration_ms: 1.0872
+  type: 'test'
+  ...
+# Subtest: full query chain FULL/DRAFT preserves encoding and five-parameter allowlist
+ok 245 - full query chain FULL/DRAFT preserves encoding and five-parameter allowlist
+  ---
+  duration_ms: 0.6021
+  type: 'test'
+  ...
+# Subtest: full query chain MINI/PUBLISHED preserves encoding and five-parameter allowlist
+ok 246 - full query chain MINI/PUBLISHED preserves encoding and five-parameter allowlist
+  ---
+  duration_ms: 0.2525
+  type: 'test'
+  ...
+# Subtest: full query chain /ARCHIVED preserves encoding and five-parameter allowlist
+ok 247 - full query chain /ARCHIVED preserves encoding and five-parameter allowlist
+  ---
+  duration_ms: 0.3056
+  type: 'test'
+  ...
+# Subtest: full query chain MINI/ preserves encoding and five-parameter allowlist
+ok 248 - full query chain MINI/ preserves encoding and five-parameter allowlist
+  ---
+  duration_ms: 0.2623
+  type: 'test'
+  ...
+# Subtest: full detail chain preserves opaque ID ─æß╗ü µùÑµ£¼Φ¬₧ ≡ƒÜÇ without another encoding step
+ok 249 - full detail chain preserves opaque ID ─æß╗ü µùÑµ£¼Φ¬₧ ≡ƒÜÇ without another encoding step
+  ---
+  duration_ms: 0.4871
+  type: 'test'
+  ...
+# Subtest: full detail chain preserves opaque ID a/b?c\#d%e without another encoding step
+ok 250 - full detail chain preserves opaque ID a/b?c\#d%e without another encoding step
+  ---
+  duration_ms: 0.1275
+  type: 'test'
+  ...
+# Subtest: full detail chain preserves opaque ID %2F without another encoding step
+ok 251 - full detail chain preserves opaque ID %2F without another encoding step
+  ---
+  duration_ms: 0.1139
+  type: 'test'
+  ...
+# Subtest: full detail chain preserves opaque ID %252F without another encoding step
+ok 252 - full detail chain preserves opaque ID %252F without another encoding step
+  ---
+  duration_ms: 0.1106
+  type: 'test'
+  ...
+# Subtest: full detail chain preserves opaque ID  /?\#% literal %2F  without another encoding step
+ok 253 - full detail chain preserves opaque ID  /?\#% literal %2F  without another encoding step
+  ---
+  duration_ms: 0.1435
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid read body reaches adapter error $.title
+ok 254 - JSON-decoded invalid read body reaches adapter error $.title
+  ---
+  duration_ms: 0.3553
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid read body reaches adapter error $.questionCount
+ok 255 - JSON-decoded invalid read body reaches adapter error $.questionCount
+  ---
+  duration_ms: 0.2261
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid read body reaches adapter error $.extra
+ok 256 - JSON-decoded invalid read body reaches adapter error $.extra
+  ---
+  duration_ms: 0.1502
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid read body reaches adapter error $.id
+ok 257 - JSON-decoded invalid read body reaches adapter error $.id
+  ---
+  duration_ms: 0.128
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid read body reaches adapter error $.id
+ok 258 - JSON-decoded invalid read body reaches adapter error $.id
+  ---
+  duration_ms: 0.0919
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid list body reaches adapter error $.items[0].type
+ok 259 - JSON-decoded invalid list body reaches adapter error $.items[0].type
+  ---
+  duration_ms: 0.1504
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid list body reaches adapter error $.catalogTotal
+ok 260 - JSON-decoded invalid list body reaches adapter error $.catalogTotal
+  ---
+  duration_ms: 0.1204
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid list body reaches adapter error $.items
+ok 261 - JSON-decoded invalid list body reaches adapter error $.items
+  ---
+  duration_ms: 0.081
+  type: 'test'
+  ...
+# Subtest: JSON-decoded invalid list body reaches adapter error $
+ok 262 - JSON-decoded invalid list body reaches adapter error $
+  ---
+  duration_ms: 0.1105
+  type: 'test'
+  ...
+# Subtest: fetch-reject {} keeps original rejection through repository without retry
+ok 263 - fetch-reject {} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.6147
+  type: 'test'
+  ...
+# Subtest: fetch-reject {"status":404} keeps original rejection through repository without retry
+ok 264 - fetch-reject {"status":404} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.409
+  type: 'test'
+  ...
+# Subtest: fetch-reject "offline" keeps original rejection through repository without retry
+ok 265 - fetch-reject "offline" keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.2219
+  type: 'test'
+  ...
+# Subtest: fetch-reject null keeps original rejection through repository without retry
+ok 266 - fetch-reject null keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.172
+  type: 'test'
+  ...
+# Subtest: fetch-reject undefined keeps original rejection through repository without retry
+ok 267 - fetch-reject undefined keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.1705
+  type: 'test'
+  ...
+# Subtest: fetch-throw {} keeps original rejection through repository without retry
+ok 268 - fetch-throw {} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.2011
+  type: 'test'
+  ...
+# Subtest: fetch-throw {"status":404} keeps original rejection through repository without retry
+ok 269 - fetch-throw {"status":404} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.4832
+  type: 'test'
+  ...
+# Subtest: fetch-throw "offline" keeps original rejection through repository without retry
+ok 270 - fetch-throw "offline" keeps original rejection through repository without retry
+  ---
+  duration_ms: 1.7149
+  type: 'test'
+  ...
+# Subtest: fetch-throw null keeps original rejection through repository without retry
+ok 271 - fetch-throw null keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.1601
+  type: 'test'
+  ...
+# Subtest: fetch-throw undefined keeps original rejection through repository without retry
+ok 272 - fetch-throw undefined keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.1945
+  type: 'test'
+  ...
+# Subtest: json-reject {} keeps original rejection through repository without retry
+ok 273 - json-reject {} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.3676
+  type: 'test'
+  ...
+# Subtest: json-reject {"status":404} keeps original rejection through repository without retry
+ok 274 - json-reject {"status":404} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.259
+  type: 'test'
+  ...
+# Subtest: json-reject "offline" keeps original rejection through repository without retry
+ok 275 - json-reject "offline" keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.3184
+  type: 'test'
+  ...
+# Subtest: json-reject null keeps original rejection through repository without retry
+ok 276 - json-reject null keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.1583
+  type: 'test'
+  ...
+# Subtest: json-reject undefined keeps original rejection through repository without retry
+ok 277 - json-reject undefined keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.1149
+  type: 'test'
+  ...
+# Subtest: json-throw {} keeps original rejection through repository without retry
+ok 278 - json-throw {} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.0988
+  type: 'test'
+  ...
+# Subtest: json-throw {"status":404} keeps original rejection through repository without retry
+ok 279 - json-throw {"status":404} keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.086
+  type: 'test'
+  ...
+# Subtest: json-throw "offline" keeps original rejection through repository without retry
+ok 280 - json-throw "offline" keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.108
+  type: 'test'
+  ...
+# Subtest: json-throw null keeps original rejection through repository without retry
+ok 281 - json-throw null keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.1289
+  type: 'test'
+  ...
+# Subtest: json-throw undefined keeps original rejection through repository without retry
+ok 282 - json-throw undefined keeps original rejection through repository without retry
+  ---
+  duration_ms: 0.1093
+  type: 'test'
+  ...
+# Subtest: query and ID validation reject before the injected fetcher is called
+ok 283 - query and ID validation reject before the injected fetcher is called
+  ---
+  duration_ms: 0.7599
+  type: 'test'
+  ...
+# Subtest: factories keep injected implementations separate and repeated calls do not cache
+ok 284 - factories keep injected implementations separate and repeated calls do not cache
+  ---
+  duration_ms: 0.2926
+  type: 'test'
+  ...
+# Subtest: concurrent in-memory reads may finish out of order without sharing response state
+ok 285 - concurrent in-memory reads may finish out of order without sharing response state
+  ---
+  duration_ms: 0.3206
+  type: 'test'
+  ...
+# Subtest: normalized UI defaults are compatible, omit empty filters and always send page/size
+ok 286 - normalized UI defaults are compatible, omit empty filters and always send page/size
+  ---
+  duration_ms: 4.6372
+  type: 'test'
+  ...
+# Subtest: filter combination type=empty status=empty is projected
+ok 287 - filter combination type=empty status=empty is projected
+  ---
+  duration_ms: 0.6156
+  type: 'test'
+  ...
+# Subtest: filter combination type=empty status=DRAFT is projected
+ok 288 - filter combination type=empty status=DRAFT is projected
+  ---
+  duration_ms: 0.2429
+  type: 'test'
+  ...
+# Subtest: filter combination type=empty status=PUBLISHED is projected
+ok 289 - filter combination type=empty status=PUBLISHED is projected
+  ---
+  duration_ms: 0.1965
+  type: 'test'
+  ...
+# Subtest: filter combination type=empty status=ARCHIVED is projected
+ok 290 - filter combination type=empty status=ARCHIVED is projected
+  ---
+  duration_ms: 0.3284
+  type: 'test'
+  ...
+# Subtest: filter combination type=FULL status=empty is projected
+ok 291 - filter combination type=FULL status=empty is projected
+  ---
+  duration_ms: 0.3002
+  type: 'test'
+  ...
+# Subtest: filter combination type=FULL status=DRAFT is projected
+ok 292 - filter combination type=FULL status=DRAFT is projected
+  ---
+  duration_ms: 0.2571
+  type: 'test'
+  ...
+# Subtest: filter combination type=FULL status=PUBLISHED is projected
+ok 293 - filter combination type=FULL status=PUBLISHED is projected
+  ---
+  duration_ms: 0.2428
+  type: 'test'
+  ...
+# Subtest: filter combination type=FULL status=ARCHIVED is projected
+ok 294 - filter combination type=FULL status=ARCHIVED is projected
+  ---
+  duration_ms: 0.3241
+  type: 'test'
+  ...
+# Subtest: filter combination type=MINI status=empty is projected
+ok 295 - filter combination type=MINI status=empty is projected
+  ---
+  duration_ms: 0.4966
+  type: 'test'
+  ...
+# Subtest: filter combination type=MINI status=DRAFT is projected
+ok 296 - filter combination type=MINI status=DRAFT is projected
+  ---
+  duration_ms: 0.2886
+  type: 'test'
+  ...
+# Subtest: filter combination type=MINI status=PUBLISHED is projected
+ok 297 - filter combination type=MINI status=PUBLISHED is projected
+  ---
+  duration_ms: 0.206
+  type: 'test'
+  ...
+# Subtest: filter combination type=MINI status=ARCHIVED is projected
+ok 298 - filter combination type=MINI status=ARCHIVED is projected
+  ---
+  duration_ms: 0.1668
+  type: 'test'
+  ...
+# Subtest: pagination preserves page=1 size=1 without catalog/page-count inference
+ok 299 - pagination preserves page=1 size=1 without catalog/page-count inference
+  ---
+  duration_ms: 0.3172
+  type: 'test'
+  ...
+# Subtest: pagination preserves page=2 size=3 without catalog/page-count inference
+ok 300 - pagination preserves page=2 size=3 without catalog/page-count inference
+  ---
+  duration_ms: 0.256
+  type: 'test'
+  ...
+# Subtest: pagination preserves page=999 size=50 without catalog/page-count inference
+ok 301 - pagination preserves page=999 size=50 without catalog/page-count inference
+  ---
+  duration_ms: 0.1729
+  type: 'test'
+  ...
+# Subtest: pagination preserves page=9007199254740991 size=20 without catalog/page-count inference
+ok 302 - pagination preserves page=9007199254740991 size=20 without catalog/page-count inference
+  ---
+  duration_ms: 0.2215
+  type: 'test'
+  ...
+# Subtest: keyword ─Éß╗ü thi tß╗òng hß╗úp survives serialization and parser round trip
+ok 303 - keyword ─Éß╗ü thi tß╗òng hß╗úp survives serialization and parser round trip
+  ---
+  duration_ms: 0.4253
+  type: 'test'
+  ...
+# Subtest: keyword ─Éß╗Ç thi  µùÑµ£¼Φ¬₧ ≡ƒÜÇ survives serialization and parser round trip
+ok 304 - keyword ─Éß╗Ç thi  µùÑµ£¼Φ¬₧ ≡ƒÜÇ survives serialization and parser round trip
+  ---
+  duration_ms: 0.2514
+  type: 'test'
+  ...
+# Subtest: keyword A&B survives serialization and parser round trip
+ok 305 - keyword A&B survives serialization and parser round trip
+  ---
+  duration_ms: 0.1901
+  type: 'test'
+  ...
+# Subtest: keyword A+B survives serialization and parser round trip
+ok 306 - keyword A+B survives serialization and parser round trip
+  ---
+  duration_ms: 0.2921
+  type: 'test'
+  ...
+# Subtest: keyword A?B\#C/D survives serialization and parser round trip
+ok 307 - keyword A?B\#C/D survives serialization and parser round trip
+  ---
+  duration_ms: 0.2397
+  type: 'test'
+  ...
+# Subtest: keyword 100% ─æ├║ng survives serialization and parser round trip
+ok 308 - keyword 100% ─æ├║ng survives serialization and parser round trip
+  ---
+  duration_ms: 0.3214
+  type: 'test'
+  ...
+# Subtest: keyword literal %2F %26 %25 survives serialization and parser round trip
+ok 309 - keyword literal %2F %26 %25 survives serialization and parser round trip
+  ---
+  duration_ms: 0.2126
+  type: 'test'
+  ...
+# Subtest: keyword A & B + C ? \# / % µùÑµ£¼Φ¬₧ survives serialization and parser round trip
+ok 310 - keyword A & B + C ? \# / % µùÑµ£¼Φ¬₧ survives serialization and parser round trip
+  ---
+  duration_ms: 0.2422
+  type: 'test'
+  ...
+# Subtest: standard encoding distinguishes literal plus, percent text, separators and space
+ok 311 - standard encoding distinguishes literal plus, percent text, separators and space
+  ---
+  duration_ms: 0.1932
+  type: 'test'
+  ...
+# Subtest: mapper does not trim, lowercase, normalize Unicode or decode its input
+ok 312 - mapper does not trim, lowercase, normalize Unicode or decode its input
+  ---
+  duration_ms: 0.218
+  type: 'test'
+  ...
+# Subtest: extra UI fields are ignored without reading them or mutating frozen input
+ok 313 - extra UI fields are ignored without reading them or mutating frozen input
+  ---
+  duration_ms: 0.6679
+  type: 'test'
+  ...
+# Subtest: both functions leave valid and invalid deeply frozen fixtures intact
+ok 314 - both functions leave valid and invalid deeply frozen fixtures intact
+  ---
+  duration_ms: 1.0483
+  type: 'test'
+  ...
+# Subtest: demo parser owns URL normalization; mapper only projects its normalized query
+ok 315 - demo parser owns URL normalization; mapper only projects its normalized query
+  ---
+  duration_ms: 0.542
+  type: 'test'
+  ...
+# Subtest: existing parser normalizes invalid/repeated URL values before mapping; mapper never does
+ok 316 - existing parser normalizes invalid/repeated URL values before mapping; mapper never does
+  ---
+  duration_ms: 0.5132
+  type: 'test'
+  ...
+# Subtest: unknown response status remains valid display data but is rejected as a query filter
+ok 317 - unknown response status remains valid display data but is rejected as a query filter
+  ---
+  duration_ms: 0.9597
+  type: 'test'
+  ...
+# Subtest: missing normalized query key keyword fails instead of supplying defaults
+ok 318 - missing normalized query key keyword fails instead of supplying defaults
+  ---
+  duration_ms: 0.3927
+  type: 'test'
+  ...
+# Subtest: missing normalized query key type fails instead of supplying defaults
+ok 319 - missing normalized query key type fails instead of supplying defaults
+  ---
+  duration_ms: 0.2308
+  type: 'test'
+  ...
+# Subtest: missing normalized query key status fails instead of supplying defaults
+ok 320 - missing normalized query key status fails instead of supplying defaults
+  ---
+  duration_ms: 0.1676
+  type: 'test'
+  ...
+# Subtest: missing normalized query key page fails instead of supplying defaults
+ok 321 - missing normalized query key page fails instead of supplying defaults
+  ---
+  duration_ms: 0.1804
+  type: 'test'
+  ...
+# Subtest: missing normalized query key size fails instead of supplying defaults
+ok 322 - missing normalized query key size fails instead of supplying defaults
+  ---
+  duration_ms: 0.1679
+  type: 'test'
+  ...
+# Subtest: wrong keyword type case 0 fails
+ok 323 - wrong keyword type case 0 fails
+  ---
+  duration_ms: 0.2404
+  type: 'test'
+  ...
+# Subtest: wrong keyword type case 1 fails
+ok 324 - wrong keyword type case 1 fails
+  ---
+  duration_ms: 0.1615
+  type: 'test'
+  ...
+# Subtest: wrong keyword type case 2 fails
+ok 325 - wrong keyword type case 2 fails
+  ---
+  duration_ms: 0.1531
+  type: 'test'
+  ...
+# Subtest: wrong keyword type case 3 fails
+ok 326 - wrong keyword type case 3 fails
+  ---
+  duration_ms: 0.16
+  type: 'test'
+  ...
+# Subtest: wrong keyword type case 4 fails
+ok 327 - wrong keyword type case 4 fails
+  ---
+  duration_ms: 0.1789
+  type: 'test'
+  ...
+# Subtest: wrong keyword type case 5 fails
+ok 328 - wrong keyword type case 5 fails
+  ---
+  duration_ms: 0.1599
+  type: 'test'
+  ...
+# Subtest: wrong keyword type case 6 fails
+ok 329 - wrong keyword type case 6 fails
+  ---
+  duration_ms: 0.1617
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 0 fails without enum repair
+ok 330 - invalid type filter case 0 fails without enum repair
+  ---
+  duration_ms: 0.8328
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 1 fails without enum repair
+ok 331 - invalid type filter case 1 fails without enum repair
+  ---
+  duration_ms: 0.3214
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 2 fails without enum repair
+ok 332 - invalid type filter case 2 fails without enum repair
+  ---
+  duration_ms: 0.1625
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 3 fails without enum repair
+ok 333 - invalid type filter case 3 fails without enum repair
+  ---
+  duration_ms: 0.1589
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 4 fails without enum repair
+ok 334 - invalid type filter case 4 fails without enum repair
+  ---
+  duration_ms: 0.0867
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 5 fails without enum repair
+ok 335 - invalid type filter case 5 fails without enum repair
+  ---
+  duration_ms: 0.0731
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 6 fails without enum repair
+ok 336 - invalid type filter case 6 fails without enum repair
+  ---
+  duration_ms: 0.0729
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 7 fails without enum repair
+ok 337 - invalid type filter case 7 fails without enum repair
+  ---
+  duration_ms: 0.0681
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 8 fails without enum repair
+ok 338 - invalid type filter case 8 fails without enum repair
+  ---
+  duration_ms: 1.32
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 9 fails without enum repair
+ok 339 - invalid type filter case 9 fails without enum repair
+  ---
+  duration_ms: 0.1308
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 10 fails without enum repair
+ok 340 - invalid type filter case 10 fails without enum repair
+  ---
+  duration_ms: 0.0946
+  type: 'test'
+  ...
+# Subtest: invalid type filter case 11 fails without enum repair
+ok 341 - invalid type filter case 11 fails without enum repair
+  ---
+  duration_ms: 0.075
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 0 fails without fallback or conversion
+ok 342 - invalid status filter case 0 fails without fallback or conversion
+  ---
+  duration_ms: 0.1959
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 1 fails without fallback or conversion
+ok 343 - invalid status filter case 1 fails without fallback or conversion
+  ---
+  duration_ms: 0.1284
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 2 fails without fallback or conversion
+ok 344 - invalid status filter case 2 fails without fallback or conversion
+  ---
+  duration_ms: 0.0848
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 3 fails without fallback or conversion
+ok 345 - invalid status filter case 3 fails without fallback or conversion
+  ---
+  duration_ms: 0.1218
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 4 fails without fallback or conversion
+ok 346 - invalid status filter case 4 fails without fallback or conversion
+  ---
+  duration_ms: 0.0985
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 5 fails without fallback or conversion
+ok 347 - invalid status filter case 5 fails without fallback or conversion
+  ---
+  duration_ms: 0.0842
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 6 fails without fallback or conversion
+ok 348 - invalid status filter case 6 fails without fallback or conversion
+  ---
+  duration_ms: 0.0671
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 7 fails without fallback or conversion
+ok 349 - invalid status filter case 7 fails without fallback or conversion
+  ---
+  duration_ms: 0.136
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 8 fails without fallback or conversion
+ok 350 - invalid status filter case 8 fails without fallback or conversion
+  ---
+  duration_ms: 0.1061
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 9 fails without fallback or conversion
+ok 351 - invalid status filter case 9 fails without fallback or conversion
+  ---
+  duration_ms: 0.0763
+  type: 'test'
+  ...
+# Subtest: invalid status filter case 10 fails without fallback or conversion
+ok 352 - invalid status filter case 10 fails without fallback or conversion
+  ---
+  duration_ms: 0.068
+  type: 'test'
+  ...
+# Subtest: invalid page case 0 fails without numeric coercion or clamp
+ok 353 - invalid page case 0 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.136
+  type: 'test'
+  ...
+# Subtest: invalid page case 1 fails without numeric coercion or clamp
+ok 354 - invalid page case 1 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1241
+  type: 'test'
+  ...
+# Subtest: invalid page case 2 fails without numeric coercion or clamp
+ok 355 - invalid page case 2 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1204
+  type: 'test'
+  ...
+# Subtest: invalid page case 3 fails without numeric coercion or clamp
+ok 356 - invalid page case 3 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0701
+  type: 'test'
+  ...
+# Subtest: invalid page case 4 fails without numeric coercion or clamp
+ok 357 - invalid page case 4 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0602
+  type: 'test'
+  ...
+# Subtest: invalid page case 5 fails without numeric coercion or clamp
+ok 358 - invalid page case 5 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0575
+  type: 'test'
+  ...
+# Subtest: invalid page case 6 fails without numeric coercion or clamp
+ok 359 - invalid page case 6 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0594
+  type: 'test'
+  ...
+# Subtest: invalid page case 7 fails without numeric coercion or clamp
+ok 360 - invalid page case 7 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.061
+  type: 'test'
+  ...
+# Subtest: invalid page case 8 fails without numeric coercion or clamp
+ok 361 - invalid page case 8 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0627
+  type: 'test'
+  ...
+# Subtest: invalid page case 9 fails without numeric coercion or clamp
+ok 362 - invalid page case 9 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0674
+  type: 'test'
+  ...
+# Subtest: invalid page case 10 fails without numeric coercion or clamp
+ok 363 - invalid page case 10 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0628
+  type: 'test'
+  ...
+# Subtest: invalid page case 11 fails without numeric coercion or clamp
+ok 364 - invalid page case 11 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0589
+  type: 'test'
+  ...
+# Subtest: invalid page case 12 fails without numeric coercion or clamp
+ok 365 - invalid page case 12 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0779
+  type: 'test'
+  ...
+# Subtest: invalid page case 13 fails without numeric coercion or clamp
+ok 366 - invalid page case 13 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0574
+  type: 'test'
+  ...
+# Subtest: invalid size case 0 fails without numeric coercion or clamp
+ok 367 - invalid size case 0 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0783
+  type: 'test'
+  ...
+# Subtest: invalid size case 1 fails without numeric coercion or clamp
+ok 368 - invalid size case 1 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0618
+  type: 'test'
+  ...
+# Subtest: invalid size case 2 fails without numeric coercion or clamp
+ok 369 - invalid size case 2 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1005
+  type: 'test'
+  ...
+# Subtest: invalid size case 3 fails without numeric coercion or clamp
+ok 370 - invalid size case 3 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1205
+  type: 'test'
+  ...
+# Subtest: invalid size case 4 fails without numeric coercion or clamp
+ok 371 - invalid size case 4 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1605
+  type: 'test'
+  ...
+# Subtest: invalid size case 5 fails without numeric coercion or clamp
+ok 372 - invalid size case 5 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1459
+  type: 'test'
+  ...
+# Subtest: invalid size case 6 fails without numeric coercion or clamp
+ok 373 - invalid size case 6 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1341
+  type: 'test'
+  ...
+# Subtest: invalid size case 7 fails without numeric coercion or clamp
+ok 374 - invalid size case 7 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1267
+  type: 'test'
+  ...
+# Subtest: invalid size case 8 fails without numeric coercion or clamp
+ok 375 - invalid size case 8 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0827
+  type: 'test'
+  ...
+# Subtest: invalid size case 9 fails without numeric coercion or clamp
+ok 376 - invalid size case 9 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0636
+  type: 'test'
+  ...
+# Subtest: invalid size case 10 fails without numeric coercion or clamp
+ok 377 - invalid size case 10 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0641
+  type: 'test'
+  ...
+# Subtest: invalid size case 11 fails without numeric coercion or clamp
+ok 378 - invalid size case 11 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.0617
+  type: 'test'
+  ...
+# Subtest: invalid size case 12 fails without numeric coercion or clamp
+ok 379 - invalid size case 12 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.2056
+  type: 'test'
+  ...
+# Subtest: invalid size case 13 fails without numeric coercion or clamp
+ok 380 - invalid size case 13 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.1691
+  type: 'test'
+  ...
+# Subtest: invalid size case 14 fails without numeric coercion or clamp
+ok 381 - invalid size case 14 fails without numeric coercion or clamp
+  ---
+  duration_ms: 0.126
+  type: 'test'
+  ...
+# Subtest: invalid input root case 0 is not a normalized query
+ok 382 - invalid input root case 0 is not a normalized query
+  ---
+  duration_ms: 0.1678
+  type: 'test'
+  ...
+# Subtest: invalid input root case 1 is not a normalized query
+ok 383 - invalid input root case 1 is not a normalized query
+  ---
+  duration_ms: 0.1084
+  type: 'test'
+  ...
+# Subtest: invalid input root case 2 is not a normalized query
+ok 384 - invalid input root case 2 is not a normalized query
+  ---
+  duration_ms: 0.0686
+  type: 'test'
+  ...
+# Subtest: invalid input root case 3 is not a normalized query
+ok 385 - invalid input root case 3 is not a normalized query
+  ---
+  duration_ms: 0.061
+  type: 'test'
+  ...
+# Subtest: invalid input root case 4 is not a normalized query
+ok 386 - invalid input root case 4 is not a normalized query
+  ---
+  duration_ms: 0.0762
+  type: 'test'
+  ...
+# Subtest: invalid input root case 5 is not a normalized query
+ok 387 - invalid input root case 5 is not a normalized query
+  ---
+  duration_ms: 0.0603
+  type: 'test'
+  ...
+# Subtest: invalid input root case 6 is not a normalized query
+ok 388 - invalid input root case 6 is not a normalized query
+  ---
+  duration_ms: 0.1624
+  type: 'test'
+  ...
+# Subtest: inherited query keys do not masquerade as the normalized parser result
+ok 389 - inherited query keys do not masquerade as the normalized parser result
+  ---
+  duration_ms: 0.3901
+  type: 'test'
+  ...
+# Subtest: factory requires a transport and independent factories use their own injected GET
+ok 390 - factory requires a transport and independent factories use their own injected GET
+  ---
+  duration_ms: 6.5492
+  type: 'test'
+  ...
+# Subtest: list 200 composes mapper, GET stub and adapter without UI fields or input mutations
+ok 391 - list 200 composes mapper, GET stub and adapter without UI fields or input mutations
+  ---
+  duration_ms: 1.4991
+  type: 'test'
+  ...
+# Subtest: list 200 keeps nullable metadata rather than inferring values from another item
+ok 392 - list 200 keeps nullable metadata rather than inferring values from another item
+  ---
+  duration_ms: 0.5323
+  type: 'test'
+  ...
+# Subtest: detail 200 preserves explicit metadata {"title":null,"type":null,"durationSeconds":null,"questionCount":null,"status":null}
+ok 393 - detail 200 preserves explicit metadata {"title":null,"type":null,"durationSeconds":null,"questionCount":null,"status":null}
+  ---
+  duration_ms: 0.4671
+  type: 'test'
+  ...
+# Subtest: detail 200 preserves explicit metadata {"type":"FULL","durationSeconds":61,"questionCount":0,"status":"CUSTOM_REVIEW"}
+ok 394 - detail 200 preserves explicit metadata {"type":"FULL","durationSeconds":61,"questionCount":0,"status":"CUSTOM_REVIEW"}
+  ---
+  duration_ms: 0.2101
+  type: 'test'
+  ...
+# Subtest: detail 200 preserves explicit metadata {"type":"MINI","durationSeconds":123,"questionCount":2,"status":" PUBLISHED "}
+ok 395 - detail 200 preserves explicit metadata {"type":"MINI","durationSeconds":123,"questionCount":2,"status":" PUBLISHED "}
+  ---
+  duration_ms: 0.1579
+  type: 'test'
+  ...
+# Subtest: list keeps API pagination without clamping or extra cross-field rules: 1/0
+ok 396 - list keeps API pagination without clamping or extra cross-field rules: 1/0
+  ---
+  duration_ms: 0.299
+  type: 'test'
+  ...
+# Subtest: list keeps API pagination without clamping or extra cross-field rules: 999/7
+ok 397 - list keeps API pagination without clamping or extra cross-field rules: 999/7
+  ---
+  duration_ms: 0.2278
+  type: 'test'
+  ...
+# Subtest: list keeps API pagination without clamping or extra cross-field rules: 42/2
+ok 398 - list keeps API pagination without clamping or extra cross-field rules: 42/2
+  ---
+  duration_ms: 0.2471
+  type: 'test'
+  ...
+# Subtest: query filters FULL/DRAFT preserve Unicode and encode only five parameters
+ok 399 - query filters FULL/DRAFT preserve Unicode and encode only five parameters
+  ---
+  duration_ms: 0.8476
+  type: 'test'
+  ...
+# Subtest: query filters MINI/PUBLISHED preserve Unicode and encode only five parameters
+ok 400 - query filters MINI/PUBLISHED preserve Unicode and encode only five parameters
+  ---
+  duration_ms: 0.4299
+  type: 'test'
+  ...
+# Subtest: query filters /ARCHIVED preserve Unicode and encode only five parameters
+ok 401 - query filters /ARCHIVED preserve Unicode and encode only five parameters
+  ---
+  duration_ms: 0.3481
+  type: 'test'
+  ...
+# Subtest: query filters MINI/ preserve Unicode and encode only five parameters
+ok 402 - query filters MINI/ preserve Unicode and encode only five parameters
+  ---
+  duration_ms: 0.3265
+  type: 'test'
+  ...
+# Subtest: UI-only getters are never read by repository query projection
+ok 403 - UI-only getters are never read by repository query projection
+  ---
+  duration_ms: 0.3682
+  type: 'test'
+  ...
+# Subtest: opaque ID ─æß╗ü µùÑµ£¼Φ¬₧ ≡ƒÜÇ is preserved and encoded once as one path segment
+ok 404 - opaque ID ─æß╗ü µùÑµ£¼Φ¬₧ ≡ƒÜÇ is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.368
+  type: 'test'
+  ...
+# Subtest: opaque ID a/b?c\#d%e is preserved and encoded once as one path segment
+ok 405 - opaque ID a/b?c\#d%e is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.1899
+  type: 'test'
+  ...
+# Subtest: opaque ID %2F is preserved and encoded once as one path segment
+ok 406 - opaque ID %2F is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.2145
+  type: 'test'
+  ...
+# Subtest: opaque ID %252F is preserved and encoded once as one path segment
+ok 407 - opaque ID %252F is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.2044
+  type: 'test'
+  ...
+# Subtest: opaque ID  /?\#% literal %2F  is preserved and encoded once as one path segment
+ok 408 - opaque ID  /?\#% literal %2F  is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.2009
+  type: 'test'
+  ...
+# Subtest: opaque ID  demo-test-001  is preserved and encoded once as one path segment
+ok 409 - opaque ID  demo-test-001  is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.3394
+  type: 'test'
+  ...
+# Subtest: opaque ID not-a-uuid is preserved and encoded once as one path segment
+ok 410 - opaque ID not-a-uuid is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.2006
+  type: 'test'
+  ...
+# Subtest: opaque ID https://example.com/a?b\#c is preserved and encoded once as one path segment
+ok 411 - opaque ID https://example.com/a?b\#c is preserved and encoded once as one path segment
+  ---
+  duration_ms: 0.2888
+  type: 'test'
+  ...
+# Subtest: invalid query null keeps mapper error before any GET
+ok 412 - invalid query null keeps mapper error before any GET
+  ---
+  duration_ms: 0.672
+  type: 'test'
+  ...
+# Subtest: invalid query undefined keeps mapper error before any GET
+ok 413 - invalid query undefined keeps mapper error before any GET
+  ---
+  duration_ms: 0.2295
+  type: 'test'
+  ...
+# Subtest: invalid query [] keeps mapper error before any GET
+ok 414 - invalid query [] keeps mapper error before any GET
+  ---
+  duration_ms: 0.2813
+  type: 'test'
+  ...
+# Subtest: invalid query {} keeps mapper error before any GET
+ok 415 - invalid query {} keeps mapper error before any GET
+  ---
+  duration_ms: 0.2655
+  type: 'test'
+  ...
+# Subtest: invalid query {"keyword":null,"type":"","status":"","page":1,"size":20} keeps mapper error before any GET
+ok 416 - invalid query {"keyword":null,"type":"","status":"","page":1,"size":20} keeps mapper error before any GET
+  ---
+  duration_ms: 0.3969
+  type: 'test'
+  ...
+# Subtest: invalid query {"keyword":"","type":"FULL_TEST","status":"","page":1,"size":20} keeps mapper error before any GET
+ok 417 - invalid query {"keyword":"","type":"FULL_TEST","status":"","page":1,"size":20} keeps mapper error before any GET
+  ---
+  duration_ms: 0.2472
+  type: 'test'
+  ...
+# Subtest: invalid query {"keyword":"","type":"","status":"CUSTOM_REVIEW","page":1,"size":20} keeps mapper error before any GET
+ok 418 - invalid query {"keyword":"","type":"","status":"CUSTOM_REVIEW","page":1,"size":20} keeps mapper error before any GET
+  ---
+  duration_ms: 0.2591
+  type: 'test'
+  ...
+# Subtest: invalid query {"keyword":"","type":"","status":"","page":"1","size":20} keeps mapper error before any GET
+ok 419 - invalid query {"keyword":"","type":"","status":"","page":"1","size":20} keeps mapper error before any GET
+  ---
+  duration_ms: 0.3005
+  type: 'test'
+  ...
+# Subtest: invalid query {"keyword":"","type":"","status":"","page":0,"size":20} keeps mapper error before any GET
+ok 420 - invalid query {"keyword":"","type":"","status":"","page":0,"size":20} keeps mapper error before any GET
+  ---
+  duration_ms: 0.2922
+  type: 'test'
+  ...
+# Subtest: invalid query {"keyword":"","type":"","status":"","page":1,"size":51} keeps mapper error before any GET
+ok 421 - invalid query {"keyword":"","type":"","status":"","page":1,"size":51} keeps mapper error before any GET
+  ---
+  duration_ms: 0.2748
+  type: 'test'
+  ...
+# Subtest: invalid ID undefined fails before any GET
+ok 422 - invalid ID undefined fails before any GET
+  ---
+  duration_ms: 0.3687
+  type: 'test'
+  ...
+# Subtest: invalid ID null fails before any GET
+ok 423 - invalid ID null fails before any GET
+  ---
+  duration_ms: 0.2432
+  type: 'test'
+  ...
+# Subtest: invalid ID 123 fails before any GET
+ok 424 - invalid ID 123 fails before any GET
+  ---
+  duration_ms: 0.1912
+  type: 'test'
+  ...
+# Subtest: invalid ID {} fails before any GET
+ok 425 - invalid ID {} fails before any GET
+  ---
+  duration_ms: 0.2162
+  type: 'test'
+  ...
+# Subtest: invalid ID [] fails before any GET
+ok 426 - invalid ID [] fails before any GET
+  ---
+  duration_ms: 0.1961
+  type: 'test'
+  ...
+# Subtest: invalid ID "" fails before any GET
+ok 427 - invalid ID "" fails before any GET
+  ---
+  duration_ms: 0.1576
+  type: 'test'
+  ...
+# Subtest: invalid ID " \\t\\n" fails before any GET
+ok 428 - invalid ID " \\t\\n" fails before any GET
+  ---
+  duration_ms: 0.1547
+  type: 'test'
+  ...
+# Subtest: invalid ID "\\ud800" fails before any GET
+ok 429 - invalid ID "\\ud800" fails before any GET
+  ---
+  duration_ms: 0.2831
+  type: 'test'
+  ...
+# Subtest: invalid ID "\\udc00" fails before any GET
+ok 430 - invalid ID "\\udc00" fails before any GET
+  ---
+  duration_ms: 0.2058
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $.title
+ok 431 - detail HTTP 200 invalid body retains adapter error $.title
+  ---
+  duration_ms: 0.4243
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $.questions
+ok 432 - detail HTTP 200 invalid body retains adapter error $.questions
+  ---
+  duration_ms: 0.2365
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $.questionCount
+ok 433 - detail HTTP 200 invalid body retains adapter error $.questionCount
+  ---
+  duration_ms: 0.2146
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $.type
+ok 434 - detail HTTP 200 invalid body retains adapter error $.type
+  ---
+  duration_ms: 0.191
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $.id
+ok 435 - detail HTTP 200 invalid body retains adapter error $.id
+  ---
+  duration_ms: 0.2236
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $.id
+ok 436 - detail HTTP 200 invalid body retains adapter error $.id
+  ---
+  duration_ms: 0.1836
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $.id
+ok 437 - detail HTTP 200 invalid body retains adapter error $.id
+  ---
+  duration_ms: 0.2617
+  type: 'test'
+  ...
+# Subtest: detail HTTP 200 invalid body retains adapter error $
+ok 438 - detail HTTP 200 invalid body retains adapter error $
+  ---
+  duration_ms: 0.2289
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.total
+ok 439 - list HTTP 200 invalid body retains adapter error $.total
+  ---
+  duration_ms: 0.4835
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.catalogTotal
+ok 440 - list HTTP 200 invalid body retains adapter error $.catalogTotal
+  ---
+  duration_ms: 0.2008
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.items
+ok 441 - list HTTP 200 invalid body retains adapter error $.items
+  ---
+  duration_ms: 0.1566
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.items[1].status
+ok 442 - list HTTP 200 invalid body retains adapter error $.items[1].status
+  ---
+  duration_ms: 0.2003
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.total
+ok 443 - list HTTP 200 invalid body retains adapter error $.total
+  ---
+  duration_ms: 0.1465
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.size
+ok 444 - list HTTP 200 invalid body retains adapter error $.size
+  ---
+  duration_ms: 0.1554
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.items
+ok 445 - list HTTP 200 invalid body retains adapter error $.items
+  ---
+  duration_ms: 0.1616
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.items
+ok 446 - list HTTP 200 invalid body retains adapter error $.items
+  ---
+  duration_ms: 0.1564
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $.items
+ok 447 - list HTTP 200 invalid body retains adapter error $.items
+  ---
+  duration_ms: 2.0466
+  type: 'test'
+  ...
+# Subtest: list HTTP 200 invalid body retains adapter error $
+ok 448 - list HTTP 200 invalid body retains adapter error $
+  ---
+  duration_ms: 0.2292
+  type: 'test'
+  ...
+# Subtest: only detail HTTP 404 is not-found, regardless of its body; list 404 stays an HTTP error
+ok 449 - only detail HTTP 404 is not-found, regardless of its body; list 404 stays an HTTP error
+  ---
+  duration_ms: 0.7441
+  type: 'test'
+  ...
+# Subtest: HTTP 201 is neither metadata nor a contract/transport/not-found result
+ok 450 - HTTP 201 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.8116
+  type: 'test'
+  ...
+# Subtest: HTTP 204 is neither metadata nor a contract/transport/not-found result
+ok 451 - HTTP 204 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.491
+  type: 'test'
+  ...
+# Subtest: HTTP 301 is neither metadata nor a contract/transport/not-found result
+ok 452 - HTTP 301 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.5017
+  type: 'test'
+  ...
+# Subtest: HTTP 400 is neither metadata nor a contract/transport/not-found result
+ok 453 - HTTP 400 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.4617
+  type: 'test'
+  ...
+# Subtest: HTTP 401 is neither metadata nor a contract/transport/not-found result
+ok 454 - HTTP 401 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.5292
+  type: 'test'
+  ...
+# Subtest: HTTP 403 is neither metadata nor a contract/transport/not-found result
+ok 455 - HTTP 403 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.5043
+  type: 'test'
+  ...
+# Subtest: HTTP 429 is neither metadata nor a contract/transport/not-found result
+ok 456 - HTTP 429 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.392
+  type: 'test'
+  ...
+# Subtest: HTTP 500 is neither metadata nor a contract/transport/not-found result
+ok 457 - HTTP 500 is neither metadata nor a contract/transport/not-found result
+  ---
+  duration_ms: 0.4478
+  type: 'test'
+  ...
+# Subtest: non-200 statuses never read the error body as metadata
+ok 458 - non-200 statuses never read the error body as metadata
+  ---
+  duration_ms: 0.8537
+  type: 'test'
+  ...
+# Subtest: transport reject {} preserves cause without retries or demo fallback
+ok 459 - transport reject {} preserves cause without retries or demo fallback
+  ---
+  duration_ms: 0.6002
+  type: 'test'
+  ...
+# Subtest: transport reject {"status":404} preserves cause without retries or demo fallback
+ok 460 - transport reject {"status":404} preserves cause without retries or demo fallback
+  ---
+  duration_ms: 0.2226
+  type: 'test'
+  ...
+# Subtest: transport reject "offline" preserves cause without retries or demo fallback
+ok 461 - transport reject "offline" preserves cause without retries or demo fallback
+  ---
+  duration_ms: 0.1697
+  type: 'test'
+  ...
+# Subtest: transport reject null preserves cause without retries or demo fallback
+ok 462 - transport reject null preserves cause without retries or demo fallback
+  ---
+  duration_ms: 0.2704
+  type: 'test'
+  ...
+# Subtest: synchronous transport throws are classified; successful reads are not cached or mutated
+ok 463 - synchronous transport throws are classified; successful reads are not cached or mutated
+  ---
+  duration_ms: 0.4226
+  type: 'test'
+  ...
+# Subtest: Exam URL defaults and independently verified size boundaries
+ok 464 - Exam URL defaults and independently verified size boundaries
+  ---
+  duration_ms: 4.921
+  type: 'test'
+  ...
+# Subtest: Repeated params, invalid persona and preview normalize; Unicode survives canonical round trip
+ok 465 - Repeated params, invalid persona and preview normalize; Unicode survives canonical round trip
+  ---
+  duration_ms: 0.9079
+  type: 'test'
+  ...
+# Subtest: Title search and type/status intersect over the same catalog without student modes
+ok 466 - Title search and type/status intersect over the same catalog without student modes
+  ---
+  duration_ms: 1.1279
+  type: 'test'
+  ...
+# Subtest: Pagination is stable, clamps past end, distinguishes empty/no match, never mutates
+ok 467 - Pagination is stable, clamps past end, distinguishes empty/no match, never mutates
+  ---
+  duration_ms: 0.8446
+  type: 'test'
+  ...
+# Subtest: Missing metadata stays missing and duration formatting never infers from test type
+ok 468 - Missing metadata stays missing and duration formatting never infers from test type
+  ---
+  duration_ms: 0.4008
+  type: 'test'
+  ...
+# Subtest: Demo repository cancels stale reads, simulates errors, retries and empty catalog locally
+ok 469 - Demo repository cancels stale reads, simulates errors, retries and empty catalog locally
+  ---
+  duration_ms: 865.1034
+  type: 'test'
+  ...
+# Subtest: Auth/User paging bounds and supported source status domain; malformed/repeated values normalize
+ok 470 - Auth/User paging bounds and supported source status domain; malformed/repeated values normalize
+  ---
+  duration_ms: 6.9249
+  type: 'test'
+  ...
+# Subtest: Canonical URL round trips Unicode and special characters, query, scenario and SYSTEM_ADMIN
+ok 471 - Canonical URL round trips Unicode and special characters, query, scenario and SYSTEM_ADMIN
+  ---
+  duration_ms: 0.8506
+  type: 'test'
+  ...
+# Subtest: Email OR name substring with AND exact status; roles and placeholder labels are not searchable fields
+ok 472 - Email OR name substring with AND exact status; roles and placeholder labels are not searchable fields
+  ---
+  duration_ms: 2.33
+  type: 'test'
+  ...
+# Subtest: All roles survive reads; missing/empty roles and status never gain defaults
+ok 473 - All roles survive reads; missing/empty roles and status never gain defaults
+  ---
+  duration_ms: 0.5666
+  type: 'test'
+  ...
+# Subtest: Stable paging has no duplicates, clamps huge pages before arithmetic, distinguishes empty from no-match
+ok 474 - Stable paging has no duplicates, clamps huge pages before arithmetic, distinguishes empty from no-match
+  ---
+  duration_ms: 1.367
+  type: 'test'
+  ...
+# Subtest: Only the minimal public summary fields and fictional example.com identities exist in fixtures
+ok 475 - Only the minimal public summary fields and fictional example.com identities exist in fixtures
+  ---
+  duration_ms: 0.787
+  type: 'test'
+  ...
+# Subtest: Local reads cancel; retry preserves query including clamp/no-match; error reload is reproducible
+ok 476 - Local reads cancel; retry preserves query including clamp/no-match; error reload is reproducible
+  ---
+  duration_ms: 1429.8989
+  type: 'test'
+  ...
+# Subtest: Vocabulary independently confirmed defaults/size bounds; unsafe and repeated query values normalize
+ok 477 - Vocabulary independently confirmed defaults/size bounds; unsafe and repeated query values normalize
+  ---
+  duration_ms: 4.4488
+  type: 'test'
+  ...
+# Subtest: Unicode, arbitrary string topic IDs and persona survive canonical URL round trip
+ok 478 - Unicode, arbitrary string topic IDs and persona survive canonical URL round trip
+  ---
+  duration_ms: 0.9422
+  type: 'test'
+  ...
+# Subtest: Local OR search covers word/meaning with AND topic; it does not search topic names or phonetic fallback text
+ok 479 - Local OR search covers word/meaning with AND topic; it does not search topic names or phonetic fallback text
+  ---
+  duration_ms: 2.3896
+  type: 'test'
+  ...
+# Subtest: Pagination stays stable for all supported sizes, clamps huge page, and never mutates summaries
+ok 480 - Pagination stays stable for all supported sizes, clamps huge page, and never mutates summaries
+  ---
+  duration_ms: 0.9338
+  type: 'test'
+  ...
+# Subtest: Missing row metadata differs from unknown topic filter and empty catalog
+ok 481 - Missing row metadata differs from unknown topic filter and empty catalog
+  ---
+  duration_ms: 0.7948
+  type: 'test'
+  ...
+# Subtest: Local repository cancellation/error/retry keeps current filters including no-match
+ok 482 - Local repository cancellation/error/retry keeps current filters including no-match
+  ---
+  duration_ms: 1151.6476
+  type: 'test'
+  ...
+1..482
+# tests 482
+# suites 0
+# pass 482
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3997.7108

@@ -1,0 +1,113 @@
+{
+  "mismatchCount": 0,
+  "note": "Production build completed after Tab wrap and resize focus changes; separate from apps/admin-cms/.next dev cache.",
+  "files": [
+    {
+      "sha256": "5E6EBA98556CA66454C166A7A282509701FF7F1EA22837F33D8A12441CC35DD9",
+      "matches": true,
+      "file": "src/app/globals.css"
+    },
+    {
+      "sha256": "79B0F2E993CE184A5218947DA2F388AD06DFEDB9CA06D6C3BBB0BCC0B041A1BA",
+      "matches": true,
+      "file": "src/app/layout.tsx"
+    },
+    {
+      "sha256": "36236BEB778B189E301A77DCD26DE941A89EB00CAAFDBD63166CFA7383274C50",
+      "matches": true,
+      "file": "src/app/page.tsx"
+    },
+    {
+      "sha256": "911BA06863A7258B5E09F8BF8EAB5BCA559ECC4423C3E61F0FDB25EE8040650D",
+      "matches": true,
+      "file": "src/app/(auth)/login/page.tsx"
+    },
+    {
+      "sha256": "2CC376E4EF1A6C325482B27BB7A6B8A0D2D277DCF6E22F79802179515B9CDC6C",
+      "matches": true,
+      "file": "src/app/(dashboard)/layout.tsx"
+    },
+    {
+      "sha256": "F7691F51B77D7A6FDA834C94BFC9C93507AC6B0465EA7D1B298ED0A826449124",
+      "matches": true,
+      "file": "src/app/(dashboard)/audit-logs/page.tsx"
+    },
+    {
+      "sha256": "9E4253C56356843E7AC943E9A8E46113F8216ED0EAFB5C205E47D4E8176FFADB",
+      "matches": true,
+      "file": "src/app/(dashboard)/lessons/page.tsx"
+    },
+    {
+      "sha256": "3E4DC0DA972628D78437EC4F2E4D8548373EF942633E610C6E7E14FDAB792DA7",
+      "matches": true,
+      "file": "src/app/(dashboard)/questions/page.tsx"
+    },
+    {
+      "sha256": "7E8A69B5808874E5FA31576D7B0ABDF93817C507CC9B474358E231A08E567021",
+      "matches": true,
+      "file": "src/app/(dashboard)/tests/page.tsx"
+    },
+    {
+      "sha256": "65FF8457ACE39591313CF9EA8F81EBBC5B4D3F1A0C1B9E82505F2065B7E08A92",
+      "matches": true,
+      "file": "src/app/(dashboard)/users/page.tsx"
+    },
+    {
+      "sha256": "EF721F305AAA32A4E08F431CD41D90BCCE85DF95E349ADA71D5C2AEEC90CF22E",
+      "matches": true,
+      "file": "src/app/(dashboard)/vocabulary/page.tsx"
+    },
+    {
+      "sha256": "7AD4CB6D93FD08292DC14D2A35FE4E7B48BCF388BF8711E6DC14D952E9CF6A1D",
+      "matches": true,
+      "file": "src/components/auth/login-preview.tsx"
+    },
+    {
+      "sha256": "B6153609CCD6EA7F2700E59DACED90DBA2D87AFAE7F108D04AE239B4E432859D",
+      "matches": true,
+      "file": "src/components/layout/cms-route-preview.tsx"
+    },
+    {
+      "sha256": "9895AE6A1B7B732FF8DF401C93117EDD29A297C3F6065CE1018D82D423A46AAB",
+      "matches": true,
+      "file": "src/components/layout/cms-shell.tsx"
+    },
+    {
+      "sha256": "88694E97C31E66CA616828DAED67AE8320BC6A9F24AF3EC7C2047D6B53AD531D",
+      "matches": true,
+      "file": "src/components/layout/sidebar.tsx"
+    },
+    {
+      "sha256": "D7DC5564FEBDF1A192A7445D3C69B373A47E2979A5683A911CBECE2873531598",
+      "matches": true,
+      "file": "src/components/ui/button.tsx"
+    },
+    {
+      "sha256": "9AD3F301125D416C60917F15AF74EAE5A2FB56F5A5CE4288C007B927C63ACD9D",
+      "matches": true,
+      "file": "src/components/ui/card.tsx"
+    },
+    {
+      "sha256": "CDCFC6285BF455749EF752600F1041B85BE4EA22CA708ABA648EF6DA6C2932B3",
+      "matches": true,
+      "file": "src/lib/api-client.ts"
+    },
+    {
+      "sha256": "FB84FAB16B54D402A222D6CD13120319CD4595D19349F51AC875A6C249065ED5",
+      "matches": true,
+      "file": "src/lib/auth.ts"
+    },
+    {
+      "sha256": "3E57291B6C381AEC28BEA7B20A9F4DD23271AC297B4AB446FEDBA53F36C97C74",
+      "matches": true,
+      "file": "src/lib/demo/cms-fixtures.ts"
+    },
+    {
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "matches": true,
+      "file": "public/.gitkeep"
+    }
+  ],
+  "buildId": "-UdDKM4wT9JehklEYYo8t",
+  "buildDirectory": "tmp/frontend-cms-shell-build-20261027"
+}

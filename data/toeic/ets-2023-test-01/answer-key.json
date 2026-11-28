@@ -1,0 +1,1809 @@
+[
+  {
+    "questionNumber": 1,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 2,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 3,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 4,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 5,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 6,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 7,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 8,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 9,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 10,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 11,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 12,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 13,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 14,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 15,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 16,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 17,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 18,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 19,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 20,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 21,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 22,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 23,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 24,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 25,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 26,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 27,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 28,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 29,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 30,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 31,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 32,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 33,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 34,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 35,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 36,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 37,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 38,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 39,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 40,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 41,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 42,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 43,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 44,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 45,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 46,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 47,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 48,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 49,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 50,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 51,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 52,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 53,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 54,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 55,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 56,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 57,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 58,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 59,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 60,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 61,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 62,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 63,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 64,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 65,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 66,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 67,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 68,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 69,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 70,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 71,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 72,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 73,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 74,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 75,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 76,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 77,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 78,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 79,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 80,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 81,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 82,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 83,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 84,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 85,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 86,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 87,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 88,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 89,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 90,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 91,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 92,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 93,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 94,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 95,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 96,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 97,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 98,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 99,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 100,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 101,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 102,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 103,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 104,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 105,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 106,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 107,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 108,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 109,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 110,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 111,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 112,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 113,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 114,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 115,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 116,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 117,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 118,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 119,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 120,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 121,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 122,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 123,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 124,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 125,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 126,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 127,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 128,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 129,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 130,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 131,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 132,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 133,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 134,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 135,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 136,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 137,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 138,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 139,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 140,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 141,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 142,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 143,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 144,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 145,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 146,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 147,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true,
+    "crossCheckEvidence": "tmp/real-content-resume-20261110-113233-636/source-review.json"
+  },
+  {
+    "questionNumber": 148,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true,
+    "crossCheckEvidence": "tmp/real-content-resume-20261110-113233-636/source-review.json"
+  },
+  {
+    "questionNumber": 149,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 150,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 151,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 152,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 153,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 154,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 155,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 156,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 157,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 158,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 159,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 160,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 161,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 162,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 163,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 164,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 165,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 166,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 167,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 168,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 169,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 170,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 171,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 172,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 173,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 174,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 175,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 176,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true,
+    "crossCheckEvidence": "tmp/real-content-resume-20261110-113233-636/source-review.json"
+  },
+  {
+    "questionNumber": 177,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true,
+    "crossCheckEvidence": "tmp/real-content-resume-20261110-113233-636/source-review.json"
+  },
+  {
+    "questionNumber": 178,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true,
+    "crossCheckEvidence": "tmp/real-content-resume-20261110-113233-636/source-review.json"
+  },
+  {
+    "questionNumber": 179,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true,
+    "crossCheckEvidence": "tmp/real-content-resume-20261110-113233-636/source-review.json"
+  },
+  {
+    "questionNumber": 180,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true,
+    "crossCheckEvidence": "tmp/real-content-resume-20261110-113233-636/source-review.json"
+  },
+  {
+    "questionNumber": 181,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 182,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 183,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 184,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 185,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 186,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 187,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 188,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 189,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 190,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": true
+  },
+  {
+    "questionNumber": 191,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 192,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 193,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 194,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 195,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 196,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 197,
+    "correctOption": "A",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 198,
+    "correctOption": "D",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 199,
+    "correctOption": "B",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  },
+  {
+    "questionNumber": 200,
+    "correctOption": "C",
+    "source": {
+      "file": "docs\\TEST 1\\1.5. Ảnh đáp án Test 01.jpg"
+    },
+    "imageTranscriptionReviewed": true,
+    "independentCrossCheck": false
+  }
+]

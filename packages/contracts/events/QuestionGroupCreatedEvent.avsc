@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "QuestionGroupCreatedEvent",
+  "namespace": "com.toeic.events",
+  "doc": "Phát ra khi tạo QuestionGroup; search indexer dùng để index câu con.",
+  "fields": [
+    { "name": "eventId", "type": "string" },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "groupId", "type": "string" },
+    { "name": "part", "type": "int" },
+    { "name": "type", "type": "string" },
+    { "name": "orderNo", "type": ["null", "int"], "default": null },
+    { "name": "questionIds", "type": { "type": "array", "items": "string" } }
+  ]
+}

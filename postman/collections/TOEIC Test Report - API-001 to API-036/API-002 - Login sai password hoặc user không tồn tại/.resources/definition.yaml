@@ -1,0 +1,11 @@
+$kind: collection
+description: |-
+  Login sai password hoặc user không tồn tại
+  Procedure: 1. Gửi từng dataset sai.
+  2. Kiểm tra status/schema và xác nhận không có token hợp lệ.
+  Expected: 401 theo contract; không tạo phiên hợp lệ, không lộ mật khẩu/hash.
+  Preconditions: Dataset độc lập; tránh khóa ngoài chủ đích.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.a; 1.3.
+  Fixture: dùng QA account ACTIVE đã seed; chạy hai request độc lập: (1) email tồn tại + password sai; (2) email chưa tồn tại trong namespace example.test. Kỳ vọng 401 theo contract, không cấp token/session. Tránh lặp nhiều lần gây rate limit hoặc khóa tài khoản.
+order: 3000

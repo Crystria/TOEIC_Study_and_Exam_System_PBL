@@ -29,6 +29,8 @@ dist/
 build/
 out/
 .next/
+.next-integration34/
+.next-tmp-frontend-*/
 .nuxt/
 .turbo/
 .cache/
@@ -40,6 +42,7 @@ coverage/
 junit.xml
 test-results/
 playwright-report/
+artifacts/qa/
 
 # ---------- Flutter / Dart ----------
 .dart_tool/
@@ -164,3 +167,9 @@ uv.lock.bak
 !.gitkeep
 # ---------- private-folder ----------
 private/
+
+artifacts/p6/
+
+# Machine-specific API import checkpoints; keep these locally when resuming.
+data/toeic/**/import-state.local.json
+data/toeic/**/import-state.local.json.lock

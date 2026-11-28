@@ -1,0 +1,12 @@
+$kind: collection
+name: API-001 - POST /auth/login hợp lệ
+description: |-
+  POST /auth/login hợp lệ
+  Procedure: 1. Gửi email/password/deviceId đúng.
+  2. Kiểm tra status/schema/user và dùng token gọi API bảo vệ.
+  Expected: HTTP 200; tokenType/expires và user theo contract; không lộ hash; token dùng được cho đúng user.
+  Preconditions: User ACTIVE; quota cho phép.
+  Execution note: Ưu tiên: High.
+  Nguồn: Software Test Documentation.docx §1.1.a; 2.1 Test API.
+  Fixture: dùng qa-demo-3@example.test hoặc qa-demo-4@example.test (ACTIVE). Đã quan sát lần login bằng tài khoản test trước đó trả HTTP 200 sau khi verify email; chưa lưu bằng chứng xác nhận đầy đủ tokenType, expires, object user và gọi thành công API bảo vệ bằng access token. Chạy lại login trên QA account; kiểm tra response theo OpenAPI, không có password/passwordHash; xác nhận token thuộc đúng user.
+order: 2000

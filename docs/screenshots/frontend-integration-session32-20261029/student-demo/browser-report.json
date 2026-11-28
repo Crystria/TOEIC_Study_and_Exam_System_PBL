@@ -1,0 +1,188 @@
+{
+  "kind": "DEMO regression; not real account/API E2E",
+  "checks": [
+    {
+      "width": 1440,
+      "route": "/"
+    },
+    {
+      "width": 1440,
+      "route": "/dashboard"
+    },
+    {
+      "width": 1440,
+      "route": "/study/vocabulary"
+    },
+    {
+      "width": 1440,
+      "route": "/study/grammar"
+    },
+    {
+      "width": 1440,
+      "route": "/exam"
+    },
+    {
+      "width": 1440,
+      "route": "/history"
+    },
+    {
+      "width": 1440,
+      "route": "/analytics"
+    },
+    {
+      "width": 1440,
+      "route": "/ai-chat"
+    },
+    {
+      "width": 1440,
+      "route": "/profile"
+    },
+    {
+      "width": 1440,
+      "route": "/settings"
+    },
+    {
+      "width": 1440,
+      "route": "/login",
+      "validation": true
+    },
+    {
+      "width": 768,
+      "route": "/"
+    },
+    {
+      "width": 768,
+      "route": "/dashboard"
+    },
+    {
+      "width": 768,
+      "route": "/study/vocabulary"
+    },
+    {
+      "width": 768,
+      "route": "/study/grammar"
+    },
+    {
+      "width": 768,
+      "route": "/exam"
+    },
+    {
+      "width": 768,
+      "route": "/history"
+    },
+    {
+      "width": 768,
+      "route": "/analytics"
+    },
+    {
+      "width": 768,
+      "route": "/ai-chat"
+    },
+    {
+      "width": 768,
+      "route": "/profile"
+    },
+    {
+      "width": 768,
+      "route": "/settings"
+    },
+    {
+      "width": 768,
+      "route": "/login",
+      "validation": true
+    },
+    {
+      "width": 390,
+      "route": "/"
+    },
+    {
+      "width": 390,
+      "route": "/dashboard"
+    },
+    {
+      "width": 390,
+      "route": "/study/vocabulary"
+    },
+    {
+      "width": 390,
+      "route": "/study/grammar"
+    },
+    {
+      "width": 390,
+      "route": "/exam"
+    },
+    {
+      "width": 390,
+      "route": "/history"
+    },
+    {
+      "width": 390,
+      "route": "/analytics"
+    },
+    {
+      "width": 390,
+      "route": "/ai-chat"
+    },
+    {
+      "width": 390,
+      "route": "/profile"
+    },
+    {
+      "width": 390,
+      "route": "/settings"
+    },
+    {
+      "width": 390,
+      "route": "/login",
+      "validation": true
+    },
+    {
+      "width": 320,
+      "route": "/"
+    },
+    {
+      "width": 320,
+      "route": "/dashboard"
+    },
+    {
+      "width": 320,
+      "route": "/study/vocabulary"
+    },
+    {
+      "width": 320,
+      "route": "/study/grammar"
+    },
+    {
+      "width": 320,
+      "route": "/exam"
+    },
+    {
+      "width": 320,
+      "route": "/history"
+    },
+    {
+      "width": 320,
+      "route": "/analytics"
+    },
+    {
+      "width": 320,
+      "route": "/ai-chat"
+    },
+    {
+      "width": 320,
+      "route": "/profile"
+    },
+    {
+      "width": 320,
+      "route": "/settings"
+    },
+    {
+      "width": 320,
+      "route": "/login",
+      "validation": true
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "completed": true
+}

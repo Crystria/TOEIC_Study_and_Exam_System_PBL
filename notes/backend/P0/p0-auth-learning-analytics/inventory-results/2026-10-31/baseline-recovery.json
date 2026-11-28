@@ -1,0 +1,42 @@
+{
+  "candidateRef": "apiGateway-exam-question",
+  "candidateCommit": "55a1a1244d7b110da94764ee62f8a9f846c09819",
+  "action": "READ_ONLY_COMPARISON_NO_CHECKOUT_OR_MERGE",
+  "migrations": [
+    {
+      "database": "analytics_db",
+      "name": "20261027090200_p0_score_mode",
+      "path": "services/analytics-service/prisma/migrations/20261027090200_p0_score_mode/migration.sql",
+      "checksumMatch": true,
+      "sha256": "31a3681a0492042fd101432c8509b7d8c7108a272aa871335be4fecd012102b6"
+    },
+    {
+      "database": "exam_db",
+      "name": "20261027090100_p0_attempt_mode_snapshot",
+      "path": "services/exam-service/prisma/migrations/20261027090100_p0_attempt_mode_snapshot/migration.sql",
+      "checksumMatch": true,
+      "sha256": "060edf92e15634ce5891cd5e936c3fd2684f52122b0b637200e014d6a6e768ad"
+    },
+    {
+      "database": "exam_db",
+      "name": "20261027090300_p0_drop_legacy_attempt_indexes",
+      "path": "services/exam-service/prisma/migrations/20261027090300_p0_drop_legacy_attempt_indexes/migration.sql",
+      "checksumMatch": true,
+      "sha256": "30e3c01d8fb2f1188eb8d19fbd35ac06e61e28bedad8d3215e25a34b13316309"
+    },
+    {
+      "database": "exam_db",
+      "name": "20261027110000_p3_attempt_workflow",
+      "path": "services/exam-service/prisma/migrations/20261027110000_p3_attempt_workflow/migration.sql",
+      "checksumMatch": true,
+      "sha256": "8f4bdf223c1e2a9ac8470b18c014461d62fd7b229dec2ded6dd3445594f73797"
+    },
+    {
+      "database": "exam_db",
+      "name": "20261027111000_p3_snapshot_position",
+      "path": "services/exam-service/prisma/migrations/20261027111000_p3_snapshot_position/migration.sql",
+      "checksumMatch": true,
+      "sha256": "71a4f11ecf11b974f24d625920bf7dab46d0a84e25a8bd850624809c4b2a4883"
+    }
+  ]
+}

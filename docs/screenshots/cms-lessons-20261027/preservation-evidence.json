@@ -1,0 +1,10 @@
+{
+  "baselineFiles": 874,
+  "changed": [
+    "apps/admin-cms/src/app/(dashboard)/lessons/page.tsx",
+    "apps/admin-cms/README.md",
+    "apps/admin-cms/tsconfig.tests.json",
+    "scripts/qa/cms-tests.cjs"
+  ],
+  "preserved": 870
+}

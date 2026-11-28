@@ -1,23 +1,36 @@
-import { Body, Controller, Get, Patch } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, Patch, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '@toeic/common';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ContractPipe } from '../../http';
 import { UsersService } from './users.service';
-
+import { AvatarService } from './avatar.service';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  @Get('me')
-  @ApiOperation({ summary: 'Lấy hồ sơ người dùng hiện tại' })
-  getMe(@CurrentUser('sub') userId: string) {
-    return this.usersService.getMe(userId);
+  constructor(
+    private readonly users: UsersService,
+    private readonly avatars: AvatarService,
+  ) {}
+  @Get('me') me(@CurrentUser('sub') userId: string) {
+    return this.users.getMe(userId);
   }
-
-  @Patch('me')
-  @ApiOperation({ summary: 'Cập nhật hồ sơ' })
-  updateMe(@CurrentUser('sub') userId: string, @Body() dto: UpdateProfileDto) {
-    return this.usersService.updateMe(userId, dto);
+  @Patch('me') update(
+    @CurrentUser('sub') userId: string,
+    @Body(new ContractPipe('ProfilePatch')) dto: { fullName?: string; phoneNumber?: string | null },
+  ) {
+    return this.users.updateMe(userId, dto);
+  }
+  @Patch('me/avatar/presign') presign(
+    @CurrentUser('sub') userId: string,
+    @Body(new ContractPipe('AvatarPresignRequest'))
+    dto: { kind: 'AVATAR'; contentType: string; sizeBytes: number },
+  ) {
+    return this.avatars.presign(userId, dto);
+  }
+  @Post('me/avatar/confirm') @HttpCode(200) confirm(
+    @CurrentUser('sub') userId: string,
+    @Body(new ContractPipe('ConfirmUploadRequest')) dto: { uploadId: string },
+  ) {
+    return this.avatars.confirm(userId, dto.uploadId);
   }
 }

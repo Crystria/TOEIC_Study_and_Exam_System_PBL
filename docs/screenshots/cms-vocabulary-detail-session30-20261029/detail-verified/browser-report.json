@@ -1,0 +1,1147 @@
+{
+  "base": "http://localhost:3007",
+  "checks": [
+    {
+      "name": "Both exact words/metadata/independent examples, English lang, direct/reload, no write/media/student controls",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Both ID history entries retain independent word/query under Back/Forward, regardless of filters",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard list-detail-return, keyword/topic/size/persona/slow scenario and Back/Forward/reload retain catalog results",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Page2/custom size and scenario survive return; tool stays detail-only; direct agenda remains agenda even with briefing list page",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Tab/Enter reaches preview disclosure and select with visible focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing word/meaning/IPA/example and missing versus unresolved topic are explicit without fallback",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long/unbroken fields and literal HTML have no overflow, injected element/request or mutation on normal restore",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown versus unsupported, Unicode/slash/percent/HTML IDs preserve opaque identity through normalization and reload",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Repeated/invalid queries normalize using vocabulary allowlist; fixed back ignores arbitrary paths and detail tool",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "System persona never mounts detail; content menu active, mobile keyboard/Escape restores focus",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Empty cookies/local/session/IndexedDB after all actions, with credential reads and persistence writes monitored",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "name": "Both exact words/metadata/independent examples, English lang, direct/reload, no write/media/student controls",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Both ID history entries retain independent word/query under Back/Forward, regardless of filters",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard list-detail-return, keyword/topic/size/persona/slow scenario and Back/Forward/reload retain catalog results",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Page2/custom size and scenario survive return; tool stays detail-only; direct agenda remains agenda even with briefing list page",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Tab/Enter reaches preview disclosure and select with visible focus",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing word/meaning/IPA/example and missing versus unresolved topic are explicit without fallback",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long/unbroken fields and literal HTML have no overflow, injected element/request or mutation on normal restore",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown versus unsupported, Unicode/slash/percent/HTML IDs preserve opaque identity through normalization and reload",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Repeated/invalid queries normalize using vocabulary allowlist; fixed back ignores arbitrary paths and detail tool",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "System persona never mounts detail; content menu active, mobile keyboard/Escape restores focus",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Empty cookies/local/session/IndexedDB after all actions, with credential reads and persistence writes monitored",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "name": "Both exact words/metadata/independent examples, English lang, direct/reload, no write/media/student controls",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Both ID history entries retain independent word/query under Back/Forward, regardless of filters",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard list-detail-return, keyword/topic/size/persona/slow scenario and Back/Forward/reload retain catalog results",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Page2/custom size and scenario survive return; tool stays detail-only; direct agenda remains agenda even with briefing list page",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Tab/Enter reaches preview disclosure and select with visible focus",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing word/meaning/IPA/example and missing versus unresolved topic are explicit without fallback",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long/unbroken fields and literal HTML have no overflow, injected element/request or mutation on normal restore",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown versus unsupported, Unicode/slash/percent/HTML IDs preserve opaque identity through normalization and reload",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Repeated/invalid queries normalize using vocabulary allowlist; fixed back ignores arbitrary paths and detail tool",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "System persona never mounts detail; content menu active, mobile keyboard/Escape restores focus",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Empty cookies/local/session/IndexedDB after all actions, with credential reads and persistence writes monitored",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      }
+    },
+    {
+      "name": "Both exact words/metadata/independent examples, English lang, direct/reload, no write/media/student controls",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Both ID history entries retain independent word/query under Back/Forward, regardless of filters",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Keyboard list-detail-return, keyword/topic/size/persona/slow scenario and Back/Forward/reload retain catalog results",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Page2/custom size and scenario survive return; tool stays detail-only; direct agenda remains agenda even with briefing list page",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Tab/Enter reaches preview disclosure and select with visible focus",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Missing word/meaning/IPA/example and missing versus unresolved topic are explicit without fallback",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Long/unbroken fields and literal HTML have no overflow, injected element/request or mutation on normal restore",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Unknown versus unsupported, Unicode/slash/percent/HTML IDs preserve opaque identity through normalization and reload",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Repeated/invalid queries normalize using vocabulary allowlist; fixed back ignores arbitrary paths and detail tool",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "System persona never mounts detail; content menu active, mobile keyboard/Escape restores focus",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    },
+    {
+      "name": "Empty cookies/local/session/IndexedDB after all actions, with credential reads and persistence writes monitored",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "word-1-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "example-1-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "word-2-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "example-2-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "keyboard-tool-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "missing-fields-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "topic-missing-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "topic-unresolved-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-word-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-meaning-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-ipa-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-topic-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "long-example-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-003-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-028-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "not-found-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "opaque-id-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "system-persona-panel-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 1440,
+        "client": 1440
+      }
+    },
+    {
+      "file": "word-1-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "example-1-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "word-2-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "example-2-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "keyboard-tool-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "missing-fields-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "topic-missing-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "topic-unresolved-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-word-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-meaning-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-ipa-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-topic-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "long-example-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-003-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-028-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "not-found-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "opaque-id-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "system-persona-panel-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "mobile-menu-768.png",
+      "viewport": {
+        "width": 768,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 768,
+        "client": 768
+      }
+    },
+    {
+      "file": "word-1-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "example-1-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "word-2-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "example-2-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "keyboard-tool-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "missing-fields-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "topic-missing-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "topic-unresolved-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-word-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-meaning-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-ipa-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-topic-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "long-example-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-003-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-028-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "not-found-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "opaque-id-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "system-persona-panel-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "mobile-menu-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 390,
+        "client": 390
+      }
+    },
+    {
+      "file": "word-1-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "example-1-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "word-2-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "example-2-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "keyboard-tool-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "missing-fields-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "topic-missing-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "topic-unresolved-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-word-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-meaning-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-ipa-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-topic-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "long-example-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-003-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "unsupported-demo-vocabulary-028-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "not-found-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "opaque-id-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "system-persona-panel-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    },
+    {
+      "file": "mobile-menu-320.png",
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "geometry": {
+        "scroll": 320,
+        "client": 320
+      }
+    }
+  ],
+  "errors": [],
+  "forbiddenRequests": [],
+  "httpErrors": [],
+  "storageWrites": [],
+  "credentialReads": [],
+  "browser": "156.0.8078.48",
+  "completed": true
+}
